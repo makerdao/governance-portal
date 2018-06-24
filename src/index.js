@@ -9,7 +9,7 @@ import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
 import rootReducer from "./reducers";
 import { globalStyles } from "./styles";
 import Router from "./Router";
-
+import { getApprovalCount } from "./handlers/web3";
 const store = createStore(
   rootReducer,
   composeWithDevTools(applyMiddleware(ReduxThunk))
@@ -23,3 +23,5 @@ ReactDOM.render(
   </Provider>,
   document.getElementById("root")
 );
+
+// getApprovalCount("0x347e94e12c623d7b9d51b3f143ff42b73d619773");

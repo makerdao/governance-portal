@@ -1,7 +1,4 @@
 {
-  "chain": {
-    "private": { "chief": "" },
-    "kovan": { "chief": "0xbbffc76e94b34f72d96d054b31f6424249c1337d" },
-    "main": { "chief": "0x8e2a84d6ade1e7fffee039a35ef5f19f13057152" }
-  }
+  "kovan": { "chief": "0xbbffc76e94b34f72d96d054b31f6424249c1337d" },
+  "main": { "chief": "0x8e2a84d6ade1e7fffee039a35ef5f19f13057152" }
 }
