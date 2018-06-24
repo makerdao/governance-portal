@@ -1,6 +1,7 @@
 {
   "name": "maker-governance-dashboard",
-  "version": "0",
+  "description": "Primary Interface for MakerDAO's Governance System",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "react": "^16.4.1",
@@ -9,18 +10,28 @@
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4",
     "redux": "^4.0.0",
-    "styled-components": "^3.3.3"
+    "redux-devtools-extension": "^2.13.5",
+    "redux-thunk": "^2.3.0",
+    "styled-components": "^3.3.3",
+    "web3": "^1.0.0-beta.34"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test --env=jsdom",
-    "precommit": "pretty-quick --staged"
+    "start": "NODE_ENV=development react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "precommit": "lint-staged",
+    "remove-sourcemaps": "rm -rf build/static/js/*.map"
+  },
+  "lint-staged": {
+    "*.{js,json}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "devDependencies": {
     "husky": "^0.14.3",
-    "prettier": "^1.13.5",
-    "pretty-quick": "^1.6.0",
-    "react-app-rewired": "^1.5.2"
+    "lint-staged": "^7.2.0",
+    "prettier": "^1.13.5"
   }
 }

@@ -1,3 +1,16 @@
+// -- Constants ------------------------------------------------------------- //
+
+const UPDATE_ACCOUNT = "user/UPDATE_ACCOUNT";
+
+// -- Actions --------------------------------------------------------------- //
+
+export const updateAccount = account => ({
+  type: UPDATE_ACCOUNT,
+  payload: account
+});
+
+// -- Reducer --------------------------------------------------------------- //
+
 const initialState = {
   activeAddress: ""
 };
