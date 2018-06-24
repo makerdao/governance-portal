@@ -1,4 +1,7 @@
 import BigNumber from "bignumber.js";
+import takeLast from "ramda/src/takeLast";
+import pipe from "ramda/src/pipe";
+
 import units from "../contracts/units.json";
 
 /**
@@ -15,9 +18,18 @@ export const padLeft = (n, width, z) => {
 };
 
 /**
+ * @desc convert a padded bytes32 string to an ethereum address
+ * @param  {String} hex
+ * @return {String}
+ */
+export const paddedBytes32ToAddress = hex =>
+  hex.length >= 42 ? "0x" + takeLast(40, hex) : hex;
+
+/**
  * @desc get ethereum contract call data string
- * @param  {String} method
- * @param  {Array}  args
+ * @param  {Object} obj
+ * @param  {String} obj.method
+ * @param  {String[]}  obj.args
  * @return {String}
  */
 export const generateCallData = ({ method, args }) => {
@@ -50,3 +62,29 @@ export const weiToEther = value =>
   BigNumber(`${value}`)
     .div(units.ether)
     .toString();
+
+/**
+ * @desc convert hex string from WAD to ether
+ * @param  {String} hex
+ * @return {String}
+ */
+export const hexWeiToEther = pipe(
+  hexToNumString,
+  weiToEther
+);
+
+/**
+ * @desc get network name
+ * @param  {Number} id
+ * @return {String}
+ */
+export const netIdToName = id => {
+  switch (id) {
+    case 1:
+      return "main";
+    case 42:
+      return "kovan";
+    default:
+      return "";
+  }
+};

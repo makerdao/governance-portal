@@ -2,5 +2,17 @@
   "approvals": {
     "method": "approvals(address)",
     "hash": "0x5d0341ba"
+  },
+  "votes": {
+    "method": "votes(address)",
+    "hash": "0xd8bff5a5"
+  },
+  "slates": {
+    "method": "slates(bytes32)",
+    "hash": "0xc2ffc7bb"
+  },
+  "deposits": {
+    "method": "deposits(address)",
+    "hash": "0xfc7e286d"
   }
 }
