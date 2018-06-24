@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "bignumber.js": "^7.2.1",
+    "prop-types": "^15.6.2",
     "ramda": "^0.25.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",

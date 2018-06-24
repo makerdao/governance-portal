@@ -1,0 +1,27 @@
+{
+  "inception_block": {
+    "main": "0x487813",
+    "kovan": "0x649575"
+  },
+  "events": {
+    "etch": "0x4f0892983790f53eea39a7a496f6cb40e8811b313871337b6a761efc6c67bb1f"
+  },
+  "methods": {
+    "approvals": {
+      "method": "approvals(address)",
+      "hash": "0x5d0341ba"
+    },
+    "votes": {
+      "method": "votes(address)",
+      "hash": "0xd8bff5a5"
+    },
+    "slates": {
+      "method": "slates(bytes32)",
+      "hash": "0xc2ffc7bb"
+    },
+    "deposits": {
+      "method": "deposits(address)",
+      "hash": "0xfc7e286d"
+    }
+  }
+}
