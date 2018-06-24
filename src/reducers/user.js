@@ -1,3 +1,5 @@
+import { createReducer } from "../helpers/redux";
+
 // -- Constants ------------------------------------------------------------- //
 
 const UPDATE_ACCOUNT = "user/UPDATE_ACCOUNT";
@@ -15,9 +17,11 @@ const initialState = {
   activeAddress: ""
 };
 
-export default function user(state = initialState, action) {
-  switch (action.type) {
-    default:
-      return state;
-  }
-}
+const user = createReducer(initialState, {
+  [UPDATE_ACCOUNT]: (state, { payload: { account } }) => ({
+    ...state,
+    account
+  })
+});
+
+export default user;

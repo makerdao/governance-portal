@@ -1,5 +1,10 @@
 import React from "react";
+import BaseLayout from "../layouts/base";
 
-const Proposal = () => <div>Proposal</div>;
+const Proposal = () => (
+  <BaseLayout>
+    <div>Proposal</div>
+  </BaseLayout>
+);
 
 export default Proposal;

@@ -1,6 +1,6 @@
 {
   "name": "maker-governance-dashboard",
-  "description": "Primary Interface for MakerDAO's Governance System",
+  "description": "The Primary Interface for MakerDAO's Governance System",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

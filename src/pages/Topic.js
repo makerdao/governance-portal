@@ -1,5 +1,10 @@
 import React from "react";
+import BaseLayout from "../layouts/base";
 
-const Topic = () => <div>Topic</div>;
+const Topic = () => (
+  <BaseLayout>
+    <div>Topic</div>
+  </BaseLayout>
+);
 
 export default Topic;
