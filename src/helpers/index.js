@@ -28,7 +28,7 @@ export const paddedBytes32ToAddress = hex =>
  * @desc get ethereum contract call data string
  * @param  {Object} obj
  * @param  {String} obj.method
- * @param  {String[]}  [obj.args]
+ * @param  {String[]} [obj.args]
  * @return {String}
  */
 export const generateCallData = ({ method, args = [] }) => {
@@ -63,6 +63,16 @@ export const weiToEther = value =>
     .toString();
 
 /**
+ * @desc convert number string from ether to wei
+ * @param  {String} value
+ * @return {String}
+ */
+export const etherToWei = value =>
+  BigNumber(`${value}`)
+    .times(units.ether)
+    .toString();
+
+/**
  * @desc get network name
  * @param  {Number} id
  * @return {String}
@@ -77,3 +87,17 @@ export const netIdToName = id => {
       return "";
   }
 };
+
+/**
+ * @desc given address is "zero" address
+ * @param  {String} address
+ * @return {Boolean}
+ */
+export const isZeroAddress = address => !BigNumber(address).toNumber();
+
+/**
+ * @desc number string to 0x prefixed hex
+ * @param  {String} string
+ * @return {String} 0x hex
+ */
+export const stringToHex = string => BigNumber(`${string}`).toString(16);

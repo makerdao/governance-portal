@@ -6,15 +6,18 @@ import {
   removeHexPrefix,
   weiToEther,
   netIdToName,
-  paddedBytes32ToAddress
+  paddedBytes32ToAddress,
+  isZeroAddress,
+  etherToWei,
+  stringToHex
 } from "../helpers";
 import addresses from "../contracts/addresses.json";
 import chiefInfo from "../contracts/chief-info.json";
 
 export const web3Instance = new Web3(
-  new Web3.providers.HttpProvider(`https://mainnet.infura.io/`)
+  new Web3.providers.HttpProvider(`https://kovan.infura.io/`)
 );
-
+// mainnet
 /**
  * @desc set a different web3 provider
  * @param {String} provider
@@ -33,7 +36,7 @@ export const web3SetHttpProvider = provider => {
 };
 
 /**
- * @desc get current network name
+ * @async @desc get current network name
  * @return {String}
  */
 const getNetworkName = async () => {
@@ -43,7 +46,7 @@ const getNetworkName = async () => {
 };
 
 /**
- * @desc get chief's address
+ * @async @desc get chief's address
  * @param {String} [_network]
  * @return {String}
  */
@@ -51,6 +54,28 @@ const getChief = async (_network = "") => {
   const network = _network || (await getNetworkName());
   const chief = addresses[network].chief;
   return chief;
+};
+
+/**
+ * @async @desc get vote proxy factory's address
+ * @param {String} [_network]
+ * @return {String}
+ */
+const getProxyFactory = async (_network = "") => {
+  const network = _network || (await getNetworkName());
+  const factory = addresses[network].proxy_factory;
+  return factory;
+};
+
+/**
+ * @async @desc get vote MKR address
+ * @param {String} [_network]
+ * @return {String}
+ */
+const getMkrAddress = async (_network = "") => {
+  const network = _network || (await getNetworkName());
+  const mkr = addresses[network].mkr;
+  return mkr;
 };
 
 /**
@@ -62,7 +87,15 @@ const getMethodSig = methodString =>
   web3Instance.utils.sha3(methodString).substring(0, 10);
 
 /**
- * @desc get address approval count
+ * @desc get address transaction count
+ * @param {String} address
+ * @return {Promise}
+ */
+export const getTransactionCount = address =>
+  web3Instance.eth.getTransactionCount(address, "pending");
+
+/**
+ * @async @desc get address approval count
  * @param  {String} address
  * @return {String} number of approvals
  */
@@ -82,7 +115,7 @@ export const getApprovalCount = async address => {
 };
 
 /**
- * @desc get address's current voted slate
+ * @async @desc get address's current voted slate
  * @param  {String} address
  * @return {String} slateHex
  */
@@ -101,7 +134,7 @@ export const getVotedSlate = async address => {
 };
 
 /**
- * @desc get address's deposited GOV
+ * @async @desc get address's deposited GOV
  * @param  {String} address
  * @return {String}
  */
@@ -121,7 +154,7 @@ export const getNumDeposits = async address => {
 };
 
 /**
- * @desc get slate's addresses
+ * @async @desc get slate's addresses
  * @param  {String} slateHex
  * @return {String[]} addresses
  */
@@ -129,7 +162,7 @@ export const getSlateAddresses = async slateHex => {
   const chief = await getChief();
   const methodSig = chiefInfo.methods.slates.hash;
   /**
-   * @param  {Number} [i] index
+   * @async @param  {Number} [i] index
    * @param  {String[]} [arr] array
    * @return {String[]} addresses
    */
@@ -154,7 +187,7 @@ export const getSlateAddresses = async slateHex => {
 };
 
 /**
- * @desc use event logs to get all etched slates
+ * @async @desc use event logs to get all etched slates
  * @return {String[]} slates
  */
 export const getEtchedSlates = async () => {
@@ -168,4 +201,176 @@ export const getEtchedSlates = async () => {
   });
   const slates = etches.map(logObj => last(logObj.topics));
   return slates;
+};
+
+/**
+ * @async @desc get the address of associated vote proxy if this wallet were hot
+ * @param {String} address
+ * @return {String} address
+ */
+export const getProxyAddressHot = async address => {
+  const factory = await getProxyFactory();
+  const methodSig = getMethodSig("hotMap(address)");
+  const callData = generateCallData({
+    method: methodSig,
+    args: [removeHexPrefix(address)]
+  });
+  const hotMapVal = await web3Instance.eth.call({
+    to: factory,
+    data: callData
+  });
+  const proxyAddress = paddedBytes32ToAddress(hotMapVal);
+  return proxyAddress;
+};
+
+/**
+ * @async @desc get the address of associated vote proxy if this wallet were cold
+ * @param {String} address
+ * @return {String} address
+ */
+export const getProxyAddressCold = async address => {
+  const factory = await getProxyFactory();
+  const methodSig = getMethodSig("coldMap(address)");
+  const callData = generateCallData({
+    method: methodSig,
+    args: [removeHexPrefix(address)]
+  });
+  const coldMapVal = await web3Instance.eth.call({
+    to: factory,
+    data: callData
+  });
+  const proxyAddress = paddedBytes32ToAddress(coldMapVal);
+  return proxyAddress;
+};
+
+/**
+ * @typedef {Object} proxyStatus
+ * @property {Boolean} isHot
+ * @property {Boolean} isCold
+ * @property {String} proxy
+ */
+
+/**
+ * @async @desc get the address of associated vote proxy if this wallet were cold
+ * @param {String} address
+ * @return {proxyStatus}
+ */
+export const getProxyStatus = async address => {
+  const proxyAddressHot = await getProxyAddressHot(address);
+  if (!isZeroAddress(proxyAddressHot)) {
+    return { isHot: true, isCold: false, proxy: proxyAddressHot };
+  }
+  const proxyAddressCold = await getProxyAddressCold(address);
+  if (!isZeroAddress(proxyAddressCold)) {
+    return { isHot: false, isCold: true, proxy: proxyAddressCold };
+  }
+  return { isHot: false, isCold: false, proxy: "" };
+};
+
+/**
+ * @async @desc get transaction details
+ * @param  {Object} transaction { from, to, data, value, gasPrice, gasLimit }
+ * @return {Object}
+ */
+export const getTxDetails = async ({
+  from,
+  to,
+  data,
+  value,
+  gasPrice,
+  gasLimit
+}) => {
+  // getGasPrice gets median gas price of the last few blocks from some oracle
+  const _gasPrice = gasPrice || (await web3Instance.eth.getGasPrice());
+  const estimateGasData = value === "0x00" ? { from, to, data } : { to, data };
+  // this fails if web3 thinks that the transaction will fail
+  const _gasLimit =
+    gasLimit || (await web3Instance.eth.estimateGas(estimateGasData));
+  const nonce = await getTransactionCount(from);
+  const tx = {
+    from: from,
+    to: to,
+    nonce: web3Instance.utils.toHex(nonce),
+    gasPrice: web3Instance.utils.toHex(_gasPrice),
+    gasLimit: web3Instance.utils.toHex(_gasLimit),
+    gas: web3Instance.utils.toHex(_gasLimit),
+    value: web3Instance.utils.toHex(value),
+    data: data
+  };
+  return tx;
+};
+
+/**
+ * @desc metamask send transaction
+ * @param  {Object}  transaction { from, to, value, data, gasPrice}
+ * @return {Promise}
+ */
+export const web3MetamaskSendTransaction = transaction =>
+  new Promise((resolve, reject) => {
+    const from =
+      transaction.from.substr(0, 2) === "0x"
+        ? transaction.from
+        : `0x${transaction.from}`;
+    const to =
+      transaction.to.substr(0, 2) === "0x"
+        ? transaction.to
+        : `0x${transaction.to}`;
+    const value = transaction.value ? etherToWei(transaction.value) : "0x00";
+    const data = transaction.data ? transaction.data : "0x";
+    getTxDetails({
+      from,
+      to,
+      data,
+      value,
+      gasPrice: transaction.gasPrice,
+      gasLimit: transaction.gasLimit
+    })
+      .then(txDetails => {
+        if (typeof window.web3 !== "undefined") {
+          window.web3.eth.sendTransaction(txDetails, (err, txHash) => {
+            if (err) {
+              reject(err);
+            }
+            resolve(txHash);
+          });
+        } else {
+          throw new Error(`Metamask is not installed`);
+        }
+      })
+      .catch(error => reject(error));
+  });
+
+/**
+ * @async @desc metamask send transaction
+ * @param  {Object}  transaction { from, to, value, data, gasPrice}
+ * @return {Promise}
+ */
+export const buildVoteProxy = async ({ cold, hot }) => {
+  const factory = await getProxyFactory();
+  const methodSig = getMethodSig("newVoteProxy(address,address)");
+  const callData = generateCallData({
+    method: methodSig,
+    args: [removeHexPrefix(cold), removeHexPrefix(hot)]
+  });
+  const tx = { to: factory, from: cold, data: callData };
+  return web3MetamaskSendTransaction(tx);
+};
+
+/**
+ * @async @desc metamask send transaction
+ * @param  {Object}  transaction { from, to, value, data, gasPrice}
+ * @return {Promise}
+ */
+export const sendMkrToProxy = async ({ from, value }) => {
+  const { proxy } = await getProxyStatus(from);
+  const mkrToken = await getMkrAddress();
+  const methodSig = getMethodSig("transfer(address,uint256)");
+  // TODO error handle if isCold is false
+  const weiAmtHex = stringToHex(etherToWei(value));
+  const callData = generateCallData({
+    method: methodSig,
+    args: [removeHexPrefix(proxy), removeHexPrefix(weiAmtHex)]
+  });
+  const tx = { to: mkrToken, from, data: callData };
+  return web3MetamaskSendTransaction(tx);
 };
