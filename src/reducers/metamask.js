@@ -2,7 +2,7 @@ import { createReducer } from "../helpers/redux";
 
 // -- Constants ------------------------------------------------------------- //
 
-const UPDATE_ACCOUNT = "user/UPDATE_ACCOUNT";
+const UPDATE_ACCOUNT = "metamask/UPDATE_ACCOUNT";
 
 // -- Actions --------------------------------------------------------------- //
 
@@ -17,11 +17,11 @@ const initialState = {
   activeAddress: ""
 };
 
-const user = createReducer(initialState, {
+const metamask = createReducer(initialState, {
   [UPDATE_ACCOUNT]: (state, { payload: { account } }) => ({
     ...state,
     account
   })
 });
 
-export default user;
+export default metamask;

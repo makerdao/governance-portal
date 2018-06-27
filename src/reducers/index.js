@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
-import user from "./user";
+import metamask from "./metamask";
 
 const rootReducer = combineReducers({
-  user
+  metamask
 });
 
 export default rootReducer;

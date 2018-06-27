@@ -1,5 +1,7 @@
 export const colors = {
   white: "255, 255, 255",
+  green: "48, 189, 159",
+  header: "31, 44, 60",
   black: "0, 0, 0"
 };
 
@@ -9,7 +11,7 @@ export const fonts = {
     small: "12px",
     smedium: "14px",
     medium: "15px",
-    large: "18px",
+    large: "20px",
     big: "22px",
     h1: "42px",
     h2: "32px",
@@ -28,6 +30,25 @@ export const fonts = {
     SFProText:
       '-apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif'
   }
+};
+
+export const shadows = {
+  soft:
+    "0 4px 6px 0 rgba(50, 50, 93, 0.11), 0 1px 3px 0 rgba(0, 0, 0, 0.08), inset 0 0 1px 0 rgba(0, 0, 0, 0.06)",
+  medium:
+    "0 3px 6px 0 rgba(0, 0, 0, 0.06), 0 0 1px 0 rgba(50, 50, 93, 0.02), 0 5px 10px 0 rgba(59, 59, 92, 0.08)",
+  big:
+    "0 15px 35px 0 rgba(50, 50, 93, 0.06), 0 5px 15px 0 rgba(50, 50, 93, 0.15)",
+  hover:
+    "0 7px 14px 0 rgba(50, 50, 93, 0.1), 0 3px 6px 0 rgba(0, 0, 0, 0.08), inset 0 0 1px 0 rgba(0, 0, 0, 0.06)"
+};
+
+export const transitions = {
+  short: "all 0.1s ease-in-out",
+  base: "all 0.2s ease-in-out",
+  long: "all 0.3s ease-in-out",
+  button: "0.15s ease",
+  buttonPress: "0.15s ease"
 };
 
 export const responsive = {

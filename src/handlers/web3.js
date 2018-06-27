@@ -10,7 +10,7 @@ import {
   isZeroAddress,
   etherToWei,
   stringToHex
-} from "../helpers";
+} from "../ethereum";
 import addresses from "../contracts/addresses.json";
 import chiefInfo from "../contracts/chief-info.json";
 
@@ -302,8 +302,8 @@ export const getTxDetails = async ({
 
 /**
  * @desc metamask send transaction
- * @param  {Object}  transaction { from, to, value, data, gasPrice}
- * @return {Promise}
+ * @param  {Object} transaction { from, to, value, data, gasPrice, gasLimit }
+ * @return {Promise} tx
  */
 export const web3MetamaskSendTransaction = transaction =>
   new Promise((resolve, reject) => {
@@ -342,8 +342,8 @@ export const web3MetamaskSendTransaction = transaction =>
 
 /**
  * @async @desc metamask send transaction
- * @param  {Object}  transaction { from, to, value, data, gasPrice}
- * @return {Promise}
+ * @param  {Object}  wallets { cold, hot }
+ * @return {Promise} tx
  */
 export const buildVoteProxy = async ({ cold, hot }) => {
   const factory = await getProxyFactory();
@@ -358,8 +358,8 @@ export const buildVoteProxy = async ({ cold, hot }) => {
 
 /**
  * @async @desc metamask send transaction
- * @param  {Object}  transaction { from, to, value, data, gasPrice}
- * @return {Promise}
+ * @param  {Object} transferDetails { from, value }
+ * @return {Promise} tx
  */
 export const sendMkrToProxy = async ({ from, value }) => {
   const { proxy } = await getProxyStatus(from);
