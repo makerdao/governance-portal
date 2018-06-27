@@ -8,6 +8,7 @@ import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
 
 import rootReducer from "./reducers";
 import { globalStyles } from "./styles";
+import { isMobile } from "./utils/misc";
 import Router from "./Router";
 import Init from "./Init";
 
@@ -21,10 +22,8 @@ injectGlobal`${globalStyles}`;
 ReactDOM.render(
   <Provider store={store}>
     <Init>
-      <Router />
+      {isMobile() ? <div>Mobile support coming soon</div> : <Router />}
     </Init>
   </Provider>,
   document.getElementById("root")
 );
-
-// disable mobile
