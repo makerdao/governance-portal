@@ -74,11 +74,11 @@ export const etherToWei = value =>
 
 /**
  * @desc get network name
- * @param  {Number} id
+ * @param  {Number|String} id
  * @return {String}
  */
 export const netIdToName = id => {
-  switch (id) {
+  switch (parseInt(id)) {
     case 1:
       return "main";
     case 42:

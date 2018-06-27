@@ -9,6 +9,7 @@ import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
 import rootReducer from "./reducers";
 import { globalStyles } from "./styles";
 import Router from "./Router";
+import Init from "./Init";
 
 const store = createStore(
   rootReducer,
@@ -19,7 +20,9 @@ injectGlobal`${globalStyles}`;
 
 ReactDOM.render(
   <Provider store={store}>
-    <Router />
+    <Init>
+      <Router />
+    </Init>
   </Provider>,
   document.getElementById("root")
 );

@@ -10,7 +10,7 @@ import {
   isZeroAddress,
   etherToWei,
   stringToHex
-} from "../ethereum";
+} from "../helpers/ethereum";
 import addresses from "../contracts/addresses.json";
 import chiefInfo from "../contracts/chief-info.json";
 
@@ -373,4 +373,21 @@ export const sendMkrToProxy = async ({ from, value }) => {
   });
   const tx = { to: mkrToken, from, data: callData };
   return web3MetamaskSendTransaction(tx);
+};
+
+/**
+ * @desc get metmask selected network
+ * @return {Promise}
+ */
+export const getMetamaskNetworkName = async () => {
+  if (typeof window.web3 !== "undefined") {
+    window.web3.version.getNetwork((err, networkID) => {
+      if (err) {
+        console.error(err);
+        throw new Error(err);
+      }
+      const networkName = netIdToName(networkID);
+      return networkName || null;
+    });
+  }
 };
