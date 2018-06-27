@@ -1,4 +1,4 @@
-import { createReducer } from "../helpers/redux";
+import { createReducer } from "../utils/redux";
 import { getMetamaskNetworkName } from "../handlers/web3";
 
 // Constants

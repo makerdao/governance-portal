@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js";
 import takeLast from "ramda/src/takeLast";
 
-import units from "../contracts/units.json";
+export const WEI = 1;
+export const ETHER = 1000000000000000000;
 
 /**
  * @desc pad string to specific width and padding
@@ -59,7 +60,7 @@ export const hexToNumString = hex => BigNumber(`${hex}`).toString();
  */
 export const weiToEther = value =>
   BigNumber(`${value}`)
-    .div(units.ether)
+    .div(ETHER)
     .toString();
 
 /**
@@ -69,7 +70,7 @@ export const weiToEther = value =>
  */
 export const etherToWei = value =>
   BigNumber(`${value}`)
-    .times(units.ether)
+    .times(ETHER)
     .toString();
 
 /**
@@ -78,7 +79,7 @@ export const etherToWei = value =>
  * @return {String}
  */
 export const netIdToName = id => {
-  switch (parseInt(id)) {
+  switch (parseInt(id, 10)) {
     case 1:
       return "main";
     case 42:
