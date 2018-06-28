@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { colors, fonts, shadows, transitions } from "../styles";
+import { colors, fonts, shadows, transitions, responsive } from "../styles";
 
 const StyledCard = styled.div`
   transition: ${transitions.base};
@@ -10,92 +10,80 @@ const StyledCard = styled.div`
   max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : "none")};
   border: none;
   border-style: none;
+  border-radius: 4px;
+  display: block;
+  color: rgb(${colors.black});
+  background-color: ${({ background }) => `rgb(${colors[background]})`};
+  box-shadow: ${shadows.soft};
+  font-size: ${fonts.size.medium};
+  font-weight: ${fonts.weight.normal};
+  flex-direction: column;
+  margin: 0 auto;
+  text-align: left;
+  overflow: hidden;
+`;
+
+const CardTop = styled.div`
+  transition: ${transitions.base};
+  position: relative;
+  padding: 23px 24px;
+  width: 100%;
+  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : "none")};
+  min-height: ${({ minHeight }) => (minHeight ? `${minHeight}px` : "0")};
+  height: ${({ height }) => (height ? `${height}px` : "auto")};
+  border-style: none;
+  border: none;
   color: rgb(${colors.dark});
   background-color: ${({ background }) => `rgb(${colors[background]})`};
   font-size: ${fonts.size.medium};
   font-weight: ${fonts.weight.normal};
   margin: 0 auto;
   text-align: left;
-  overflow: ${({ allowOverflow }) => (allowOverflow ? "visible" : "hidden")};
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
 `;
 
-const StyledContent = styled.div`
-  min-height: ${({ minHeight }) => (minHeight ? `${minHeight}px` : "0")};
+const CardElement = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 24px;
   transition: ${transitions.base};
-  opacity: ${({ fetching }) => (fetching ? 0 : 1)};
-  visibility: ${({ fetching }) => (fetching ? "hidden" : "visible")};
-  pointer-events: ${({ fetching }) => (fetching ? "none" : "auto")};
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: relative;
+  width: 100%;
+  min-height: ${({ minHeight }) => (minHeight ? `${minHeight}px` : "0")};
+  height: ${({ height }) => (height ? `${height}px` : "auto")};
+  border-top: solid 2px #eaeaea;
+  color: rgb(${colors.dark});
+  background-color: ${({ background }) => `rgb(${colors[background]})`};
+  font-size: ${fonts.size.medium};
+  font-weight: ${fonts.weight.normal};
+  margin: 0 auto;
+  text-align: left;
+  overflow: hidden;
+  @media screen and (${responsive.sm.max}) {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 `;
 
-const StyledFetching = styled.div`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: ${transitions.short};
-  opacity: ${({ fetching }) => (fetching ? 1 : 0)};
-  visibility: ${({ fetching }) => (fetching ? "visible" : "hidden")};
-  pointer-events: ${({ fetching }) => (fetching ? "auto" : "none")};
-`;
-
-const StyledMessage = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgb(${colors.grey});
-  font-weight: ${fonts.weight.medium};
-  margin: 20px;
-`;
-
-const Card = ({
-  fetching,
-  fetchingMessage,
-  allowOverflow,
-  background,
-  maxWidth,
-  minHeight,
-  children,
-  ...props
-}) => (
-  <StyledCard
-    allowOverflow={allowOverflow}
-    background={background}
-    maxWidth={maxWidth}
-    {...props}
-  >
-    <StyledFetching fetching={fetching}>
-      <StyledMessage>{fetchingMessage}</StyledMessage>
-    </StyledFetching>
-    <StyledContent minHeight={minHeight} fetching={fetching}>
-      {children}
-    </StyledContent>
+const Card = ({ background, children, ...props }) => (
+  <StyledCard background={background} {...props}>
+    {children}
   </StyledCard>
 );
 
 Card.propTypes = {
   children: PropTypes.node.isRequired,
-  fetching: PropTypes.bool,
-  allowOverflow: PropTypes.bool,
-  fetchingMessage: PropTypes.string,
   background: PropTypes.string,
-  maxWidth: PropTypes.number
+  minHeight: PropTypes.number
 };
 
 Card.defaultProps = {
-  fetching: false,
-  allowOverflow: false,
-  fetchingMessage: "",
   background: "white",
-  maxWidth: null,
   minHeight: null
 };
 
 export default Card;
+export { CardTop, CardElement };

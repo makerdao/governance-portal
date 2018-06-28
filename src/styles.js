@@ -2,6 +2,7 @@ export const colors = {
   white: "255, 255, 255",
   green: "48, 189, 159",
   header: "31, 44, 60",
+  background: "246,248,249",
   black: "0, 0, 0"
 };
 
@@ -9,16 +10,11 @@ export const fonts = {
   size: {
     tiny: "10px",
     small: "12px",
-    smedium: "14px",
-    medium: "15px",
+    medium: "14px",
     large: "20px",
-    big: "22px",
+    xlarge: "24px",
     h1: "42px",
-    h2: "32px",
-    h3: "24px",
-    h4: "20px",
-    h5: "17px",
-    h6: "14px"
+    h2: "32px"
   },
   weight: {
     normal: 400,
@@ -88,6 +84,7 @@ export const globalStyles = `
       font-stretch: normal;
       font-weight: ${fonts.weight.normal};
       font-size: ${fonts.size.medium};
+      background-color: rgb(${colors.background});
       overflow-y:auto;
       text-rendering: optimizeLegibility;
       -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -120,18 +117,6 @@ export const globalStyles = `
     }
     h2 {
       font-size: ${fonts.size.h2}
-    }
-    h3 {
-      font-size: ${fonts.size.h3}
-    }
-    h4 {
-      font-size: ${fonts.size.h4}
-    }
-    h5 {
-      font-size: ${fonts.size.h5}
-    }
-    h6 {
-      font-size: ${fonts.size.h6}
     }
   
     a {

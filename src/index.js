@@ -9,7 +9,7 @@ import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
 import rootReducer from "./reducers";
 import { globalStyles } from "./styles";
 import { isMobile } from "./utils/misc";
-import Router from "./Router";
+import Router from "./Routes";
 import Init from "./Init";
 
 const store = createStore(
@@ -21,9 +21,7 @@ injectGlobal`${globalStyles}`;
 
 ReactDOM.render(
   <Provider store={store}>
-    <Init>
-      {isMobile() ? <div>Mobile support coming soon</div> : <Router />}
-    </Init>
+    <Init>{isMobile() ? <div>No mobile support yet</div> : <Router />}</Init>
   </Provider>,
   document.getElementById("root")
 );

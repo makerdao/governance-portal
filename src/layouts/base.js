@@ -12,9 +12,15 @@ const StyledLayout = styled.div`
   min-height: 100vh;
   text-align: center;
 `;
+const AppWrapper = styled.div`
+  padding: 0px 16px;
+`;
 
 const StyledColumn = styled.div`
-  padding: 0px 96px;
+  max-width: 1000px;
+  align-items: center;
+  max-width: 1140px;
+  margin: auto;
 `;
 
 const StyledHeader = styled.div`
@@ -31,7 +37,7 @@ const StyledHeader = styled.div`
 
 const StyledTitle = styled.div`
   color: rgb(${colors.white});
-  font-size: ${fonts.size.big};
+  font-size: ${fonts.size.xlarge};
 `;
 
 const StyledContent = styled.div`
@@ -43,9 +49,11 @@ const BaseLayout = ({ children }) => (
     <StyledHeader>
       <StyledTitle>Maker Voting</StyledTitle>
     </StyledHeader>
-    <StyledColumn>
-      <StyledContent>{children}</StyledContent>
-    </StyledColumn>
+    <AppWrapper>
+      <StyledColumn>
+        <StyledContent>{children}</StyledContent>
+      </StyledColumn>
+    </AppWrapper>
   </StyledLayout>
 );
 

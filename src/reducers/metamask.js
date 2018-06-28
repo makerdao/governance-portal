@@ -1,7 +1,7 @@
 import { createReducer } from "../utils/redux";
 import { getMetamaskNetworkName } from "../handlers/web3";
 
-// Constants
+// Constants ----------------------------------------------
 
 const UPDATE_ACCOUNT = "metamask/UPDATE_ACCOUNT";
 const UPDATE_NETWORK = "metamask/UPDATE_NETWORK";
@@ -10,10 +10,7 @@ const CONNECT_SUCCESS = "metamask/CONNECT_SUCCESS";
 const CONNECT_FAILURE = "metamask/CONNECT_FAILURE";
 const NOT_AVAILABLE = "metamask/NOT_AVAILABLE";
 
-// Actions
-
-let accountTimeout = null;
-let networkTimeout = null;
+// Actions ------------------------------------------------
 
 export const updateMetamaskAccount = () => (dispatch, getState) => {
   if (window.web3.eth.defaultAccount !== getState().metamask.accountAddress) {
@@ -23,7 +20,7 @@ export const updateMetamaskAccount = () => (dispatch, getState) => {
       payload: { address: accountAddress }
     });
   }
-  accountTimeout = setTimeout(() => dispatch(updateMetamaskAccount()), 100);
+  setTimeout(() => dispatch(updateMetamaskAccount()), 100);
 };
 
 export const updateMetamaskNetwork = () => (dispatch, getState) => {
@@ -32,7 +29,7 @@ export const updateMetamaskNetwork = () => (dispatch, getState) => {
       if (network !== getState().metamask.network) {
         dispatch({ type: UPDATE_NETWORK, payload: { network } });
       }
-      networkTimeout = setTimeout(() => dispatch(updateMetamaskNetwork()), 250);
+      setTimeout(() => dispatch(updateMetamaskNetwork()), 250);
     })
     .catch(error => {
       console.error(error);
@@ -59,12 +56,7 @@ export const metamaskConnectInit = () => dispatch => {
   }
 };
 
-export const metamaskClearTimeouts = () => () => {
-  clearTimeout(accountTimeout);
-  clearTimeout(networkTimeout);
-};
-
-// Reducer
+// Reducer ------------------------------------------------
 
 const initialState = {
   fetching: false,
@@ -85,15 +77,12 @@ const metamask = createReducer(initialState, {
     web3Available: true,
     network: payload.network
   }),
-  [CONNECT_FAILURE]: state => ({
-    ...state,
-    fetching: false,
+  [CONNECT_FAILURE]: () => ({
+    ...initialState,
     web3Available: true
   }),
-  [NOT_AVAILABLE]: state => ({
-    ...state,
-    fetching: false,
-    web3Available: false
+  [NOT_AVAILABLE]: () => ({
+    ...initialState
   }),
   [UPDATE_ACCOUNT]: (state, { payload }) => ({
     ...state,
