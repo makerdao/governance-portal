@@ -95,18 +95,90 @@ const Creation = styled.div`
 const TopicStatus = styled.div`
   line-height: 24px;
   align-self: center;
-  background-color: #d2f9f1;
+  background-color: ${({ active }) => (active ? "#d2f9f1" : "#EAEFF7")};
   padding: 2px 15px;
   border-radius: 20px;
-  color: #30bd9f;
+  color: ${({ active }) => (active ? "#30bd9f" : "#546978")};
+  &::after {
+    content: ${({ active }) => (active ? `"Topic active"` : `"Topic closed"`)};
+  }
+`;
+
+const VoteTallyWrapper = styled.div``;
+
+const VoteTally = styled.div`
+  line-height: 20px;
+  color: #212536;
+  font-size: 18px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const VotePercent = styled.div`
+  &::after {
+    font-size: 16px;
+    color: #848484;
+    content: " VOTES";
+  }
+`;
+
+const VoteAmount = styled.div`
+  &::after {
+    font-size: 16px;
+    color: #848484;
+    content: " MKR";
+  }
+`;
+
+const Banner = styled.div`
+  height: 82px;
+  background: #fdede8;
+  border: 1px solid #f77249;
+  box-sizing: border-box;
+  border-radius: 4px;
+  margin: 31px 0px;
+  text-align: left;
+  padding: 16px 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const BannerHeader = styled.div`
+  font-size: 20px;
+  color: #1f2c3c;
+  font-weight: bold;
+`;
+
+const BannerBody = styled.div`
+  white-space: pre;
+  font-size: 15px;
+  color: #546978;
+  display: flex;
 `;
 
 const Timeline = () => (
   <BaseLayout>
+    <Banner>
+      <BannerHeader> Welcome to the governance voting dashboard </BannerHeader>
+      <BannerBody>
+        Before you can get started voting you will need to set up a secure
+        voting contract{"   "}
+        <Link href="https://makerdao.com/" target="_blank">
+          Set up secure voting contract
+        </Link>
+        <div style={{ color: "#c4c4c4" }}>{"   •   "}</div>
+        <Link href="https://makerdao.com/" target="_blank">
+          Read more
+        </Link>
+      </BannerBody>
+    </Banner>
     <Card>
       <CardTop minHeight={48}>
         <Heading>Foundation Proposal</Heading>
-        <TopicStatus>Topic active</TopicStatus>
+        <TopicStatus active />
       </CardTop>
       <CardElement height={163}>
         <ProposalDetails>
@@ -130,7 +202,13 @@ const Timeline = () => (
             <Creation>12 Mar 2018</Creation>
           </Footer>
         </ProposalDetails>
-        <Button>Vote this Proposal</Button>
+        <VoteTallyWrapper>
+          <VoteTally>
+            <VotePercent>31.68%</VotePercent>
+            <VoteAmount>11.4k</VoteAmount>
+          </VoteTally>
+          <Button>Vote this Proposal</Button>
+        </VoteTallyWrapper>
       </CardElement>
       <CardElement height={163}>
         <ProposalDetails>
@@ -154,7 +232,13 @@ const Timeline = () => (
             <Creation>12 Mar 2018</Creation>
           </Footer>
         </ProposalDetails>
-        <Button>Vote this Proposal</Button>
+        <VoteTallyWrapper>
+          <VoteTally>
+            <VotePercent>22.6%</VotePercent>
+            <VoteAmount>8.1k</VoteAmount>
+          </VoteTally>
+          <Button>Vote this Proposal</Button>
+        </VoteTallyWrapper>
       </CardElement>
     </Card>
   </BaseLayout>
