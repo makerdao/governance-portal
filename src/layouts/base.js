@@ -65,7 +65,8 @@ const AddressBlock = styled.div`
 const Account = styled.div`
   &::before {
     white-space: pre;
-    content: "  MetaMask ";
+    content: ${({ locked }) =>
+      locked ? `"  MetaMask locked "` : `"  MetaMask "`};
   }
 `;
 
@@ -87,7 +88,7 @@ const BaseLayout = ({ children, account }) => (
             color="#fc5e04"
             bgColor="#fff"
           />
-          <Account>{cutMiddle(account)}</Account>
+          <Account locked={!account}>{cutMiddle(account)}</Account>
         </AddressBlock>
       </HeaderContent>
     </StyledHeader>

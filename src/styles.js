@@ -162,4 +162,7 @@ export const globalStyles = `
     textarea {
       font-size: 16px;
     }
+
+    ::selection { background: #a0b1e1; }
+    ::-moz-selection { background: #a0b1e1; }
   `;

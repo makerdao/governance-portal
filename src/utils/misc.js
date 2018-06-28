@@ -17,5 +17,5 @@ export const isMobile = () => {
  * @return {String}
  */
 export const cutMiddle = (text = "") => {
-  return `${take(3, text)}...${takeLast(4, text)}`;
+  return `${take(3, text)}${!!text ? "..." : ""}${takeLast(4, text)}`;
 };
