@@ -3,6 +3,7 @@ export const colors = {
   green: "48, 189, 159",
   header: "31, 44, 60",
   background: "246,248,249",
+  dark: "12, 12, 13",
   black: "0, 0, 0"
 };
 
@@ -162,7 +163,4 @@ export const globalStyles = `
     textarea {
       font-size: 16px;
     }
-
-    ::selection { background: #a0b1e1; }
-    ::-moz-selection { background: #a0b1e1; }
   `;

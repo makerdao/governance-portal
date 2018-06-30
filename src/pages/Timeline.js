@@ -1,11 +1,13 @@
 import React from "react";
 import styled from "styled-components";
+import { connect } from "react-redux";
 
 import Button from "../components/Button";
 import BaseLayout from "../layouts/base";
 import Card, { CardTop, CardElement } from "../components/Card";
 import { fonts } from "../styles";
 import verified from "../assets/verified.svg";
+import { modalOpen } from "../reducers/modal";
 
 const SubHeading = styled.p`
   color: #1f2c3c;
@@ -72,6 +74,7 @@ const Submitter = styled.div`
 
 const Link = styled.a`
   color: #3080ed;
+  cursor: pointer;
 `;
 
 const VerifiedMark = styled.div`
@@ -159,14 +162,14 @@ const BannerBody = styled.div`
   display: flex;
 `;
 
-const Timeline = () => (
+const Timeline = ({ modalOpen }) => (
   <BaseLayout>
     <Banner>
       <BannerHeader> Welcome to the governance voting dashboard </BannerHeader>
       <BannerBody>
         Before you can get started voting you will need to set up a secure
         voting contract{"   "}
-        <Link href="https://makerdao.com/" target="_blank">
+        <Link onClick={() => modalOpen("PROXY_SETUP")}>
           Set up secure voting contract
         </Link>
         <div style={{ color: "#c4c4c4" }}>{"   •   "}</div>
@@ -244,4 +247,9 @@ const Timeline = () => (
   </BaseLayout>
 );
 
-export default Timeline;
+const reduxProps = ({}) => ({});
+
+export default connect(
+  reduxProps,
+  { modalOpen }
+)(Timeline);

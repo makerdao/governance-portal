@@ -14,8 +14,10 @@ export const isMobile = () => {
 /**
  * @desc returns truncated string with middle replaced with elipse
  * @param {String} text
+ * @param {Number} left - how many characters to keep from the beginning
+ * @param {Number} right - how many characters to keep from the end
  * @return {String}
  */
-export const cutMiddle = (text = "") => {
-  return `${take(3, text)}${!!text ? "..." : ""}${takeLast(4, text)}`;
+export const cutMiddle = (text = "", left = 3, right = 4) => {
+  return `${take(left, text)}${!!text ? "..." : ""}${takeLast(right, text)}`;
 };

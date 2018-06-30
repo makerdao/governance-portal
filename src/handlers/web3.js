@@ -117,6 +117,64 @@ export const getTxDetails = async ({
   return tx;
 };
 
+export const awaitTx = (txnHash, { confirmations = 6 }) => {
+  const INTERVAL = 500;
+  const transactionReceiptAsync = async function(txnHash, resolve, reject) {
+    try {
+      const receipt = web3Instance.eth.getTransactionReceipt(txnHash);
+      if (!receipt) {
+        setTimeout(
+          () => transactionReceiptAsync(txnHash, resolve, reject),
+          INTERVAL
+        );
+      } else {
+        const resolvedReceipt = await receipt;
+        if (!resolvedReceipt || !resolvedReceipt.blockNumber) {
+          setTimeout(
+            () => transactionReceiptAsync(txnHash, resolve, reject),
+            INTERVAL
+          );
+        } else {
+          try {
+            const [txBlock, currentBlock] = await Promise.all([
+              web3Instance.eth.getBlock(resolvedReceipt.blockNumber),
+              web3Instance.eth.getBlock("latest")
+            ]);
+            if (currentBlock.number - txBlock.number >= confirmations) {
+              const txn = await web3Instance.eth.getTransaction(txnHash);
+              if (txn.blockNumber != null) resolve(resolvedReceipt);
+              else
+                reject(
+                  new Error(
+                    "Transaction with hash: " +
+                      txnHash +
+                      " ended up in an uncle block."
+                  )
+                );
+            } else
+              setTimeout(
+                () => transactionReceiptAsync(txnHash, resolve, reject),
+                INTERVAL
+              );
+          } catch (e) {
+            setTimeout(
+              () => transactionReceiptAsync(txnHash, resolve, reject),
+              INTERVAL
+            );
+          }
+        }
+      }
+    } catch (e) {
+      reject(e);
+    }
+  };
+  return new Promise((resolve, reject) =>
+    transactionReceiptAsync(txnHash, resolve, reject)
+  );
+};
+
+// MetaMask -------------------------------------
+
 /**
  * @desc get metmask selected network
  * @return {Promise}
@@ -126,7 +184,7 @@ export const getMetamaskNetworkName = async () => {
     window.web3.version.getNetwork((err, networkID) => {
       if (err) {
         console.error(err);
-        throw new Error(err);
+        // throw new Error(err);
       }
       const networkName = netIdToName(networkID);
       return networkName || null;

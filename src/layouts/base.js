@@ -2,10 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import Blockies from "react-blockies";
 
 import { colors, fonts } from "../styles";
-import { cutMiddle } from "../utils/misc";
+import Modals from "../components/modals";
+import AccountBox from "../components/AccountBox";
 
 const StyledLayout = styled.div`
   position: relative;
@@ -52,60 +52,38 @@ const StyledContent = styled.div`
   width: 100%;
 `;
 
-const AddressBlock = styled.div`
-  color: white;
-  background: #435367;
-  border-radius: 4px;
-  padding: 6px 10px;
-  font-size: 15px;
-  display: flex;
-  margin-left: auto;
+const Footer = styled.div`
+  height: 100px;
 `;
 
-const Account = styled.div`
-  &::before {
-    white-space: pre;
-    content: ${({ locked }) =>
-      locked ? `"  MetaMask locked "` : `"  MetaMask "`};
-  }
-`;
-
-const StyledBlockies = styled(Blockies)`
-  float: left;
-`;
-
-const BaseLayout = ({ children, account }) => (
+const BaseLayout = ({ children, account, web3Available }) => (
   <StyledLayout>
     <StyledHeader>
       <HeaderContent>
         <div />
         <StyledTitle>Maker Voting</StyledTitle>
-        <AddressBlock>
-          <StyledBlockies
-            seed={account}
-            size={5}
-            spotColor="#fc5e04"
-            color="#fc5e04"
-            bgColor="#fff"
-          />
-          <Account locked={!account}>{cutMiddle(account)}</Account>
-        </AddressBlock>
+        <AccountBox web3Available={web3Available} account={account} />
       </HeaderContent>
     </StyledHeader>
     <AppWrapper>
       <StyledColumn>
         <StyledContent>{children}</StyledContent>
+        <Footer />
       </StyledColumn>
     </AppWrapper>
+    <Modals />
   </StyledLayout>
 );
 
 BaseLayout.propTypes = {
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
+  account: PropTypes.string,
+  web3Available: PropTypes.bool
 };
 
 const reduxProps = ({ metamask }) => ({
-  account: metamask.accountAddress
+  account: metamask.accountAddress,
+  web3Available: metamask.web3Available
 });
 
 export default connect(
