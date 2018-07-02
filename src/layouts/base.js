@@ -2,10 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 import { colors, fonts } from "../styles";
 import Modals from "../components/modals";
 import AccountBox from "../components/AccountBox";
+import logo from "../assets/logo.svg";
 
 const StyledLayout = styled.div`
   position: relative;
@@ -19,7 +21,6 @@ const AppWrapper = styled.div`
 `;
 
 const StyledColumn = styled.div`
-  max-width: 1000px;
   align-items: center;
   max-width: 1140px;
   margin: auto;
@@ -28,42 +29,117 @@ const StyledColumn = styled.div`
 const StyledHeader = styled.div`
   margin-top: -1px;
   width: 100%;
-  height: 72px;
-  display: flex;
+  height: 148px;
+  display: block;
   align-items: center;
   background-color: rgb(${colors.header});
-  justify-content: center;
-  padding: 0 16px;
+  color: rgb(${colors.white});
 `;
 
-const HeaderContent = styled.div`
-  width: 1140px;
+const HeaderTop = styled.div`
+  width: 100%;
+  height: 83px;
+  max-width: 1140px;
+  width: 100%;
   align-items: center;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
+  justify-content: space-between;
+  margin: 0px auto;
+`;
+
+const HeaderBottom = styled.div`
+  border-top: 1px solid #445162;
+  height: 64px;
+  width: 100%;
+`;
+
+const HeaderBottomContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  max-width: 1140px;
+  height: 100%;
+  width: 100%;
+  margin: 0px auto;
+  align-items: center;
 `;
 
 const StyledTitle = styled.div`
   color: rgb(${colors.white});
-  font-size: ${fonts.size.xlarge};
+  font-size: ${fonts.size.large};
+  margin-left: 12px;
+`;
+
+const HeaderBottomLeft = styled.div`
+  color: rgb(${colors.white});
+  font-size: ${fonts.size.medium};
+  font-weight: ${fonts.weight.medium};
+`;
+
+const MakerLinks = styled.div``;
+
+const StyledAnchor = styled.a`
+  color: rgb(${colors.white});
+  font-size: ${fonts.size.medium};
+  font-weight: ${fonts.weight.medium};
+  margin: 0px 49px;
+  margin-right: ${({ edge }) => (!!edge && edge === "right" ? "0px" : "")};
+  margin-left: ${({ edge }) => (!!edge && edge === "left" ? "0px" : "")};
 `;
 
 const StyledContent = styled.div`
   width: 100%;
 `;
 
+const StyledLogo = styled.div`
+  height: 36px;
+  width: 36px;
+  cursor: pointer;
+  background: url(${logo}) no-repeat;
+  margin-top: 10px;
+`;
+
 const Footer = styled.div`
   height: 100px;
+`;
+
+const StyledLink = styled(Link)`
+  display: flex;
+  align-items: center;
 `;
 
 const BaseLayout = ({ children, account, web3Available }) => (
   <StyledLayout>
     <StyledHeader>
-      <HeaderContent>
-        <div />
-        <StyledTitle>Maker Voting</StyledTitle>
-        <AccountBox web3Available={web3Available} account={account} />
-      </HeaderContent>
+      <HeaderTop>
+        <StyledLink to="/">
+          <StyledLogo />
+          <StyledTitle>MAKER</StyledTitle>
+        </StyledLink>
+        <MakerLinks>
+          <StyledAnchor href="/" target="_blank" edge={"left"}>
+            Products
+          </StyledAnchor>
+          <StyledAnchor href="https://makerdao.com/whitepaper/" target="_blank">
+            Learn
+          </StyledAnchor>
+          <StyledAnchor href="https://makerdao.com" target="_blank">
+            Company
+          </StyledAnchor>
+          <StyledAnchor
+            href="https://chat.makerdao.com/channel/collateral-discuss"
+            target="_blank"
+            edge={"right"}
+          >
+            Community
+          </StyledAnchor>
+        </MakerLinks>
+      </HeaderTop>
+      <HeaderBottom>
+        <HeaderBottomContent>
+          <HeaderBottomLeft>Governance</HeaderBottomLeft>
+          <AccountBox web3Available={web3Available} account={account} />
+        </HeaderBottomContent>
+      </HeaderBottom>
     </StyledHeader>
     <AppWrapper>
       <StyledColumn>

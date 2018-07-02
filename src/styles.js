@@ -11,13 +11,14 @@ export const fonts = {
   size: {
     tiny: "10px",
     small: "12px",
-    medium: "14px",
+    medium: "16px",
     large: "20px",
     xlarge: "24px",
     h1: "42px",
     h2: "32px"
   },
   weight: {
+    thin: 300,
     normal: 400,
     medium: 500,
     semibold: 600,
@@ -72,7 +73,7 @@ export const responsive = {
 };
 
 export const globalStyles = `  
-    html, body, #root, #router-root {
+    html, body {
       height: 100%;
       width: 100%;
       margin: 0;

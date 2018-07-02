@@ -16,7 +16,7 @@ const StyledButton = styled.button`
   font-weight: ${fonts.weight.semibold};
   padding: 0 15px;
   height: 40px;
-  width: 240px;
+  width: ${({ wide }) => (wide ? "320px" : "240px")};
   cursor: ${({ disabled }) => (disabled ? "auto" : "pointer")};
   &:disabled {
     opacity: 0.6;
@@ -49,6 +49,7 @@ const Button = ({
   hoverColor,
   activeColor,
   disabled,
+  wide,
   ...props
 }) => (
   <StyledButton
@@ -56,6 +57,7 @@ const Button = ({
     hoverColor={hoverColor}
     activeColor={activeColor}
     disabled={disabled}
+    wide={wide}
     {...props}
   >
     {fetching ? "fetching" : children}
@@ -76,7 +78,8 @@ Button.defaultProps = {
   color: "green",
   hoverColor: "darkGrey",
   activeColor: "green",
-  disabled: false
+  disabled: false,
+  wide: false
 };
 
 export default Button;

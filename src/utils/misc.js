@@ -18,6 +18,16 @@ export const isMobile = () => {
  * @param {Number} right - how many characters to keep from the end
  * @return {String}
  */
-export const cutMiddle = (text = "", left = 3, right = 4) => {
-  return `${take(left, text)}${!!text ? "..." : ""}${takeLast(right, text)}`;
-};
+export const cutMiddle = (text = "", left = 3, right = 4) =>
+  `${take(left, text)}${!!text ? "..." : ""}${takeLast(right, text)}`;
+
+/**
+ * @desc returns a url slugged version of some text
+ * @param {String} text eg "New Topic"
+ * @return {String} eg "new-topic"
+ */
+export const toSlug = text =>
+  text
+    .split(" ")
+    .map(word => word.toLowerCase())
+    .join("-");

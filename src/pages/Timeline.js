@@ -1,12 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 import Button from "../components/Button";
+import VoteMeta from "../components/VoteMeta";
+import VoteTally from "../components/VoteTally";
 import BaseLayout from "../layouts/base";
 import Card, { CardTop, CardElement } from "../components/Card";
+import { toSlug } from "../utils/misc";
 import { fonts } from "../styles";
-import verified from "../assets/verified.svg";
 import { modalOpen } from "../reducers/modal";
 
 const SubHeading = styled.p`
@@ -21,22 +24,13 @@ const SubHeading = styled.p`
   }
 `;
 
-const Heading = styled.p`
-  color: #1f2c3c;
-  font-size: ${fonts.size.xlarge};
-  font-weight: ${fonts.weight.medium};
-  opacity: ${({ disabled }) => (disabled ? 0.7 : 1)};
-  flex: none;
-  position: relative;
-  @media screen and (max-width: 736px) {
-    display: ${({ isAlwaysVisible }) => (isAlwaysVisible ? "block" : "none")};
-  }
-`;
-
 const Body = styled.p`
   font-size: 16px;
   line-height: 26px;
+  height: 52px;
   color: #546978;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const ProposalDetails = styled.div`
@@ -47,92 +41,9 @@ const ProposalDetails = styled.div`
   justify-content: space-between;
 `;
 
-const Footer = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-
-const Verification = styled.div`
-  &::after {
-    content: "   •   ";
-    white-space: pre;
-    color: #c4c4c4;
-  }
-`;
-
-const Submitter = styled.div`
-  &::before {
-    color: #848484;
-    content: "Submitted by ";
-  }
-  &::after {
-    content: "   •   ";
-    white-space: pre;
-    color: #c4c4c4;
-  }
-`;
-
-const Link = styled.a`
+const StyledAnchor = styled.a`
   color: #3080ed;
   cursor: pointer;
-`;
-
-const VerifiedMark = styled.div`
-  height: ${({ verified }) => (verified ? "20px" : "0px")};
-  margin-top: -1px;
-  margin-bottom: 1px;
-  width: ${({ verified }) => (verified ? "26px" : "0px")};
-  background-repeat: no-repeat;
-  background-image: url(${verified});
-  visibility: ${({ verified }) => (verified ? "visible" : "hidden")};
-`;
-
-const Creation = styled.div`
-  color: #30bd9f;
-  &::before {
-    color: #848484;
-    content: "Created ";
-  }
-`;
-
-const TopicStatus = styled.div`
-  line-height: 24px;
-  align-self: center;
-  background-color: ${({ active }) => (active ? "#d2f9f1" : "#EAEFF7")};
-  padding: 2px 15px;
-  border-radius: 20px;
-  color: ${({ active }) => (active ? "#30bd9f" : "#546978")};
-  &::after {
-    content: ${({ active }) => (active ? `"Topic active"` : `"Topic closed"`)};
-  }
-`;
-
-const VoteTallyWrapper = styled.div``;
-
-const VoteTally = styled.div`
-  line-height: 20px;
-  color: #212536;
-  font-size: 18px;
-  margin-top: -10px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-`;
-
-const VotePercent = styled.div`
-  &::after {
-    font-size: 16px;
-    color: #848484;
-    content: " VOTES";
-  }
-`;
-
-const VoteAmount = styled.div`
-  &::after {
-    font-size: 16px;
-    color: #848484;
-    content: " MKR";
-  }
 `;
 
 const Banner = styled.div`
@@ -162,92 +73,50 @@ const BannerBody = styled.div`
   display: flex;
 `;
 
-const Timeline = ({ modalOpen }) => (
+const Timeline = ({ modalOpen, data }) => (
   <BaseLayout>
     <Banner>
-      <BannerHeader> Welcome to the governance voting dashboard </BannerHeader>
+      <BannerHeader>Welcome to the governance voting dashboard </BannerHeader>
       <BannerBody>
         Before you can get started voting you will need to set up a secure
-        voting contract{"   "}
-        <Link onClick={() => modalOpen("PROXY_SETUP")}>
-          Set up secure voting contract
-        </Link>
+        voting contract
+        <StyledAnchor onClick={() => modalOpen("PROXY_SETUP")}>
+          {"    "}Set up secure voting contract
+        </StyledAnchor>
         <div style={{ color: "#c4c4c4" }}>{"   •   "}</div>
-        <Link href="https://makerdao.com/" target="_blank">
+        <StyledAnchor href="https://makerdao.com/" target="_blank">
           Read more
-        </Link>
+        </StyledAnchor>
       </BannerBody>
     </Banner>
-    <Card>
-      <CardTop minHeight={48}>
-        <Heading>Foundation Proposal</Heading>
-        <TopicStatus active />
-      </CardTop>
-      <CardElement height={163}>
-        <ProposalDetails>
-          <SubHeading>
-            Vote YES to the five core principals of the Maker Governance
-            philosophy
-          </SubHeading>
-          <Body>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
-            ultricies dignissim libero at ultrices. Duis iaculis, arcu quis
-            rutrum vestibulum.
-          </Body>
-          <Footer>
-            <VerifiedMark verified />
-            <Verification>Verified Proposal</Verification>
-            <Submitter>
-              <Link href="https://makerdao.com/" target="_blank">
-                Dai Foundation
+    {data.map(topic => (
+      <Card key={topic.topic}>
+        <CardTop active={topic.active} topic={topic.topic} />
+        {topic.proposals.map(proposal => (
+          <CardElement key={proposal.title} height={163}>
+            <ProposalDetails>
+              <Link to={`/${toSlug(topic.topic)}/${toSlug(proposal.title)}`}>
+                <SubHeading>{proposal.title}</SubHeading>
               </Link>
-            </Submitter>
-            <Creation>12 Mar 2018</Creation>
-          </Footer>
-        </ProposalDetails>
-        <VoteTallyWrapper>
-          <VoteTally>
-            <VotePercent>31.68%</VotePercent>
-            <VoteAmount>11.4k</VoteAmount>
-          </VoteTally>
-          <Button>Vote this Proposal</Button>
-        </VoteTallyWrapper>
-      </CardElement>
-      <CardElement height={163}>
-        <ProposalDetails>
-          <SubHeading>
-            Vote NO to the five core principals of the Maker Governance
-            philosophy
-          </SubHeading>
-          <Body>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
-            ultricies dignissim libero at ultrices. Duis iaculis, arcu quis
-            rutrum vestibulum.
-          </Body>
-          <Footer>
-            <VerifiedMark verified />
-            <Verification>Verified Proposal</Verification>
-            <Submitter>
-              <Link href="https://makerdao.com/" target="_blank">
-                Dai Foundation
-              </Link>
-            </Submitter>
-            <Creation>12 Mar 2018</Creation>
-          </Footer>
-        </ProposalDetails>
-        <VoteTallyWrapper>
-          <VoteTally>
-            <VotePercent>22.6%</VotePercent>
-            <VoteAmount>8.1k</VoteAmount>
-          </VoteTally>
-          <Button>Vote this Proposal</Button>
-        </VoteTallyWrapper>
-      </CardElement>
-    </Card>
+              <Body>{proposal.blurb}</Body>
+              <VoteMeta
+                verified={proposal.verified}
+                submitter={proposal.submitted_by.name}
+                submitterLink={proposal.submitted_by.link}
+                creationDate={proposal.created}
+              />
+            </ProposalDetails>
+            <VoteTally />
+          </CardElement>
+        ))}
+      </Card>
+    ))}
   </BaseLayout>
 );
 
-const reduxProps = ({}) => ({});
+const reduxProps = ({ mock }) => ({
+  data: mock
+});
 
 export default connect(
   reduxProps,

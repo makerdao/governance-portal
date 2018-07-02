@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
 import styled from "styled-components";
 
 import Button from "../Button";
@@ -72,7 +71,6 @@ class ProxySetup extends Component {
   };
 
   renderStep() {
-    console.log(this.state.step);
     switch (this.state.step) {
       case 1:
         return (
@@ -158,12 +156,4 @@ ProxySetup.propTypes = {
   web3Available: PropTypes.bool
 };
 
-const reduxProps = ({ metamask }) => ({
-  account: metamask.accountAddress,
-  web3Available: metamask.web3Available
-});
-
-export default connect(
-  reduxProps,
-  {}
-)(ProxySetup);
+export default ProxySetup;

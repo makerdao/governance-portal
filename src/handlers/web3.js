@@ -4,7 +4,7 @@ import { netIdToName } from "../utils/ethereum";
 import addresses from "../contracts/addresses.json";
 
 export const web3Instance = new Web3(
-  new Web3.providers.HttpProvider(`https://kovan.infura.io/`)
+  new Web3.providers.HttpProvider(`https://mainnet.infura.io/`)
 );
 // mainnet
 

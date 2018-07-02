@@ -21,7 +21,7 @@
   },
   "scripts": {
     "start": "NODE_ENV=development react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && npm run remove-sourcemaps",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "precommit": "lint-staged",
@@ -36,6 +36,7 @@
   "devDependencies": {
     "husky": "^0.14.3",
     "lint-staged": "^7.2.0",
-    "prettier": "^1.13.5"
+    "prettier": "^1.13.5",
+    "react-styleguidist": "^7.0.20"
   }
 }

@@ -72,6 +72,7 @@ const StyledClose = styled.div`
   margin-top: -8px;
   margin-bottom: 8px;
   cursor: pointer;
+  visibility: ${({ modal }) => (!!modal ? "visible" : "hidden")};
   background: url(${close}) no-repeat;
 `;
 
@@ -83,7 +84,7 @@ class Modal extends Component {
   modalController = () => {
     switch (this.props.modal) {
       case "PROXY_SETUP":
-        return <ProxySetup />;
+        return <ProxySetup {...this.props} />;
       default:
         return <div />;
     }
@@ -104,7 +105,10 @@ class Modal extends Component {
           <StyledHitbox onClick={this.props.modalClose} />
           <Column center>
             <ModalTopper>
-              <StyledClose onClick={this.props.modalClose} />
+              <StyledClose
+                modal={this.props.modal}
+                onClick={this.props.modalClose}
+              />
             </ModalTopper>
             {this.modalController()}
           </Column>
@@ -116,7 +120,11 @@ class Modal extends Component {
 
 Modal.propTypes = {};
 
-const reduxProps = ({ modal }) => ({ modal: modal.modal });
+const reduxProps = ({ modal, metamask }) => ({
+  modal: modal.modal,
+  account: metamask.accountAddress,
+  web3Available: metamask.web3Available
+});
 
 export default connect(
   reduxProps,

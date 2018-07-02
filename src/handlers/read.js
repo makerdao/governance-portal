@@ -3,6 +3,10 @@
 ///////////////////////////////////////////
 
 import last from "ramda/src/last";
+import nth from "ramda/src/nth";
+import uniq from "ramda/src/uniq";
+import memoizeWith from "ramda/src/memoizeWith";
+import identity from "ramda/src/identity";
 
 import {
   getMethodSig,
@@ -86,7 +90,7 @@ export const getNumDeposits = async address => {
  */
 export const getSlateAddresses = async slateHex => {
   const chief = await getChief();
-  const methodSig = getMethodSig("slates(bytes32)");
+  const methodSig = getMethodSig("slates(bytes32,uint256)");
   /**
    * @async @param  {Number} [i] index
    * @param  {String[]} [arr] array
@@ -184,4 +188,91 @@ export const getProxyStatus = async address => {
     return { isHot: false, isCold: true, proxy: proxyAddressCold };
   }
   return { isHot: false, isCold: false, proxy: "" };
+};
+
+/**
+ * @async @desc use event logs to get all addresses that've locked
+ * @return {String[]} addresses
+ */
+export const getLockLogs = async () => {
+  const network = await getNetworkName();
+  const chief = await getChief(network);
+  const locks = await web3Instance.eth.getPastLogs({
+    fromBlock: chiefInfo.inception_block[network],
+    toBlock: "latest",
+    address: chief,
+    topics: [chiefInfo.events.lock]
+  });
+  const addresses = uniq(
+    locks.map(logObj => nth(1, logObj.topics)).map(paddedBytes32ToAddress)
+  );
+  return addresses;
+};
+
+/**
+ * @async @desc get the voter approvals and address for each proposal
+ * @return {[]}
+ */
+export const getVoteTally = async () => {
+  const t0 = performance.now();
+  const voters = await getLockLogs();
+  const withDeposits = await Promise.all(
+    voters.map(voter =>
+      getNumDeposits(voter).then(deposits => ({
+        address: voter,
+        deposits: parseFloat(deposits)
+      }))
+    )
+  );
+
+  const withSlates = await Promise.all(
+    withDeposits.map(addressDeposit =>
+      getVotedSlate(addressDeposit.address).then(slate => ({
+        ...addressDeposit,
+        slate
+      }))
+    )
+  );
+
+  const memoizedGetSlateAddresses = memoizeWith(identity, getSlateAddresses);
+  const withVotes = await Promise.all(
+    withSlates.map(withSlate =>
+      memoizedGetSlateAddresses(withSlate.slate).then(addresses => ({
+        ...withSlate,
+        votes: addresses
+      }))
+    )
+  );
+
+  const voteTally = {};
+  for (const voteObj of withVotes) {
+    for (const vote of voteObj.votes) {
+      if (voteTally[vote] === undefined) {
+        voteTally[vote] = {
+          approvals: voteObj.deposits,
+          addresses: [{ address: voteObj.address, deposits: voteObj.deposits }]
+        };
+      } else {
+        voteTally[vote].approvals += voteObj.deposits;
+        voteTally[vote].addresses.push({
+          address: voteObj.address,
+          deposits: voteObj.deposits
+        });
+      }
+    }
+  }
+  for (const [key, value] of Object.entries(voteTally)) {
+    const sortedAddresses = value.addresses.sort(
+      (a, b) => b.deposits - a.deposits
+    );
+    const approvals = voteTally[key].approvals;
+    const withPercentages = sortedAddresses.map(shapedVoteObj => ({
+      ...shapedVoteObj,
+      percent: ((shapedVoteObj.deposits * 100) / approvals).toFixed(2)
+    }));
+    voteTally[key] = withPercentages;
+  }
+  const t1 = performance.now();
+  console.log(voteTally, t1 - t0);
+  return voteTally;
 };
