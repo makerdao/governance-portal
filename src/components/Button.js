@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+
+import Loader from "./Loader";
 import { colors, fonts, transitions } from "../styles";
 
 const StyledButton = styled.button`
@@ -44,7 +46,7 @@ const StyledButton = styled.button`
 
 const Button = ({
   children,
-  fetching,
+  loading,
   color,
   hoverColor,
   activeColor,
@@ -60,13 +62,13 @@ const Button = ({
     wide={wide}
     {...props}
   >
-    {fetching ? "fetching" : children}
+    {loading ? <Loader size={20} color="white" background={color} /> : children}
   </StyledButton>
 );
 
 Button.propTypes = {
   children: PropTypes.node.isRequired,
-  fetching: PropTypes.bool,
+  loading: PropTypes.bool,
   color: PropTypes.string,
   hoverColor: PropTypes.string,
   activeColor: PropTypes.string,
@@ -74,7 +76,7 @@ Button.propTypes = {
 };
 
 Button.defaultProps = {
-  fetching: false,
+  loading: false,
   color: "green",
   hoverColor: "darkGrey",
   activeColor: "green",

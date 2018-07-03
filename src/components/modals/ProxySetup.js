@@ -78,7 +78,7 @@ class ProxySetup extends Component {
             <StyledTop>
               <StyledTitle>Set up secure voting </StyledTitle>
               <AccountBox
-                account={this.props.account}
+                accounts={[{ address: this.props.account, type: "MetaMask" }]}
                 web3Available={this.props.web3Available}
               />
             </StyledTop>

@@ -1,13 +1,17 @@
-import React from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import find from "ramda/src/find";
 import styled from "styled-components";
+import ReactMarkdown from "react-markdown";
 
 import { toSlug } from "../utils/misc";
 import BaseLayout from "../layouts/base";
 import VoteMeta from "../components/VoteMeta";
 import VoteTally from "../components/VoteTally";
+import Loader from "../components/Loader";
 import Card from "../components/Card";
+import ResizeSpinLoader from "../components/ResizeSpinLoader";
+import WithTally from "../components/hocs/WithTally";
 import NotFound from "./NotFound";
 import { colors } from "../styles";
 
@@ -75,6 +79,9 @@ const RightPanels = styled.div`
 
 const DescriptionCard = styled(Card)`
   max-width: 750px;
+  padding: 18px 25px;
+  color: #546978;
+  line-height: 30px;
 `;
 
 const DetailsCard = styled(Card)`
@@ -86,7 +93,6 @@ const DetailsCard = styled(Card)`
 const SupporterCard = styled(Card)`
   padding: 14px 20px;
   height: 334px;
-  overflow-y: scroll;
 `;
 
 const Percentage = styled.p`
@@ -120,48 +126,108 @@ const CardTitle = styled.p`
   margin-bottom: 6px;
 `;
 
-const Proposal = ({ match, data, voteState }) => {
-  const { topicSlug, proposalSlug } = match.params;
-  const topic = find(({ topic }) => toSlug(topic) === topicSlug, data);
-  if (topic === undefined) return <NotFound />;
-  const proposal = find(
-    ({ title }) => toSlug(title) === proposalSlug,
-    topic.proposals
-  );
-  if (proposal === undefined) return <NotFound />;
-  const supporters = voteState[proposal.source] || null;
-  console.log(supporters, voteState, proposal.source);
-  return (
-    <BaseLayout>
-      <WhiteBackground>
-        <StyledTop>
-          <StyledCenter>
-            <StyledTitle>{proposal.title}</StyledTitle>
-            <StyledBody>{proposal.blurb}</StyledBody>
-            <StyledVoteMeta
-              verified={proposal.verified}
-              submitter={proposal.submitted_by.name}
-              submitterLink={proposal.submitted_by.link}
-              creationDate={proposal.created}
-            />
-          </StyledCenter>
-          <VoteTally wideButton withStatusBar />
-        </StyledTop>
-      </WhiteBackground>
-      <ConentWrapper>
-        <DescriptionCard>
-          <div>left main</div>
-        </DescriptionCard>
-        <RightPanels>
-          <DetailsCard>
-            <CardTitle>Details</CardTitle>
-            <div>right 1</div>
-          </DetailsCard>
-          <SupporterCard>
-            <CardTitle>Top Supporters</CardTitle>
-            <div>
-              {supporters
-                ? supporters.map(supporter => (
+const SupporterWrapper = styled.div`
+  overflow-y: scroll;
+  height: 100%;
+`;
+
+const NoSupporters = styled.p`
+  text-align: center;
+  color: gray;
+  font-size: 20px;
+  margin-top: 105px;
+  font-style: oblique;
+`;
+
+const LoadingWrapper = styled.div`
+  padding: 25px 0;
+`;
+
+class Proposal extends Component {
+  state = {
+    proposal: {},
+    markdown: ""
+  };
+
+  componentDidMount() {
+    const { topicSlug, proposalSlug } = this.props.match.params;
+    const topic = find(
+      ({ topic }) => toSlug(topic) === topicSlug,
+      this.props.data
+    );
+    if (topic === undefined) return; //not found
+    const proposal = find(
+      ({ title }) => toSlug(title) === proposalSlug,
+      topic.proposals
+    );
+    if (proposal === undefined) return; //not found
+    this.setState({ proposal });
+    fetch(proposal.about)
+      .then(response => {
+        return response.text();
+      })
+      .then(text => {
+        console.log(text);
+        this.setState({
+          markdown: text
+        });
+      });
+  }
+
+  render() {
+    const { proposal, markdown } = this.state;
+    if (Object.keys(proposal).length === 0) return <NotFound />;
+    const { voteState, voteStateFetching } = this.props;
+    const supporters = voteState[proposal.source] || null;
+    return (
+      <BaseLayout>
+        <WhiteBackground>
+          <StyledTop>
+            <StyledCenter>
+              <StyledTitle>{proposal.title}</StyledTitle>
+              <StyledBody>{proposal.blurb}</StyledBody>
+              <StyledVoteMeta
+                verified={proposal.verified}
+                submitter={proposal.submitted_by.name}
+                submitterLink={proposal.submitted_by.link}
+                creationDate={proposal.created}
+              />
+            </StyledCenter>
+            <WithTally candidate={proposal.source}>
+              {({
+                loadingApprovals,
+                loadingPercentage,
+                approvals,
+                percentage
+              }) => (
+                <VoteTally
+                  wideButton
+                  withStatusBar
+                  loadingPercentage={loadingPercentage}
+                  loadingApprovals={loadingApprovals}
+                  approvals={approvals}
+                  percentage={percentage}
+                />
+              )}
+              {/* TODO: split button out of vote tally component */}
+            </WithTally>
+          </StyledTop>
+        </WhiteBackground>
+        <ConentWrapper>
+          <DescriptionCard>
+            {!!markdown ? (
+              <ReactMarkdown skipHtml={true} source={markdown} />
+            ) : null}
+          </DescriptionCard>
+          <RightPanels>
+            <DetailsCard>
+              <CardTitle>Details</CardTitle>
+            </DetailsCard>
+            <SupporterCard>
+              <CardTitle>Top Supporters</CardTitle>
+              <SupporterWrapper>
+                {supporters ? (
+                  supporters.map(supporter => (
                     <Supporter key={supporter.address}>
                       <Percentage>{supporter.percent}</Percentage>
                       <Address
@@ -174,17 +240,25 @@ const Proposal = ({ match, data, voteState }) => {
                       </Address>
                     </Supporter>
                   ))
-                : null}
-            </div>
-          </SupporterCard>
-        </RightPanels>
-      </ConentWrapper>
-    </BaseLayout>
-  );
-};
+                ) : voteStateFetching ? (
+                  <LoadingWrapper>
+                    <ResizeSpinLoader size={12} color="#6D6D6D" />
+                  </LoadingWrapper>
+                ) : (
+                  <NoSupporters>No supporters found</NoSupporters>
+                )}
+              </SupporterWrapper>
+            </SupporterCard>
+          </RightPanels>
+        </ConentWrapper>
+      </BaseLayout>
+    );
+  }
+}
 
 const reduxProps = ({ mock, voteTally }) => ({
   data: mock,
+  voteStateFetching: voteTally.fetching,
   voteState: voteTally.tally
 });
 

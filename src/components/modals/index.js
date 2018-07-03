@@ -58,7 +58,7 @@ const StyledHitbox = styled.div`
 const StyledContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 460px;
   padding: 15px;
   display: flex;
   align-items: center;
@@ -84,6 +84,7 @@ class Modal extends Component {
   modalController = () => {
     switch (this.props.modal) {
       case "PROXY_SETUP":
+        window.scrollTo(0, 0);
         return <ProxySetup {...this.props} />;
       default:
         return <div />;

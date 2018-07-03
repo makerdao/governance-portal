@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 import StatusBar from "./StatusBar";
 import Button from "./Button";
+import Loader from "./Loader";
 
 const VoteTallyWrapper = styled.div``;
 
@@ -18,7 +19,9 @@ const StyledVoteTally = styled.div`
 `;
 
 const VotePercent = styled.div`
+  display: flex;
   &::after {
+    margin-left: 4px;
     font-size: 16px;
     color: #848484;
     content: " VOTES";
@@ -29,7 +32,8 @@ const VoteAmount = styled.div`
   &::after {
     font-size: 16px;
     color: #848484;
-    content: " MKR";
+    white-space: pre;
+    content: " Approvals";
   }
 `;
 
@@ -38,12 +42,32 @@ const StyledStatusBar = styled(StatusBar)`
   margin-top: -15px;
 `;
 
-const VoteTally = ({ wideButton, withStatusBar, ...props }) => (
+const VoteTally = ({
+  wideButton,
+  withStatusBar,
+  loadingApprovals,
+  loadingPercentage,
+  percentage,
+  approvals,
+  ...props
+}) => (
   <VoteTallyWrapper {...props}>
-    {withStatusBar ? <StyledStatusBar percentage={40} /> : null}
+    {withStatusBar ? <StyledStatusBar percentage={percentage} /> : null}
     <StyledVoteTally>
-      <VotePercent>31.68%</VotePercent>
-      <VoteAmount>11.4k</VoteAmount>
+      <VotePercent>
+        {loadingPercentage ? (
+          <Loader size={20} color="light_grey" background="white" />
+        ) : (
+          `${percentage}%`
+        )}
+      </VotePercent>
+      <VoteAmount>
+        {loadingApprovals ? (
+          <Loader size={20} color="light_grey" background="white" />
+        ) : (
+          `${approvals}`
+        )}
+      </VoteAmount>
     </StyledVoteTally>
     <Button wide={wideButton}>Vote this Proposal</Button>
   </VoteTallyWrapper>
@@ -51,7 +75,11 @@ const VoteTally = ({ wideButton, withStatusBar, ...props }) => (
 
 VoteTally.defaultProps = {
   wideButton: false,
-  withStatusBar: false
+  withStatusBar: false,
+  loadingPercentage: false,
+  loadingApprovals: false,
+  approvals: 0,
+  percentage: 0
 };
 
 export default VoteTally;

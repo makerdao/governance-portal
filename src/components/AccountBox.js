@@ -1,13 +1,54 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import Blockies from "react-blockies";
 
 import { cutMiddle } from "../utils/misc";
-import { fonts } from "../styles";
+import arrow from "../assets/arrow.svg";
+import { fonts, colors, shadows } from "../styles";
+
+const StyledArrow = styled.img`
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
+  mask: url(${arrow}) center no-repeat;
+  mask-size: 90%;
+  background-color: rgba(${colors.white}, 0.8);
+`;
+
+const Account = styled.div`
+  margin-left: 9px;
+  margin: ${({ noAccounts }) => (noAccounts ? "auto" : "")};
+`;
+
+const StyledDropdownWrapper = styled.div`
+  min-width: 70px;
+  border-radius: 4px;
+  position: relative;
+  font-size: ${fonts.size.small};
+  font-weight: ${fonts.weight.medium};
+  text-align: center;
+  outline: none;
+  position: absolute;
+  background: rgb(${colors.dark});
+  color: rgb(${colors.dark_grey});
+  border-radius: 4px;
+  width: 100%;
+  top: 110%;
+  z-index: 1;
+  opacity: ${({ show }) => (show ? 1 : 0)};
+  visibility: ${({ show }) => (show ? "visible" : "hidden")};
+  pointer-events: ${({ show }) => (show ? "auto" : "none")};
+  box-shadow: ${shadows.medium};
+  overflow-x: hidden;
+  overflow-y: auto;
+`;
 
 const StyledAccount = styled.div`
   color: white;
+  cursor: ${({ dropdown }) => (dropdown ? "pointer" : "auto")};
   background: ${({ dark }) => (dark ? "#053C4B" : "#435367")};
   border-radius: 4px;
   padding: 6px 10px;
@@ -19,46 +60,105 @@ const StyledAccount = styled.div`
   font-family: ${fonts.family.SFProText};
 `;
 
-const Account = styled.div`
-  margin-left: 9px;
-  margin: ${({ locked, web3Available }) =>
-    locked || !web3Available ? "auto" : ""};
+const StyledRow = styled.div`
+  display: flex;
+  cursor: pointer;
+  justify-content: flex-start;
+  border-top: ${({ selected }) =>
+    selected ? "" : `1px solid rgba(${colors.light_grey}, 0.15)`};
+  font-weight: ${({ selected }) =>
+    selected ? fonts.weight.bold : fonts.weight.normal};
+  padding: 6px;
+  width: auto;
+  font-size: 15px;
+  padding-left: 11px;
+  color: white;
+  background: #435367;
+  &:hover {
+    opacity: 0.9;
+  }
 `;
 
-// TODO: make more general for use w/ ledger and trezor
-const AccountBox = ({ account, web3Available, dark, ...props }) => (
-  <StyledAccount dark={dark} {...props}>
-    {!!account ? (
-      <Blockies
-        seed={account}
-        size={5}
-        spotColor="#fc5e04"
-        color="#fc5e04"
-        bgColor="#fff"
-      />
-    ) : null}
-    <Account locked={!account} web3Available={web3Available}>
-      {web3Available
-        ? !account
-          ? "MetaMask locked "
-          : "MetaMask "
-        : "No MetaMask "}
-      {cutMiddle(account)}
-    </Account>
-  </StyledAccount>
-);
+const AccountWrapper = styled.div`
+  position: relative;
+`;
+
+class AccountBox extends Component {
+  state = {
+    dropdownOpen: false
+  };
+  onChange = selected => {
+    this.setState({ showDropdown: false });
+    if (this.props.onChange) {
+      this.props.onChange(selected);
+    }
+  };
+  toggleDropdown = () => {
+    this.setState(state => ({ dropdownOpen: !state.dropdownOpen }));
+  };
+  render() {
+    // TODO: click outside component
+    const { dark, accounts, ...props } = this.props;
+    const availableAccounts = accounts.filter(account => !!account.address);
+    const [headAccount, ...tailAccounts] = availableAccounts;
+    if (headAccount === undefined)
+      return (
+        <StyledAccount dark={dark} {...this.props}>
+          <Account noAccounts={true}>No Accounts</Account>
+        </StyledAccount>
+      );
+    const hasTail = tailAccounts.length > 0;
+    return (
+      <AccountWrapper {...props}>
+        <StyledAccount
+          dark={dark}
+          onClick={hasTail ? this.toggleDropdown : () => {}}
+          dropdown={hasTail}
+        >
+          <Blockies
+            seed={headAccount.address}
+            size={5}
+            spotColor="#fc5e04"
+            color="#fc5e04"
+            bgColor="#fff"
+          />
+          <Account>
+            {headAccount.type} {cutMiddle(headAccount.address)}
+          </Account>
+          {hasTail ? <StyledArrow /> : null}
+        </StyledAccount>
+        <StyledDropdownWrapper show={this.state.dropdownOpen}>
+          {availableAccounts.map(({ address, type }) => (
+            <StyledRow
+              key={address}
+              onClick={() => this.onChangeSelected({ address, type })}
+              selected={address === headAccount.address}
+            >
+              <Blockies
+                seed={address}
+                size={5}
+                spotColor="#fc5e04"
+                color="#fc5e04"
+                bgColor="#fff"
+              />
+              <Account>{`${type} ${cutMiddle(address)}`}</Account>
+            </StyledRow>
+          ))}
+        </StyledDropdownWrapper>
+      </AccountWrapper>
+    );
+  }
+}
 
 AccountBox.propTypes = {
-  /**
-   * Account
-   */
-  account: PropTypes.string,
-  web3Available: PropTypes.bool
+  accounts: PropTypes.array,
+  dark: PropTypes.bool,
+  onChange: PropTypes.func
 };
 
 AccountBox.defaultProps = {
-  account: "",
-  web3Available: false
+  accounts: [],
+  dark: false
 };
 
 export default AccountBox;

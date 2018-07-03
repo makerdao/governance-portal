@@ -67,6 +67,9 @@ const WhiteBackground = styled.div`
 
 const SubHeading = styled.p`
   color: #1f2c3c;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   font-size: ${fonts.size.large};
   font-weight: ${fonts.weight.medium};
   opacity: ${({ disabled }) => (disabled ? 0.7 : 1)};

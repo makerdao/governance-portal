@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
-import Button from "../components/Button";
 import VoteMeta from "../components/VoteMeta";
 import VoteTally from "../components/VoteTally";
 import BaseLayout from "../layouts/base";
@@ -14,6 +13,9 @@ import { modalOpen } from "../reducers/modal";
 
 const SubHeading = styled.p`
   color: #1f2c3c;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   font-size: ${fonts.size.large};
   font-weight: ${fonts.weight.medium};
   opacity: ${({ disabled }) => (disabled ? 0.7 : 1)};
@@ -44,6 +46,9 @@ const ProposalDetails = styled.div`
 const StyledAnchor = styled.a`
   color: #3080ed;
   cursor: pointer;
+  padding-bottom: 3px;
+  margin-bottom: -3px;
+  border-bottom: 1px dashed #317fed;
 `;
 
 const Banner = styled.div`
@@ -73,24 +78,24 @@ const BannerBody = styled.div`
   display: flex;
 `;
 
+const StyledCard = styled(Card)`
+  margin-bottom: 30px;
+`;
+
 const Timeline = ({ modalOpen, data }) => (
   <BaseLayout>
     <Banner>
       <BannerHeader>Welcome to the governance voting dashboard </BannerHeader>
       <BannerBody>
         Before you can get started voting you will need to set up a secure
-        voting contract
+        voting contract{"   "}
         <StyledAnchor onClick={() => modalOpen("PROXY_SETUP")}>
-          {"    "}Set up secure voting contract
-        </StyledAnchor>
-        <div style={{ color: "#c4c4c4" }}>{"   •   "}</div>
-        <StyledAnchor href="https://makerdao.com/" target="_blank">
-          Read more
+          Set up secure voting contract
         </StyledAnchor>
       </BannerBody>
     </Banner>
     {data.map(topic => (
-      <Card key={topic.topic}>
+      <StyledCard key={topic.topic}>
         <CardTop active={topic.active} topic={topic.topic} />
         {topic.proposals.map(proposal => (
           <CardElement key={proposal.title} height={163}>
@@ -109,7 +114,7 @@ const Timeline = ({ modalOpen, data }) => (
             <VoteTally />
           </CardElement>
         ))}
-      </Card>
+      </StyledCard>
     ))}
   </BaseLayout>
 );

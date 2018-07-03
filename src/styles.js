@@ -3,6 +3,8 @@ export const colors = {
   green: "48, 189, 159",
   header: "31, 44, 60",
   background: "246,248,249",
+  light_grey: "	234, 239, 247",
+  dark_grey: "39, 39, 39",
   dark: "12, 12, 13",
   black: "0, 0, 0"
 };
@@ -122,15 +124,8 @@ export const globalStyles = `
     }
   
     a {
-      text-decoration: none;
-      color: inherit;
+      color: #3080ed;
       outline: none;
-    }
-  
-    ul, li {
-        list-style: none;
-        margin: 0;
-        padding: 0;
     }
   
     * {

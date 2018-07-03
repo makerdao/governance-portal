@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 import { colors, fonts } from "../styles";
 import Modals from "../components/modals";
+import Footer from "../components/Footer";
 import AccountBox from "../components/AccountBox";
 import logo from "../assets/logo.svg";
 
@@ -98,13 +99,13 @@ const StyledLogo = styled.div`
   margin-top: 10px;
 `;
 
-const Footer = styled.div`
-  height: 100px;
-`;
-
 const StyledLink = styled(Link)`
   display: flex;
   align-items: center;
+`;
+
+const Padding = styled.div`
+  height: 100px;
 `;
 
 const BaseLayout = ({ children, account, web3Available }) => (
@@ -136,15 +137,24 @@ const BaseLayout = ({ children, account, web3Available }) => (
       </HeaderTop>
       <HeaderBottom>
         <HeaderBottomContent>
-          <HeaderBottomLeft>Governance</HeaderBottomLeft>
-          <AccountBox web3Available={web3Available} account={account} />
+          <StyledLink to="/">
+            <HeaderBottomLeft>Governance</HeaderBottomLeft>
+          </StyledLink>
+          <AccountBox
+            web3Available={web3Available}
+            accounts={[
+              { address: account, type: "MetaMask" },
+              { address: "0x8193704982a089", type: "Ledger" }
+            ]}
+          />
         </HeaderBottomContent>
       </HeaderBottom>
     </StyledHeader>
     <AppWrapper>
       <StyledColumn>
         <StyledContent>{children}</StyledContent>
-        <Footer />
+        {/* <Footer /> */}
+        <Padding />
       </StyledColumn>
     </AppWrapper>
     <Modals />

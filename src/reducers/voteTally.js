@@ -18,6 +18,7 @@ export const voteTallyInit = () => dispatch => {
     .catch(error => {
       // TODO: notify user or throw to a fallback component
       console.error(error);
+      // sometimes this fails if we're reading event logs
       dispatch({ type: TALLY_FAILURE });
     });
 };
