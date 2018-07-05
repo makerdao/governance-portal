@@ -1,13 +1,12 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import verified from "../assets/verified.svg";
+import verified from "../imgs/verified.svg";
 // import { colors, fonts, transitions } from "../styles";
 
 const VerifiedMark = styled.div`
   height: 20px;
-  margin-top: -1px;
-  margin-bottom: 1px;
+  margin-top: 1px;
   width: 26px;
   background-repeat: no-repeat;
   background-image: url(${verified});

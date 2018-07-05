@@ -29,5 +29,37 @@ export const cutMiddle = (text = "", left = 3, right = 4) =>
 export const toSlug = text =>
   text
     .split(" ")
-    .map(word => word.toLowerCase())
+    .map(word => word.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").toLowerCase())
     .join("-");
+
+/**
+ * @desc if the number is bigger than 1000, truncate and add a "k"
+ * @param {Number|String} n number
+ * @return {String}
+ */
+export const kFormat = n => {
+  const num = parseFloat(n);
+  return num > 999 ? (num / 1000).toFixed(1) + "k" : num.toFixed(2);
+};
+
+/**
+ * @desc return a promise that resolves after specified time
+ * @param {Number} time
+ * @return {Promise}
+ */
+Promise.wait = time => new Promise(resolve => setTimeout(resolve, time || 0));
+
+/**
+ * @desc retry an async function a set number of times
+ * @param  {Object} { times, fn, delay }
+ * @return {Promise}
+ */
+Promise.retry = ({ times, fn, delay }) => {
+  console.log(fn, "fn");
+  return fn().catch(
+    err =>
+      times > 0
+        ? Promise.wait(delay).then(() => Promise.retry(times - 1, fn, delay))
+        : Promise.reject(err)
+  );
+};

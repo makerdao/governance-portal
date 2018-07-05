@@ -18,7 +18,7 @@ const StyledButton = styled.button`
   font-weight: ${fonts.weight.semibold};
   padding: 0 15px;
   height: 40px;
-  width: ${({ wide }) => (wide ? "320px" : "240px")};
+  width: ${({ wide, slim }) => (wide ? "320px" : slim ? "166px" : "240px")};
   cursor: ${({ disabled }) => (disabled ? "auto" : "pointer")};
   &:disabled {
     opacity: 0.6;
@@ -72,7 +72,8 @@ Button.propTypes = {
   color: PropTypes.string,
   hoverColor: PropTypes.string,
   activeColor: PropTypes.string,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  slim: PropTypes.bool
 };
 
 Button.defaultProps = {
@@ -81,7 +82,8 @@ Button.defaultProps = {
   hoverColor: "darkGrey",
   activeColor: "green",
   disabled: false,
-  wide: false
+  wide: false,
+  slim: false
 };
 
 export default Button;

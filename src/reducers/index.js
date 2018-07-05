@@ -1,14 +1,16 @@
 import { combineReducers } from "redux";
 import metamask from "./metamask";
 import modal from "./modal";
-import mock from "./mock";
-import voteTally from "./voteTally";
+import topics from "./topics";
+import tally from "./tally";
+import approvals from "./approvals";
 
 const rootReducer = combineReducers({
   metamask,
   modal,
-  mock,
-  voteTally
+  topics,
+  tally,
+  approvals
 });
 
 export default rootReducer;

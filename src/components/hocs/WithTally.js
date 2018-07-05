@@ -1,11 +1,19 @@
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-const WithTally = ({ children, voteStateFetching, candidate, voteState }) => {
+const WithTally = ({
+  children,
+  voteStateFetching,
+  approvalFetching,
+  approvalObj,
+  candidate,
+  voteState
+}) => {
   const loadingPercentage = voteStateFetching;
-  const loadingApprovals = false;
+  const loadingApprovals = approvalFetching;
   let percentage = 0;
   let approvals = 0;
+  if (approvalObj[candidate] !== undefined) approvals = approvalObj[candidate];
   if (voteState[candidate] === undefined)
     return children({
       loadingPercentage,
@@ -38,9 +46,11 @@ WithTally.defaultProps = {
   candidate: ""
 };
 
-const reduxProps = ({ voteTally }) => ({
-  voteStateFetching: voteTally.fetching,
-  voteState: voteTally.tally
+const reduxProps = ({ tally, approvals }) => ({
+  voteStateFetching: tally.fetching,
+  voteState: tally.tally,
+  approvalFetching: approvals.fetching,
+  approvalObj: approvals.approvals
 });
 
 export default connect(

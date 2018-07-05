@@ -1,5 +1,5 @@
 import { createReducer } from "../utils/redux";
-import { getVoteTally } from "../handlers/read";
+import { getVoteTally } from "../chain/read";
 
 // Constants ----------------------------------------------
 
@@ -11,14 +11,15 @@ const TALLY_FAILURE = "voteTally/TALLY_FAILURE";
 
 export const voteTallyInit = () => dispatch => {
   dispatch({ type: TALLY_REQUEST });
-  getVoteTally()
+  // NOTE: sometimes the following call will lose its reference of "getVoteTally" on hot reloads
+  Promise.retry({ times: 3, fn: getVoteTally, delay: 500 })
     .then(tally => {
       dispatch({ type: TALLY_SUCCESS, payload: { tally } });
     })
+    // sometimes this fails when we're reading event logs
     .catch(error => {
       // TODO: notify user or throw to a fallback component
       console.error(error);
-      // sometimes this fails if we're reading event logs
       dispatch({ type: TALLY_FAILURE });
     });
 };
@@ -30,7 +31,7 @@ const initialState = {
   tally: {}
 };
 
-const voteTally = createReducer(initialState, {
+const tally = createReducer(initialState, {
   [TALLY_REQUEST]: state => ({
     ...state,
     fetching: true
@@ -45,4 +46,4 @@ const voteTally = createReducer(initialState, {
   })
 });
 
-export default voteTally;
+export default tally;

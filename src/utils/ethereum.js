@@ -81,7 +81,7 @@ export const etherToWei = value =>
 export const netIdToName = id => {
   switch (parseInt(id, 10)) {
     case 1:
-      return "main";
+      return "mainnet";
     case 42:
       return "kovan";
     default:

@@ -1,5 +1,5 @@
 import { createReducer } from "../utils/redux";
-import { getMetamaskNetworkName, web3SetHttpProvider } from "../handlers/web3";
+import { getMetamaskNetworkName, web3SetHttpProvider } from "../chain/web3";
 
 // Constants ----------------------------------------------
 
@@ -27,7 +27,7 @@ export const updateMetamaskNetwork = () => (dispatch, getState) => {
   getMetamaskNetworkName()
     .then(network => {
       if (network !== getState().metamask.network) {
-        web3SetHttpProvider(`https://${network}.infura.io/`);
+        // web3SetHttpProvider(`https://${network}.infura.io/`);
         dispatch({ type: UPDATE_NETWORK, payload: { network } });
       }
       setTimeout(() => dispatch(updateMetamaskNetwork()), 2500);
@@ -43,7 +43,6 @@ export const metamaskConnectInit = () => dispatch => {
   if (typeof window.web3 !== "undefined") {
     getMetamaskNetworkName()
       .then(network => {
-        console.log(network, "network");
         dispatch({ type: CONNECT_SUCCESS, payload: { network } });
         // web3SetHttpProvider(`https://${network}.infura.io/`);
         dispatch(updateMetamaskAccount());
@@ -65,7 +64,7 @@ const initialState = {
   fetching: false,
   accountAddress: "",
   web3Available: false,
-  network: "main"
+  network: "mainnet"
 };
 
 const metamask = createReducer(initialState, {

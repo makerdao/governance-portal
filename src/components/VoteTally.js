@@ -1,12 +1,10 @@
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 
+import { kFormat } from "../utils/misc";
 import StatusBar from "./StatusBar";
-import Button from "./Button";
 import Loader from "./Loader";
-
-const VoteTallyWrapper = styled.div``;
 
 const StyledVoteTally = styled.div`
   line-height: 20px;
@@ -29,11 +27,12 @@ const VotePercent = styled.div`
 `;
 
 const VoteAmount = styled.div`
+  display: flex;
   &::after {
     font-size: 16px;
     color: #848484;
     white-space: pre;
-    content: " Approvals";
+    content: " MKR";
   }
 `;
 
@@ -43,16 +42,15 @@ const StyledStatusBar = styled(StatusBar)`
 `;
 
 const VoteTally = ({
-  wideButton,
-  withStatusBar,
+  statusBar,
   loadingApprovals,
   loadingPercentage,
   percentage,
   approvals,
   ...props
 }) => (
-  <VoteTallyWrapper {...props}>
-    {withStatusBar ? <StyledStatusBar percentage={percentage} /> : null}
+  <Fragment>
+    {statusBar ? <StyledStatusBar percentage={percentage} {...props} /> : null}
     <StyledVoteTally>
       <VotePercent>
         {loadingPercentage ? (
@@ -65,21 +63,27 @@ const VoteTally = ({
         {loadingApprovals ? (
           <Loader size={20} color="light_grey" background="white" />
         ) : (
-          `${approvals}`
+          `${kFormat(approvals)}`
         )}
       </VoteAmount>
     </StyledVoteTally>
-    <Button wide={wideButton}>Vote this Proposal</Button>
-  </VoteTallyWrapper>
+  </Fragment>
 );
 
 VoteTally.defaultProps = {
-  wideButton: false,
-  withStatusBar: false,
+  statusBar: false,
   loadingPercentage: false,
   loadingApprovals: false,
   approvals: 0,
   percentage: 0
+};
+
+VoteTally.propTypes = {
+  statusBar: PropTypes.bool,
+  loadingPercentage: PropTypes.bool,
+  loadingApprovals: PropTypes.bool,
+  approvals: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  percentage: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 export default VoteTally;

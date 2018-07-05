@@ -1,6 +1,6 @@
 {
   "inception_block": {
-    "main": "0x487813",
+    "mainnet": "0x487813",
     "kovan": "0x649575"
   },
   "events": {

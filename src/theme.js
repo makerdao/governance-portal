@@ -1,4 +1,4 @@
-export const theme = {
+const theme = {
   bg: {
     default: "#FFFFFF",
     reverse: "#16171A",

@@ -4,5 +4,5 @@
     "proxy_factory": "0x7C6a4af40CD742C3A03D008Ab8f13e32b5743413",
     "mkr": "0xAaF64BFCC32d0F15873a02163e7E500671a4ffcD"
   },
-  "main": { "chief": "0x8e2a84d6ade1e7fffee039a35ef5f19f13057152" }
+  "mainnet": { "chief": "0x8e2a84d6ade1e7fffee039a35ef5f19f13057152" }
 }

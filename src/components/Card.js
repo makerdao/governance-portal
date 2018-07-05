@@ -1,8 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { Link } from "react-router-dom";
 
+import descend from "../imgs/descend.svg";
 import { toSlug } from "../utils/misc";
 import { colors, fonts, shadows, transitions, responsive } from "../styles";
 
@@ -36,6 +37,7 @@ const CardElement = styled.div`
   width: 100%;
   min-height: ${({ minHeight }) => (minHeight ? `${minHeight}px` : "0")};
   height: ${({ height }) => (height ? `${height}px` : "auto")};
+  max-height: auto;
   border-top: solid 2px #eaeaea;
   color: rgb(${colors.dark});
   background-color: ${({ background }) => `rgb(${colors[background]})`};
@@ -86,6 +88,16 @@ const CardTopWrapper = styled.div`
   overflow: hidden;
   display: flex;
   justify-content: space-between;
+  & ~ div {
+    ${({ collapse }) =>
+      collapse
+        ? css`
+            max-height: 0;
+          `
+        : css`
+            max-height: 600px;
+          `};
+  }
 `;
 
 const TopicStatus = styled.div`
@@ -112,14 +124,44 @@ const Heading = styled.p`
   }
 `;
 
-const CardTop = ({ minHeight, topic, active }) => (
-  <CardTopWrapper minHeight={minHeight}>
-    <Link to={`/${toSlug(topic)}`}>
-      <Heading>{topic}</Heading>
-    </Link>
-    <TopicStatus active={active} />
-  </CardTopWrapper>
-);
+const Descend = styled.div`
+  margin-top: 14px;
+  margin-right: 10px;
+  height: 10px;
+  width: 16px;
+  cursor: pointer;
+  background: url(${descend}) no-repeat;
+  transition: ${transitions.base};
+  transform: ${({ flip }) => (flip ? "rotate(180deg)" : "")};
+`;
+
+class CardTop extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { collapse: props.startCollapsed };
+  }
+  toggleCollapse = () => {
+    if (!this.props.collapsable) return;
+    this.setState(state => ({ collapse: !state.collapse }));
+  };
+  render() {
+    const { minHeight, topic, active, collapsable } = this.props;
+    const { collapse } = this.state;
+    return (
+      <CardTopWrapper minHeight={minHeight} collapse={collapse}>
+        <div style={{ display: "flex" }}>
+          {collapsable ? (
+            <Descend flip={collapse} onClick={this.toggleCollapse} />
+          ) : null}
+          <Link to={`/${toSlug(topic)}`}>
+            <Heading>{topic}</Heading>
+          </Link>
+        </div>
+        <TopicStatus active={active} />
+      </CardTopWrapper>
+    );
+  }
+}
 
 CardTop.defaultProps = {
   minHeight: 48

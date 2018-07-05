@@ -1,7 +1,7 @@
 import Web3 from "web3";
 
 import { netIdToName } from "../utils/ethereum";
-import addresses from "../contracts/addresses.json";
+import addresses from "./addresses.json";
 
 export const web3Instance = new Web3(
   new Web3.providers.HttpProvider(`https://mainnet.infura.io/`)
@@ -117,6 +117,12 @@ export const getTxDetails = async ({
   return tx;
 };
 
+/**
+ * @async returns a promise that resolves after a transaction has a set number of confirmations
+ * @param  {String} transaction
+ * @param  {Object} { confirmations }
+ * @return {Promise}
+ */
 export const awaitTx = (txnHash, { confirmations = 6 }) => {
   const INTERVAL = 500;
   const transactionReceiptAsync = async function(txnHash, resolve, reject) {
@@ -179,15 +185,16 @@ export const awaitTx = (txnHash, { confirmations = 6 }) => {
  * @desc get metmask selected network
  * @return {Promise}
  */
-export const getMetamaskNetworkName = async () => {
+export const getMetamaskNetworkName = () => {
   if (typeof window.web3 !== "undefined") {
-    window.web3.version.getNetwork((err, networkID) => {
-      if (err) {
-        console.error(err);
-        // throw new Error(err);
-      }
-      const networkName = netIdToName(networkID);
-      return networkName || null;
+    return new Promise((resolve, reject) => {
+      window.web3.version.getNetwork((err, networkID) => {
+        if (err) {
+          reject(err);
+        }
+        const networkName = netIdToName(networkID);
+        resolve(networkName);
+      });
     });
   }
 };

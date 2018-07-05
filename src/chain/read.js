@@ -22,7 +22,7 @@ import {
   paddedBytes32ToAddress,
   isZeroAddress
 } from "../utils/ethereum";
-import chiefInfo from "../contracts/chief-info.json";
+import chiefInfo from "./chief-info.json";
 
 /**
  * @async @desc get address approval count
@@ -209,13 +209,17 @@ export const getLockLogs = async () => {
   return addresses;
 };
 
+// helper for when we might call getSlateAddresses with the same slate several times
+const memoizedGetSlateAddresses = memoizeWith(identity, getSlateAddresses);
+
 /**
  * @async @desc get the voter approvals and address for each proposal
- * @return {[]}
+ * @return {Object}
  */
 export const getVoteTally = async () => {
-  const t0 = performance.now();
   const voters = await getLockLogs();
+  // we could use web3's "batch" feature here, but it doesn't seem that it would be any faster
+  // https://ethereum.stackexchange.com/questions/47918/how-to-make-batch-transaction-in-ethereum
   const withDeposits = await Promise.all(
     voters.map(voter =>
       getNumDeposits(voter).then(deposits => ({
@@ -234,7 +238,6 @@ export const getVoteTally = async () => {
     )
   );
 
-  const memoizedGetSlateAddresses = memoizeWith(identity, getSlateAddresses);
   const withVotes = await Promise.all(
     withSlates.map(withSlate =>
       memoizedGetSlateAddresses(withSlate.slate).then(addresses => ({
@@ -272,7 +275,5 @@ export const getVoteTally = async () => {
     }));
     voteTally[key] = withPercentages;
   }
-  const t1 = performance.now();
-  console.log(voteTally, t1 - t0);
   return voteTally;
 };

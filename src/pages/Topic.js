@@ -7,8 +7,10 @@ import { Link } from "react-router-dom";
 
 import NotFound from "./NotFound";
 import VoteMeta from "../components/VoteMeta";
+import Button from "../components/Button";
 import Card, { CardTop, CardElement } from "../components/Card";
 import VoteTally from "../components/VoteTally";
+import WithTally from "../components/hocs/WithTally";
 import BaseLayout from "../layouts/base";
 import { toSlug } from "../utils/misc";
 import { colors, fonts } from "../styles";
@@ -26,7 +28,7 @@ const StyledTop = styled.div`
   background-color: rgb(${colors.white});
   border-bottom: 2px solid #eaeaea;
   text-align: left;
-  padding: 54px 0px;
+  padding: 54px 16px;
 `;
 
 const StyledCenter = styled.div`
@@ -96,7 +98,6 @@ const Topic = ({ match, topics }) => {
   const topic = find(({ topic }) => toSlug(topic) === topicSlug, topics);
   if (topic === undefined) return <NotFound />;
   const { topic: topicTitle, active, proposals } = topic;
-  console.log(proposals);
   return (
     <BaseLayout>
       <WhiteBackground>
@@ -126,7 +127,7 @@ const Topic = ({ match, topics }) => {
               <Link to={`/${toSlug(topicTitle)}/${toSlug(proposal.title)}`}>
                 <SubHeading>{proposal.title}</SubHeading>
               </Link>
-              <Body>{proposal.blurb}</Body>
+              <Body>{proposal.proposal_blurb}</Body>
               <VoteMeta
                 verified={proposal.verified}
                 submitter={proposal.submitted_by.name}
@@ -134,7 +135,24 @@ const Topic = ({ match, topics }) => {
                 creationDate={proposal.created}
               />
             </ProposalDetails>
-            <VoteTally />
+            <div>
+              <WithTally candidate={proposal.source}>
+                {({
+                  loadingApprovals,
+                  loadingPercentage,
+                  approvals,
+                  percentage
+                }) => (
+                  <VoteTally
+                    loadingPercentage={loadingPercentage}
+                    loadingApprovals={loadingApprovals}
+                    approvals={approvals}
+                    percentage={percentage}
+                  />
+                )}
+              </WithTally>
+              <Button>Vote this Proposal</Button>
+            </div>
           </CardElement>
         ))}
       </Card>
@@ -152,8 +170,8 @@ Topic.defaultProps = {
   topics: []
 };
 
-const reduxProps = ({ mock }) => ({
-  topics: mock
+const reduxProps = ({ topics }) => ({
+  topics: topics
 });
 
 export default connect(

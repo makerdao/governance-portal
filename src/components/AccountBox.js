@@ -3,8 +3,9 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import Blockies from "react-blockies";
 
+import ClickOutside from "./ClickOutside";
 import { cutMiddle } from "../utils/misc";
-import arrow from "../assets/arrow.svg";
+import arrow from "../imgs/arrow.svg";
 import { fonts, colors, shadows } from "../styles";
 
 const StyledArrow = styled.img`
@@ -48,7 +49,7 @@ const StyledDropdownWrapper = styled.div`
 
 const StyledAccount = styled.div`
   color: white;
-  cursor: ${({ dropdown }) => (dropdown ? "pointer" : "auto")};
+  cursor: pointer;
   background: ${({ dark }) => (dark ? "#053C4B" : "#435367")};
   border-radius: 4px;
   padding: 6px 10px;
@@ -73,7 +74,7 @@ const StyledRow = styled.div`
   font-size: 15px;
   padding-left: 11px;
   color: white;
-  background: #435367;
+  background: ${({ dark }) => (dark ? "#053C4B" : "#435367")};
   &:hover {
     opacity: 0.9;
   }
@@ -87,65 +88,65 @@ class AccountBox extends Component {
   state = {
     dropdownOpen: false
   };
-  onChange = selected => {
+  clickOutside = () => {
+    if (this.state.dropdownOpen) this.setState({ dropdownOpen: false });
+  };
+  onChange = ({ address, type }) => {
     this.setState({ showDropdown: false });
     if (this.props.onChange) {
-      this.props.onChange(selected);
+      this.props.onChange({ address, type });
     }
   };
   toggleDropdown = () => {
     this.setState(state => ({ dropdownOpen: !state.dropdownOpen }));
   };
   render() {
-    // TODO: click outside component
     const { dark, accounts, ...props } = this.props;
     const availableAccounts = accounts.filter(account => !!account.address);
-    const [headAccount, ...tailAccounts] = availableAccounts;
+    const [headAccount] = availableAccounts;
     if (headAccount === undefined)
       return (
         <StyledAccount dark={dark} {...this.props}>
           <Account noAccounts={true}>No Accounts</Account>
         </StyledAccount>
       );
-    const hasTail = tailAccounts.length > 0;
     return (
-      <AccountWrapper {...props}>
-        <StyledAccount
-          dark={dark}
-          onClick={hasTail ? this.toggleDropdown : () => {}}
-          dropdown={hasTail}
-        >
-          <Blockies
-            seed={headAccount.address}
-            size={5}
-            spotColor="#fc5e04"
-            color="#fc5e04"
-            bgColor="#fff"
-          />
-          <Account>
-            {headAccount.type} {cutMiddle(headAccount.address)}
-          </Account>
-          {hasTail ? <StyledArrow /> : null}
-        </StyledAccount>
-        <StyledDropdownWrapper show={this.state.dropdownOpen}>
-          {availableAccounts.map(({ address, type }) => (
-            <StyledRow
-              key={address}
-              onClick={() => this.onChangeSelected({ address, type })}
-              selected={address === headAccount.address}
-            >
-              <Blockies
-                seed={address}
-                size={5}
-                spotColor="#fc5e04"
-                color="#fc5e04"
-                bgColor="#fff"
-              />
-              <Account>{`${type} ${cutMiddle(address)}`}</Account>
-            </StyledRow>
-          ))}
-        </StyledDropdownWrapper>
-      </AccountWrapper>
+      <ClickOutside onOutsideClick={this.clickOutside}>
+        <AccountWrapper {...props}>
+          <StyledAccount dark={dark} onClick={this.toggleDropdown}>
+            <Blockies
+              seed={headAccount.address}
+              size={5}
+              spotColor="#fc5e04"
+              color="#fc5e04"
+              bgColor="#fff"
+            />
+            <Account>
+              {headAccount.type} {cutMiddle(headAccount.address)}
+            </Account>
+            <StyledArrow />
+          </StyledAccount>
+          <StyledDropdownWrapper show={this.state.dropdownOpen}>
+            {availableAccounts.map(({ address, type }) => (
+              <StyledRow
+                key={address}
+                onClick={() => this.onChange({ address, type })}
+                selected={address === headAccount.address}
+                dark={dark}
+              >
+                <Blockies
+                  seed={address}
+                  size={5}
+                  spotColor="#fc5e04"
+                  color="#fc5e04"
+                  bgColor="#fff"
+                />
+                <Account>{`${type} ${cutMiddle(address)}`}</Account>
+              </StyledRow>
+            ))}
+          </StyledDropdownWrapper>
+        </AccountWrapper>
+      </ClickOutside>
     );
   }
 }

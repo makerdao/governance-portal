@@ -17,7 +17,7 @@ module.exports = {
     return componentPath
       .replace(
         /\.js?$|src/g,
-        matched => (matched === "src" ? "src/styleguide" : ".md")
+        matched => (matched === "src" ? "src/_styleguide" : ".md")
       )
       .replace("components/", "")
       .replace("modals/", "");

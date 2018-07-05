@@ -2,12 +2,14 @@ import { Component } from "react";
 import { connect } from "react-redux";
 
 import { metamaskConnectInit } from "./reducers/metamask";
-import { voteTallyInit } from "./reducers/voteTally";
+import { voteTallyInit } from "./reducers/tally";
+import { topicsFetchInit } from "./reducers/topics";
 
 class Init extends Component {
   componentDidMount() {
     this.props.metamaskConnectInit();
     this.props.voteTallyInit();
+    this.props.topicsFetchInit();
   }
   render() {
     return this.props.children;
@@ -16,5 +18,5 @@ class Init extends Component {
 
 export default connect(
   () => ({}),
-  { metamaskConnectInit, voteTallyInit }
+  { metamaskConnectInit, voteTallyInit, topicsFetchInit }
 )(Init);

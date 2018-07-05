@@ -8,7 +8,7 @@ import { toSlug } from "../utils/misc";
 import BaseLayout from "../layouts/base";
 import VoteMeta from "../components/VoteMeta";
 import VoteTally from "../components/VoteTally";
-import Loader from "../components/Loader";
+import Button from "../components/Button";
 import Card from "../components/Card";
 import ResizeSpinLoader from "../components/ResizeSpinLoader";
 import WithTally from "../components/hocs/WithTally";
@@ -79,7 +79,7 @@ const RightPanels = styled.div`
 
 const DescriptionCard = styled(Card)`
   max-width: 750px;
-  padding: 18px 25px;
+  padding: 0px 25px 18px 25px;
   color: #546978;
   line-height: 30px;
 `;
@@ -153,7 +153,7 @@ class Proposal extends Component {
     const { topicSlug, proposalSlug } = this.props.match.params;
     const topic = find(
       ({ topic }) => toSlug(topic) === topicSlug,
-      this.props.data
+      this.props.topics
     );
     if (topic === undefined) return; //not found
     const proposal = find(
@@ -163,13 +163,10 @@ class Proposal extends Component {
     if (proposal === undefined) return; //not found
     this.setState({ proposal });
     fetch(proposal.about)
-      .then(response => {
-        return response.text();
-      })
-      .then(text => {
-        console.log(text);
+      .then(response => response.text())
+      .then(markdown => {
         this.setState({
-          markdown: text
+          markdown
         });
       });
   }
@@ -185,43 +182,54 @@ class Proposal extends Component {
           <StyledTop>
             <StyledCenter>
               <StyledTitle>{proposal.title}</StyledTitle>
-              <StyledBody>{proposal.blurb}</StyledBody>
+              <StyledBody>{proposal.proposal_blurb}</StyledBody>
               <StyledVoteMeta
                 verified={proposal.verified}
                 submitter={proposal.submitted_by.name}
                 submitterLink={proposal.submitted_by.link}
-                creationDate={proposal.created}
+                creationDate={proposal.date}
               />
             </StyledCenter>
-            <WithTally candidate={proposal.source}>
-              {({
-                loadingApprovals,
-                loadingPercentage,
-                approvals,
-                percentage
-              }) => (
-                <VoteTally
-                  wideButton
-                  withStatusBar
-                  loadingPercentage={loadingPercentage}
-                  loadingApprovals={loadingApprovals}
-                  approvals={approvals}
-                  percentage={percentage}
-                />
-              )}
-              {/* TODO: split button out of vote tally component */}
-            </WithTally>
+            <div>
+              <WithTally candidate={proposal.source}>
+                {({
+                  loadingApprovals,
+                  loadingPercentage,
+                  approvals,
+                  percentage
+                }) => (
+                  <VoteTally
+                    statusBar
+                    loadingPercentage={loadingPercentage}
+                    loadingApprovals={loadingApprovals}
+                    approvals={approvals}
+                    percentage={percentage}
+                  />
+                )}
+              </WithTally>
+              <Button wide={true}>Vote this Proposal</Button>
+            </div>
           </StyledTop>
         </WhiteBackground>
         <ConentWrapper>
           <DescriptionCard>
             {!!markdown ? (
-              <ReactMarkdown skipHtml={true} source={markdown} />
-            ) : null}
+              <ReactMarkdown
+                className="markdown"
+                skipHtml={true}
+                source={markdown}
+              />
+            ) : (
+              <div />
+            )}
           </DescriptionCard>
           <RightPanels>
             <DetailsCard>
               <CardTitle>Details</CardTitle>
+              <Supporter>
+                <Percentage>Topic</Percentage>
+                <Address>poasidjf aoisdjf </Address>
+              </Supporter>
             </DetailsCard>
             <SupporterCard>
               <CardTitle>Top Supporters</CardTitle>
@@ -256,10 +264,10 @@ class Proposal extends Component {
   }
 }
 
-const reduxProps = ({ mock, voteTally }) => ({
-  data: mock,
-  voteStateFetching: voteTally.fetching,
-  voteState: voteTally.tally
+const reduxProps = ({ topics, tally }) => ({
+  topics,
+  voteStateFetching: tally.fetching,
+  voteState: tally.tally
 });
 
 export default connect(

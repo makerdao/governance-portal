@@ -3,14 +3,13 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 
-// import Column from "../components/Column";
 import { modalClose } from "../../reducers/modal";
 import ProxySetup from "./ProxySetup";
-import close from "../../assets/close.svg";
+import close from "../../imgs/close.svg";
 
 import { colors, transitions } from "../../styles";
 
-const StyledColumn = styled.div`
+const Column = styled.div`
   position: relative;
   width: 100%;
   height: ${({ spanHeight }) => (spanHeight ? "100%" : "auto")};
@@ -22,24 +21,12 @@ const StyledColumn = styled.div`
   justify-content: ${({ center }) => (center ? "center" : "flex-start")};
 `;
 
-const Column = ({ children, spanHeight, maxWidth, center, ...props }) => (
-  <StyledColumn
-    spanHeight={spanHeight}
-    maxWidth={maxWidth}
-    center={center}
-    {...props}
-  >
-    {children}
-  </StyledColumn>
-);
-
 const StyledLightbox = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 2;
   transition: ${transitions.base};
   opacity: ${({ modal }) => (modal ? 1 : 0)};
   visibility: ${({ modal }) => (modal ? "visible" : "hidden")};
@@ -58,10 +45,10 @@ const StyledHitbox = styled.div`
 const StyledContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 460px;
+  align-items: flex-start;
+  margin-top: 70px;
   padding: 15px;
   display: flex;
-  align-items: center;
   justify-content: center;
 `;
 
@@ -84,7 +71,7 @@ class Modal extends Component {
   modalController = () => {
     switch (this.props.modal) {
       case "PROXY_SETUP":
-        window.scrollTo(0, 0);
+        window.scrollTo(50, 50);
         return <ProxySetup {...this.props} />;
       default:
         return <div />;
@@ -104,7 +91,7 @@ class Modal extends Component {
       <StyledLightbox modal={this.props.modal}>
         <StyledContainer>
           <StyledHitbox onClick={this.props.modalClose} />
-          <Column center>
+          <Column maxWidth={600} center>
             <ModalTopper>
               <StyledClose
                 modal={this.props.modal}
@@ -123,8 +110,7 @@ Modal.propTypes = {};
 
 const reduxProps = ({ modal, metamask }) => ({
   modal: modal.modal,
-  account: metamask.accountAddress,
-  web3Available: metamask.web3Available
+  account: metamask.accountAddress
 });
 
 export default connect(

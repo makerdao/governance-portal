@@ -5,11 +5,25 @@ import { Link } from "react-router-dom";
 
 import VoteMeta from "../components/VoteMeta";
 import VoteTally from "../components/VoteTally";
+import WithTally from "../components/hocs/WithTally";
+import Button from "../components/Button";
 import BaseLayout from "../layouts/base";
 import Card, { CardTop, CardElement } from "../components/Card";
 import { toSlug } from "../utils/misc";
-import { fonts } from "../styles";
+import { fonts, transitions } from "../styles";
 import { modalOpen } from "../reducers/modal";
+
+const Heading = styled.p`
+  color: #1f2c3c;
+  font-size: ${fonts.size.xlarge};
+  font-weight: ${fonts.weight.medium};
+  opacity: ${({ disabled }) => (disabled ? 0.7 : 1)};
+  flex: none;
+  position: relative;
+  @media screen and (max-width: 736px) {
+    display: ${({ isAlwaysVisible }) => (isAlwaysVisible ? "block" : "none")};
+  }
+`;
 
 const SubHeading = styled.p`
   color: #1f2c3c;
@@ -48,7 +62,7 @@ const StyledAnchor = styled.a`
   cursor: pointer;
   padding-bottom: 3px;
   margin-bottom: -3px;
-  border-bottom: 1px dashed #317fed;
+  border-bottom: ${({ noBorder }) => (noBorder ? "" : "1px dashed #317fed")};
 `;
 
 const Banner = styled.div`
@@ -63,6 +77,7 @@ const Banner = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow: hidden;
 `;
 
 const BannerHeader = styled.div`
@@ -78,8 +93,24 @@ const BannerBody = styled.div`
   display: flex;
 `;
 
+const BannerContent = styled.div`
+  margin-right: 8px;
+`;
+
 const StyledCard = styled(Card)`
   margin-bottom: 30px;
+`;
+
+const RootWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 26px;
+  align-items: center;
+`;
+
+const CollapsableWrapper = styled.div`
+  transition: ${transitions.base};
+  max-height: 600px;
 `;
 
 const Timeline = ({ modalOpen, data }) => (
@@ -87,40 +118,79 @@ const Timeline = ({ modalOpen, data }) => (
     <Banner>
       <BannerHeader>Welcome to the governance voting dashboard </BannerHeader>
       <BannerBody>
-        Before you can get started voting you will need to set up a secure
-        voting contract{"   "}
+        <BannerContent>
+          Before you can get started voting you will need to set up a secure
+          voting contract
+        </BannerContent>
         <StyledAnchor onClick={() => modalOpen("PROXY_SETUP")}>
           Set up secure voting contract
         </StyledAnchor>
       </BannerBody>
     </Banner>
+    <StyledCard>
+      <RootWrapper>
+        <div>
+          <Heading>Current Root Proposal</Heading>
+          <div style={{ display: "flex" }}>
+            <StyledAnchor noBorder>See all system parameters</StyledAnchor>
+            <div style={{ margin: "0px 12px", color: "#C4C4C4" }}>{" • "}</div>
+            <StyledAnchor noBorder>What is the Root Proposal?</StyledAnchor>
+          </div>
+        </div>
+        <Button>Vote this Proposal</Button>
+      </RootWrapper>
+    </StyledCard>
     {data.map(topic => (
       <StyledCard key={topic.topic}>
-        <CardTop active={topic.active} topic={topic.topic} />
-        {topic.proposals.map(proposal => (
-          <CardElement key={proposal.title} height={163}>
-            <ProposalDetails>
-              <Link to={`/${toSlug(topic.topic)}/${toSlug(proposal.title)}`}>
-                <SubHeading>{proposal.title}</SubHeading>
-              </Link>
-              <Body>{proposal.blurb}</Body>
-              <VoteMeta
-                verified={proposal.verified}
-                submitter={proposal.submitted_by.name}
-                submitterLink={proposal.submitted_by.link}
-                creationDate={proposal.created}
-              />
-            </ProposalDetails>
-            <VoteTally />
-          </CardElement>
-        ))}
+        <CardTop
+          active={topic.active}
+          topic={topic.topic}
+          collapsable={true}
+          startCollapsed={false}
+        />
+        <CollapsableWrapper>
+          {topic.proposals.map(proposal => (
+            <CardElement key={proposal.title} height={163}>
+              <ProposalDetails>
+                <Link to={`/${toSlug(topic.topic)}/${toSlug(proposal.title)}`}>
+                  <SubHeading>{proposal.title}</SubHeading>
+                </Link>
+                <Body>{proposal.proposal_blurb}</Body>
+                <VoteMeta
+                  verified={proposal.verified}
+                  submitter={proposal.submitted_by.name}
+                  submitterLink={proposal.submitted_by.link}
+                  creationDate={proposal.date}
+                />
+              </ProposalDetails>
+              <div>
+                <WithTally candidate={proposal.source}>
+                  {({
+                    loadingApprovals,
+                    loadingPercentage,
+                    approvals,
+                    percentage
+                  }) => (
+                    <VoteTally
+                      loadingPercentage={loadingPercentage}
+                      loadingApprovals={loadingApprovals}
+                      approvals={approvals}
+                      percentage={percentage}
+                    />
+                  )}
+                </WithTally>
+                <Button>Vote this Proposal</Button>
+              </div>
+            </CardElement>
+          ))}
+        </CollapsableWrapper>
       </StyledCard>
     ))}
   </BaseLayout>
 );
 
-const reduxProps = ({ mock }) => ({
-  data: mock
+const reduxProps = ({ topics }) => ({
+  data: topics
 });
 
 export default connect(
