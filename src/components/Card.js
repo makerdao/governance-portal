@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import descend from "../imgs/descend.svg";
 import { toSlug } from "../utils/misc";
-import { colors, fonts, shadows, transitions, responsive } from "../styles";
+import { colors, fonts, shadows, transitions, responsive } from "../theme";
 
 const StyledCard = styled.div`
   transition: ${transitions.base};
@@ -27,7 +27,24 @@ const StyledCard = styled.div`
   overflow: hidden;
 `;
 
-const CardElement = styled.div`
+const Card = ({ background, children, ...props }) => (
+  <StyledCard background={background} {...props}>
+    {children}
+  </StyledCard>
+);
+
+Card.propTypes = {
+  children: PropTypes.node.isRequired,
+  background: PropTypes.string,
+  minHeight: PropTypes.number
+};
+
+Card.defaultProps = {
+  background: "white",
+  minHeight: null
+};
+
+const CardElementWrapper = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
@@ -52,22 +69,22 @@ const CardElement = styled.div`
   }
 `;
 
-const Card = ({ background, children, ...props }) => (
-  <StyledCard background={background} {...props}>
-    {children}
-  </StyledCard>
+const CollapsableWrapper = styled.div`
+  transition: ${transitions.base};
+  max-height: auto;
+`;
+
+const CardElement = ({ children, height, background, minHeight, ...props }) => (
+  <CollapsableWrapper>
+    <CardElementWrapper
+      height={height}
+      background={background}
+      minHeight={minHeight}
+    >
+      {children}
+    </CardElementWrapper>
+  </CollapsableWrapper>
 );
-
-Card.propTypes = {
-  children: PropTypes.node.isRequired,
-  background: PropTypes.string,
-  minHeight: PropTypes.number
-};
-
-Card.defaultProps = {
-  background: "white",
-  minHeight: null
-};
 
 const CardTopWrapper = styled.div`
   transition: ${transitions.base};
@@ -167,5 +184,8 @@ CardTop.defaultProps = {
   minHeight: 48
 };
 
+Card.Top = CardTop;
+Card.Element = CardElement;
+
 export default Card;
-export { CardTop, CardElement };
+// export { CardTop, CardElement };

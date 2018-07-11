@@ -11,9 +11,7 @@ class Init extends Component {
     this.props.voteTallyInit();
     this.props.topicsFetchInit();
   }
-  render() {
-    return this.props.children;
-  }
+  render = () => this.props.children;
 }
 
 export default connect(

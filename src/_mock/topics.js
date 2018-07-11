@@ -3,6 +3,13 @@ export default [
     topic: "Foundation Proposal",
     active: true,
     topic_blurb: "Lorem...",
+    source: "0x8ffb52208c08d4254e06737be0e1f0fe271b76b2",
+    date: "2018-03-12", //yyyy-mm-dd
+    verified: true,
+    submitted_by: {
+      name: "Dai Foundation",
+      link: "https://makerdao.com"
+    },
     proposals: [
       {
         title:
@@ -10,7 +17,7 @@ export default [
         proposal_blurb: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vehicula sapien mi, vitae suscipit felis pellentesque a. Aenean condimentum vitae neque quis sagittis. Duis nec purus neque. Duis quis ultricies magna, in facilisis nisl. Suspendisse aliquet nisl et nisl mattis dictum. Donec varius sed lacus sit amet mollis. `,
         about: require("./demo.md"),
         source: "0x8ffb52208c08d4254e06737be0e1f0fe271b76b2",
-        date: "12 Mar 2018",
+        date: "2018-03-12", //yyyy-mm-dd
         verified: true,
         submitted_by: {
           name: "Dai Foundation",
@@ -29,7 +36,7 @@ export default [
         proposal_blurb: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vehicula sapien mi, vitae suscipit felis pellentesque a. Aenean condimentum vitae neque quis sagittis. Duis nec purus neque. Duis quis ultricies magna, in facilisis nisl. Suspendisse aliquet nisl et nisl mattis dictum. Donec varius sed lacus sit amet mollis. `,
         about: require("./demo.md"),
         source: "0x0000000000000000000000000000000000000000",
-        date: "12 Mar 2018",
+        date: "2018-03-12",
         verified: true,
         submitted_by: {
           name: "Dai Foundation",
@@ -48,6 +55,13 @@ export default [
     topic: "OSM, Debt Ceiling",
     active: false,
     topic_blurb: "Lorem...",
+    source: "0x8ffb52208c08d4254e06737be0e1f0fe271b76b2",
+    date: "2018-03-12", //yyyy-mm-dd
+    verified: true,
+    submitted_by: {
+      name: "Dai Foundation",
+      link: "https://makerdao.com"
+    },
     proposals: [
       {
         title:
@@ -55,7 +69,7 @@ export default [
         proposal_blurb: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vehicula sapien mi, vitae suscipit felis pellentesque a. Aenean condimentum vitae neque quis sagittis. Duis nec purus neque. Duis quis ultricies magna, in facilisis nisl. Suspendisse aliquet nisl et nisl mattis dictum. Donec varius sed lacus sit amet mollis. `,
         about: require("./demo.md"),
         source: "0x8ffb52208c08d4254e06737be0e1f0fe271b76b2",
-        date: "12 Mar 2018",
+        date: "2018-03-12",
         verified: true,
         submitted_by: {
           name: "Dai Foundation",

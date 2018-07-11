@@ -1,8 +1,9 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+
 import verified from "../imgs/verified.svg";
-// import { colors, fonts, transitions } from "../styles";
+import { formatDate } from "../utils/misc";
 
 const VerifiedMark = styled.div`
   height: 20px;
@@ -50,13 +51,7 @@ const Submitter = styled.div`
   }
 `;
 
-const VoteMeta = ({
-  verified,
-  submitter,
-  submitterLink,
-  creationDate,
-  ...props
-}) => (
+const VoteMeta = ({ verified, submitted_by, date, ...props }) => (
   <Footer {...props}>
     {verified ? (
       <Fragment>
@@ -65,26 +60,27 @@ const VoteMeta = ({
       </Fragment>
     ) : null}
     <Submitter>
-      <StyledAnchor href={submitterLink} target="_blank">
-        {submitter}
+      <StyledAnchor href={submitted_by.link} target="_blank">
+        {submitted_by.name}
       </StyledAnchor>
     </Submitter>
-    <Creation>{creationDate}</Creation>
+    <Creation>{formatDate(date)}</Creation>
   </Footer>
 );
 
 VoteMeta.propTypes = {
   verified: PropTypes.bool,
-  submitter: PropTypes.string,
-  submitterLink: PropTypes.string,
-  creationDate: PropTypes.string
+  submitted_by: PropTypes.object,
+  date: PropTypes.string
 };
 
 VoteMeta.defaultProps = {
   verified: false,
-  submitter: "",
-  submitterLink: "",
-  creationDate: ""
+  submitted_by: {
+    name: "",
+    link: ""
+  },
+  date: ""
 };
 
 export default VoteMeta;

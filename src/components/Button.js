@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 
 import Loader from "./Loader";
-import { colors, fonts, transitions } from "../styles";
+import { colors, fonts, transitions } from "../theme";
 
 const StyledButton = styled.button`
   transition: ${transitions.button};
@@ -25,6 +25,7 @@ const StyledButton = styled.button`
   }
   @media (hover: hover) {
     &:hover {
+      box-shadow: rgba(5, 45, 73, 0.1) 0px 0.25rem 0.75rem;
       background-color: ${({ disabled, hoverColor, color }) =>
         !disabled
           ? hoverColor
@@ -44,6 +45,7 @@ const StyledButton = styled.button`
   }
 `;
 
+// TODO add icon option
 const Button = ({
   children,
   loading,

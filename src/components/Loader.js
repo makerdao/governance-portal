@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled, { keyframes } from "styled-components";
-import { fonts, colors } from "../styles";
+import { fonts, colors } from "../theme";
 
 const load = keyframes`
   0% {

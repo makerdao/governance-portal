@@ -5,6 +5,7 @@ import styled from "styled-components";
 import ReactMarkdown from "react-markdown";
 
 import { toSlug } from "../utils/misc";
+import { ethScanLink } from "../utils/ethereum";
 import BaseLayout from "../layouts/base";
 import VoteMeta from "../components/VoteMeta";
 import VoteTally from "../components/VoteTally";
@@ -13,7 +14,7 @@ import Card from "../components/Card";
 import ResizeSpinLoader from "../components/ResizeSpinLoader";
 import WithTally from "../components/hocs/WithTally";
 import NotFound from "./NotFound";
-import { colors } from "../styles";
+import { colors } from "../theme";
 
 const WhiteBackground = styled.div`
   width: 100vw;
@@ -183,12 +184,7 @@ class Proposal extends Component {
             <StyledCenter>
               <StyledTitle>{proposal.title}</StyledTitle>
               <StyledBody>{proposal.proposal_blurb}</StyledBody>
-              <StyledVoteMeta
-                verified={proposal.verified}
-                submitter={proposal.submitted_by.name}
-                submitterLink={proposal.submitted_by.link}
-                creationDate={proposal.date}
-              />
+              <StyledVoteMeta {...proposal} />
             </StyledCenter>
             <div>
               <WithTally candidate={proposal.source}>
@@ -226,10 +222,10 @@ class Proposal extends Component {
           <RightPanels>
             <DetailsCard>
               <CardTitle>Details</CardTitle>
-              <Supporter>
+              {/* <Supporter>
                 <Percentage>Topic</Percentage>
                 <Address>poasidjf aoisdjf </Address>
-              </Supporter>
+              </Supporter> */}
             </DetailsCard>
             <SupporterCard>
               <CardTitle>Top Supporters</CardTitle>
@@ -240,9 +236,7 @@ class Proposal extends Component {
                       <Percentage>{supporter.percent}</Percentage>
                       <Address
                         target="_blank"
-                        href={`https://etherscan.io/address/${
-                          supporter.address
-                        }`}
+                        href={ethScanLink(supporter.address)}
                       >
                         {supporter.address}
                       </Address>

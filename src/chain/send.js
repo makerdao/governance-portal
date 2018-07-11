@@ -69,6 +69,7 @@ export const buildVoteProxy = async ({ cold, hot }) => {
     args: [removeHexPrefix(cold), removeHexPrefix(hot)]
   });
   const tx = { to: factory, from: cold, data: callData };
+  console.log(tx);
   return web3MetamaskSendTransaction(tx);
 };
 
@@ -78,6 +79,7 @@ export const buildVoteProxy = async ({ cold, hot }) => {
  * @return {Promise} tx
  */
 export const sendMkrToProxy = async ({ from, value }) => {
+  console.log("sending", value, "mkr ");
   const { proxy } = await getProxyStatus(from);
   const mkrToken = await getMkrAddress();
   const methodSig = getMethodSig("transfer(address,uint256)");

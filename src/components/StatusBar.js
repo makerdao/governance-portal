@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styled, { keyframes } from "styled-components";
-import { colors, transitions } from "../styles";
+import styled from "styled-components";
+import { colors, transitions } from "../theme";
 
 const ProgressBar = styled.div`
   height: 8px;

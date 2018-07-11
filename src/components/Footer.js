@@ -1,8 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 
-// import { colors, fonts, transitions } from "../styles";
-
 const FooterWrapper = styled.div`
   height: 194px;
   display: grid;

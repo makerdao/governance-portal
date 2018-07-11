@@ -25,9 +25,7 @@ class OutsideClickHandler extends Component {
       this.props.onOutsideClick();
     }
   };
-  render() {
-    return <div ref={this.setWrapperRef}>{this.props.children}</div>;
-  }
+  render = () => <div ref={this.setWrapperRef}>{this.props.children}</div>;
 }
 
 OutsideClickHandler.propTypes = {

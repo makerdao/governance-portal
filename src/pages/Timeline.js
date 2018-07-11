@@ -8,9 +8,9 @@ import VoteTally from "../components/VoteTally";
 import WithTally from "../components/hocs/WithTally";
 import Button from "../components/Button";
 import BaseLayout from "../layouts/base";
-import Card, { CardTop, CardElement } from "../components/Card";
+import Card from "../components/Card";
 import { toSlug } from "../utils/misc";
-import { fonts, transitions } from "../styles";
+import { fonts } from "../theme";
 import { modalOpen } from "../reducers/modal";
 
 const Heading = styled.p`
@@ -108,11 +108,6 @@ const RootWrapper = styled.div`
   align-items: center;
 `;
 
-const CollapsableWrapper = styled.div`
-  transition: ${transitions.base};
-  max-height: 600px;
-`;
-
 const Timeline = ({ modalOpen, data }) => (
   <BaseLayout>
     <Banner>
@@ -142,48 +137,41 @@ const Timeline = ({ modalOpen, data }) => (
     </StyledCard>
     {data.map(topic => (
       <StyledCard key={topic.topic}>
-        <CardTop
+        <Card.Top
           active={topic.active}
           topic={topic.topic}
           collapsable={true}
           startCollapsed={false}
         />
-        <CollapsableWrapper>
-          {topic.proposals.map(proposal => (
-            <CardElement key={proposal.title} height={163}>
-              <ProposalDetails>
-                <Link to={`/${toSlug(topic.topic)}/${toSlug(proposal.title)}`}>
-                  <SubHeading>{proposal.title}</SubHeading>
-                </Link>
-                <Body>{proposal.proposal_blurb}</Body>
-                <VoteMeta
-                  verified={proposal.verified}
-                  submitter={proposal.submitted_by.name}
-                  submitterLink={proposal.submitted_by.link}
-                  creationDate={proposal.date}
-                />
-              </ProposalDetails>
-              <div>
-                <WithTally candidate={proposal.source}>
-                  {({
-                    loadingApprovals,
-                    loadingPercentage,
-                    approvals,
-                    percentage
-                  }) => (
-                    <VoteTally
-                      loadingPercentage={loadingPercentage}
-                      loadingApprovals={loadingApprovals}
-                      approvals={approvals}
-                      percentage={percentage}
-                    />
-                  )}
-                </WithTally>
-                <Button>Vote this Proposal</Button>
-              </div>
-            </CardElement>
-          ))}
-        </CollapsableWrapper>
+        {topic.proposals.map(proposal => (
+          <Card.Element key={proposal.title} height={163}>
+            <ProposalDetails>
+              <Link to={`/${toSlug(topic.topic)}/${toSlug(proposal.title)}`}>
+                <SubHeading>{proposal.title}</SubHeading>
+              </Link>
+              <Body>{proposal.proposal_blurb}</Body>
+              <VoteMeta {...proposal} />
+            </ProposalDetails>
+            <div>
+              <WithTally candidate={proposal.source}>
+                {({
+                  loadingApprovals,
+                  loadingPercentage,
+                  approvals,
+                  percentage
+                }) => (
+                  <VoteTally
+                    loadingPercentage={loadingPercentage}
+                    loadingApprovals={loadingApprovals}
+                    approvals={approvals}
+                    percentage={percentage}
+                  />
+                )}
+              </WithTally>
+              <Button>Vote this Proposal</Button>
+            </div>
+          </Card.Element>
+        ))}
       </StyledCard>
     ))}
   </BaseLayout>

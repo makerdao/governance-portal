@@ -1,5 +1,6 @@
 import { createReducer } from "../utils/redux";
-import { getMetamaskNetworkName, web3SetHttpProvider } from "../chain/web3";
+import { getMetamaskNetworkName } from "../chain/web3";
+import { userInit } from "./user";
 
 // Constants ----------------------------------------------
 
@@ -13,12 +14,16 @@ const NOT_AVAILABLE = "metamask/NOT_AVAILABLE";
 // Actions ------------------------------------------------
 
 export const updateMetamaskAccount = () => (dispatch, getState) => {
-  if (window.web3.eth.defaultAccount !== getState().metamask.accountAddress) {
+  if (
+    window.web3.eth.defaultAccount !== undefined &&
+    window.web3.eth.defaultAccount !== getState().metamask.accountAddress
+  ) {
     const accountAddress = window.web3.eth.defaultAccount;
     dispatch({
       type: UPDATE_ACCOUNT,
       payload: { address: accountAddress }
     });
+    dispatch(userInit(accountAddress));
   }
   setTimeout(() => dispatch(updateMetamaskAccount()), 100);
 };

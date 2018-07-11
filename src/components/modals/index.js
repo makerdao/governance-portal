@@ -4,10 +4,12 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 
 import { modalClose } from "../../reducers/modal";
-import ProxySetup from "./ProxySetup";
+import { createProxy } from "../../reducers/proxy";
+import { userSendMkrToProxy } from "../../reducers/user";
+import ProxySetup from "./PoxySetup/index";
 import close from "../../imgs/close.svg";
 
-import { colors, transitions } from "../../styles";
+import { colors, transitions } from "../../theme";
 
 const Column = styled.div`
   position: relative;
@@ -108,12 +110,15 @@ class Modal extends Component {
 
 Modal.propTypes = {};
 
-const reduxProps = ({ modal, metamask }) => ({
+const reduxProps = ({ modal, metamask, proxy, user }) => ({
   modal: modal.modal,
-  account: metamask.accountAddress
+  account: metamask.accountAddress,
+  proxyCreationTxHash: proxy.txHash,
+  mkrBalance: user.mkr,
+  mkrToProxyTxHash: user.txHash
 });
 
 export default connect(
   reduxProps,
-  { modalClose }
+  { modalClose, createProxy, userSendMkrToProxy }
 )(Modal);

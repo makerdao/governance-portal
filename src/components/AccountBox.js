@@ -6,7 +6,7 @@ import Blockies from "react-blockies";
 import ClickOutside from "./ClickOutside";
 import { cutMiddle } from "../utils/misc";
 import arrow from "../imgs/arrow.svg";
-import { fonts, colors, shadows } from "../styles";
+import { fonts, colors, shadows } from "../theme";
 
 const StyledArrow = styled.img`
   position: absolute;

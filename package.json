@@ -4,7 +4,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ledgerhq/hw-app-eth": "^4.19.0",
     "bignumber.js": "^7.2.1",
+    "ethereumjs-tx": "^1.3.6",
+    "hdkey": "^1.0.0",
     "prop-types": "^15.6.2",
     "ramda": "^0.25.0",
     "react": "^16.4.1",

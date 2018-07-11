@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
-import { colors, fonts } from "../styles";
+import { colors, fonts } from "../theme";
 import Modals from "../components/modals";
 import Footer from "../components/Footer";
 import AccountBox from "../components/AccountBox";

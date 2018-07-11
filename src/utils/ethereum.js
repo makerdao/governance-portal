@@ -102,3 +102,31 @@ export const isZeroAddress = address => !BigNumber(address).toNumber();
  * @return {String} 0x hex
  */
 export const stringToHex = string => BigNumber(`${string}`).toString(16);
+
+/**
+ * @desc returns whether txString is a syntactically correct tx
+ * @param  {String} txString
+ * @return {Boolean}
+ */
+export const validTxString = txString => /^0x([A-Fa-f0-9]{64})$/.test(txString);
+
+/**
+ * @desc returns whether txString is a syntactically correct address
+ * @param  {String} addressString
+ * @return {Boolean}
+ */
+export const validAddressString = addressString =>
+  /^0x([A-Fa-f0-9]{40})$/.test(addressString);
+
+/**
+ * @desc get etherescan address link
+ * @param  {String} address
+ * @return {String} link
+ */
+export const ethScanLink = string => {
+  if (validAddressString(string))
+    return `https://etherscan.io/address/${string}`;
+  else if (validTxString(string)) return `https://etherscan.io/tx/${string}`;
+  // TODO maybe log to raven instead of throwing
+  else throw new Error("Invalid address string; can't create etherescan link");
+};

@@ -47,19 +47,36 @@ export const kFormat = n => {
  * @param {Number} time
  * @return {Promise}
  */
-Promise.wait = time => new Promise(resolve => setTimeout(resolve, time || 0));
+export const promiseWait = time =>
+  new Promise(resolve => setTimeout(resolve, time || 0));
 
 /**
  * @desc retry an async function a set number of times
  * @param  {Object} { times, fn, delay }
  * @return {Promise}
  */
-Promise.retry = ({ times, fn, delay }) => {
-  console.log(fn, "fn");
+export const promiseRetry = ({ times, fn, delay }) => {
   return fn().catch(
     err =>
       times > 0
-        ? Promise.wait(delay).then(() => Promise.retry(times - 1, fn, delay))
+        ? promiseWait(delay).then(() =>
+            promiseRetry({ times: times - 1, fn, delay })
+          )
         : Promise.reject(err)
   );
+};
+
+/**
+ * @desc format date string to this app's standard display formate
+ * @param  {String} dateString any parsable date string
+ * @return {String} a date string like: shortMonthName dayNum, year
+ */
+export const formatDate = dateString => {
+  const date = new Date(dateString);
+  const options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  };
+  return new Intl.DateTimeFormat("en-US", options).format(date);
 };
