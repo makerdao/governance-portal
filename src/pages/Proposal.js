@@ -207,7 +207,7 @@ class Proposal extends Component {
                   />
                 )}
               </WithTally>
-              <Button wide={true}>Vote this Proposal</Button>
+              <Button wide={true}>Vote for this Proposal</Button>
             </div>
           </StyledTop>
         </WhiteBackground>

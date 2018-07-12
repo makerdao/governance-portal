@@ -151,7 +151,7 @@ const Topic = ({ match, topics }) => {
                   />
                 )}
               </WithTally>
-              <Button>Vote this Proposal</Button>
+              <Button>Vote for this Proposal</Button>
             </div>
           </CardElement>
         ))}

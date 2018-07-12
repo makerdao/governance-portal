@@ -137,7 +137,7 @@ const Timeline = ({ modalOpen, data }) => (
             <StyledAnchor noBorder>What is the Root Proposal?</StyledAnchor>
           </div>
         </div>
-        <Button>Vote this Proposal</Button>
+        <Button>Vote for this Proposal</Button>
       </RootWrapper>
     </StyledCard>
     {data.map(topic => (
@@ -179,7 +179,7 @@ const Timeline = ({ modalOpen, data }) => (
                     />
                   )}
                 </WithTally>
-                <Button>Vote this Proposal</Button>
+                <Button>Vote for this Proposal</Button>
               </div>
             </CardElement>
           ))}
