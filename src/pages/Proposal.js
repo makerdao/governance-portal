@@ -5,7 +5,6 @@ import styled from "styled-components";
 import ReactMarkdown from "react-markdown";
 
 import { toSlug } from "../utils/misc";
-import BaseLayout from "../layouts/base";
 import VoteMeta from "../components/VoteMeta";
 import VoteTally from "../components/VoteTally";
 import Button from "../components/Button";
@@ -65,7 +64,7 @@ const StyledCenter = styled.div`
   max-width: 720px;
 `;
 
-const ConentWrapper = styled.div`
+const ContentWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -177,7 +176,7 @@ class Proposal extends Component {
     const { voteState, voteStateFetching } = this.props;
     const supporters = voteState[proposal.source] || null;
     return (
-      <BaseLayout>
+      <React.Fragment>
         <WhiteBackground>
           <StyledTop>
             <StyledCenter>
@@ -211,7 +210,7 @@ class Proposal extends Component {
             </div>
           </StyledTop>
         </WhiteBackground>
-        <ConentWrapper>
+        <ContentWrapper>
           <DescriptionCard>
             {!!markdown ? (
               <ReactMarkdown
@@ -258,8 +257,8 @@ class Proposal extends Component {
               </SupporterWrapper>
             </SupporterCard>
           </RightPanels>
-        </ConentWrapper>
-      </BaseLayout>
+        </ContentWrapper>
+      </React.Fragment>
     );
   }
 }
