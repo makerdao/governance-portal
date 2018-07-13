@@ -1,10 +1,5 @@
 import React from "react";
-import BaseLayout from "../layouts/base";
 
-const NotFound = () => (
-  <BaseLayout>
-    <div>NotFound</div>
-  </BaseLayout>
-);
+const NotFound = () => <div>NotFound</div>;
 
 export default NotFound;

@@ -6,7 +6,6 @@ import ReactMarkdown from "react-markdown";
 
 import { toSlug } from "../utils/misc";
 import { ethScanLink } from "../utils/ethereum";
-import BaseLayout from "../layouts/base";
 import VoteMeta from "../components/VoteMeta";
 import VoteTally from "../components/VoteTally";
 import Button from "../components/Button";
@@ -178,7 +177,7 @@ class Proposal extends Component {
     const { voteState, voteStateFetching } = this.props;
     const supporters = voteState[proposal.source] || null;
     return (
-      <BaseLayout>
+      <React.Fragment>
         <WhiteBackground>
           <StyledTop>
             <StyledCenter>
@@ -253,7 +252,7 @@ class Proposal extends Component {
             </SupporterCard>
           </RightPanels>
         </ConentWrapper>
-      </BaseLayout>
+      </React.Fragment>
     );
   }
 }

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import { withRouter } from "react-router";
 
 import { colors, fonts } from "../theme";
 import Modals from "../components/modals";
@@ -206,7 +207,8 @@ const reduxProps = ({ metamask, accounts }) => ({
   allAccounts: accounts.allAccounts
 });
 
-export default connect(
+const connector = connect(
   reduxProps,
   { setActiveAccount }
-)(BaseLayout);
+);
+export default withRouter(connector(BaseLayout));

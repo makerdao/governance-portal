@@ -11,7 +11,6 @@ import Button from "../components/Button";
 import Card from "../components/Card";
 import VoteTally from "../components/VoteTally";
 import WithTally from "../components/hocs/WithTally";
-import BaseLayout from "../layouts/base";
 import { toSlug } from "../utils/misc";
 import { colors, fonts } from "../theme";
 
@@ -99,7 +98,7 @@ const Topic = ({ match, topics }) => {
   if (topic === undefined) return <NotFound />;
   const { topic: topicTitle, active, proposals } = topic;
   return (
-    <BaseLayout>
+    <React.Fragment>
       <WhiteBackground>
         <StyledTop>
           <StyledCenter>
@@ -151,7 +150,7 @@ const Topic = ({ match, topics }) => {
           </Card.Element>
         ))}
       </Card>
-    </BaseLayout>
+    </React.Fragment>
   );
 };
 
