@@ -80,3 +80,11 @@ export const formatDate = dateString => {
   };
   return new Intl.DateTimeFormat("en-US", options).format(date);
 };
+
+/**
+ * @desc capitalize this first letter and lowercase the rest
+ * @param  {String}
+ * @return {String}
+ */
+export const firstLetterCapital = string =>
+  string.charAt(0).toUpperCase() + string.slice(1).toLocaleLowerCase();

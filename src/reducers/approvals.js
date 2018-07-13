@@ -36,7 +36,7 @@ export const initApprovalsFetch = proposals => dispatch => {
 // Reducer ------------------------------------------------
 
 const initialState = {
-  fetching: false,
+  fetching: true,
   approvals: {}
 };
 

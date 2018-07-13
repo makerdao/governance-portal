@@ -28,7 +28,7 @@ export const voteTallyInit = () => dispatch => {
 // Reducer ------------------------------------------------
 
 const initialState = {
-  fetching: false,
+  fetching: true,
   tally: {}
 };
 

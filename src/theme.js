@@ -4,6 +4,8 @@ export const colors = {
   header: "31, 44, 60",
   background: "246,248,249",
   light_grey: "	234, 239, 247",
+  box_dark: "5, 60, 75",
+  box_light: "67, 83, 103",
   dark_grey: "39, 39, 39",
   dark: "12, 12, 13",
   black: "0, 0, 0"

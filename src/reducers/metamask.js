@@ -1,6 +1,8 @@
 import { createReducer } from "../utils/redux";
-import { getMetamaskNetworkName } from "../chain/web3";
+import { getMetamaskNetworkName, web3SetHttpProvider } from "../chain/web3";
 import { updateAccount, addAccount } from "./accounts";
+import { voteTallyInit } from "./tally";
+import { topicsFetchInit } from "./topics";
 
 // Constants ----------------------------------------------
 
@@ -37,7 +39,9 @@ export const updateMetamaskNetwork = () => (dispatch, getState) => {
   getMetamaskNetworkName()
     .then(network => {
       if (network !== getState().metamask.network) {
-        // web3SetHttpProvider(`https://${network}.infura.io/`);
+        if (network === "kovan")
+          web3SetHttpProvider(`https://${network}.infura.io/`);
+        else web3SetHttpProvider(`https://mainnet.infura.io/`);
         dispatch({ type: UPDATE_NETWORK, payload: { network } });
       }
       setTimeout(() => dispatch(updateMetamaskNetwork()), 2500);
@@ -54,17 +58,30 @@ export const metamaskConnectInit = () => dispatch => {
     getMetamaskNetworkName()
       .then(network => {
         dispatch({ type: CONNECT_SUCCESS, payload: { network } });
-        // web3SetHttpProvider(`https://${network}.infura.io/`);
+        if (network === "kovan")
+          web3SetHttpProvider(`https://${network}.infura.io/`);
+        else web3SetHttpProvider(`https://mainnet.infura.io/`);
         dispatch(updateMetamaskAccount());
         dispatch(updateMetamaskNetwork());
+        dispatch(voteTallyInit());
+        dispatch(topicsFetchInit());
       })
       .catch(error => {
         // TODO: notify user or throw to a fallback component
         console.error(error);
         dispatch({ type: CONNECT_FAILURE });
+
+        // we try to fetch mainnet state if we failed to connect to MetaMask
+        web3SetHttpProvider(`https://mainnet.infura.io/`);
+        dispatch(voteTallyInit());
+        dispatch(topicsFetchInit());
       });
   } else {
     dispatch({ type: NOT_AVAILABLE });
+    // we fetch mainnet state if MetaMask is unavailable
+    web3SetHttpProvider(`https://mainnet.infura.io/`);
+    dispatch(voteTallyInit());
+    dispatch(topicsFetchInit());
   }
 };
 
@@ -91,10 +108,12 @@ const metamask = createReducer(initialState, {
   }),
   [CONNECT_FAILURE]: () => ({
     ...initialState,
+    fetching: false,
     web3Available: true
   }),
   [NOT_AVAILABLE]: () => ({
-    ...initialState
+    ...initialState,
+    fetching: false
   }),
   [UPDATE_ACCOUNT]: (state, { payload }) => ({
     ...state,

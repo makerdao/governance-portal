@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { colors, fonts } from "../theme";
 import Modals from "../components/modals";
 import Footer from "../components/Footer";
+import Loader from "../components/Loader";
 import AccountBox from "../components/AccountBox";
 import logo from "../imgs/logo.svg";
 
@@ -119,7 +120,12 @@ const BorderLine = styled.div`
   background-color: #445162;
 `;
 
-const BaseLayout = ({ children, web3Available, allAccounts }) => (
+const BaseLayout = ({
+  children,
+  web3Available,
+  allAccounts,
+  metamaskFetching
+}) => (
   <StyledLayout>
     <StyledHeader>
       <HeaderTop>
@@ -157,18 +163,30 @@ const BaseLayout = ({ children, web3Available, allAccounts }) => (
           <StyledLink to="/">
             <HeaderBottomLeft>Governance</HeaderBottomLeft>
           </StyledLink>
-          <AccountBox web3Available={web3Available} accounts={allAccounts} />
+          <AccountBox
+            web3Available={web3Available}
+            accounts={allAccounts}
+            fetching={metamaskFetching}
+          />
         </HeaderBottomContent>
       </HeaderBottom>
     </StyledHeader>
     <AppWrapper>
       <StyledColumn>
-        <StyledContent>{children}</StyledContent>
+        <StyledContent>
+          {metamaskFetching ? (
+            <div style={{ marginTop: "150px" }}>
+              <Loader size={20} color="header" background="background" />
+            </div>
+          ) : (
+            children
+          )}
+        </StyledContent>
         {/* <Footer /> */}
         <Padding />
       </StyledColumn>
     </AppWrapper>
-    <Modals modal="PROXY_SETUP" />
+    <Modals />
   </StyledLayout>
 );
 
@@ -181,6 +199,7 @@ BaseLayout.propTypes = {
 const reduxProps = ({ metamask, accounts }) => ({
   account: metamask.accountAddress,
   web3Available: metamask.web3Available,
+  metamaskFetching: metamask.fetching,
   allAccounts: accounts.allAccounts
 });
 
