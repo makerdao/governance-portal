@@ -13,7 +13,7 @@ export default {
       proposals: [
         {
           title:
-            "Vote YES to the five core principals of the Maker Governance philosophy",
+            "Vote YES to the five core principles of the Maker Governance philosophy",
           proposal_blurb: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vehicula sapien mi, vitae suscipit felis pellentesque a. Aenean condimentum vitae neque quis sagittis. Duis nec purus neque. Duis quis ultricies magna, in facilisis nisl. Suspendisse aliquet nisl et nisl mattis dictum. Donec varius sed lacus sit amet mollis. `,
           about: require("./demo.md"),
           source: "0x8ffb52208c08d4254e06737be0e1f0fe271b76b2",
@@ -32,7 +32,7 @@ export default {
         },
         {
           title:
-            "Vote NO to the five core principals of the Maker Governance philosophy",
+            "Vote NO to the five core principles of the Maker Governance philosophy",
           proposal_blurb: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vehicula sapien mi, vitae suscipit felis pellentesque a. Aenean condimentum vitae neque quis sagittis. Duis nec purus neque. Duis quis ultricies magna, in facilisis nisl. Suspendisse aliquet nisl et nisl mattis dictum. Donec varius sed lacus sit amet mollis. `,
           about: require("./demo.md"),
           source: "0x0000000000000000000000000000000000000000",
@@ -98,7 +98,7 @@ export default {
       proposals: [
         {
           title:
-            "Vote YES to the five core principals of the Maker Governance philosophy",
+            "Vote YES to the five core principles of the Maker Governance philosophy",
           proposal_blurb: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vehicula sapien mi, vitae suscipit felis pellentesque a. Aenean condimentum vitae neque quis sagittis. Duis nec purus neque. Duis quis ultricies magna, in facilisis nisl. Suspendisse aliquet nisl et nisl mattis dictum. Donec varius sed lacus sit amet mollis. `,
           about: require("./demo.md"),
           source: "0xbf1182cae267143c281534364c1f2637420baf59",
@@ -117,7 +117,7 @@ export default {
         },
         {
           title:
-            "Vote NO to the five core principals of the Maker Governance philosophy",
+            "Vote NO to the five core principles of the Maker Governance philosophy",
           proposal_blurb: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vehicula sapien mi, vitae suscipit felis pellentesque a. Aenean condimentum vitae neque quis sagittis. Duis nec purus neque. Duis quis ultricies magna, in facilisis nisl. Suspendisse aliquet nisl et nisl mattis dictum. Donec varius sed lacus sit amet mollis. `,
           about: require("./demo.md"),
           source: "0x1c07da32ddbbb4e7d2b663f4b8c9fc2f54b6210a",
