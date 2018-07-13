@@ -58,9 +58,7 @@ const ProgressTabs = ({ progress }) => (
 class ProxySetup extends Component {
   state = {
     step: 1,
-    mkrAmountInput: "",
-    hot: "",
-    cold: ""
+    mkrAmountInput: ""
   };
 
   nextStep = () => {
@@ -69,13 +67,6 @@ class ProxySetup extends Component {
 
   updateInputValue = evt => {
     this.setState({ mkrAmountInput: evt.target.value });
-  };
-  updateInputValueHot = evt => {
-    this.setState({ hot: evt.target.value });
-  };
-
-  updateInputValueCold = evt => {
-    this.setState({ cold: evt.target.value });
   };
 
   componentDidUpdate(prevProps) {

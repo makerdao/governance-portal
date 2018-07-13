@@ -1,5 +1,5 @@
 import { createReducer } from "../utils/redux";
-import { buildVoteProxy } from "../chain/send";
+// import { buildVoteProxy } from "../chain/send";
 
 // Constants ----------------------------------------------
 
@@ -8,9 +8,9 @@ const CREATE_PROXY = "proxy/CREATE_PROXY";
 // Actions ------------------------------------------------
 
 export const createProxy = ({ cold, hot }) => dispatch => {
-  buildVoteProxy({ cold, hot }).then(txHash => {
-    dispatch({ type: CREATE_PROXY, payload: { txHash } });
-  });
+  // buildVoteProxy({ cold, hot }).then(txHash => {
+  //   dispatch({ type: CREATE_PROXY, payload: { txHash } });
+  // });
 };
 
 // Reducer ------------------------------------------------

@@ -90,6 +90,22 @@ export const netIdToName = id => {
 };
 
 /**
+ * @desc get network id
+ * @param  {String} name
+ * @return {Number}
+ */
+export const netNameToId = name => {
+  switch (name) {
+    case "mainnet":
+      return 1;
+    case "kovan":
+      return 42;
+    default:
+      return "";
+  }
+};
+
+/**
  * @desc given address is "zero" address
  * @param  {String} address
  * @return {Boolean}

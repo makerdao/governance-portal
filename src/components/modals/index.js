@@ -6,7 +6,9 @@ import styled from "styled-components";
 import { modalClose } from "../../reducers/modal";
 import { createProxy } from "../../reducers/proxy";
 import { userSendMkrToProxy } from "../../reducers/user";
-import ProxySetup from "./PoxySetup/index";
+import { sendVote } from "../../reducers/transactions";
+import ProxySetup from "./PoxySetup";
+import Vote from "./Vote";
 import close from "../../imgs/close.svg";
 
 import { colors, transitions } from "../../theme";
@@ -75,12 +77,14 @@ class Modal extends Component {
       case "PROXY_SETUP":
         window.scrollTo(50, 50);
         return <ProxySetup {...this.props} />;
+      case "VOTE":
+        return <Vote {...this.props} />;
       default:
         return <div />;
     }
   };
 
-  render = () => {
+  render() {
     // const body = document.body || document.getElementsByTagName("body")[0];
 
     // if (this.props.modal) {
@@ -105,13 +109,14 @@ class Modal extends Component {
         </StyledContainer>
       </StyledLightbox>
     );
-  };
+  }
 }
 
 Modal.propTypes = {};
 
 const reduxProps = ({ modal, metamask, proxy, user }) => ({
   modal: modal.modal,
+  modalProps: modal.modalProps,
   account: metamask.accountAddress,
   proxyCreationTxHash: proxy.txHash,
   mkrBalance: user.mkr,
@@ -120,5 +125,5 @@ const reduxProps = ({ modal, metamask, proxy, user }) => ({
 
 export default connect(
   reduxProps,
-  { modalClose, createProxy, userSendMkrToProxy }
+  { modalClose, createProxy, userSendMkrToProxy, sendVote }
 )(Modal);

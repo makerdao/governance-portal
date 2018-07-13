@@ -119,7 +119,7 @@ const BorderLine = styled.div`
   background-color: #445162;
 `;
 
-const BaseLayout = ({ children, account, web3Available }) => (
+const BaseLayout = ({ children, web3Available, allAccounts }) => (
   <StyledLayout>
     <StyledHeader>
       <HeaderTop>
@@ -157,10 +157,7 @@ const BaseLayout = ({ children, account, web3Available }) => (
           <StyledLink to="/">
             <HeaderBottomLeft>Governance</HeaderBottomLeft>
           </StyledLink>
-          <AccountBox
-            web3Available={web3Available}
-            accounts={[{ address: account, type: "MetaMask" }]}
-          />
+          <AccountBox web3Available={web3Available} accounts={allAccounts} />
         </HeaderBottomContent>
       </HeaderBottom>
     </StyledHeader>
@@ -181,9 +178,10 @@ BaseLayout.propTypes = {
   web3Available: PropTypes.bool
 };
 
-const reduxProps = ({ metamask }) => ({
+const reduxProps = ({ metamask, accounts }) => ({
   account: metamask.accountAddress,
-  web3Available: metamask.web3Available
+  web3Available: metamask.web3Available,
+  allAccounts: accounts.allAccounts
 });
 
 export default connect(

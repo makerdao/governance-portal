@@ -1,14 +1,13 @@
 import AppEth from "@ledgerhq/hw-app-eth";
 import HookedWalletSubprovider from "web3-provider-engine/dist/es5/subproviders/hooked-wallet";
-import { removeHexPrefix } from "../utils/ethereum";
+import { removeHexPrefix, netNameToId } from "../utils/ethereum";
 import EthereumTx from "ethereumjs-tx";
-import AddressGenerator from "../utils/AddressGenerator";
+import TransportU2F from "@ledgerhq/hw-transport-u2f";
 
 const allowedHdPaths = ["44'/1'", "44'/60'", "44'/61'"];
 
 function makeError(msg, id) {
   const err = new Error(msg);
-  // $FlowFixMe
   err.id = id;
   return err;
 }
@@ -32,13 +31,16 @@ function obtainPathComponentsFromDerivationPath(derivationPath) {
 const defaultOptions = {
   networkId: 1, // mainnet
   path: "44'/60'/0'/0", // ledger default derivation path
-  askConfirm: false,
   accountsLength: 1,
-  accountsOffset: 0
+  accountsOffset: 0,
+  getTransport: () => TransportU2F.create()
 };
 
-export default function createLedgerSubprovider(getTransport, options) {
-  const { networkId, path, askConfirm, accountsLength, accountsOffset } = {
+// ethereumNetworks[network].id;
+export function createLedgerSubprovider(options) {
+  if (options !== undefined && options.networkName !== undefined)
+    options.networkId = netNameToId(options.networkName);
+  const { networkId, path, accountsLength, accountsOffset, getTransport } = {
     ...defaultOptions,
     ...options
   };
@@ -59,15 +61,10 @@ export default function createLedgerSubprovider(getTransport, options) {
     const transport = await getTransport();
     try {
       const eth = new AppEth(transport);
-      const addressGenerator = await new AddressGenerator(
-        await eth.getAddress(pathComponents.basePath, askConfirm, true)
-      );
-
       const addresses = {};
       for (let i = accountsOffset; i < accountsOffset + accountsLength; i++) {
-        const path =
-          pathComponents.basePath + (pathComponents.index + i).toString();
-        const address = addressGenerator.getAddressString(i);
+        const path = `${pathComponents.basePath}${pathComponents.index + i}`;
+        const { address = "" } = await eth.getAddress(path);
         addresses[path] = address;
         addressToPathMap[address.toLowerCase()] = path;
       }
@@ -149,12 +146,10 @@ export default function createLedgerSubprovider(getTransport, options) {
         .then(res => callback(null, res))
         .catch(err => callback(err, null));
     },
-    signTransaction: (txData, callback) => {
-      signTransaction(txData)
-        .then(res => callback(null, res))
-        .catch(err => callback(err, null));
-    }
+    signTransaction: txData => signTransaction(txData)
   });
 
   return subprovider;
 }
+
+export default createLedgerSubprovider();

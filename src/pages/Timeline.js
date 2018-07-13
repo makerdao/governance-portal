@@ -168,7 +168,18 @@ const Timeline = ({ modalOpen, data }) => (
                   />
                 )}
               </WithTally>
-              <Button>Vote this Proposal</Button>
+              <Button
+                onClick={() =>
+                  modalOpen("VOTE", {
+                    proposal: {
+                      address: proposal.source,
+                      title: proposal.title
+                    }
+                  })
+                }
+              >
+                Vote this Proposal
+              </Button>
             </div>
           </Card.Element>
         ))}

@@ -4,7 +4,7 @@ import { netIdToName } from "../utils/ethereum";
 import addresses from "./addresses.json";
 
 export const web3Instance = new Web3(
-  new Web3.providers.HttpProvider(`https://mainnet.infura.io/`)
+  new Web3.providers.HttpProvider(`https://kovan.infura.io/`)
 );
 // mainnet
 
@@ -83,6 +83,15 @@ export const getMethodSig = methodString =>
  */
 export const getTransactionCount = address =>
   web3Instance.eth.getTransactionCount(address, "pending");
+
+/**
+ * @desc get Encodes a parameter based on its type to its ABI representation.
+ * @param {String} type
+ * @param {String} param
+ * @return {Promise}
+ */
+export const encodeParameter = (type, param) =>
+  web3Instance.eth.abi.encodeParameter(type, param);
 
 /**
  * @async @desc get transaction details

@@ -6,7 +6,9 @@ import {
   getTxDetails,
   getMethodSig,
   getProxyFactory,
-  getMkrAddress
+  getMkrAddress,
+  getChief,
+  encodeParameter
 } from "./web3";
 import { getProxyStatus } from "./read";
 import {
@@ -15,6 +17,7 @@ import {
   stringToHex,
   etherToWei
 } from "../utils/ethereum";
+import ledgerSubprovider from "./ledger";
 
 /**
  * @desc metamask send transaction
@@ -56,6 +59,15 @@ export const web3MetamaskSendTransaction = transaction =>
       .catch(error => reject(error));
   });
 
+export const sendTransactionMulti = (type, tranasction) => {
+  switch (type) {
+    case "METAMASK":
+      return web3MetamaskSendTransaction(tranasction);
+    case "LEDGER":
+      return ledgerSubprovider.signTransaction(tranasction);
+  }
+};
+
 /**
  * @async @desc metamask send transaction
  * @param  {Object}  wallets { cold, hot }
@@ -79,7 +91,6 @@ export const buildVoteProxy = async ({ cold, hot }) => {
  * @return {Promise} tx
  */
 export const sendMkrToProxy = async ({ from, value }) => {
-  console.log("sending", value, "mkr ");
   const { proxy } = await getProxyStatus(from);
   const mkrToken = await getMkrAddress();
   const methodSig = getMethodSig("transfer(address,uint256)");
@@ -91,4 +102,21 @@ export const sendMkrToProxy = async ({ from, value }) => {
   });
   const tx = { to: mkrToken, from, data: callData };
   return web3MetamaskSendTransaction(tx);
+};
+
+/**
+ * @async @desc vote for a single proposal (in the form of an address)
+ * @param {Object} voteDetails { acccount: { address, type }, proposal }
+ * @return {Promise} tx
+ */
+export const voteProposal = async ({ account, proposal }) => {
+  const chief = await getChief();
+  const methodSig = getMethodSig("vote(address[])");
+  const proposalParam = encodeParameter("address[]", [proposal]);
+  const callData = generateCallData({
+    method: methodSig,
+    args: [removeHexPrefix(proposalParam)]
+  });
+  const tx = { to: chief, from: account.address, data: callData };
+  return sendTransactionMulti(account.type, tx);
 };
