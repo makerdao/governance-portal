@@ -1,4 +1,3 @@
-import { connect } from "react-redux";
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
@@ -163,9 +162,4 @@ AccountBox.defaultProps = {
   dark: false
 };
 
-const mapStateToProps = ({ metamask }) => ({
-  account: metamask.accountAddress,
-  web3Available: metamask.web3Available
-});
-
-export default connect(mapStateToProps)(AccountBox);
+export default AccountBox;

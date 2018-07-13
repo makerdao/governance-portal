@@ -7,6 +7,7 @@ import VoteMeta from "../components/VoteMeta";
 import VoteTally from "../components/VoteTally";
 import WithTally from "../components/hocs/WithTally";
 import Button from "../components/Button";
+import BaseLayout from "../layouts/base";
 import Card, { CardTop, CardElement } from "../components/Card";
 import { toSlug } from "../utils/misc";
 import { fonts, transitions } from "../styles";
@@ -113,7 +114,7 @@ const CollapsableWrapper = styled.div`
 `;
 
 const Timeline = ({ modalOpen, data }) => (
-  <React.Fragment>
+  <BaseLayout>
     <Banner>
       <BannerHeader>Welcome to the governance voting dashboard </BannerHeader>
       <BannerBody>
@@ -185,7 +186,7 @@ const Timeline = ({ modalOpen, data }) => (
         </CollapsableWrapper>
       </StyledCard>
     ))}
-  </React.Fragment>
+  </BaseLayout>
 );
 
 const reduxProps = ({ topics }) => ({

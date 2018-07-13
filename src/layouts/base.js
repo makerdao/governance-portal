@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
 import { colors, fonts } from "../styles";
@@ -174,4 +175,18 @@ const BaseLayout = ({ children, account, web3Available }) => (
   </StyledLayout>
 );
 
-export default BaseLayout;
+BaseLayout.propTypes = {
+  children: PropTypes.node.isRequired,
+  account: PropTypes.string,
+  web3Available: PropTypes.bool
+};
+
+const reduxProps = ({ metamask }) => ({
+  account: metamask.accountAddress,
+  web3Available: metamask.web3Available
+});
+
+export default connect(
+  reduxProps,
+  {}
+)(BaseLayout);

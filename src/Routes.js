@@ -8,7 +8,6 @@ import {
 import { ThemeProvider } from "styled-components";
 
 import theme from "./theme";
-import BaseLayout from "./layouts/base";
 import Timeline from "./pages/Timeline";
 import Topic from "./pages/Topic";
 import Proposal from "./pages/Proposal";
@@ -34,17 +33,12 @@ class App extends Component {
         <Router>
           <ScrollToTop>
             <div className="App">
-              <BaseLayout>
-                <Switch>
-                  <Route exact path="/" component={Timeline} />
-                  <Route path="/not-found" component={NotFound} />
-                  <Route exact path="/:topicSlug" component={Topic} />
-                  <Route
-                    path="/:topicSlug/:proposalSlug"
-                    component={Proposal}
-                  />
-                </Switch>
-              </BaseLayout>
+              <Switch>
+                <Route exact path="/" component={Timeline} />
+                <Route path="/not-found" component={NotFound} />
+                <Route path="/:topicSlug/:proposalSlug" component={Proposal} />
+                <Route path="/:topicSlug" component={Topic} />
+              </Switch>
             </div>
           </ScrollToTop>
         </Router>
