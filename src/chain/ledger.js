@@ -61,11 +61,11 @@ export function createLedgerSubprovider(options) {
     const transport = await getTransport();
     try {
       const eth = new AppEth(transport);
-      const addresses = {};
+      const addresses = [];
       for (let i = accountsOffset; i < accountsOffset + accountsLength; i++) {
         const path = `${pathComponents.basePath}${pathComponents.index + i}`;
         const { address = "" } = await eth.getAddress(path);
-        addresses[path] = address;
+        addresses.push(address);
         addressToPathMap[address.toLowerCase()] = path;
       }
       return addresses;
@@ -136,16 +136,8 @@ export function createLedgerSubprovider(options) {
   }
 
   const subprovider = new HookedWalletSubprovider({
-    getAccounts: callback => {
-      getAccounts()
-        .then(res => callback(null, Object.values(res)))
-        .catch(err => callback(err, null));
-    },
-    signPersonalMessage: (txData, callback) => {
-      signPersonalMessage(txData)
-        .then(res => callback(null, res))
-        .catch(err => callback(err, null));
-    },
+    getAccounts: () => getAccounts(),
+    signPersonalMessage: txData => signPersonalMessage(txData),
     signTransaction: txData => signTransaction(txData)
   });
 

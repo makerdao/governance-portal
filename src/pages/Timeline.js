@@ -139,7 +139,7 @@ const Timeline = ({ modalOpen, data }) => (
       <StyledCard key={topic.topic}>
         <Card.Top
           active={topic.active}
-          topic={topic.topic}
+          topicTitle={topic.topic}
           collapsable={true}
           startCollapsed={false}
         />

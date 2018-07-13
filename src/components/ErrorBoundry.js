@@ -17,14 +17,6 @@ export const FillSpaceError = styled.div`
   border-radius: 12px;
 `;
 
-export const LargeEmoji = styled.span`
-  text-align: center;
-  display: block;
-  font-size: ${props => (props.small ? "32px" : "56px")};
-  margin-bottom: ${props => (props.small ? "16px" : "24px")};
-  line-height: 1;
-`;
-
 export const Heading = styled.h3`
   font-size: ${props => (props.small ? "18px" : "24px")};
   font-weight: ${props => (props.small ? "500" : "600")};
@@ -54,9 +46,6 @@ class ErrorBoundary extends Component {
     if (this.state.error) {
       return (
         <FillSpaceError>
-          <LargeEmoji role="img" aria-label="Emoji">
-            😌
-          </LargeEmoji>
           <Heading>Something went wrong</Heading>
           <Subheading>
             Sorry about that, the Maker team has been notified and should

@@ -35,7 +35,7 @@ const FooterLink = styled.a`
   opacity: 0.5;
 `;
 
-const Footer = ({}) => (
+const Footer = () => (
   <FooterWrapper>
     <Column>
       <FooterTitle>Learn</FooterTitle>

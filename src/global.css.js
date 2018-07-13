@@ -47,7 +47,7 @@ const globalStyles = `
     -webkit-overflow-scrolling: touch;
   }
   a {
-    color: currentColor;
+    color: #3080ed;
     text-decoration: none;
   }
   a:hover {

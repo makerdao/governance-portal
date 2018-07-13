@@ -99,11 +99,14 @@ export const ledgerSendTransaction = transaction =>
   });
 
 export const sendTransactionMulti = (type, tranasction) => {
+  console.log(type);
   switch (type) {
     case "METAMASK":
       return metamaskSendTx(tranasction);
     case "LEDGER":
       return ledgerSendTransaction(tranasction);
+    default:
+      return metamaskSendTx(tranasction);
   }
 };
 
@@ -165,10 +168,10 @@ export const sendMkrToProxy = async ({ account, value }) => {
  * @param {Object} voteDetails { acccount: { address, type }, proposal }
  * @return {Promise} tx
  */
-export const voteProposal = async ({ account, proposal }) => {
+export const voteProposal = async ({ account, proposalAddress }) => {
   const chief = await getChief();
   const methodSig = getMethodSig("vote(address[])");
-  const proposalParam = encodeParameter("address[]", [proposal]);
+  const proposalParam = encodeParameter("address[]", [proposalAddress]);
   const callData = generateCallData({
     method: methodSig,
     args: [removeHexPrefix(proposalParam)]

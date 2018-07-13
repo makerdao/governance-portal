@@ -5,7 +5,7 @@ import {
   ProgressTabsWrapper,
   TabsTitle,
   TabsTitleWrapper
-} from "./style";
+} from "../shared/styles";
 
 const ProgressTabs = ({ progress }) => (
   <ProgressTabsWrapper>

@@ -33,4 +33,8 @@ OutsideClickHandler.propTypes = {
   onOutsideClick: PropTypes.func.isRequired
 };
 
+OutsideClickHandler.defaultProps = {
+  onOutsideClick: () => {}
+};
+
 export default OutsideClickHandler;

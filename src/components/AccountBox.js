@@ -169,13 +169,15 @@ class AccountBox extends Component {
 AccountBox.propTypes = {
   accounts: PropTypes.array,
   dark: PropTypes.bool,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
+  fetching: PropTypes.bool
 };
 
 AccountBox.defaultProps = {
   accounts: [],
   dark: false,
-  onChange: () => {}
+  onChange: () => {},
+  fetching: false
 };
 
 export default AccountBox;

@@ -10,7 +10,6 @@ import { isMobile } from "./utils/misc";
 import Router from "./Routes";
 import Init from "./Init";
 import "./global.css.js";
-import { getHat } from "./chain/read";
 
 const store = createStore(
   rootReducer,

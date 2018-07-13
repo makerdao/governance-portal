@@ -9,21 +9,15 @@ const VerifiedMark = styled.div`
   height: 20px;
   margin-top: 1px;
   width: 26px;
-  background-repeat: no-repeat;
-  background-image: url(${verified});
+  background: url(${verified}) no-repeat;
 `;
 
-const Creation = styled.div`
-  color: #30bd9f;
+const Created = styled.div`
+  color: ${({ theme }) => theme.text.green};
   &::before {
-    color: #848484;
+    color: ${({ theme }) => theme.text.dim_grey};
     content: "Created ";
   }
-`;
-
-const StyledAnchor = styled.a`
-  color: #3080ed;
-  cursor: pointer;
 `;
 
 const Footer = styled.div`
@@ -35,19 +29,19 @@ const Verification = styled.div`
   &::after {
     content: "   •   ";
     white-space: pre;
-    color: #c4c4c4;
+    color: ${({ theme }) => theme.text.dark_default};
   }
 `;
 
 const Submitter = styled.div`
   &::before {
-    color: #848484;
+    color: ${({ theme }) => theme.text.dim_grey};
     content: "Submitted by ";
   }
   &::after {
     content: "   •   ";
     white-space: pre;
-    color: #c4c4c4;
+    color: ${({ theme }) => theme.text.dark_default};
   }
 `;
 
@@ -60,11 +54,11 @@ const VoteMeta = ({ verified, submitted_by, date, ...props }) => (
       </Fragment>
     ) : null}
     <Submitter>
-      <StyledAnchor href={submitted_by.link} target="_blank">
+      <a href={submitted_by.link} target="_blank">
         {submitted_by.name}
-      </StyledAnchor>
+      </a>
     </Submitter>
-    <Creation>{formatDate(date)}</Creation>
+    <Created>{formatDate(date)}</Created>
   </Footer>
 );
 

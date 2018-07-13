@@ -1,30 +1,12 @@
 import React, { Fragment, Component } from "react";
 
 import {
-  StyledContainer,
-  StyledCenter,
   StyledTitle,
   StyledBlurb,
   StyledTop,
-  Column,
   StyledAnchor,
-  CircledNum,
-  Section,
-  GuideWrapper,
-  Guide,
-  GuideTitle,
-  GuideInfo,
-  SetupLater,
-  InfoBox,
-  InfoBoxSection,
-  InfoBoxHeading,
-  InfoBoxContent,
-  ProgressTabsWrapper,
-  TabsTitle,
-  TabsTitleWrapper,
-  TxHash,
   Styledinput
-} from "./style";
+} from "../shared/styles";
 import Button from "../../Button";
 import ProgressTabs from "./ProgressTabs";
 

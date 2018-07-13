@@ -33,7 +33,7 @@ const hat = createReducer(initialState, {
     ...state,
     fetching: true
   }),
-  [HAT_SUCCESS]: (state, { payload }) => ({
+  [HAT_SUCCESS]: (_, { payload }) => ({
     hatAddress: payload.address,
     fetching: false
   }),

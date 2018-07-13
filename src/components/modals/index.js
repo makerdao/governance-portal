@@ -46,13 +46,12 @@ const StyledHitbox = styled.div`
 `;
 
 const StyledContainer = styled.div`
-  position: relative;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 100%;
-  align-items: flex-start;
-  margin-top: 70px;
   padding: 15px;
-  display: flex;
-  justify-content: center;
 `;
 
 const StyledClose = styled.div`
@@ -84,13 +83,13 @@ class Modal extends Component {
   };
 
   render() {
-    // const body = document.body || document.getElementsByTagName("body")[0];
+    const body = document.body || document.getElementsByTagName("body")[0];
 
-    // if (this.props.modal) {
-    //   body.style.overflow = "hidden";
-    // } else {
-    //   body.style.overflow = "auto";
-    // }
+    if (this.props.modal) {
+      body.style.overflow = "hidden";
+    } else {
+      body.style.overflow = "auto";
+    }
 
     return (
       <StyledLightbox modal={this.props.modal}>
@@ -113,10 +112,11 @@ class Modal extends Component {
 
 Modal.propTypes = {};
 
-const reduxProps = ({ modal, metamask, proxy }) => ({
+const reduxProps = ({ modal, metamask, vote }) => ({
   modal: modal.modal,
   modalProps: modal.modalProps,
-  account: metamask.accountAddress
+  account: metamask.accountAddress,
+  voteTxHash: vote.txHash
 });
 
 export default connect(

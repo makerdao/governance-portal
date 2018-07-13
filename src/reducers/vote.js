@@ -1,52 +1,73 @@
 import { createReducer } from "../utils/redux";
-import { voteProposal } from "../chain/send";
+import { voteProposal } from "../chain/write";
 import { awaitTx } from "../chain/web3";
 
 // Constants ----------------------------------------------
 
-const CAST_VOTE = "transactions/CAST_VOTE";
-const VOTE_SUCCESS = "transactions/VOTE_SUCCESS";
-const VOTE_FAILURE = "transactions/VOTE_FAILURE";
+const VOTE_REQUEST = "vote/VOTE_CAST_REQUEST";
+const VOTE_SENT = "vote/VOTE_CAST_REQUEST";
+const VOTE_SUCCESS = "vote/VOTE_SUCCESS";
+const VOTE_FAILURE = "vote/VOTE_FAILURE";
+const CLEAR = "vote/CLEAR";
 
 // Actions ------------------------------------------------
 
-export const sendVote = proposal => (dispatch, getState) => {
-  dispatch({ type: CAST_VOTE, payload: { proposal } });
-  // TODO: make this active account only
-  const activeAccount = getState().accounts.allAccounts[0];
+export const clear = () => ({
+  type: CLEAR
+});
+
+export const sendVote = proposalAddress => (dispatch, getState) => {
+  dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
+  const activeAccount = getState().accounts.activeAccount;
   if (activeAccount) {
-    voteProposal({ account: activeAccount, proposal })
+    voteProposal({ account: activeAccount, proposalAddress })
       .then(txHash => {
-        awaitTx(txHash, { confirmations: 1 }).then(txReciept => {
-          console.log("mined", txReciept);
-        });
+        dispatch({ type: VOTE_SENT, payload: { txHash } });
+        awaitTx(txHash, { confirmations: 1 })
+          .then(txReciept => {
+            dispatch({ type: VOTE_SUCCESS });
+            console.log("mined", txReciept);
+          })
+          .catch(error => {
+            dispatch({ type: VOTE_FAILURE });
+          });
       })
       .catch(error => {
         // txRejected
         // TODO error handle
+        dispatch({ type: VOTE_FAILURE });
       });
-  } else null; // notify no account selected
+  }
+  // else  notify no account available
 };
 
 // Reducer ------------------------------------------------
 
 const initialState = {
-  proposal: "",
+  proposalAddress: "",
+  fetching: false,
   txHash: ""
 };
 
 const vote = createReducer(initialState, {
-  [CAST_VOTE]: (state, { payload }) => ({
+  [VOTE_REQUEST]: (state, { payload }) => ({
     ...state,
-    proposal: payload.proposal
+    proposalAddress: payload.address
+  }),
+  [VOTE_SENT]: (state, { payload }) => ({
+    ...state,
+    fetching: true,
+    txHash: payload.txHash
   }),
   [VOTE_SUCCESS]: (state, { payload }) => ({
     ...state,
-    txHash: payload.txHash
+    fetching: false
   }),
-  [VOTE_FAILURE]: state => ({
-    proposal: "",
-    txHash: ""
+  [VOTE_FAILURE]: () => ({
+    ...initialState
+  }),
+  [CLEAR]: () => ({
+    ...initialState
   })
 });
 

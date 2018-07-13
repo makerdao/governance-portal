@@ -46,6 +46,8 @@ export const updateAccount = account => ({
   }
 });
 
+// After the initial load, this will generally be called a an account
+// is selected in the account box dropdown
 export const setActiveAccount = account => ({
   type: SET_ACTIVE_ACCOUNT,
   payload: {
@@ -55,7 +57,7 @@ export const setActiveAccount = account => ({
 
 export const accountDataInit = () => (dispatch, getState) => {
   const account = getState().accounts.activeAccount;
-  // TODO if no active account, do something else
+  // TODO if there's no active account, do something else
   const accountAddress = account.address;
   getMkrBalance(accountAddress).then(mkr => {
     dispatch({ type: SET_UNLOCKED_MKR, payload: { mkr } });

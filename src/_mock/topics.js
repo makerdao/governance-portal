@@ -8,7 +8,7 @@ export default {
       verified: true,
       submitted_by: {
         name: "Dai Foundation",
-        link: "https://makerdao.com"
+        link: "https://dai-dai-dai.now.sh/"
       },
       proposals: [
         {
@@ -21,7 +21,7 @@ export default {
           verified: true,
           submitted_by: {
             name: "Dai Foundation",
-            link: "https://makerdao.com"
+            link: "https://dai-dai-dai.now.sh/"
           },
           documents: [
             {
@@ -40,7 +40,7 @@ export default {
           verified: true,
           submitted_by: {
             name: "Dai Foundation",
-            link: "https://makerdao.com"
+            link: "https://dai-dai-dai.now.sh/"
           },
           documents: [
             {
@@ -59,7 +59,7 @@ export default {
       verified: true,
       submitted_by: {
         name: "Dai Foundation",
-        link: "https://makerdao.com"
+        link: "https://dai-dai-dai.now.sh/"
       },
       proposals: [
         {
@@ -72,7 +72,7 @@ export default {
           verified: true,
           submitted_by: {
             name: "Dai Foundation",
-            link: "https://makerdao.com"
+            link: "https://dai-dai-dai.now.sh/"
           },
           documents: [
             {
@@ -93,7 +93,7 @@ export default {
       verified: true,
       submitted_by: {
         name: "Dai Foundation",
-        link: "https://makerdao.com"
+        link: "https://dai-dai-dai.now.sh/"
       },
       proposals: [
         {
@@ -106,7 +106,7 @@ export default {
           verified: true,
           submitted_by: {
             name: "Dai Foundation",
-            link: "https://makerdao.com"
+            link: "https://dai-dai-dai.now.sh/"
           },
           documents: [
             {
@@ -125,7 +125,7 @@ export default {
           verified: true,
           submitted_by: {
             name: "Dai Foundation",
-            link: "https://makerdao.com"
+            link: "https://dai-dai-dai.now.sh/"
           },
           documents: [
             {
@@ -144,7 +144,7 @@ export default {
       verified: true,
       submitted_by: {
         name: "Dai Foundation",
-        link: "https://makerdao.com"
+        link: "https://dai-dai-dai.now.sh/"
       },
       proposals: [
         {
@@ -157,7 +157,7 @@ export default {
           verified: true,
           submitted_by: {
             name: "Dai Foundation",
-            link: "https://makerdao.com"
+            link: "https://dai-dai-dai.now.sh/"
           },
           documents: [
             {

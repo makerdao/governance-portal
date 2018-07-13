@@ -1,11 +1,8 @@
 import React from "react";
 
 import {
-  StyledContainer,
-  StyledCenter,
   StyledTitle,
   StyledBlurb,
-  StyledTop,
   Column,
   StyledAnchor,
   CircledNum,
@@ -14,17 +11,8 @@ import {
   Guide,
   GuideTitle,
   GuideInfo,
-  SetupLater,
-  InfoBox,
-  InfoBoxSection,
-  InfoBoxHeading,
-  InfoBoxContent,
-  ProgressTabsWrapper,
-  TabsTitle,
-  TabsTitleWrapper,
-  TxHash,
-  Styledinput
-} from "./style";
+  SetupLater
+} from "../shared/styles";
 import Button from "../../Button";
 
 const Intro = ({ modalClose, nextStep }) => (

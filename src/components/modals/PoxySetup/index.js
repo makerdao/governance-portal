@@ -7,53 +7,14 @@ import {
   StyledTitle,
   StyledBlurb,
   StyledTop,
-  Column,
-  StyledAnchor,
-  CircledNum,
-  Section,
-  GuideWrapper,
-  Guide,
-  GuideTitle,
-  GuideInfo,
-  SetupLater,
-  InfoBox,
-  InfoBoxSection,
-  InfoBoxHeading,
-  InfoBoxContent,
-  ProgressTabsWrapper,
-  TabsTitle,
-  TabsTitleWrapper,
-  TxHash,
   Styledinput
-} from "./style";
-import { ethScanLink } from "../../../utils/ethereum";
+} from "../shared/styles";
 import Button from "../../Button";
 import Card from "../../Card";
 import Intro from "./Intro";
 import Link from "./Link";
-
-const ProgressTabs = ({ progress }) => (
-  <ProgressTabsWrapper>
-    <TabsTitleWrapper borderRight>
-      <CircledNum dim={progress <= 0} p={-1} fontSize={14} size={22}>
-        1
-      </CircledNum>
-      <TabsTitle>Link Wallets</TabsTitle>
-    </TabsTitleWrapper>
-    <TabsTitleWrapper borderRight>
-      <CircledNum dim={progress <= 1} p={-1} fontSize={14} size={22}>
-        2
-      </CircledNum>
-      <TabsTitle>Lock MKR</TabsTitle>
-    </TabsTitleWrapper>
-    <TabsTitleWrapper>
-      <CircledNum dim={progress <= 2} p={-1} fontSize={14} size={22}>
-        3
-      </CircledNum>
-      <TabsTitle>Finished</TabsTitle>
-    </TabsTitleWrapper>
-  </ProgressTabsWrapper>
-);
+import Transaction from "../shared/Transaction";
+import ProgressTabs from "./ProgressTabs";
 
 class ProxySetup extends Component {
   state = {
@@ -70,9 +31,12 @@ class ProxySetup extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    if (this.props.proxyCreationTxHash !== prevProps.proxyCreationTxHash)
+    // they've signed and sent a tx
+    if (this.props.initiateLinkTxHash !== prevProps.initiateLinkTxHash)
       this.nextStep();
-    if (this.props.mkrToProxyTxHash !== prevProps.mkrToProxyTxHash)
+    if (this.props.approveLinkTxHash !== prevProps.approveLinkTxHash)
+      this.nextStep();
+    if (this.props.sendMkrToProxyTxHash !== prevProps.sendMkrToProxyTxHash)
       this.nextStep();
   }
 
@@ -89,30 +53,10 @@ class ProxySetup extends Component {
         return (
           <Fragment>
             <ProgressTabs progress={1} />
-            <StyledTop>
-              <StyledTitle>Transaction Hash</StyledTitle>
-            </StyledTop>
-            <TxHash
-              href={ethScanLink(this.props.proxyCreationTxHash)}
-              target="_blank"
-            >
-              {this.props.proxyCreationTxHash}
-            </TxHash>
-            <div
-              style={{
-                alignSelf: "center",
-                marginTop: "18px"
-              }}
-            >
-              <Button
-                slim
-                onClick={() => {
-                  this.nextStep();
-                }}
-              >
-                Continue
-              </Button>
-            </div>
+            <Transaction
+              txHash={this.props.proxyCreationTxHash}
+              nextStep={this.nextStep}
+            />
           </Fragment>
         );
       case 4:
@@ -155,30 +99,10 @@ class ProxySetup extends Component {
         return (
           <Fragment>
             <ProgressTabs progress={2} />
-            <StyledTop>
-              <StyledTitle>Transaction Hash</StyledTitle>
-            </StyledTop>
-            <TxHash
-              href={ethScanLink(this.props.mkrToProxyTxHash)}
-              target="_blank"
-            >
-              {this.props.mkrToProxyTxHash}
-            </TxHash>
-            <div
-              style={{
-                alignSelf: "center",
-                marginTop: "18px"
-              }}
-            >
-              <Button
-                slim
-                onClick={() => {
-                  this.nextStep();
-                }}
-              >
-                Continue
-              </Button>
-            </div>
+            <Transaction
+              txHash={this.props.mkrToProxyTxHash}
+              nextStep={this.nextStep}
+            />
           </Fragment>
         );
       case 6:
@@ -203,12 +127,7 @@ class ProxySetup extends Component {
                 marginTop: "18px"
               }}
             >
-              <Button
-                slim
-                onClick={() => {
-                  this.props.modalClose();
-                }}
-              >
+              <Button slim onClick={this.props.modalClose}>
                 Finish and close
               </Button>
             </div>
@@ -218,7 +137,7 @@ class ProxySetup extends Component {
         return null;
     }
   }
-  // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, reject transaction, why did this tx fail
+  // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, check balances, etc
   render = () => (
     <Card maxWidth={600} background="white">
       <StyledContainer>
@@ -229,13 +148,17 @@ class ProxySetup extends Component {
 }
 
 ProxySetup.propTypes = {
-  account: PropTypes.string,
-  createProxy: PropTypes.func,
-  proxyCreationTxHash: PropTypes.string
+  modalClose: PropTypes.func.isRequired,
+  sendMkrToProxy: PropTypes.func.isRequired,
+  initiateLinkTxHash: PropTypes.string,
+  approveLinkTxHash: PropTypes.string,
+  sendMkrToProxyTxHash: PropTypes.string
 };
 
 ProxySetup.defaultProps = {
-  proxyCreationTxHash: ""
+  initiateLinkTxHash: "",
+  approveLinkTxHash: "",
+  sendMkrToProxyTxHash: ""
 };
 
 export default ProxySetup;

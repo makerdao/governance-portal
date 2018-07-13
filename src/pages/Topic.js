@@ -117,7 +117,7 @@ const Topic = ({ match, topics }) => {
       <Card>
         <Card.Top
           active={active}
-          topic={topicTitle}
+          topicTitle={topicTitle}
           collapsable={true}
           startCollapsed={false}
         />

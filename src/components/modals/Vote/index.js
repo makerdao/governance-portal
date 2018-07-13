@@ -9,15 +9,18 @@ import {
   StyledCenter,
   StyledTitle,
   StyledBlurb,
-  StyledTop,
-  StyledAnchor,
-  Styledinput
-} from "../PoxySetup/style";
+  StyledTop
+} from "../shared/styles";
+import Transaction from "../shared/Transaction";
 
 class Vote extends Component {
   state = {
     step: 1
   };
+
+  componentDidUpdate(prevProps) {
+    if (this.props.voteTxHash !== prevProps.voteTxHash) this.nextStep();
+  }
 
   nextStep = () => {
     this.setState(state => ({ step: state.step + 1 }));
@@ -52,6 +55,13 @@ class Vote extends Component {
             </div>
           </Fragment>
         );
+      case 2:
+        return (
+          <Transaction
+            txHash={this.props.voteTxHash}
+            nextStep={this.nextStep}
+          />
+        );
       default:
         return null;
     }
@@ -66,8 +76,14 @@ class Vote extends Component {
   );
 }
 
-Vote.propTypes = {};
+Vote.propTypes = {
+  voteTxHash: PropTypes.string,
+  sendVote: PropTypes.func,
+  modalProps: PropTypes.object
+};
 
-Vote.defaultProps = {};
+Vote.defaultProps = {
+  voteTxHash: ""
+};
 
 export default Vote;

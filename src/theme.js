@@ -86,18 +86,21 @@ const theme = {
     inactive: "#DFE7EF"
   },
   brand: {
-    default: "#4400CC",
+    default: "#30bd9f",
     alt: "#7B16FF",
     wash: "#E8E5FF",
     border: "#DDD9FF",
     dark: "#2A0080"
   },
   generic: {
-    default: "#E6ECF7",
+    default: "#ededed",
     alt: "#F6FBFC"
   },
   text: {
     default: "#1F2C3C",
+    dark_default: "#c4c4c4",
+    green: "#30bd9f",
+    dim_grey: "#848484",
     alt: "#546978"
   }
 };

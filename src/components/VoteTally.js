@@ -8,7 +8,6 @@ import Loader from "./Loader";
 
 const StyledVoteTally = styled.div`
   line-height: 20px;
-  color: #212536;
   font-size: 18px;
   margin-top: -10px;
   margin-bottom: 10px;
@@ -16,23 +15,13 @@ const StyledVoteTally = styled.div`
   justify-content: space-between;
 `;
 
-const VotePercent = styled.div`
+const VoteInfo = styled.div`
   display: flex;
   &::after {
     margin-left: 4px;
     font-size: 16px;
-    color: #848484;
-    content: " VOTES";
-  }
-`;
-
-const VoteAmount = styled.div`
-  display: flex;
-  &::after {
-    font-size: 16px;
-    color: #848484;
-    white-space: pre;
-    content: " MKR";
+    color: ${({ theme }) => theme.text.dim_grey};
+    content: ${({ content }) => `"${content}"`};
   }
 `;
 
@@ -52,31 +41,23 @@ const VoteTally = ({
   <Fragment>
     {statusBar ? <StyledStatusBar percentage={percentage} {...props} /> : null}
     <StyledVoteTally>
-      <VotePercent>
+      <VoteInfo content="VOTES">
         {loadingPercentage ? (
           <Loader size={20} color="light_grey" background="white" />
         ) : (
           `${percentage}%`
         )}
-      </VotePercent>
-      <VoteAmount>
+      </VoteInfo>
+      <VoteInfo content="MKR">
         {loadingApprovals ? (
           <Loader size={20} color="light_grey" background="white" />
         ) : (
           `${kFormat(approvals)}`
         )}
-      </VoteAmount>
+      </VoteInfo>
     </StyledVoteTally>
   </Fragment>
 );
-
-VoteTally.defaultProps = {
-  statusBar: false,
-  loadingPercentage: false,
-  loadingApprovals: false,
-  approvals: 0,
-  percentage: 0
-};
 
 VoteTally.propTypes = {
   statusBar: PropTypes.bool,
@@ -84,6 +65,14 @@ VoteTally.propTypes = {
   loadingApprovals: PropTypes.bool,
   approvals: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   percentage: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+};
+
+VoteTally.defaultProps = {
+  statusBar: false,
+  loadingPercentage: false,
+  loadingApprovals: false,
+  approvals: 0,
+  percentage: 0
 };
 
 export default VoteTally;

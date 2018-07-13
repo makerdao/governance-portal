@@ -12,14 +12,20 @@ const CONNECT_FAILURE = "ledger/CONNECT_FAILURE";
 
 export const ledgerConnectInit = () => dispatch => {
   dispatch({ type: CONNECT_REQUEST });
-  ledgerSubprovider.getAccounts((error, addresses) => {
-    if (!error) {
+  ledgerSubprovider
+    .getAccounts()
+    .then(addresses => {
       dispatch({ type: CONNECT_SUCCESS, payload: { addresses } });
-      const accounts = addresses.map(address => ({ address, type: "LEDGER" }));
+      const accounts = addresses.map(address => ({
+        address,
+        type: "LEDGER"
+      }));
       dispatch(addAccounts(accounts));
-    } else dispatch({ type: CONNECT_FAILURE });
-    // maybe notify if ledger is supposed to be used, but we can't get it
-  });
+    })
+    .catch(error => {
+      // maybe notify if ledger is supposed to be used, but we can't get it
+      dispatch({ type: CONNECT_FAILURE });
+    });
 };
 
 // Reducer ------------------------------------------------

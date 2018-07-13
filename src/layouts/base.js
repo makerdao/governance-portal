@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 import { colors, fonts } from "../theme";
 import Modals from "../components/modals";
-import Footer from "../components/Footer";
+// import Footer from "../components/Footer";
 import Loader from "../components/Loader";
 import AccountBox from "../components/AccountBox";
 import { setActiveAccount } from "../reducers/accounts";
