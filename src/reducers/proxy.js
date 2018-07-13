@@ -42,14 +42,14 @@ const initialState = {
 };
 
 const proxy = createReducer(initialState, {
-  [INITIATE_LINK_REQUEST]: (state, { payload }) => ({
+  [INITIATE_LINK_REQUEST]: state => ({
     ...state
   }),
   [INITIATE_LINK_SENT]: (state, { payload }) => ({
     ...state,
     initateLinkTxHash: payload.txHash
   }),
-  [SEND_MKR_TO_PROXY_REQUEST]: (state, { payload }) => ({
+  [SEND_MKR_TO_PROXY_REQUEST]: state => ({
     ...state
   }),
   [SEND_MKR_TO_PROXY_SENT]: (state, { payload }) => ({

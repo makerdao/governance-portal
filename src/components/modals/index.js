@@ -61,7 +61,7 @@ const StyledClose = styled.div`
   margin-top: -8px;
   margin-bottom: 8px;
   cursor: pointer;
-  visibility: ${({ modal }) => (!!modal ? "visible" : "hidden")};
+  visibility: ${({ modal }) => (modal ? "visible" : "hidden")};
   background: url(${close}) no-repeat;
 `;
 

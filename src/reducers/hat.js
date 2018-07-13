@@ -15,7 +15,7 @@ export const hatInit = () => dispatch => {
     .then(address => {
       dispatch({ type: HAT_SUCCESS, payload: { address } });
     })
-    .catch(error => {
+    .catch(() => {
       // notify user of error or throw to fallback. Network disconnect?
       dispatch({ type: HAT_FAILURE });
     });

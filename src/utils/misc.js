@@ -19,7 +19,7 @@ export const isMobile = () => {
  * @return {String}
  */
 export const cutMiddle = (text = "", left = 3, right = 4) =>
-  `${take(left, text)}${!!text ? "..." : ""}${takeLast(right, text)}`;
+  `${take(left, text)}${text ? "..." : ""}${takeLast(right, text)}`;
 
 /**
  * @desc returns a url slugged version of some text

@@ -208,7 +208,7 @@ class Proposal extends Component {
         </WhiteBackground>
         <ConentWrapper>
           <DescriptionCard>
-            {!!markdown ? (
+            {markdown ? (
               <ReactMarkdown
                 className="markdown"
                 skipHtml={true}

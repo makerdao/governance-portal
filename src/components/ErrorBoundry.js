@@ -37,7 +37,7 @@ export const Subheading = styled.h4`
 class ErrorBoundary extends Component {
   state = { error: false };
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error) {
     this.setState({ error });
     // window.Raven.captureException(error, { extra: errorInfo });
   }

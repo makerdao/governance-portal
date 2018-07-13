@@ -27,9 +27,10 @@ class Vote extends Component {
   };
 
   renderStep() {
+    let proposal;
     switch (this.state.step) {
       case 1:
-        const { proposal } = this.props.modalProps;
+        proposal = this.props.modalProps.proposal;
         return (
           <Fragment>
             <StyledTop>

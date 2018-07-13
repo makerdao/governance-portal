@@ -22,7 +22,7 @@ export const ledgerConnectInit = () => dispatch => {
       }));
       dispatch(addAccounts(accounts));
     })
-    .catch(error => {
+    .catch(() => {
       // maybe notify if ledger is supposed to be used, but we can't get it
       dispatch({ type: CONNECT_FAILURE });
     });
