@@ -156,7 +156,9 @@ class AccountBox extends Component {
                   color="#fc5e04"
                   bgColor="#fff"
                 />
-                <Account>{`${type} ${cutMiddle(address)}`}</Account>
+                <Account>{`${firstLetterCapital(type)} ${cutMiddle(
+                  address
+                )}`}</Account>
               </StyledRow>
             ))}
           </StyledDropdownWrapper>

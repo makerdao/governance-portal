@@ -29,7 +29,7 @@ const initialState = {
   addresses: ""
 };
 
-const metamask = createReducer(initialState, {
+const ledger = createReducer(initialState, {
   [CONNECT_REQUEST]: state => ({
     ...state,
     fetching: true
@@ -45,4 +45,4 @@ const metamask = createReducer(initialState, {
   })
 });
 
-export default metamask;
+export default ledger;

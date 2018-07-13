@@ -121,6 +121,24 @@ export const getSlateAddresses = async slateHex => {
  * @async @desc use event logs to get all etched slates
  * @return {String[]} slates
  */
+export const getHat = async () => {
+  const chief = await getChief();
+  const methodSig = getMethodSig("hat()");
+  const callData = generateCallData({
+    method: methodSig,
+    args: []
+  });
+  const hat = await web3Instance.eth.call({
+    to: chief,
+    data: callData
+  });
+  return hat;
+};
+
+/**
+ * @async @desc use event logs to get all etched slates
+ * @return {String[]} slates
+ */
 export const getEtchedSlates = async () => {
   const network = await getNetworkName();
   const chief = await getChief(network);

@@ -73,10 +73,10 @@ class Link extends Component {
         >
           <Button
             slim
-            onClick={this.props.createProxy({
-              hot: this.state.hot,
-              cold: this.state.cold
-            })}
+            // onClick={this.props.createProxy({
+            //   hot: this.state.hot,
+            //   cold: this.state.cold
+            // })}
           >
             Link Wallets
           </Button>

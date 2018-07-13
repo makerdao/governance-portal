@@ -4,9 +4,8 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 
 import { modalClose } from "../../reducers/modal";
-import { createProxy } from "../../reducers/proxy";
-import { userSendMkrToProxy } from "../../reducers/user";
-import { sendVote } from "../../reducers/transactions";
+import { initiateLink, sendMkrToProxy } from "../../reducers/proxy";
+import { sendVote } from "../../reducers/vote";
 import ProxySetup from "./PoxySetup";
 import Vote from "./Vote";
 import close from "../../imgs/close.svg";
@@ -114,16 +113,13 @@ class Modal extends Component {
 
 Modal.propTypes = {};
 
-const reduxProps = ({ modal, metamask, proxy, user }) => ({
+const reduxProps = ({ modal, metamask, proxy }) => ({
   modal: modal.modal,
   modalProps: modal.modalProps,
-  account: metamask.accountAddress,
-  proxyCreationTxHash: proxy.txHash,
-  mkrBalance: user.mkr,
-  mkrToProxyTxHash: user.txHash
+  account: metamask.accountAddress
 });
 
 export default connect(
   reduxProps,
-  { modalClose, createProxy, userSendMkrToProxy, sendVote }
+  { modalClose, initiateLink, sendMkrToProxy, sendVote }
 )(Modal);

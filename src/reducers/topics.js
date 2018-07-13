@@ -9,28 +9,22 @@ import mocked from "../_mock/topics";
 
 // Constants ----------------------------------------------
 
-// const PROPOSALS_REQUEST = "mock/PROPOSALS_REQUEST";
-const PROPOSALS_SUCCESS = "mock/PROPOSALS_SUCCESS";
-// const PROPOSALS_FAILURE = "mock/PROPOSALS_FAILURE";
+const TOPICS_SUCCESS = "mock/PROPOSALS_SUCCESS";
 
 // Actions ------------------------------------------------
 
-export const topicsFetchInit = () => (dispatch, getState) => {
-  dispatch({ type: PROPOSALS_SUCCESS });
+export const topicsInit = network => (dispatch, getState) => {
+  dispatch({ type: TOPICS_SUCCESS, payload: { network } });
   const proposals = flatten(getState().topics.map(topic => topic.proposals));
   dispatch(initApprovalsFetch(proposals));
 };
 
 // Reducer ------------------------------------------------
 
-// date: "2018-04-20",, slug, description
-// "dates": {
-//   "start": "2017-10-02",
-//   "end": "2017-10-03"
-// }
-
 const mockedBackend = mocked;
 
-const topics = createReducer(mockedBackend, {});
+const topics = createReducer([], {
+  [TOPICS_SUCCESS]: (_, { payload }) => mockedBackend[payload.network]
+});
 
 export default topics;

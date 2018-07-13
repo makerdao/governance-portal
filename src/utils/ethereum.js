@@ -137,12 +137,15 @@ export const validAddressString = addressString =>
 /**
  * @desc get etherescan address link
  * @param  {String} address
+ * @param  {String} network
  * @return {String} link
  */
-export const ethScanLink = string => {
+export const ethScanLink = (string, network = "mainnet") => {
+  const pathPrefix = network === "mainnet" ? "" : "network.";
   if (validAddressString(string))
-    return `https://etherscan.io/address/${string}`;
-  else if (validTxString(string)) return `https://etherscan.io/tx/${string}`;
+    return `https://${pathPrefix}etherscan.io/address/${string}`;
+  else if (validTxString(string))
+    return `https://${pathPrefix}etherscan.io/tx/${string}`;
   // TODO maybe log to raven instead of throwing
   else throw new Error("Invalid address string; can't create etherescan link");
 };

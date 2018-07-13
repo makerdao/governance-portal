@@ -2,7 +2,8 @@ import { createReducer } from "../utils/redux";
 import { getMetamaskNetworkName, web3SetHttpProvider } from "../chain/web3";
 import { updateAccount, addAccount } from "./accounts";
 import { voteTallyInit } from "./tally";
-import { topicsFetchInit } from "./topics";
+import { topicsInit } from "./topics";
+import { hatInit } from "./hat";
 
 // Constants ----------------------------------------------
 
@@ -63,8 +64,12 @@ export const metamaskConnectInit = () => dispatch => {
         else web3SetHttpProvider(`https://mainnet.infura.io/`);
         dispatch(updateMetamaskAccount());
         dispatch(updateMetamaskNetwork());
+
+        // we're dispatching our state fetches here instead of in our init component because
+        // we choose what network to fetch from based on metamask, but maybe there's a better way...
         dispatch(voteTallyInit());
-        dispatch(topicsFetchInit());
+        dispatch(topicsInit(network));
+        dispatch(hatInit());
       })
       .catch(error => {
         // TODO: notify user or throw to a fallback component
@@ -74,14 +79,16 @@ export const metamaskConnectInit = () => dispatch => {
         // we try to fetch mainnet state if we failed to connect to MetaMask
         web3SetHttpProvider(`https://mainnet.infura.io/`);
         dispatch(voteTallyInit());
-        dispatch(topicsFetchInit());
+        dispatch(topicsInit("mainnet"));
+        dispatch(hatInit());
       });
   } else {
     dispatch({ type: NOT_AVAILABLE });
-    // we fetch mainnet state if MetaMask is unavailable
+    // we also fetch mainnet state if MetaMask is unavailable
     web3SetHttpProvider(`https://mainnet.infura.io/`);
     dispatch(voteTallyInit());
-    dispatch(topicsFetchInit());
+    dispatch(topicsInit("mainnet"));
+    dispatch(hatInit());
   }
 };
 

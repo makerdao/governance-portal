@@ -69,29 +69,46 @@ export const sendTransactionMulti = (type, tranasction) => {
 };
 
 /**
- * @async @desc metamask send transaction
- * @param  {Object}  wallets { cold, hot }
+ * @async @desc initate vote-proxy link
+ * @param  {Object} wallets { acccount: { address, type }, hot }
  * @return {Promise} tx
  */
-export const buildVoteProxy = async ({ cold, hot }) => {
+export const initateLink = async ({ account, hot }) => {
+  const cold = account.address;
   const factory = await getProxyFactory();
-  const methodSig = getMethodSig("newVoteProxy(address,address)");
+  const methodSig = getMethodSig("initiateLink(address)");
   const callData = generateCallData({
     method: methodSig,
-    args: [removeHexPrefix(cold), removeHexPrefix(hot)]
+    args: [removeHexPrefix(hot)]
   });
   const tx = { to: factory, from: cold, data: callData };
-  console.log(tx);
-  return web3MetamaskSendTransaction(tx);
+  return sendTransactionMulti(account.type, tx);
 };
 
 /**
- * @async @desc metamask send transaction
- * @param  {Object} transferDetails { from, value }
+ * @async @desc approve vote-proxy link
+ * @param  {Object} wallets { acccount: { address, type }, hot }
  * @return {Promise} tx
  */
-export const sendMkrToProxy = async ({ from, value }) => {
-  const { proxy } = await getProxyStatus(from);
+export const approveLink = async ({ account, cold }) => {
+  const hot = account.address;
+  const factory = await getProxyFactory();
+  const methodSig = getMethodSig("approveLink(address)");
+  const callData = generateCallData({
+    method: methodSig,
+    args: [removeHexPrefix(cold)]
+  });
+  const tx = { to: factory, from: hot, data: callData };
+  return sendTransactionMulti(account.type, tx);
+};
+
+/**
+ * @async @desc transfer Mkr to this address's proxy
+ * @param  {Object} transferDetails { acccount: { address, type }, value }
+ * @return {Promise} tx
+ */
+export const sendMkrToProxy = async ({ account, value }) => {
+  const { proxy } = await getProxyStatus(account.address);
   const mkrToken = await getMkrAddress();
   const methodSig = getMethodSig("transfer(address,uint256)");
   // TODO error handle if isCold is false
@@ -100,8 +117,8 @@ export const sendMkrToProxy = async ({ from, value }) => {
     method: methodSig,
     args: [removeHexPrefix(proxy), removeHexPrefix(weiAmtHex)]
   });
-  const tx = { to: mkrToken, from, data: callData };
-  return web3MetamaskSendTransaction(tx);
+  const tx = { to: mkrToken, from: account.address, data: callData };
+  return sendTransactionMulti(account.type, tx);
 };
 
 /**

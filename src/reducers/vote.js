@@ -31,34 +31,23 @@ export const sendVote = proposal => (dispatch, getState) => {
 // Reducer ------------------------------------------------
 
 const initialState = {
-  vote: {
-    proposal: "",
-    txHash: ""
-  }
+  proposal: "",
+  txHash: ""
 };
 
-const proxy = createReducer(initialState, {
+const vote = createReducer(initialState, {
   [CAST_VOTE]: (state, { payload }) => ({
     ...state,
-    vote: {
-      ...state.vote,
-      proposal: payload.proposal
-    }
+    proposal: payload.proposal
   }),
   [VOTE_SUCCESS]: (state, { payload }) => ({
     ...state,
-    vote: {
-      ...state.vote,
-      txHash: payload.txHash
-    }
+    txHash: payload.txHash
   }),
   [VOTE_FAILURE]: state => ({
-    ...state,
-    vote: {
-      proposal: "",
-      txHash: ""
-    }
+    proposal: "",
+    txHash: ""
   })
 });
 
-export default proxy;
+export default vote;

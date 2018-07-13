@@ -127,7 +127,7 @@ class ProxySetup extends Component {
               voting contract. You can withdraw it at anytime
             </StyledBlurb>
             <div style={{ textAlign: "center" }}>
-              Your MKR Balance: {this.props.mkrBalance}
+              {/* Your MKR Balance: {this.props.mkrBalance} */}
             </div>
             <Styledinput
               value={this.state.mkrAmountInput}
