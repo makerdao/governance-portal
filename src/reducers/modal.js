@@ -7,9 +7,9 @@ const MODAL_CLOSE = "modal/MODAL_CLOSE";
 
 // Actions ------------------------------------------------
 
-export const modalOpen = modal => ({
+export const modalOpen = (modal, props = {}) => ({
   type: MODAL_OPEN,
-  payload: { name: modal }
+  payload: { name: modal, props }
 });
 
 export const modalClose = () => ({ type: MODAL_CLOSE });
@@ -17,12 +17,17 @@ export const modalClose = () => ({ type: MODAL_CLOSE });
 // Reducer ------------------------------------------------
 
 const initialState = {
-  modal: ""
+  modal: "",
+  modalProps: {}
 };
 
 const modal = createReducer(initialState, {
-  [MODAL_OPEN]: (state, { payload }) => ({ ...state, modal: payload.name }),
-  [MODAL_CLOSE]: state => ({ ...state, modal: "" })
+  [MODAL_OPEN]: (state, { payload }) => ({
+    ...state,
+    modal: payload.name,
+    modalProps: payload.props
+  }),
+  [MODAL_CLOSE]: state => ({ ...state, modal: "", modalProps: {} })
 });
 
 export default modal;

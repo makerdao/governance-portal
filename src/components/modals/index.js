@@ -4,10 +4,13 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 
 import { modalClose } from "../../reducers/modal";
-import ProxySetup from "./ProxySetup";
+import { initiateLink, sendMkrToProxy } from "../../reducers/proxy";
+import { sendVote } from "../../reducers/vote";
+import ProxySetup from "./PoxySetup";
+import Vote from "./Vote";
 import close from "../../imgs/close.svg";
 
-import { colors, transitions } from "../../styles";
+import { colors, transitions } from "../../theme";
 
 const Column = styled.div`
   position: relative;
@@ -43,13 +46,12 @@ const StyledHitbox = styled.div`
 `;
 
 const StyledContainer = styled.div`
-  position: relative;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 100%;
-  align-items: flex-start;
-  margin-top: 70px;
   padding: 15px;
-  display: flex;
-  justify-content: center;
 `;
 
 const StyledClose = styled.div`
@@ -59,7 +61,7 @@ const StyledClose = styled.div`
   margin-top: -8px;
   margin-bottom: 8px;
   cursor: pointer;
-  visibility: ${({ modal }) => (!!modal ? "visible" : "hidden")};
+  visibility: ${({ modal }) => (modal ? "visible" : "hidden")};
   background: url(${close}) no-repeat;
 `;
 
@@ -73,19 +75,21 @@ class Modal extends Component {
       case "PROXY_SETUP":
         window.scrollTo(50, 50);
         return <ProxySetup {...this.props} />;
+      case "VOTE":
+        return <Vote {...this.props} />;
       default:
         return <div />;
     }
   };
 
-  render = () => {
-    // const body = document.body || document.getElementsByTagName("body")[0];
+  render() {
+    const body = document.body || document.getElementsByTagName("body")[0];
 
-    // if (this.props.modal) {
-    //   body.style.overflow = "hidden";
-    // } else {
-    //   body.style.overflow = "auto";
-    // }
+    if (this.props.modal) {
+      body.style.overflow = "hidden";
+    } else {
+      body.style.overflow = "auto";
+    }
 
     return (
       <StyledLightbox modal={this.props.modal}>
@@ -103,17 +107,19 @@ class Modal extends Component {
         </StyledContainer>
       </StyledLightbox>
     );
-  };
+  }
 }
 
 Modal.propTypes = {};
 
-const reduxProps = ({ modal, metamask }) => ({
+const reduxProps = ({ modal, metamask, vote }) => ({
   modal: modal.modal,
-  account: metamask.accountAddress
+  modalProps: modal.modalProps,
+  account: metamask.accountAddress,
+  voteTxHash: vote.txHash
 });
 
 export default connect(
   reduxProps,
-  { modalClose }
+  { modalClose, initiateLink, sendMkrToProxy, sendVote }
 )(Modal);

@@ -1,28 +1,23 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+
 import verified from "../imgs/verified.svg";
-// import { colors, fonts, transitions } from "../styles";
+import { formatDate } from "../utils/misc";
 
 const VerifiedMark = styled.div`
   height: 20px;
   margin-top: 1px;
   width: 26px;
-  background-repeat: no-repeat;
-  background-image: url(${verified});
+  background: url(${verified}) no-repeat;
 `;
 
-const Creation = styled.div`
-  color: #30bd9f;
+const Created = styled.div`
+  color: ${({ theme }) => theme.text.green};
   &::before {
-    color: #848484;
+    color: ${({ theme }) => theme.text.dim_grey};
     content: "Created ";
   }
-`;
-
-const StyledAnchor = styled.a`
-  color: #3080ed;
-  cursor: pointer;
 `;
 
 const Footer = styled.div`
@@ -34,29 +29,23 @@ const Verification = styled.div`
   &::after {
     content: "   •   ";
     white-space: pre;
-    color: #c4c4c4;
+    color: ${({ theme }) => theme.text.dark_default};
   }
 `;
 
 const Submitter = styled.div`
   &::before {
-    color: #848484;
+    color: ${({ theme }) => theme.text.dim_grey};
     content: "Submitted by ";
   }
   &::after {
     content: "   •   ";
     white-space: pre;
-    color: #c4c4c4;
+    color: ${({ theme }) => theme.text.dark_default};
   }
 `;
 
-const VoteMeta = ({
-  verified,
-  submitter,
-  submitterLink,
-  creationDate,
-  ...props
-}) => (
+const VoteMeta = ({ verified, submitted_by, date, ...props }) => (
   <Footer {...props}>
     {verified ? (
       <Fragment>
@@ -65,26 +54,27 @@ const VoteMeta = ({
       </Fragment>
     ) : null}
     <Submitter>
-      <StyledAnchor href={submitterLink} target="_blank">
-        {submitter}
-      </StyledAnchor>
+      <a href={submitted_by.link} target="_blank">
+        {submitted_by.name}
+      </a>
     </Submitter>
-    <Creation>{creationDate}</Creation>
+    <Created>{formatDate(date)}</Created>
   </Footer>
 );
 
 VoteMeta.propTypes = {
   verified: PropTypes.bool,
-  submitter: PropTypes.string,
-  submitterLink: PropTypes.string,
-  creationDate: PropTypes.string
+  submitted_by: PropTypes.object,
+  date: PropTypes.string
 };
 
 VoteMeta.defaultProps = {
   verified: false,
-  submitter: "",
-  submitterLink: "",
-  creationDate: ""
+  submitted_by: {
+    name: "",
+    link: ""
+  },
+  date: ""
 };
 
 export default VoteMeta;

@@ -8,12 +8,11 @@ import { Link } from "react-router-dom";
 import NotFound from "./NotFound";
 import VoteMeta from "../components/VoteMeta";
 import Button from "../components/Button";
-import Card, { CardTop, CardElement } from "../components/Card";
+import Card from "../components/Card";
 import VoteTally from "../components/VoteTally";
 import WithTally from "../components/hocs/WithTally";
-import BaseLayout from "../layouts/base";
 import { toSlug } from "../utils/misc";
-import { colors, fonts } from "../styles";
+import { colors, fonts } from "../theme";
 
 const ProposalDetails = styled.div`
   max-width: 59%;
@@ -99,7 +98,7 @@ const Topic = ({ match, topics }) => {
   if (topic === undefined) return <NotFound />;
   const { topic: topicTitle, active, proposals } = topic;
   return (
-    <BaseLayout>
+    <React.Fragment>
       <WhiteBackground>
         <StyledTop>
           <StyledCenter>
@@ -109,31 +108,26 @@ const Topic = ({ match, topics }) => {
               ultricies dignissim libero at ultrices. Duis iaculis, arcu quis
               rutrum vestibulum.
             </StyledBody>
-            <StyledVoteMeta
-              verified={true}
-              submitter="Dai Foundation"
-              submitterLink="https://makerdao.com"
-              creationDate="12 Mar 2018"
-            />
+            <StyledVoteMeta {...topic} />
           </StyledCenter>
         </StyledTop>
       </WhiteBackground>
 
       <Card>
-        <CardTop active={active} topic={topicTitle} />
+        <Card.Top
+          active={active}
+          topicTitle={topicTitle}
+          collapsable={true}
+          startCollapsed={false}
+        />
         {proposals.map(proposal => (
-          <CardElement key={proposal.title} height={163}>
+          <Card.Element key={proposal.title} height={163}>
             <ProposalDetails>
               <Link to={`/${toSlug(topicTitle)}/${toSlug(proposal.title)}`}>
                 <SubHeading>{proposal.title}</SubHeading>
               </Link>
               <Body>{proposal.proposal_blurb}</Body>
-              <VoteMeta
-                verified={proposal.verified}
-                submitter={proposal.submitted_by.name}
-                submitterLink={proposal.submitted_by.link}
-                creationDate={proposal.created}
-              />
+              <VoteMeta {...proposal} />
             </ProposalDetails>
             <div>
               <WithTally candidate={proposal.source}>
@@ -153,10 +147,10 @@ const Topic = ({ match, topics }) => {
               </WithTally>
               <Button>Vote for this Proposal</Button>
             </div>
-          </CardElement>
+          </Card.Element>
         ))}
       </Card>
-    </BaseLayout>
+    </React.Fragment>
   );
 };
 

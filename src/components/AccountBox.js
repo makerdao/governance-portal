@@ -1,12 +1,14 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import Blockies from "react-blockies";
 
 import ClickOutside from "./ClickOutside";
+import Loader from "./Loader";
 import { cutMiddle } from "../utils/misc";
 import arrow from "../imgs/arrow.svg";
-import { fonts, colors, shadows } from "../styles";
+import { firstLetterCapital } from "../utils/misc";
+import { fonts, colors, shadows } from "../theme";
 
 const StyledArrow = styled.img`
   position: absolute;
@@ -93,18 +95,16 @@ class AccountBox extends Component {
   };
   onChange = ({ address, type }) => {
     this.setState({ showDropdown: false });
-    if (this.props.onChange) {
-      this.props.onChange({ address, type });
-    }
+    this.props.onChange({ address, type });
   };
   toggleDropdown = () => {
     this.setState(state => ({ dropdownOpen: !state.dropdownOpen }));
   };
   render() {
-    const { dark, accounts, ...props } = this.props;
+    const { dark, accounts, fetching, ...props } = this.props;
     const availableAccounts = accounts.filter(account => !!account.address);
     const [headAccount] = availableAccounts;
-    if (headAccount === undefined)
+    if (!fetching && headAccount === undefined)
       return (
         <StyledAccount dark={dark} {...this.props}>
           <Account noAccounts={true}>No Accounts</Account>
@@ -114,17 +114,30 @@ class AccountBox extends Component {
       <ClickOutside onOutsideClick={this.clickOutside}>
         <AccountWrapper {...props}>
           <StyledAccount dark={dark} onClick={this.toggleDropdown}>
-            <Blockies
-              seed={headAccount.address}
-              size={5}
-              spotColor="#fc5e04"
-              color="#fc5e04"
-              bgColor="#fff"
-            />
-            <Account>
-              {headAccount.type} {cutMiddle(headAccount.address)}
-            </Account>
-            <StyledArrow />
+            {fetching ? (
+              <Loader
+                size={20}
+                color="background"
+                background={dark ? "box_dark" : "box_light"}
+              />
+            ) : (
+              <Fragment>
+                <Blockies
+                  seed={headAccount.address}
+                  size={5}
+                  spotColor="#fc5e04"
+                  color="#fc5e04"
+                  bgColor="#fff"
+                />
+                <Account>
+                  <Fragment>
+                    {firstLetterCapital(headAccount.type)}{" "}
+                    {cutMiddle(headAccount.address)}
+                  </Fragment>
+                </Account>
+                <StyledArrow />
+              </Fragment>
+            )}
           </StyledAccount>
           <StyledDropdownWrapper show={this.state.dropdownOpen}>
             {availableAccounts.map(({ address, type }) => (
@@ -141,7 +154,9 @@ class AccountBox extends Component {
                   color="#fc5e04"
                   bgColor="#fff"
                 />
-                <Account>{`${type} ${cutMiddle(address)}`}</Account>
+                <Account>{`${firstLetterCapital(type)} ${cutMiddle(
+                  address
+                )}`}</Account>
               </StyledRow>
             ))}
           </StyledDropdownWrapper>
@@ -154,12 +169,15 @@ class AccountBox extends Component {
 AccountBox.propTypes = {
   accounts: PropTypes.array,
   dark: PropTypes.bool,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
+  fetching: PropTypes.bool
 };
 
 AccountBox.defaultProps = {
   accounts: [],
-  dark: false
+  dark: false,
+  onChange: () => {},
+  fetching: false
 };
 
 export default AccountBox;

@@ -13,7 +13,8 @@ import {
   getChief,
   getProxyFactory,
   getNetworkName,
-  web3Instance
+  web3Instance,
+  getMkrAddress
 } from "./web3";
 import {
   generateCallData,
@@ -114,6 +115,24 @@ export const getSlateAddresses = async slateHex => {
   };
   const addresses = await traverseSlate();
   return addresses;
+};
+
+/**
+ * @async @desc use event logs to get all etched slates
+ * @return {String[]} slates
+ */
+export const getHat = async () => {
+  const chief = await getChief();
+  const methodSig = getMethodSig("hat()");
+  const callData = generateCallData({
+    method: methodSig,
+    args: []
+  });
+  const hat = await web3Instance.eth.call({
+    to: chief,
+    data: callData
+  });
+  return hat;
 };
 
 /**
@@ -276,4 +295,23 @@ export const getVoteTally = async () => {
     voteTally[key] = withPercentages;
   }
   return voteTally;
+};
+
+/**
+ * @async @desc use event logs to get all etched slates
+ * @return {String} balance
+ */
+export const getMkrBalance = async address => {
+  const mkr = await getMkrAddress();
+  const methodSig = getMethodSig("balanceOf(address)");
+  const callData = generateCallData({
+    method: methodSig,
+    args: [removeHexPrefix(address)]
+  });
+  const hexBalance = await web3Instance.eth.call({
+    to: mkr,
+    data: callData
+  });
+  const balanceStdUnits = weiToEther(hexBalance);
+  return balanceStdUnits;
 };

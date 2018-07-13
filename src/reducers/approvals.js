@@ -12,11 +12,11 @@ const APPROVALS_FAILURE = "voteTally/APPROVALS_FAILURE";
 export const initApprovalsFetch = proposals => dispatch => {
   dispatch({ type: APPROVALS_REQUEST });
   Promise.all(
-    proposals.map(({ source }) => {
-      return getApprovalCount(source).then(approvals => ({
+    proposals.map(({ source }) =>
+      getApprovalCount(source).then(approvals => ({
         [source]: approvals
-      }));
-    })
+      }))
+    )
   )
     .then(approvals => {
       const approvalsObj = {};
@@ -36,7 +36,7 @@ export const initApprovalsFetch = proposals => dispatch => {
 // Reducer ------------------------------------------------
 
 const initialState = {
-  fetching: false,
+  fetching: true,
   approvals: {}
 };
 

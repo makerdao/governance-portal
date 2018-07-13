@@ -85,6 +85,15 @@ export const getTransactionCount = address =>
   web3Instance.eth.getTransactionCount(address, "pending");
 
 /**
+ * @desc get Encodes a parameter based on its type to its ABI representation.
+ * @param {String} type
+ * @param {String} param
+ * @return {Promise}
+ */
+export const encodeParameter = (type, param) =>
+  web3Instance.eth.abi.encodeParameter(type, param);
+
+/**
  * @async @desc get transaction details
  * @param  {Object} transaction { from, to, data, value, gasPrice, gasLimit }
  * @return {Object}
@@ -116,6 +125,20 @@ export const getTxDetails = async ({
   };
   return tx;
 };
+
+/**
+ * @desc send signed transaction
+ * @param  {String}  signedTx
+ * @return {Promise}
+ */
+export const sendSignedTx = signedTx =>
+  new Promise((resolve, reject) => {
+    const serializedTx = typeof signedTx === "string" ? signedTx : signedTx.raw;
+    web3Instance.eth
+      .sendSignedTransaction(serializedTx)
+      .once("transactionHash", txHash => resolve(txHash))
+      .catch(error => reject(error));
+  });
 
 /**
  * @async returns a promise that resolves after a transaction has a set number of confirmations

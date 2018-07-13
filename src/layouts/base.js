@@ -3,11 +3,14 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import { withRouter } from "react-router";
 
-import { colors, fonts } from "../styles";
+import { colors, fonts } from "../theme";
 import Modals from "../components/modals";
-import Footer from "../components/Footer";
+// import Footer from "../components/Footer";
+import Loader from "../components/Loader";
 import AccountBox from "../components/AccountBox";
+import { setActiveAccount } from "../reducers/accounts";
 import logo from "../imgs/logo.svg";
 
 const StyledLayout = styled.div`
@@ -119,7 +122,13 @@ const BorderLine = styled.div`
   background-color: #445162;
 `;
 
-const BaseLayout = ({ children, account, web3Available }) => (
+const BaseLayout = ({
+  children,
+  web3Available,
+  allAccounts,
+  metamaskFetching,
+  setActiveAccount
+}) => (
   <StyledLayout>
     <StyledHeader>
       <HeaderTop>
@@ -159,19 +168,29 @@ const BaseLayout = ({ children, account, web3Available }) => (
           </StyledLink>
           <AccountBox
             web3Available={web3Available}
-            accounts={[{ address: account, type: "MetaMask" }]}
+            accounts={allAccounts}
+            fetching={metamaskFetching}
+            onChange={setActiveAccount}
           />
         </HeaderBottomContent>
       </HeaderBottom>
     </StyledHeader>
     <AppWrapper>
       <StyledColumn>
-        <StyledContent>{children}</StyledContent>
+        <StyledContent>
+          {metamaskFetching ? (
+            <div style={{ marginTop: "150px" }}>
+              <Loader size={20} color="header" background="background" />
+            </div>
+          ) : (
+            children
+          )}
+        </StyledContent>
         {/* <Footer /> */}
         <Padding />
       </StyledColumn>
     </AppWrapper>
-    <Modals modal="PROXY_SETUP" />
+    <Modals />
   </StyledLayout>
 );
 
@@ -181,12 +200,15 @@ BaseLayout.propTypes = {
   web3Available: PropTypes.bool
 };
 
-const reduxProps = ({ metamask }) => ({
+const reduxProps = ({ metamask, accounts }) => ({
   account: metamask.accountAddress,
-  web3Available: metamask.web3Available
+  web3Available: metamask.web3Available,
+  metamaskFetching: metamask.fetching,
+  allAccounts: accounts.allAccounts
 });
 
-export default connect(
+const connector = connect(
   reduxProps,
-  {}
-)(BaseLayout);
+  { setActiveAccount }
+);
+export default withRouter(connector(BaseLayout));

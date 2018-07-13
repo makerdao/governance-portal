@@ -5,13 +5,12 @@ import { Link } from "react-router-dom";
 
 import descend from "../imgs/descend.svg";
 import { toSlug } from "../utils/misc";
-import { colors, fonts, shadows, transitions, responsive } from "../styles";
+import { colors, fonts, shadows, transitions, responsive } from "../theme";
 
 const StyledCard = styled.div`
   transition: ${transitions.base};
   position: relative;
   width: 100%;
-  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : "none")};
   border: none;
   border-style: none;
   border-radius: 4px;
@@ -27,7 +26,24 @@ const StyledCard = styled.div`
   overflow: hidden;
 `;
 
-const CardElement = styled.div`
+const Card = ({ background, children, ...props }) => (
+  <StyledCard background={background} {...props}>
+    {children}
+  </StyledCard>
+);
+
+Card.propTypes = {
+  children: PropTypes.node.isRequired,
+  background: PropTypes.string,
+  minHeight: PropTypes.number
+};
+
+Card.defaultProps = {
+  background: "white",
+  minHeight: null
+};
+
+const CardElementWrapper = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
@@ -52,21 +68,38 @@ const CardElement = styled.div`
   }
 `;
 
-const Card = ({ background, children, ...props }) => (
-  <StyledCard background={background} {...props}>
-    {children}
-  </StyledCard>
+const CollapsableWrapper = styled.div`
+  transition: ${transitions.base};
+  max-height: auto;
+`;
+
+const CardElement = ({ children, height, background, minHeight, ...props }) => (
+  <CollapsableWrapper>
+    <CardElementWrapper
+      height={height}
+      background={background}
+      minHeight={minHeight}
+      {...props}
+    >
+      {children}
+    </CardElementWrapper>
+  </CollapsableWrapper>
 );
 
-Card.propTypes = {
-  children: PropTypes.node.isRequired,
+CardElement.propTypes = {
+  children: PropTypes.node,
+  height: PropTypes.number,
   background: PropTypes.string,
-  minHeight: PropTypes.number
+  minHeight: PropTypes.number,
+  active: PropTypes.bool
 };
 
-Card.defaultProps = {
-  background: "white",
-  minHeight: null
+CardElement.defaultProps = {
+  minHeight: 48,
+  collapsable: true,
+  startCollapsed: false,
+  topicTitle: "",
+  active: false
 };
 
 const CardTopWrapper = styled.div`
@@ -124,7 +157,7 @@ const Heading = styled.p`
   }
 `;
 
-const Descend = styled.div`
+const Caret = styled.div`
   margin-top: 14px;
   margin-right: 10px;
   height: 10px;
@@ -132,7 +165,7 @@ const Descend = styled.div`
   cursor: pointer;
   background: url(${descend}) no-repeat;
   transition: ${transitions.base};
-  transform: ${({ flip }) => (flip ? "rotate(180deg)" : "")};
+  transform: ${({ flipped }) => (flipped ? "rotate(180deg)" : "")};
 `;
 
 class CardTop extends React.Component {
@@ -145,16 +178,16 @@ class CardTop extends React.Component {
     this.setState(state => ({ collapse: !state.collapse }));
   };
   render() {
-    const { minHeight, topic, active, collapsable } = this.props;
+    const { minHeight, topicTitle, active, collapsable } = this.props;
     const { collapse } = this.state;
     return (
       <CardTopWrapper minHeight={minHeight} collapse={collapse}>
         <div style={{ display: "flex" }}>
           {collapsable ? (
-            <Descend flip={collapse} onClick={this.toggleCollapse} />
+            <Caret flipped={collapse} onClick={this.toggleCollapse} />
           ) : null}
-          <Link to={`/${toSlug(topic)}`}>
-            <Heading>{topic}</Heading>
+          <Link to={`/${toSlug(topicTitle)}`}>
+            <Heading>{topicTitle}</Heading>
           </Link>
         </div>
         <TopicStatus active={active} />
@@ -163,9 +196,23 @@ class CardTop extends React.Component {
   }
 }
 
-CardTop.defaultProps = {
-  minHeight: 48
+CardTop.propTypes = {
+  collapsable: PropTypes.bool,
+  minHeight: PropTypes.number,
+  startCollapsed: PropTypes.bool,
+  topicTitle: PropTypes.string,
+  active: PropTypes.bool
 };
 
+CardTop.defaultProps = {
+  minHeight: 48,
+  collapsable: true,
+  startCollapsed: false,
+  topicTitle: "",
+  active: false
+};
+
+Card.Top = CardTop;
+Card.Element = CardElement;
+
 export default Card;
-export { CardTop, CardElement };
