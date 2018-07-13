@@ -127,6 +127,20 @@ export const getTxDetails = async ({
 };
 
 /**
+ * @desc send signed transaction
+ * @param  {String}  signedTx
+ * @return {Promise}
+ */
+export const sendSignedTx = signedTx =>
+  new Promise((resolve, reject) => {
+    const serializedTx = typeof signedTx === "string" ? signedTx : signedTx.raw;
+    web3Instance.eth
+      .sendSignedTransaction(serializedTx)
+      .once("transactionHash", txHash => resolve(txHash))
+      .catch(error => reject(error));
+  });
+
+/**
  * @async returns a promise that resolves after a transaction has a set number of confirmations
  * @param  {String} transaction
  * @param  {Object} { confirmations }

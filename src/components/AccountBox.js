@@ -95,9 +95,7 @@ class AccountBox extends Component {
   };
   onChange = ({ address, type }) => {
     this.setState({ showDropdown: false });
-    if (this.props.onChange) {
-      this.props.onChange({ address, type });
-    }
+    this.props.onChange({ address, type });
   };
   toggleDropdown = () => {
     this.setState(state => ({ dropdownOpen: !state.dropdownOpen }));
@@ -176,7 +174,8 @@ AccountBox.propTypes = {
 
 AccountBox.defaultProps = {
   accounts: [],
-  dark: false
+  dark: false,
+  onChange: () => {}
 };
 
 export default AccountBox;

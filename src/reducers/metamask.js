@@ -1,6 +1,6 @@
 import { createReducer } from "../utils/redux";
 import { getMetamaskNetworkName, web3SetHttpProvider } from "../chain/web3";
-import { updateAccount, addAccount } from "./accounts";
+import { updateAccount, addAccount, setActiveAccount } from "./accounts";
 import { voteTallyInit } from "./tally";
 import { topicsInit } from "./topics";
 import { hatInit } from "./hat";
@@ -31,6 +31,8 @@ export const updateMetamaskAccount = () => (dispatch, getState) => {
       dispatch(updateAccount({ address: newAddress, type: "METAMASK" }));
     else {
       dispatch(addAccount({ address: newAddress, type: "METAMASK" }));
+      // default to our metamask account
+      dispatch(setActiveAccount({ address: newAddress, type: "METAMASK" }));
     }
   }
   setTimeout(() => dispatch(updateMetamaskAccount()), 100);

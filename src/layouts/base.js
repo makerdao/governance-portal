@@ -9,6 +9,7 @@ import Modals from "../components/modals";
 import Footer from "../components/Footer";
 import Loader from "../components/Loader";
 import AccountBox from "../components/AccountBox";
+import { setActiveAccount } from "../reducers/accounts";
 import logo from "../imgs/logo.svg";
 
 const StyledLayout = styled.div`
@@ -124,7 +125,8 @@ const BaseLayout = ({
   children,
   web3Available,
   allAccounts,
-  metamaskFetching
+  metamaskFetching,
+  setActiveAccount
 }) => (
   <StyledLayout>
     <StyledHeader>
@@ -167,6 +169,7 @@ const BaseLayout = ({
             web3Available={web3Available}
             accounts={allAccounts}
             fetching={metamaskFetching}
+            onChange={setActiveAccount}
           />
         </HeaderBottomContent>
       </HeaderBottom>
@@ -205,5 +208,5 @@ const reduxProps = ({ metamask, accounts }) => ({
 
 export default connect(
   reduxProps,
-  {}
+  { setActiveAccount }
 )(BaseLayout);

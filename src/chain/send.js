@@ -8,7 +8,8 @@ import {
   getProxyFactory,
   getMkrAddress,
   getChief,
-  encodeParameter
+  encodeParameter,
+  sendSignedTx
 } from "./web3";
 import { getProxyStatus } from "./read";
 import {
@@ -24,7 +25,7 @@ import ledgerSubprovider from "./ledger";
  * @param  {Object} transaction { from, to, value, data, gasPrice, gasLimit }
  * @return {Promise} tx
  */
-export const web3MetamaskSendTransaction = transaction =>
+export const metamaskSendTx = transaction =>
   new Promise((resolve, reject) => {
     const from =
       transaction.from.substr(0, 2) === "0x"
@@ -59,12 +60,50 @@ export const web3MetamaskSendTransaction = transaction =>
       .catch(error => reject(error));
   });
 
+/**
+ * @desc ledger send transaction
+ * @param  {Object}  transaction { from, to, value, data, gasPrice}
+ * @return {Promise}
+ */
+export const ledgerSendTransaction = transaction =>
+  new Promise((resolve, reject) => {
+    const from =
+      transaction.from.substr(0, 2) === "0x"
+        ? transaction.from
+        : `0x${transaction.from}`;
+    const to =
+      transaction.to.substr(0, 2) === "0x"
+        ? transaction.to
+        : `0x${transaction.to}`;
+    const value = transaction.value ? etherToWei(transaction.value) : "0x00";
+    const data = transaction.data ? transaction.data : "0x";
+    getTxDetails({
+      from,
+      to,
+      data,
+      value,
+      gasPrice: transaction.gasPrice,
+      gasLimit: transaction.gasLimit
+    })
+      .then(txDetails => {
+        ledgerSubprovider
+          .signTransaction(txDetails)
+          .then(signedTx =>
+            sendSignedTx(signedTx)
+              .then(txHash => resolve(txHash))
+              .catch(error => reject(error))
+          )
+          .catch(error => reject(error));
+      })
+      .catch(error => reject(error));
+  });
+
 export const sendTransactionMulti = (type, tranasction) => {
   switch (type) {
     case "METAMASK":
-      return web3MetamaskSendTransaction(tranasction);
+      return metamaskSendTx(tranasction);
     case "LEDGER":
-      return ledgerSubprovider.signTransaction(tranasction);
+      return ledgerSendTransaction(tranasction);
   }
 };
 
