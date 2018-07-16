@@ -1,8 +1,10 @@
-import React from "react";
+import React, { Fragment } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
+import DotSpacer from "../components/DotSpacer";
+import VoterStatus from "../components/VoterStatus";
 import VoteMeta from "../components/VoteMeta";
 import VoteTally from "../components/VoteTally";
 import WithTally from "../components/hocs/WithTally";
@@ -107,8 +109,8 @@ const RootWrapper = styled.div`
   align-items: center;
 `;
 
-const Timeline = ({ modalOpen, data }) => (
-  <React.Fragment>
+const WelcomeBanner = ({ modalOpen }) => {
+  return (
     <Banner>
       <BannerHeader>Welcome to the governance voting dashboard </BannerHeader>
       <BannerBody>
@@ -121,13 +123,19 @@ const Timeline = ({ modalOpen, data }) => (
         </StyledAnchor>
       </BannerBody>
     </Banner>
+  );
+};
+
+const Timeline = ({ modalOpen, isVotingSetup, data }) => (
+  <Fragment>
+    {isVotingSetup ? <VoterStatus /> : <WelcomeBanner modalOpen={modalOpen} />}
     <StyledCard>
       <RootWrapper>
         <div>
           <Heading>Current Root Proposal</Heading>
           <div style={{ display: "flex" }}>
             <StyledAnchor noBorder>See all system parameters</StyledAnchor>
-            <div style={{ margin: "0px 12px", color: "#C4C4C4" }}>{" • "}</div>
+            <DotSpacer />
             <StyledAnchor noBorder>What is the Root Proposal?</StyledAnchor>
           </div>
         </div>
@@ -177,18 +185,19 @@ const Timeline = ({ modalOpen, data }) => (
                   })
                 }
               >
-                Vote this Proposal
+                Vote for this Proposal
               </Button>
             </div>
           </Card.Element>
         ))}
       </StyledCard>
     ))}
-  </React.Fragment>
+  </Fragment>
 );
 
 const reduxProps = ({ topics }) => ({
-  data: topics
+  data: topics,
+  isVotingSetup: true
 });
 
 export default connect(
