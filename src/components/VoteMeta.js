@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-
+import DotSpacer from "./DotSpacer";
 import verified from "../imgs/verified.svg";
 import { formatDate } from "../utils/misc";
 
@@ -25,23 +25,10 @@ const Footer = styled.div`
   flex-direction: row;
 `;
 
-const Verification = styled.div`
-  &::after {
-    content: "   •   ";
-    white-space: pre;
-    color: ${({ theme }) => theme.text.dark_default};
-  }
-`;
-
 const Submitter = styled.div`
   &::before {
     color: ${({ theme }) => theme.text.dim_grey};
     content: "Submitted by ";
-  }
-  &::after {
-    content: "   •   ";
-    white-space: pre;
-    color: ${({ theme }) => theme.text.dark_default};
   }
 `;
 
@@ -49,8 +36,8 @@ const VoteMeta = ({ verified, submitted_by, date, ...props }) => (
   <Footer {...props}>
     {verified ? (
       <Fragment>
-        <VerifiedMark verified />
-        <Verification>Verified Proposal</Verification>
+        <VerifiedMark verified /> Verified Proposal
+        <DotSpacer />
       </Fragment>
     ) : null}
     <Submitter>
@@ -58,6 +45,7 @@ const VoteMeta = ({ verified, submitted_by, date, ...props }) => (
         {submitted_by.name}
       </a>
     </Submitter>
+    <DotSpacer />
     <Created>{formatDate(date)}</Created>
   </Footer>
 );
