@@ -56,6 +56,7 @@ class ProxySetup extends Component {
             <Transaction
               txHash={this.props.proxyCreationTxHash}
               nextStep={this.nextStep}
+              network={this.props.network}
             />
           </Fragment>
         );
@@ -102,6 +103,7 @@ class ProxySetup extends Component {
             <Transaction
               txHash={this.props.mkrToProxyTxHash}
               nextStep={this.nextStep}
+              network={this.props.network}
             />
           </Fragment>
         );

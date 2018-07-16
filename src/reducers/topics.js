@@ -9,12 +9,13 @@ import mocked from "../_mock/topics";
 
 // Constants ----------------------------------------------
 
-const TOPICS_SUCCESS = "mock/PROPOSALS_SUCCESS";
+const TOPICS_SUCCESS = "toics/TOPICS_SUCCESS";
 
 // Actions ------------------------------------------------
 
 export const topicsInit = network => (dispatch, getState) => {
-  dispatch({ type: TOPICS_SUCCESS, payload: { network } });
+  const networkToShow = network === "kovan" ? "kovan" : "mainnet";
+  dispatch({ type: TOPICS_SUCCESS, payload: { network: networkToShow } });
   const proposals = flatten(getState().topics.map(topic => topic.proposals));
   dispatch(initApprovalsFetch(proposals));
 };

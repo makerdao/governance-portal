@@ -116,6 +116,7 @@ const reduxProps = ({ modal, metamask, vote }) => ({
   modal: modal.modal,
   modalProps: modal.modalProps,
   account: metamask.accountAddress,
+  network: metamask.network === "kovan" ? "kovan" : "mainnet",
   voteTxHash: vote.txHash
 });
 

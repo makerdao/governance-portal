@@ -4,12 +4,12 @@ import { ethScanLink } from "../../../utils/ethereum";
 import { StyledTitle, StyledTop, TxHash } from "./styles";
 import Button from "../../Button";
 
-const Transaction = ({ txHash, nextStep }) => (
+const Transaction = ({ txHash, nextStep, network }) => (
   <Fragment>
     <StyledTop>
       <StyledTitle>Transaction Hash</StyledTitle>
     </StyledTop>
-    <TxHash href={ethScanLink(txHash)} target="_blank">
+    <TxHash href={ethScanLink(txHash, network)} target="_blank">
       {txHash}
     </TxHash>
     <div

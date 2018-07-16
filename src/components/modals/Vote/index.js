@@ -27,6 +27,7 @@ class Vote extends Component {
   };
 
   renderStep() {
+    console.log(this.props.network);
     let proposal;
     switch (this.state.step) {
       case 1:
@@ -61,6 +62,7 @@ class Vote extends Component {
           <Transaction
             txHash={this.props.voteTxHash}
             nextStep={this.nextStep}
+            network={this.props.network}
           />
         );
       default:
