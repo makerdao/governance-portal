@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from "react";
+import React, { Fragment, Component } from 'react';
 
 import {
   StyledTitle,
@@ -6,14 +6,14 @@ import {
   StyledTop,
   StyledAnchor,
   Styledinput
-} from "../shared/styles";
-import Button from "../../Button";
-import ProgressTabs from "./ProgressTabs";
+} from '../shared/styles';
+import Button from '../../Button';
+import ProgressTabs from './ProgressTabs';
 
 class Link extends Component {
   state = {
-    hot: "",
-    cold: ""
+    hot: '',
+    cold: ''
   };
 
   updateInputValueHot = evt => {
@@ -33,8 +33,8 @@ class Link extends Component {
           <StyledTitle>Link cold and hot wallets</StyledTitle>
         </StyledTop>
         <StyledBlurb>
-          Please connect your <StyledAnchor>cold wallet</StyledAnchor> , we
-          support MetaMask, Ledger and Trezor. Then select the{" "}
+          Please connect your <StyledAnchor>cold wallet</StyledAnchor>; we
+          support MetaMask, Ledger and Trezor. Then select the{' '}
           <StyledAnchor>hot wallet</StyledAnchor> you would like to link it to.
         </StyledBlurb>
         <Styledinput
@@ -49,8 +49,8 @@ class Link extends Component {
         />
         <div
           style={{
-            alignSelf: "center",
-            marginTop: "18px"
+            alignSelf: 'center',
+            marginTop: '18px'
           }}
         >
           <Button

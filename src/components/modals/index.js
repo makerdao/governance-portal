@@ -6,7 +6,6 @@ import { modalClose } from '../../reducers/modal';
 import { initiateLink, sendMkrToProxy } from '../../reducers/proxy';
 import { sendVote } from '../../reducers/vote';
 import ProxySetup from './PoxySetup';
-import Vote from './Vote';
 import Card from '../Card';
 import close from '../../imgs/close.svg';
 import { colors, transitions, responsive } from '../../theme';
@@ -84,8 +83,6 @@ class Modal extends Component {
       case 'PROXY_SETUP':
         window.scrollTo(50, 50);
         return <ProxySetup {...this.props} />;
-      case 'VOTE':
-        return <Vote {...this.props} />;
       default:
         if (typeof this.props.modal === 'function')
           return <this.props.modal {...this.props} />;

@@ -1,19 +1,21 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import find from "ramda/src/find";
-import styled from "styled-components";
-import ReactMarkdown from "react-markdown";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import find from 'ramda/src/find';
+import styled from 'styled-components';
+import ReactMarkdown from 'react-markdown';
 
-import { toSlug } from "../utils/misc";
-import { ethScanLink } from "../utils/ethereum";
-import VoteMeta from "../components/VoteMeta";
-import VoteTally from "../components/VoteTally";
-import Button from "../components/Button";
-import Card from "../components/Card";
-import Loader from "../components/Loader";
-import WithTally from "../components/hocs/WithTally";
-import NotFound from "./NotFound";
-import { colors } from "../theme";
+import { toSlug } from '../utils/misc';
+import { ethScanLink } from '../utils/ethereum';
+import VoteMeta from '../components/VoteMeta';
+import VoteTally from '../components/VoteTally';
+import Vote from '../components/modals/Vote';
+import Button from '../components/Button';
+import Card from '../components/Card';
+import Loader from '../components/Loader';
+import WithTally from '../components/hocs/WithTally';
+import NotFound from './NotFound';
+import { colors } from '../theme';
+import { modalOpen } from '../reducers/modal';
 
 const WhiteBackground = styled.div`
   width: 100vw;
@@ -100,7 +102,7 @@ const Percentage = styled.p`
   line-height: 26px;
   font-size: 14px;
   &::after {
-    content: "%";
+    content: '%';
   }
 `;
 
@@ -146,7 +148,7 @@ const LoadingWrapper = styled.div`
 class Proposal extends Component {
   state = {
     proposal: {},
-    markdown: ""
+    markdown: ''
   };
 
   componentDidMount() {
@@ -174,7 +176,7 @@ class Proposal extends Component {
   render() {
     const { proposal, markdown } = this.state;
     if (Object.keys(proposal).length === 0) return <NotFound />;
-    const { voteState, voteStateFetching } = this.props;
+    const { voteState, voteStateFetching, modalOpen } = this.props;
     const supporters = voteState[proposal.source] || null;
     return (
       <React.Fragment>
@@ -202,7 +204,9 @@ class Proposal extends Component {
                   />
                 )}
               </WithTally>
-              <Button wide={true}>Vote for this Proposal</Button>
+              <Button wide={true} onClick={() => modalOpen(Vote, { proposal })}>
+                Vote for this Proposal
+              </Button>
             </div>
           </StyledTop>
         </WhiteBackground>
@@ -265,5 +269,5 @@ const reduxProps = ({ topics, tally }) => ({
 
 export default connect(
   reduxProps,
-  {}
+  { modalOpen }
 )(Proposal);
