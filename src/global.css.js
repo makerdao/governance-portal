@@ -127,14 +127,8 @@ const globalStyles = `
     max-width: 100%;
     display: inline;
     border-radius: 4px;
-    transition: box-shadow 0.2s;
     display: block;
     margin: 12px 0;
-  }
-  .markdown img:hover {
-    cursor: pointer;
-    transition: box-shadow 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
   .markdown em {
     color: inherit;

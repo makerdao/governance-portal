@@ -96,18 +96,14 @@ const Topic = ({ match, topics }) => {
   const topicSlug = match.params.topicSlug;
   const topic = find(({ topic }) => toSlug(topic) === topicSlug, topics);
   if (topic === undefined) return <NotFound />;
-  const { topic: topicTitle, active, proposals } = topic;
+  const { topic: topicTitle, topic_blurb, active, proposals } = topic;
   return (
     <React.Fragment>
       <WhiteBackground>
         <StyledTop>
           <StyledCenter>
             <StyledTitle>{topicTitle}</StyledTitle>
-            <StyledBody>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
-              ultricies dignissim libero at ultrices. Duis iaculis, arcu quis
-              rutrum vestibulum.
-            </StyledBody>
+            <StyledBody>{topic_blurb}</StyledBody>
             <StyledVoteMeta {...topic} />
           </StyledCenter>
         </StyledTop>

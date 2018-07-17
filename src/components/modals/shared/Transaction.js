@@ -4,7 +4,7 @@ import { ethScanLink } from "../../../utils/ethereum";
 import { StyledTitle, StyledTop, TxHash } from "./styles";
 import Button from "../../Button";
 
-const Transaction = ({ txHash, nextStep, network }) => (
+const Transaction = ({ txHash, nextStep, network, lastCard }) => (
   <Fragment>
     <StyledTop>
       <StyledTitle>Transaction Hash</StyledTitle>
@@ -19,7 +19,7 @@ const Transaction = ({ txHash, nextStep, network }) => (
       }}
     >
       <Button slim onClick={nextStep}>
-        Continue
+        {lastCard ? "Finish and close" : "Continue"}
       </Button>
     </div>
   </Fragment>

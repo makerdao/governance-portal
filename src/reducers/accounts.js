@@ -59,9 +59,9 @@ export const accountDataInit = () => (dispatch, getState) => {
   const account = getState().accounts.activeAccount;
   // TODO if there's no active account, do something else
   const accountAddress = account.address;
-  getMkrBalance(accountAddress).then(mkr => {
-    dispatch({ type: SET_UNLOCKED_MKR, payload: { mkr } });
-  });
+  return getMkrBalance(accountAddress).then(mkr =>
+    dispatch({ type: SET_UNLOCKED_MKR, payload: { mkr } })
+  );
 };
 
 // Reducer ------------------------------------------------

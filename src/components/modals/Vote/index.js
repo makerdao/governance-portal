@@ -61,8 +61,9 @@ class Vote extends Component {
         return (
           <Transaction
             txHash={this.props.voteTxHash}
-            nextStep={this.nextStep}
+            nextStep={this.props.modalClose}
             network={this.props.network}
+            lastCard={true}
           />
         );
       default:

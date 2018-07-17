@@ -10,7 +10,7 @@ import VoteMeta from "../components/VoteMeta";
 import VoteTally from "../components/VoteTally";
 import Button from "../components/Button";
 import Card from "../components/Card";
-import ResizeSpinLoader from "../components/ResizeSpinLoader";
+import Loader from "../components/Loader";
 import WithTally from "../components/hocs/WithTally";
 import NotFound from "./NotFound";
 import { colors } from "../theme";
@@ -243,7 +243,7 @@ class Proposal extends Component {
                   ))
                 ) : voteStateFetching ? (
                   <LoadingWrapper>
-                    <ResizeSpinLoader size={12} color="#6D6D6D" />
+                    <Loader size={20} color="background" background="white" />
                   </LoadingWrapper>
                 ) : (
                   <NoSupporters>No supporters found</NoSupporters>
