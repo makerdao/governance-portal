@@ -27,13 +27,13 @@ export const updateMetamaskAccount = () => (dispatch, getState) => {
       type: UPDATE_ACCOUNT,
       payload: { address: newAddress }
     });
-    if (oldAddress)
+    if (oldAddress === newAddress)
       dispatch(updateAccount({ address: newAddress, type: 'METAMASK' }));
     else {
       dispatch(addAccount({ address: newAddress, type: 'METAMASK' }));
       // default to our metamask account
     }
-    dispatch(setActiveAccount({ address: newAddress, type: 'METAMASK' }));
+    dispatch(setActiveAccount(newAddress));
   }
   setTimeout(() => dispatch(updateMetamaskAccount()), 1000);
 };

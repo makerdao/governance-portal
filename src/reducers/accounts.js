@@ -16,6 +16,13 @@ const UPDATE_ACCOUNT = 'accounts/UPDATE_ACCOUNT';
 const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
 const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
 
+// Selectors ----------------------------------------------
+
+export function getActiveAccount(state) {
+  const { activeAccount, allAccounts } = state.accounts;
+  return allAccounts.find(a => a.address === activeAccount);
+}
+
 // Actions ------------------------------------------------
 
 export const addAccounts = accounts => ({
@@ -46,14 +53,17 @@ export const updateAccount = account => ({
   }
 });
 
-// After the initial load, this will generally be called a an account
+// After the initial load, this will generally be called when an account
 // is selected in the account box dropdown
-export const setActiveAccount = account => ({
-  type: SET_ACTIVE_ACCOUNT,
-  payload: {
-    account
-  }
-});
+export const setActiveAccount = address => {
+  // get proxy info if it's not present
+  // const accountInfo = getState().accounts. TODO
+
+  return {
+    type: SET_ACTIVE_ACCOUNT,
+    payload: address
+  };
+};
 
 export const accountDataInit = () => (dispatch, getState) => {
   const account = getState().accounts.activeAccount;
@@ -104,7 +114,10 @@ const accounts = createReducer(initialState, {
       account =>
         account.address === payload.account.address &&
         account.type === payload.account.type
-          ? { address: payload.account.address, type: account.type }
+          ? {
+              ...account,
+              ...payload.account
+            }
           : account
     )
   }),
@@ -112,10 +125,10 @@ const accounts = createReducer(initialState, {
     ...state,
     allAccounts: append(payload.account, state.allAccounts)
   }),
-  [SET_ACTIVE_ACCOUNT]: (state, { payload }) => ({
+  [SET_ACTIVE_ACCOUNT]: (state, { payload: address }) => ({
     ...initialState,
     allAccounts: state.allAccounts,
-    activeAccount: payload.account
+    activeAccount: address
   }),
   [SET_UNLOCKED_MKR]: (state, { payload }) => ({
     ...state,

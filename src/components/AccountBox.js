@@ -9,7 +9,7 @@ import { cutMiddle } from '../utils/misc';
 import arrow from '../imgs/arrow.svg';
 import { firstLetterCapital } from '../utils/misc';
 import { fonts, colors, shadows } from '../theme';
-import { setActiveAccount } from '../reducers/accounts';
+import { getActiveAccount, setActiveAccount } from '../reducers/accounts';
 
 const StyledArrow = styled.img`
   position: absolute;
@@ -94,9 +94,9 @@ class AccountBox extends Component {
   clickOutside = () => {
     if (this.state.dropdownOpen) this.setState({ dropdownOpen: false });
   };
-  onChange = ({ address, type }) => {
+  onChange = ({ address }) => {
     this.setState({ dropdownOpen: false });
-    this.props.setActiveAccount({ address, type });
+    this.props.setActiveAccount(address);
   };
   toggleDropdown = () => {
     this.setState(state => ({ dropdownOpen: !state.dropdownOpen }));
@@ -115,9 +115,8 @@ class AccountBox extends Component {
 
     const { dark, allAccounts, activeAccount, ...props } = this.props;
     const availableAccounts = allAccounts.filter(account => !!account.address);
-    const headAccount = activeAccount || availableAccounts[0];
 
-    if (!headAccount)
+    if (!activeAccount)
       return (
         <StyledAccount dark={dark} {...this.props}>
           <Account noAccounts>No Accounts</Account>
@@ -129,15 +128,15 @@ class AccountBox extends Component {
         <AccountWrapper {...props}>
           <StyledAccount dark={dark} onClick={this.toggleDropdown}>
             <Blockies
-              seed={headAccount.address}
+              seed={activeAccount.address}
               size={5}
               spotColor="#fc5e04"
               color="#fc5e04"
               bgColor="#fff"
             />
             <Account>
-              {firstLetterCapital(headAccount.type)}{' '}
-              {cutMiddle(headAccount.address)}
+              {firstLetterCapital(activeAccount.type)}{' '}
+              {cutMiddle(activeAccount.address)}
             </Account>
             <StyledArrow />
           </StyledAccount>
@@ -146,7 +145,7 @@ class AccountBox extends Component {
               <StyledRow
                 key={address}
                 onClick={() => this.onChange({ address, type })}
-                selected={address === headAccount.address}
+                selected={address === activeAccount.address}
                 dark={dark}
               >
                 <Blockies
@@ -182,9 +181,9 @@ AccountBox.defaultProps = {
   fetching: false
 };
 
-const mapStateToProps = ({ accounts: { allAccounts, activeAccount } }) => ({
-  allAccounts,
-  activeAccount
+const mapStateToProps = state => ({
+  allAccounts: state.accounts.allAccounts,
+  activeAccount: getActiveAccount(state)
 });
 
 export default connect(

@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import React from 'react';
 import styled from 'styled-components';
 import { modalOpen } from '../reducers/modal';
+import { getActiveAccount } from '../reducers/accounts';
 import { Link } from 'react-router-dom';
 import theme, { colors, fonts } from '../theme';
 import DotSpacer from './DotSpacer';
@@ -21,6 +22,7 @@ const Value = styled.span`
 `;
 
 const VoterStatus = ({ votingContract, account, network }) => {
+  if (!account) return null;
   const domain = `${network === 'kovan' ? 'kovan.' : ''}etherscan.io`;
   const etherscanUrl = `https://${domain}/address/${account.address}`;
   return (
@@ -46,10 +48,9 @@ const VoterStatus = ({ votingContract, account, network }) => {
 
 const mapStateToProps = state => ({
   votingContract: {
-    isSetup: true,
     balance: 888
   },
-  account: state.accounts.activeAccount,
+  account: getActiveAccount(state),
   network: state.metamask.network
 });
 
