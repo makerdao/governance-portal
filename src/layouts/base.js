@@ -127,72 +127,76 @@ const BaseLayout = ({
   web3Available,
   allAccounts,
   metamaskFetching,
-  setActiveAccount
-}) => (
-  <StyledLayout>
-    <StyledHeader>
-      <HeaderTop>
-        <HeaderTopContent>
-          <StyledLink to="/">
-            <StyledLogo />
-            <StyledTitle>MAKER</StyledTitle>
-          </StyledLink>
-          <MakerLinks>
-            <StyledAnchor href="/" target="_blank" edge={"left"}>
-              Products
-            </StyledAnchor>
-            <StyledAnchor
-              href="https://makerdao.com/whitepaper/"
-              target="_blank"
-            >
-              Learn
-            </StyledAnchor>
-            <StyledAnchor href="https://makerdao.com" target="_blank">
-              Company
-            </StyledAnchor>
-            <StyledAnchor
-              href="https://chat.makerdao.com/channel/collateral-discuss"
-              target="_blank"
-              edge={"right"}
-            >
-              Community
-            </StyledAnchor>
-          </MakerLinks>
-        </HeaderTopContent>
-      </HeaderTop>
-      <BorderLine />
-      <HeaderBottom>
-        <HeaderBottomContent>
-          <StyledLink to="/">
-            <HeaderBottomLeft>Governance</HeaderBottomLeft>
-          </StyledLink>
-          <AccountBox
-            web3Available={web3Available}
-            accounts={allAccounts}
-            fetching={metamaskFetching}
-            onChange={setActiveAccount}
-          />
-        </HeaderBottomContent>
-      </HeaderBottom>
-    </StyledHeader>
-    <AppWrapper>
-      <StyledColumn>
-        <StyledContent>
-          {metamaskFetching ? (
-            <div style={{ marginTop: "150px" }}>
-              <Loader size={20} color="header" background="background" />
-            </div>
-          ) : (
-            children
-          )}
-        </StyledContent>
-        {/* <Footer /> */}
-        <Padding />
-      </StyledColumn>
-    </AppWrapper>
-    <Modals />
-  </StyledLayout>
-);
+  setActiveAccount,
+  topicsAvailable
+}) => {
+  const childrenShouldMount = !metamaskFetching && topicsAvailable;
+  return (
+    <StyledLayout>
+      <StyledHeader>
+        <HeaderTop>
+          <HeaderTopContent>
+            <StyledLink to="/">
+              <StyledLogo />
+              <StyledTitle>MAKER</StyledTitle>
+            </StyledLink>
+            <MakerLinks>
+              <StyledAnchor href="/" target="_blank" edge={"left"}>
+                Products
+              </StyledAnchor>
+              <StyledAnchor
+                href="https://makerdao.com/whitepaper/"
+                target="_blank"
+              >
+                Learn
+              </StyledAnchor>
+              <StyledAnchor href="https://makerdao.com" target="_blank">
+                Company
+              </StyledAnchor>
+              <StyledAnchor
+                href="https://chat.makerdao.com/channel/collateral-discuss"
+                target="_blank"
+                edge={"right"}
+              >
+                Community
+              </StyledAnchor>
+            </MakerLinks>
+          </HeaderTopContent>
+        </HeaderTop>
+        <BorderLine />
+        <HeaderBottom>
+          <HeaderBottomContent>
+            <StyledLink to="/">
+              <HeaderBottomLeft>Governance</HeaderBottomLeft>
+            </StyledLink>
+            <AccountBox
+              web3Available={web3Available}
+              accounts={allAccounts}
+              fetching={metamaskFetching}
+              onChange={setActiveAccount}
+            />
+          </HeaderBottomContent>
+        </HeaderBottom>
+      </StyledHeader>
+      <AppWrapper>
+        <StyledColumn>
+          <StyledContent>
+            {childrenShouldMount ? (
+              children
+            ) : (
+              <div style={{ marginTop: "150px" }}>
+                <Loader size={20} color="header" background="background" />
+              </div>
+            )}
+          </StyledContent>
+          {/* <Footer /> */}
+          <Padding />
+        </StyledColumn>
+      </AppWrapper>
+      <Modals />
+    </StyledLayout>
+  );
+};
 
 BaseLayout.propTypes = {
   children: PropTypes.node.isRequired,
@@ -200,10 +204,11 @@ BaseLayout.propTypes = {
   web3Available: PropTypes.bool
 };
 
-const reduxProps = ({ metamask, accounts }) => ({
+const reduxProps = ({ metamask, accounts, topics }) => ({
   account: metamask.accountAddress,
   web3Available: metamask.web3Available,
   metamaskFetching: metamask.fetching,
+  topicsAvailable: topics.length > 0,
   allAccounts: accounts.allAccounts
 });
 

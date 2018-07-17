@@ -243,7 +243,7 @@ class Proposal extends Component {
                   ))
                 ) : voteStateFetching ? (
                   <LoadingWrapper>
-                    <Loader size={20} color="background" background="white" />
+                    <Loader size={20} color="header" background="white" />
                   </LoadingWrapper>
                 ) : (
                   <NoSupporters>No supporters found</NoSupporters>
