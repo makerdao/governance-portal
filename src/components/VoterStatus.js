@@ -6,7 +6,17 @@ import { getActiveAccount } from '../reducers/accounts';
 import { Link } from 'react-router-dom';
 import theme, { colors, fonts } from '../theme';
 import DotSpacer from './DotSpacer';
+import { Banner, BannerHeader, BannerBody, BannerContent } from './Banner';
 import { cutMiddle } from '../utils/misc';
+
+// duplicated in Timeline
+const StyledAnchor = styled.a`
+  color: #3080ed;
+  cursor: pointer;
+  padding-bottom: 3px;
+  margin-bottom: -3px;
+  border-bottom: ${({ noBorder }) => (noBorder ? '' : '1px dashed #317fed')};
+`;
 
 const SmallText = styled.p`
   margin-top: 20px;
@@ -21,16 +31,35 @@ const Value = styled.span`
   color: rgb(${colors.black});
 `;
 
-const VoterStatus = ({ votingContract, account, network }) => {
+const WelcomeBanner = ({ modalOpen }) => {
+  return (
+    <Banner>
+      <BannerHeader>Welcome to the governance voting dashboard </BannerHeader>
+      <BannerBody>
+        <BannerContent>
+          Before you can get started voting you will need to set up a secure
+          voting contract
+        </BannerContent>
+        <StyledAnchor onClick={() => modalOpen('PROXY_SETUP')}>
+          Set up secure voting contract
+        </StyledAnchor>
+      </BannerBody>
+    </Banner>
+  );
+};
+
+const VoterStatus = ({ account, network, modalOpen }) => {
   if (!account) return null;
+  if (account && !account.proxy) return <WelcomeBanner modalOpen={modalOpen} />;
+
   const domain = `${network === 'kovan' ? 'kovan.' : ''}etherscan.io`;
   const etherscanUrl = `https://${domain}/address/${account.address}`;
   return (
     <SmallText>
-      In voting contract <Value>{votingContract.balance} MKR</Value>{' '}
+      In voting contract <Value>{account.proxy.balance} MKR</Value>{' '}
       <a>Withdraw to wallet</a>
       <DotSpacer />
-      In wallet <Value>{account.balance || 0} MKR</Value>{' '}
+      In wallet <Value>{account.coldWallet.balance || 0} MKR</Value>{' '}
       <a>Add to voting contract</a>
       <DotSpacer />
       Hot wallet address {cutMiddle(account.address)}{' '}
@@ -47,9 +76,6 @@ const VoterStatus = ({ votingContract, account, network }) => {
 };
 
 const mapStateToProps = state => ({
-  votingContract: {
-    balance: 888
-  },
   account: getActiveAccount(state),
   network: state.metamask.network
 });

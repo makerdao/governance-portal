@@ -94,7 +94,15 @@ const initialState = {
   allAccounts: [
     {
       address: '0xfakefakefake',
-      type: 'fake'
+      type: 'fake',
+      proxy: {
+        address: '0xproxyfake',
+        balance: 111
+      },
+      coldWallet: {
+        address: '0xcoldfake',
+        balance: 222
+      }
     }
   ]
 };
