@@ -1,20 +1,20 @@
-import uniqWith from "ramda/src/uniqWith";
-import concat from "ramda/src/concat";
-import pipe from "ramda/src/pipe";
-import append from "ramda/src/append";
-import differenceWith from "ramda/src/differenceWith";
+import uniqWith from 'ramda/src/uniqWith';
+import concat from 'ramda/src/concat';
+import pipe from 'ramda/src/pipe';
+import append from 'ramda/src/append';
+import differenceWith from 'ramda/src/differenceWith';
 
-import { createReducer } from "../utils/redux";
-import { getMkrBalance } from "../chain/read";
+import { createReducer } from '../utils/redux';
+import { getMkrBalance } from '../chain/read';
 
 // Constants ----------------------------------------------
 
-const ADD_ACCOUNTS = "accounts/ADD_ACCOUNTS";
-const REMOVE_ACCOUNTS = "accounts/REMOVE_ACCOUNTS";
-const SET_ACTIVE_ACCOUNT = "accounts/SET_ACTIVE_ACCOUNT";
-const UPDATE_ACCOUNT = "accounts/UPDATE_ACCOUNT";
-const ADD_ACCOUNT = "accounts/ADD_ACCOUNT";
-const SET_UNLOCKED_MKR = "accounts/SET_UNLOCKED_MKR";
+const ADD_ACCOUNTS = 'accounts/ADD_ACCOUNTS';
+const REMOVE_ACCOUNTS = 'accounts/REMOVE_ACCOUNTS';
+const SET_ACTIVE_ACCOUNT = 'accounts/SET_ACTIVE_ACCOUNT';
+const UPDATE_ACCOUNT = 'accounts/UPDATE_ACCOUNT';
+const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
+const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
 
 // Actions ------------------------------------------------
 
@@ -76,13 +76,17 @@ const addressCmp = (x, y) => x.address === y.address;
 
 // accounts look like { type: "METAMASK", address: "0x34a..." }
 const initialState = {
-  activeAccount: {},
   activeAccountHasProxy: false,
-  activeAccountProxyType: "",
-  activeAccountCurrentVote: "",
+  activeAccountProxyType: '',
+  activeAccountCurrentVote: '',
   activeAccountVotableMkr: 0,
   activeAccountUnlockedMkr: 0,
-  allAccounts: []
+  allAccounts: [
+    {
+      address: '0xfakefakefake',
+      type: 'fake'
+    }
+  ]
 };
 
 const accounts = createReducer(initialState, {

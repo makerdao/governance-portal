@@ -1,10 +1,11 @@
-import { connect } from "react-redux";
-import React from "react";
-import styled from "styled-components";
-import { modalOpen } from "../reducers/modal";
-import { Link } from "react-router-dom";
-import theme, { colors, fonts } from "../theme";
-import DotSpacer from "./DotSpacer";
+import { connect } from 'react-redux';
+import React from 'react';
+import styled from 'styled-components';
+import { modalOpen } from '../reducers/modal';
+import { Link } from 'react-router-dom';
+import theme, { colors, fonts } from '../theme';
+import DotSpacer from './DotSpacer';
+import { cutMiddle } from '../utils/misc';
 
 const SmallText = styled.p`
   margin-top: 20px;
@@ -19,18 +20,23 @@ const Value = styled.span`
   color: rgb(${colors.black});
 `;
 
-const VoterStatus = ({ votingContract, wallet }) => {
+const VoterStatus = ({ votingContract, account, network }) => {
+  const domain = `${network === 'kovan' ? 'kovan.' : ''}etherscan.io`;
+  const etherscanUrl = `https://${domain}/address/${account.address}`;
   return (
     <SmallText>
-      In voting contract <Value>{votingContract.balance} MKR</Value>{" "}
+      In voting contract <Value>{votingContract.balance} MKR</Value>{' '}
       <a>Withdraw to wallet</a>
       <DotSpacer />
-      In wallet <Value>{wallet.balance} MKR</Value>{" "}
+      In wallet <Value>{account.balance || 0} MKR</Value>{' '}
       <a>Add to voting contract</a>
       <DotSpacer />
-      Hot wallet address 0x...f00 <a>Etherscan</a>
+      Hot wallet address {cutMiddle(account.address)}{' '}
+      <a target="_blank" href={etherscanUrl}>
+        Etherscan
+      </a>
       <br />
-      Currently voting for{" "}
+      Currently voting for{' '}
       <Link to="/foundation-proposal/vote-yes-to-the-five-core-principles-of-the-maker-governance-philosophy">
         Vote YES to the five core principles of the Maker Governance philosophy
       </Link>
@@ -38,14 +44,13 @@ const VoterStatus = ({ votingContract, wallet }) => {
   );
 };
 
-const mapStateToProps = () => ({
+const mapStateToProps = state => ({
   votingContract: {
     isSetup: true,
     balance: 888
   },
-  wallet: {
-    balance: 777
-  }
+  account: state.accounts.activeAccount,
+  network: state.metamask.network
 });
 
 export default connect(

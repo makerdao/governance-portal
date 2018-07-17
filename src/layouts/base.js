@@ -1,17 +1,16 @@
-import React from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { connect } from "react-redux";
-import { Link } from "react-router-dom";
-import { withRouter } from "react-router";
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router';
 
-import { colors, fonts } from "../theme";
-import Modals from "../components/modals";
+import { colors, fonts } from '../theme';
+import Modals from '../components/modals';
 // import Footer from "../components/Footer";
-import Loader from "../components/Loader";
-import AccountBox from "../components/AccountBox";
-import { setActiveAccount } from "../reducers/accounts";
-import logo from "../imgs/logo.svg";
+import Loader from '../components/Loader';
+import AccountBox from '../components/AccountBox';
+import logo from '../imgs/logo.svg';
 
 const StyledLayout = styled.div`
   position: relative;
@@ -92,8 +91,8 @@ const StyledAnchor = styled.a`
   font-size: ${fonts.size.medium};
   font-weight: ${fonts.weight.medium};
   margin: 0px 49px;
-  margin-right: ${({ edge }) => (!!edge && edge === "right" ? "0px" : "")};
-  margin-left: ${({ edge }) => (!!edge && edge === "left" ? "0px" : "")};
+  margin-right: ${({ edge }) => (!!edge && edge === 'right' ? '0px' : '')};
+  margin-left: ${({ edge }) => (!!edge && edge === 'left' ? '0px' : '')};
 `;
 
 const StyledContent = styled.div`
@@ -125,9 +124,7 @@ const BorderLine = styled.div`
 const BaseLayout = ({
   children,
   web3Available,
-  allAccounts,
   metamaskFetching,
-  setActiveAccount,
   topicsAvailable
 }) => {
   const childrenShouldMount = !metamaskFetching && topicsAvailable;
@@ -141,7 +138,7 @@ const BaseLayout = ({
               <StyledTitle>MAKER</StyledTitle>
             </StyledLink>
             <MakerLinks>
-              <StyledAnchor href="/" target="_blank" edge={"left"}>
+              <StyledAnchor href="/" target="_blank" edge={'left'}>
                 Products
               </StyledAnchor>
               <StyledAnchor
@@ -156,7 +153,7 @@ const BaseLayout = ({
               <StyledAnchor
                 href="https://chat.makerdao.com/channel/collateral-discuss"
                 target="_blank"
-                edge={"right"}
+                edge={'right'}
               >
                 Community
               </StyledAnchor>
@@ -171,9 +168,7 @@ const BaseLayout = ({
             </StyledLink>
             <AccountBox
               web3Available={web3Available}
-              accounts={allAccounts}
               fetching={metamaskFetching}
-              onChange={setActiveAccount}
             />
           </HeaderBottomContent>
         </HeaderBottom>
@@ -184,7 +179,7 @@ const BaseLayout = ({
             {childrenShouldMount ? (
               children
             ) : (
-              <div style={{ marginTop: "150px" }}>
+              <div style={{ marginTop: '150px' }}>
                 <Loader size={20} color="header" background="background" />
               </div>
             )}
@@ -200,20 +195,13 @@ const BaseLayout = ({
 
 BaseLayout.propTypes = {
   children: PropTypes.node.isRequired,
-  account: PropTypes.string,
   web3Available: PropTypes.bool
 };
 
-const reduxProps = ({ metamask, accounts, topics }) => ({
-  account: metamask.accountAddress,
+const reduxProps = ({ metamask, topics }) => ({
   web3Available: metamask.web3Available,
   metamaskFetching: metamask.fetching,
-  topicsAvailable: topics.length > 0,
-  allAccounts: accounts.allAccounts
+  topicsAvailable: topics.length > 0
 });
 
-const connector = connect(
-  reduxProps,
-  { setActiveAccount }
-);
-export default withRouter(connector(BaseLayout));
+export default withRouter(connect(reduxProps)(BaseLayout));

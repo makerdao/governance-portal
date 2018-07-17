@@ -1,18 +1,18 @@
-import { createReducer } from "../utils/redux";
-import { getMetamaskNetworkName, web3SetHttpProvider } from "../chain/web3";
-import { updateAccount, addAccount, setActiveAccount } from "./accounts";
-import { voteTallyInit } from "./tally";
-import { topicsInit } from "./topics";
-import { hatInit } from "./hat";
+import { createReducer } from '../utils/redux';
+import { getMetamaskNetworkName, web3SetHttpProvider } from '../chain/web3';
+import { updateAccount, addAccount, setActiveAccount } from './accounts';
+import { voteTallyInit } from './tally';
+import { topicsInit } from './topics';
+import { hatInit } from './hat';
 
 // Constants ----------------------------------------------
 
-const UPDATE_ACCOUNT = "metamask/UPDATE_ACCOUNT";
-const UPDATE_NETWORK = "metamask/UPDATE_NETWORK";
-const CONNECT_REQUEST = "metamask/CONNECT_REQUEST";
-const CONNECT_SUCCESS = "metamask/CONNECT_SUCCESS";
-const CONNECT_FAILURE = "metamask/CONNECT_FAILURE";
-const NOT_AVAILABLE = "metamask/NOT_AVAILABLE";
+const UPDATE_ACCOUNT = 'metamask/UPDATE_ACCOUNT';
+const UPDATE_NETWORK = 'metamask/UPDATE_NETWORK';
+const CONNECT_REQUEST = 'metamask/CONNECT_REQUEST';
+const CONNECT_SUCCESS = 'metamask/CONNECT_SUCCESS';
+const CONNECT_FAILURE = 'metamask/CONNECT_FAILURE';
+const NOT_AVAILABLE = 'metamask/NOT_AVAILABLE';
 
 // Actions ------------------------------------------------
 
@@ -28,21 +28,21 @@ export const updateMetamaskAccount = () => (dispatch, getState) => {
       payload: { address: newAddress }
     });
     if (oldAddress)
-      dispatch(updateAccount({ address: newAddress, type: "METAMASK" }));
+      dispatch(updateAccount({ address: newAddress, type: 'METAMASK' }));
     else {
-      dispatch(addAccount({ address: newAddress, type: "METAMASK" }));
+      dispatch(addAccount({ address: newAddress, type: 'METAMASK' }));
       // default to our metamask account
-      dispatch(setActiveAccount({ address: newAddress, type: "METAMASK" }));
     }
+    dispatch(setActiveAccount({ address: newAddress, type: 'METAMASK' }));
   }
-  setTimeout(() => dispatch(updateMetamaskAccount()), 100);
+  setTimeout(() => dispatch(updateMetamaskAccount()), 1000);
 };
 
 export const updateMetamaskNetwork = () => (dispatch, getState) => {
   getMetamaskNetworkName()
     .then(network => {
       if (network !== getState().metamask.network) {
-        if (network === "kovan")
+        if (network === 'kovan')
           web3SetHttpProvider(`https://${network}.infura.io/`);
         else web3SetHttpProvider(`https://mainnet.infura.io/`);
         dispatch({ type: UPDATE_NETWORK, payload: { network } });
@@ -57,11 +57,11 @@ export const updateMetamaskNetwork = () => (dispatch, getState) => {
 
 export const metamaskConnectInit = () => dispatch => {
   dispatch({ type: CONNECT_REQUEST });
-  if (typeof window.web3 !== "undefined") {
+  if (typeof window.web3 !== 'undefined') {
     getMetamaskNetworkName()
       .then(network => {
         dispatch({ type: CONNECT_SUCCESS, payload: { network } });
-        if (network === "kovan")
+        if (network === 'kovan')
           web3SetHttpProvider(`https://${network}.infura.io/`);
         else web3SetHttpProvider(`https://mainnet.infura.io/`);
         dispatch(updateMetamaskAccount());
@@ -81,7 +81,7 @@ export const metamaskConnectInit = () => dispatch => {
         // we try to fetch mainnet state if we failed to connect to MetaMask
         web3SetHttpProvider(`https://mainnet.infura.io/`);
         dispatch(voteTallyInit());
-        dispatch(topicsInit("mainnet"));
+        dispatch(topicsInit('mainnet'));
         dispatch(hatInit());
       });
   } else {
@@ -89,7 +89,7 @@ export const metamaskConnectInit = () => dispatch => {
     // we also fetch mainnet state if MetaMask is unavailable
     web3SetHttpProvider(`https://mainnet.infura.io/`);
     dispatch(voteTallyInit());
-    dispatch(topicsInit("mainnet"));
+    dispatch(topicsInit('mainnet'));
     dispatch(hatInit());
   }
 };
@@ -98,9 +98,9 @@ export const metamaskConnectInit = () => dispatch => {
 
 const initialState = {
   fetching: false,
-  accountAddress: "",
+  accountAddress: '',
   web3Available: false,
-  network: "mainnet"
+  network: 'mainnet'
 };
 
 const metamask = createReducer(initialState, {

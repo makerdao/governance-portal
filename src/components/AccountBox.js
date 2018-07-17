@@ -1,14 +1,15 @@
-import React, { Component, Fragment } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import Blockies from "react-blockies";
-
-import ClickOutside from "./ClickOutside";
-import Loader from "./Loader";
-import { cutMiddle } from "../utils/misc";
-import arrow from "../imgs/arrow.svg";
-import { firstLetterCapital } from "../utils/misc";
-import { fonts, colors, shadows } from "../theme";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import Blockies from 'react-blockies';
+import { connect } from 'react-redux';
+import ClickOutside from './ClickOutside';
+import Loader from './Loader';
+import { cutMiddle } from '../utils/misc';
+import arrow from '../imgs/arrow.svg';
+import { firstLetterCapital } from '../utils/misc';
+import { fonts, colors, shadows } from '../theme';
+import { setActiveAccount } from '../reducers/accounts';
 
 const StyledArrow = styled.img`
   position: absolute;
@@ -23,7 +24,7 @@ const StyledArrow = styled.img`
 
 const Account = styled.div`
   margin-left: 9px;
-  margin: ${({ noAccounts }) => (noAccounts ? "auto" : "")};
+  margin: ${({ noAccounts }) => (noAccounts ? 'auto' : '')};
 `;
 
 const StyledDropdownWrapper = styled.div`
@@ -42,8 +43,8 @@ const StyledDropdownWrapper = styled.div`
   top: 110%;
   z-index: 1;
   opacity: ${({ show }) => (show ? 1 : 0)};
-  visibility: ${({ show }) => (show ? "visible" : "hidden")};
-  pointer-events: ${({ show }) => (show ? "auto" : "none")};
+  visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
+  pointer-events: ${({ show }) => (show ? 'auto' : 'none')};
   box-shadow: ${shadows.medium};
   overflow-x: hidden;
   overflow-y: auto;
@@ -52,7 +53,7 @@ const StyledDropdownWrapper = styled.div`
 const StyledAccount = styled.div`
   color: white;
   cursor: pointer;
-  background: ${({ dark }) => (dark ? "#053C4B" : "#435367")};
+  background: ${({ dark }) => (dark ? '#053C4B' : '#435367')};
   border-radius: 4px;
   padding: 6px 10px;
   font-size: 15px;
@@ -68,7 +69,7 @@ const StyledRow = styled.div`
   cursor: pointer;
   justify-content: flex-start;
   border-top: ${({ selected }) =>
-    selected ? "" : `1px solid rgba(${colors.light_grey}, 0.15)`};
+    selected ? '' : `1px solid rgba(${colors.light_grey}, 0.15)`};
   font-weight: ${({ selected }) =>
     selected ? fonts.weight.bold : fonts.weight.normal};
   padding: 6px;
@@ -76,7 +77,7 @@ const StyledRow = styled.div`
   font-size: 15px;
   padding-left: 11px;
   color: white;
-  background: ${({ dark }) => (dark ? "#053C4B" : "#435367")};
+  background: ${({ dark }) => (dark ? '#053C4B' : '#435367')};
   &:hover {
     opacity: 0.9;
   }
@@ -94,50 +95,51 @@ class AccountBox extends Component {
     if (this.state.dropdownOpen) this.setState({ dropdownOpen: false });
   };
   onChange = ({ address, type }) => {
-    this.setState({ showDropdown: false });
-    this.props.onChange({ address, type });
+    this.setState({ dropdownOpen: false });
+    this.props.setActiveAccount({ address, type });
   };
   toggleDropdown = () => {
     this.setState(state => ({ dropdownOpen: !state.dropdownOpen }));
   };
   render() {
-    const { dark, accounts, fetching, ...props } = this.props;
-    const availableAccounts = accounts.filter(account => !!account.address);
-    const [headAccount] = availableAccounts;
-    if (!fetching && headAccount === undefined)
+    if (this.props.fetching)
       return (
         <StyledAccount dark={dark} {...this.props}>
-          <Account noAccounts={true}>No Accounts</Account>
+          <Loader
+            size={20}
+            color="background"
+            background={dark ? 'box_dark' : 'box_light'}
+          />
         </StyledAccount>
       );
+
+    const { dark, allAccounts, activeAccount, ...props } = this.props;
+    const availableAccounts = allAccounts.filter(account => !!account.address);
+    const headAccount = activeAccount || availableAccounts[0];
+
+    if (!headAccount)
+      return (
+        <StyledAccount dark={dark} {...this.props}>
+          <Account noAccounts>No Accounts</Account>
+        </StyledAccount>
+      );
+
     return (
       <ClickOutside onOutsideClick={this.clickOutside}>
         <AccountWrapper {...props}>
           <StyledAccount dark={dark} onClick={this.toggleDropdown}>
-            {fetching ? (
-              <Loader
-                size={20}
-                color="background"
-                background={dark ? "box_dark" : "box_light"}
-              />
-            ) : (
-              <Fragment>
-                <Blockies
-                  seed={headAccount.address}
-                  size={5}
-                  spotColor="#fc5e04"
-                  color="#fc5e04"
-                  bgColor="#fff"
-                />
-                <Account>
-                  <Fragment>
-                    {firstLetterCapital(headAccount.type)}{" "}
-                    {cutMiddle(headAccount.address)}
-                  </Fragment>
-                </Account>
-                <StyledArrow />
-              </Fragment>
-            )}
+            <Blockies
+              seed={headAccount.address}
+              size={5}
+              spotColor="#fc5e04"
+              color="#fc5e04"
+              bgColor="#fff"
+            />
+            <Account>
+              {firstLetterCapital(headAccount.type)}{' '}
+              {cutMiddle(headAccount.address)}
+            </Account>
+            <StyledArrow />
           </StyledAccount>
           <StyledDropdownWrapper show={this.state.dropdownOpen}>
             {availableAccounts.map(({ address, type }) => (
@@ -167,17 +169,25 @@ class AccountBox extends Component {
 }
 
 AccountBox.propTypes = {
-  accounts: PropTypes.array,
+  allAccounts: PropTypes.array,
   dark: PropTypes.bool,
-  onChange: PropTypes.func,
-  fetching: PropTypes.bool
+  fetching: PropTypes.bool,
+  setActiveAccount: PropTypes.func
 };
 
 AccountBox.defaultProps = {
-  accounts: [],
+  allAccounts: [],
   dark: false,
   onChange: () => {},
   fetching: false
 };
 
-export default AccountBox;
+const mapStateToProps = ({ accounts: { allAccounts, activeAccount } }) => ({
+  allAccounts,
+  activeAccount
+});
+
+export default connect(
+  mapStateToProps,
+  { setActiveAccount }
+)(AccountBox);
