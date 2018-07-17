@@ -1,25 +1,23 @@
-import React, { Component, Fragment } from "react";
-import PropTypes from "prop-types";
+import React, { Component, Fragment } from 'react';
+import PropTypes from 'prop-types';
 
 import {
-  StyledContainer,
   StyledCenter,
   StyledTitle,
   StyledBlurb,
   StyledTop,
   Styledinput
-} from "../shared/styles";
-import Button from "../../Button";
-import Card from "../../Card";
-import Intro from "./Intro";
-import Link from "./Link";
-import Transaction from "../shared/Transaction";
-import ProgressTabs from "./ProgressTabs";
+} from '../shared/styles';
+import Button from '../../Button';
+import Intro from './Intro';
+import Link from './Link';
+import Transaction from '../shared/Transaction';
+import ProgressTabs from './ProgressTabs';
 
 class ProxySetup extends Component {
   state = {
     step: 1,
-    mkrAmountInput: ""
+    mkrAmountInput: ''
   };
 
   nextStep = () => {
@@ -71,7 +69,7 @@ class ProxySetup extends Component {
               Please select how much MKR you would like to lock in the secure
               voting contract. You can withdraw it at anytime
             </StyledBlurb>
-            <div style={{ textAlign: "center" }}>
+            <div style={{ textAlign: 'center' }}>
               {/* Your MKR Balance: {this.props.mkrBalance} */}
             </div>
             <Styledinput
@@ -81,8 +79,8 @@ class ProxySetup extends Component {
             />
             <div
               style={{
-                alignSelf: "center",
-                marginTop: "18px"
+                alignSelf: 'center',
+                marginTop: '18px'
               }}
             >
               <Button
@@ -120,13 +118,13 @@ class ProxySetup extends Component {
               voting contract by clicking Secure voting on the governance
               dashboard
             </StyledBlurb>
-            <div style={{ textAlign: "center" }}>
+            <div style={{ textAlign: 'center' }}>
               Locked in voting contract: {this.state.mkrAmountInput}
             </div>
             <div
               style={{
-                alignSelf: "center",
-                marginTop: "18px"
+                alignSelf: 'center',
+                marginTop: '18px'
               }}
             >
               <Button slim onClick={this.props.modalClose}>
@@ -140,13 +138,7 @@ class ProxySetup extends Component {
     }
   }
   // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, check balances, etc
-  render = () => (
-    <Card maxWidth={600} background="white">
-      <StyledContainer>
-        <StyledCenter>{this.renderStep()}</StyledCenter>
-      </StyledContainer>
-    </Card>
-  );
+  render = () => <StyledCenter>{this.renderStep()}</StyledCenter>;
 }
 
 ProxySetup.propTypes = {
@@ -158,9 +150,9 @@ ProxySetup.propTypes = {
 };
 
 ProxySetup.defaultProps = {
-  initiateLinkTxHash: "",
-  approveLinkTxHash: "",
-  sendMkrToProxyTxHash: ""
+  initiateLinkTxHash: '',
+  approveLinkTxHash: '',
+  sendMkrToProxyTxHash: ''
 };
 
 export default ProxySetup;

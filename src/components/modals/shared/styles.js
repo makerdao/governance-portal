@@ -1,16 +1,4 @@
-import styled from "styled-components";
-
-import { responsive } from "../../../theme";
-
-export const StyledContainer = styled.div`
-  padding: 30px 26px;
-  @media screen and (${responsive.sm.max}) {
-    padding: 15px;
-    & h4 {
-      margin: 20px auto;
-    }
-  }
-`;
+import styled from 'styled-components';
 
 export const StyledCenter = styled.div`
   display: flex;
@@ -39,31 +27,31 @@ export const StyledTop = styled.div`
 export const Column = styled.div`
   position: relative;
   width: 100%;
-  height: ${({ spanHeight }) => (spanHeight ? "100%" : "auto")};
+  height: ${({ spanHeight }) => (spanHeight ? '100%' : 'auto')};
   max-width: ${({ maxWidth }) => `${maxWidth}px`};
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: ${({ center }) => (center ? "center" : "flex-start")};
+  justify-content: ${({ center }) => (center ? 'center' : 'flex-start')};
 `;
 
 export const StyledAnchor = styled.a`
-  color: ${({ blue }) => (blue ? "#3080ed" : "#212536")};
+  color: ${({ blue }) => (blue ? '#3080ed' : '#212536')};
   margin-bottom: -3px;
   border-bottom: 1px dashed ${({ blue }) =>
-    blue ? "#2F80ED" : "#868997"}; #868997;
+    blue ? '#2F80ED' : '#868997'}; #868997;
 `;
 
 export const CircledNum = styled.div`
   border-radius: 50%;
   width: ${({ size }) => `${size}px`};
   height: ${({ size }) => `${size}px`};
-  background: ${({ dim }) => (dim ? "#D1D8DA" : "#30bd9f")};
+  background: ${({ dim }) => (dim ? '#D1D8DA' : '#30bd9f')};
   color: #fff;
   text-align: center;
-  font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : "17px")};
-  padding: ${({ p }) => (p ? `${p}px` : "3px")};
+  font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '17px')};
+  padding: ${({ p }) => (p ? `${p}px` : '3px')};
 `;
 
 export const Section = styled.div`
@@ -114,7 +102,7 @@ export const InfoBox = styled.div`
   box-sizing: border-box;
   border-radius: 4px;
   background: #f2f5fa;
-  height: ${({ height }) => (height ? `${height}px` : "68px")};
+  height: ${({ height }) => (height ? `${height}px` : '68px')};
 `;
 
 export const InfoBoxSection = styled.div`
@@ -159,7 +147,7 @@ export const TabsTitleWrapper = styled.div`
   align-items: center;
   justify-content: center;
   border-right: ${({ borderRight }) =>
-    borderRight ? "1px solid #D3DADC" : ""};
+    borderRight ? '1px solid #D3DADC' : ''};
 `;
 
 export const TxHash = styled.a`

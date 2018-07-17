@@ -1,17 +1,14 @@
-import React, { Component, Fragment } from "react";
-import PropTypes from "prop-types";
-
-import Card from "../../Card";
-import Button from "../../Button";
+import React, { Component, Fragment } from 'react';
+import PropTypes from 'prop-types';
+import Button from '../../Button';
 
 import {
-  StyledContainer,
   StyledCenter,
   StyledTitle,
   StyledBlurb,
   StyledTop
-} from "../shared/styles";
-import Transaction from "../shared/Transaction";
+} from '../shared/styles';
+import Transaction from '../shared/Transaction';
 
 class Vote extends Component {
   state = {
@@ -38,14 +35,14 @@ class Vote extends Component {
               <StyledTitle>Confirmation</StyledTitle>
             </StyledTop>
             <StyledBlurb>
-              You will be voting for{" "}
-              <strong style={{ color: "#212536" }}>{proposal.title}</strong>{" "}
+              You will be voting for{' '}
+              <strong style={{ color: '#212536' }}>{proposal.title}</strong>{' '}
               please confirm vote below. Vote can be withdrawn at anytime
             </StyledBlurb>
             <div
               style={{
-                margin: "auto",
-                marginTop: "18px"
+                margin: 'auto',
+                marginTop: '18px'
               }}
             >
               <Button
@@ -71,13 +68,7 @@ class Vote extends Component {
     }
   }
   // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, reject transaction, why did this tx fail
-  render = () => (
-    <Card maxWidth={600} background="white">
-      <StyledContainer>
-        <StyledCenter>{this.renderStep()}</StyledCenter>
-      </StyledContainer>
-    </Card>
-  );
+  render = () => <StyledCenter>{this.renderStep()}</StyledCenter>;
 }
 
 Vote.propTypes = {
@@ -87,7 +78,7 @@ Vote.propTypes = {
 };
 
 Vote.defaultProps = {
-  voteTxHash: ""
+  voteTxHash: ''
 };
 
 export default Vote;

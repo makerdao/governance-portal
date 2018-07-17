@@ -8,6 +8,8 @@ import theme, { colors, fonts } from '../theme';
 import DotSpacer from './DotSpacer';
 import { Banner, BannerHeader, BannerBody, BannerContent } from './Banner';
 import { cutMiddle } from '../utils/misc';
+import Lock from './modals/Lock';
+import Withdraw from './modals/Withdraw';
 
 // duplicated in Timeline
 const StyledAnchor = styled.a`
@@ -57,10 +59,10 @@ const VoterStatus = ({ account, network, modalOpen }) => {
   return (
     <SmallText>
       In voting contract <Value>{account.proxy.balance} MKR</Value>{' '}
-      <a>Withdraw to wallet</a>
+      <a onClick={() => modalOpen(Withdraw)}>Withdraw to wallet</a>
       <DotSpacer />
       In wallet <Value>{account.coldWallet.balance || 0} MKR</Value>{' '}
-      <a>Add to voting contract</a>
+      <a onClick={() => modalOpen(Lock)}>Add to voting contract</a>
       <DotSpacer />
       Hot wallet address {cutMiddle(account.address)}{' '}
       <a target="_blank" href={etherscanUrl}>

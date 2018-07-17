@@ -13,6 +13,7 @@ import Card from '../components/Card';
 import { toSlug } from '../utils/misc';
 import { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
+import Vote from '../components/modals/Vote';
 
 const Heading = styled.p`
   color: #1f2c3c;
@@ -90,7 +91,18 @@ const Timeline = ({ modalOpen, data }) => (
             <StyledAnchor noBorder>What is the Root Proposal?</StyledAnchor>
           </div>
         </div>
-        <Button>Vote for this Proposal</Button>
+        <Button
+          onClick={() =>
+            modalOpen(Vote, {
+              proposal: {
+                address: 0,
+                title: 'Root Proposal'
+              }
+            })
+          }
+        >
+          Vote for this Proposal
+        </Button>
       </RootWrapper>
     </StyledCard>
     {data.map(topic => (
@@ -128,7 +140,7 @@ const Timeline = ({ modalOpen, data }) => (
               </WithTally>
               <Button
                 onClick={() =>
-                  modalOpen('VOTE', {
+                  modalOpen(Vote, {
                     proposal: {
                       address: proposal.source,
                       title: proposal.title

@@ -1,13 +1,13 @@
-import React from "react";
-import PropTypes from "prop-types";
-import styled, { css } from "styled-components";
-import { Link } from "react-router-dom";
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled, { css } from 'styled-components';
+import { Link } from 'react-router-dom';
 
-import descend from "../imgs/descend.svg";
-import { toSlug } from "../utils/misc";
-import { colors, fonts, shadows, transitions, responsive } from "../theme";
+import descend from '../imgs/descend.svg';
+import { toSlug } from '../utils/misc';
+import { colors, fonts, shadows, transitions, responsive } from '../theme';
 
-const StyledCard = styled.div`
+const Card = styled.div`
   transition: ${transitions.base};
   position: relative;
   width: 100%;
@@ -26,12 +26,6 @@ const StyledCard = styled.div`
   overflow: hidden;
 `;
 
-const Card = ({ background, children, ...props }) => (
-  <StyledCard background={background} {...props}>
-    {children}
-  </StyledCard>
-);
-
 Card.propTypes = {
   children: PropTypes.node.isRequired,
   background: PropTypes.string,
@@ -39,7 +33,7 @@ Card.propTypes = {
 };
 
 Card.defaultProps = {
-  background: "white",
+  background: 'white',
   minHeight: null
 };
 
@@ -51,8 +45,8 @@ const CardElementWrapper = styled.div`
   transition: ${transitions.base};
   position: relative;
   width: 100%;
-  min-height: ${({ minHeight }) => (minHeight ? `${minHeight}px` : "0")};
-  height: ${({ height }) => (height ? `${height}px` : "auto")};
+  min-height: ${({ minHeight }) => (minHeight ? `${minHeight}px` : '0')};
+  height: ${({ height }) => (height ? `${height}px` : 'auto')};
   max-height: auto;
   border-top: solid 2px #eaeaea;
   color: rgb(${colors.dark});
@@ -98,7 +92,7 @@ CardElement.defaultProps = {
   minHeight: 48,
   collapsable: true,
   startCollapsed: false,
-  topicTitle: "",
+  topicTitle: '',
   active: false
 };
 
@@ -107,9 +101,9 @@ const CardTopWrapper = styled.div`
   position: relative;
   padding: 23px 24px;
   width: 100%;
-  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : "none")};
-  min-height: ${({ minHeight }) => (minHeight ? `${minHeight}px` : "0")};
-  height: ${({ height }) => (height ? `${height}px` : "auto")};
+  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : 'none')};
+  min-height: ${({ minHeight }) => (minHeight ? `${minHeight}px` : '0')};
+  height: ${({ height }) => (height ? `${height}px` : 'auto')};
   border-style: none;
   border: none;
   color: rgb(${colors.dark});
@@ -136,10 +130,10 @@ const CardTopWrapper = styled.div`
 const TopicStatus = styled.div`
   line-height: 24px;
   align-self: center;
-  background-color: ${({ active }) => (active ? "#d2f9f1" : "#EAEFF7")};
+  background-color: ${({ active }) => (active ? '#d2f9f1' : '#EAEFF7')};
   padding: 2px 15px;
   border-radius: 20px;
-  color: ${({ active }) => (active ? "#30bd9f" : "#546978")};
+  color: ${({ active }) => (active ? '#30bd9f' : '#546978')};
   &::after {
     content: ${({ active }) => (active ? `"Topic active"` : `"Topic closed"`)};
   }
@@ -153,7 +147,7 @@ const Heading = styled.p`
   flex: none;
   position: relative;
   @media screen and (max-width: 736px) {
-    display: ${({ isAlwaysVisible }) => (isAlwaysVisible ? "block" : "none")};
+    display: ${({ isAlwaysVisible }) => (isAlwaysVisible ? 'block' : 'none')};
   }
 `;
 
@@ -165,7 +159,7 @@ const Caret = styled.div`
   cursor: pointer;
   background: url(${descend}) no-repeat;
   transition: ${transitions.base};
-  transform: ${({ flipped }) => (flipped ? "rotate(180deg)" : "")};
+  transform: ${({ flipped }) => (flipped ? 'rotate(180deg)' : '')};
 `;
 
 class CardTop extends React.Component {
@@ -182,7 +176,7 @@ class CardTop extends React.Component {
     const { collapse } = this.state;
     return (
       <CardTopWrapper minHeight={minHeight} collapse={collapse}>
-        <div style={{ display: "flex" }}>
+        <div style={{ display: 'flex' }}>
           {collapsable ? (
             <Caret flipped={collapse} onClick={this.toggleCollapse} />
           ) : null}
@@ -208,7 +202,7 @@ CardTop.defaultProps = {
   minHeight: 48,
   collapsable: true,
   startCollapsed: false,
-  topicTitle: "",
+  topicTitle: '',
   active: false
 };
 

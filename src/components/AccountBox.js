@@ -102,6 +102,8 @@ class AccountBox extends Component {
     this.setState(state => ({ dropdownOpen: !state.dropdownOpen }));
   };
   render() {
+    const { dark, allAccounts, activeAccount, ...props } = this.props;
+
     if (this.props.fetching)
       return (
         <StyledAccount dark={dark} {...this.props}>
@@ -113,7 +115,6 @@ class AccountBox extends Component {
         </StyledAccount>
       );
 
-    const { dark, allAccounts, activeAccount, ...props } = this.props;
     const availableAccounts = allAccounts.filter(account => !!account.address);
 
     if (!activeAccount)
