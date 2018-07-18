@@ -13,7 +13,6 @@ import { sendVote } from '../../reducers/vote';
 import { getActiveAccount } from '../../reducers/accounts';
 import ProxySetup from './ProxySetup';
 import Card from '../Card';
-import close from '../../imgs/close.svg';
 import { colors, transitions, responsive } from '../../theme';
 
 const Column = styled.div`
@@ -61,32 +60,32 @@ const ModalCard = Card.extend`
 
 const Centered = styled.div`
   position: fixed;
-  top: 3%;
+  top: 8%;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   padding: 15px;
 `;
 
-const StyledClose = styled.div`
-  height: 36px;
-  width: 36px;
-  margin-left: auto;
-  margin-top: -8px;
-  margin-bottom: 8px;
+const CloseButton = styled(props => <div {...props}>&times;</div>)`
+  height: 28px;
+  width: 28px;
+  border-radius: 28px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  right: 12px;
+  top: 12px;
   cursor: pointer;
-  background: url(${close}) no-repeat;
-`;
-
-const ModalTopper = styled.div`
-  width: 600px;
+  font-size: 26px;
+  line-height: 19px;
+  text-align: center;
 `;
 
 class Modal extends Component {
   modalController = () => {
     switch (this.props.modal) {
       case 'PROXY_SETUP':
-        window.scrollTo(50, 50);
         return <ProxySetup {...this.props} />;
       default:
         if (typeof this.props.modal === 'function')
@@ -107,13 +106,11 @@ class Modal extends Component {
 
     return (
       <StyledLightbox modal={!!modal}>
+        <StyledHitbox onClick={modalClose} />
         <Centered>
-          <StyledHitbox onClick={modalClose} />
           <Column maxWidth={600} center>
-            <ModalTopper>
-              <StyledClose onClick={modalClose} />
-            </ModalTopper>
             <ModalCard maxWidth={600} background="white">
+              <CloseButton onClick={modalClose} />
               {this.modalController()}
             </ModalCard>
           </Column>
