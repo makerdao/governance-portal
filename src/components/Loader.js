@@ -1,7 +1,7 @@
-import React from "react";
-import PropTypes from "prop-types";
-import styled, { keyframes } from "styled-components";
-import { fonts, colors } from "../theme";
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled, { keyframes } from 'styled-components';
+import { fonts, colors } from '../theme';
 
 const load = keyframes`
   0% {
@@ -16,6 +16,8 @@ const StyledLoader = styled.div`
   position: relative;
   font-size: ${fonts.size.tiny};
   margin: 0 auto;
+  margin-top: ${({ mt }) => (mt ? `${mt}px` : '')};
+  margin-bottom: ${({ mb }) => (mb ? `${mb}px` : '')};
   text-indent: -9999em;
   width: ${({ size }) => `${size}px`};
   height: ${({ size }) => `${size}px`};
@@ -63,9 +65,9 @@ Loader.propTypes = {
 };
 
 Loader.defaultProps = {
-  size: 50,
-  color: "dark",
-  background: "white"
+  size: 20,
+  color: 'dark',
+  background: 'white'
 };
 
 export default Loader;

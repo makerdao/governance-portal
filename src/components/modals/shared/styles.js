@@ -165,3 +165,10 @@ export const Styledinput = styled.input`
   padding: 10px;
   font-size: 16px;
 `;
+
+export const Note = styled.p`
+  width: 75%;
+  margin: auto;
+  font-style: oblique;
+  opacity: 0.5;
+`;

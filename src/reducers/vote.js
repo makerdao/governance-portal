@@ -1,14 +1,14 @@
-import { createReducer } from "../utils/redux";
-import { voteProposal } from "../chain/write";
-import { awaitTx } from "../chain/web3";
+import { createReducer } from '../utils/redux';
+import { voteAndLockViaProxy } from '../chain/write';
+import { awaitTx } from '../chain/web3';
 
 // Constants ----------------------------------------------
 
-const VOTE_REQUEST = "vote/VOTE_CAST_REQUEST";
-const VOTE_SENT = "vote/VOTE_CAST_REQUEST";
-const VOTE_SUCCESS = "vote/VOTE_SUCCESS";
-const VOTE_FAILURE = "vote/VOTE_FAILURE";
-const CLEAR = "vote/CLEAR";
+const VOTE_REQUEST = 'vote/VOTE_CAST_REQUEST';
+const VOTE_SENT = 'vote/VOTE_CAST_REQUEST';
+const VOTE_SUCCESS = 'vote/VOTE_SUCCESS';
+const VOTE_FAILURE = 'vote/VOTE_FAILURE';
+const CLEAR = 'vote/CLEAR';
 
 // Actions ------------------------------------------------
 
@@ -20,13 +20,13 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
   dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
   const activeAccount = getState().accounts.activeAccount;
   if (activeAccount) {
-    voteProposal({ account: activeAccount, proposalAddress })
+    voteAndLockViaProxy({ account: activeAccount, proposalAddress })
       .then(txHash => {
         dispatch({ type: VOTE_SENT, payload: { txHash } });
         awaitTx(txHash, { confirmations: 1 })
           .then(txReciept => {
             dispatch({ type: VOTE_SUCCESS });
-            console.log("mined", txReciept);
+            console.log('mined', txReciept);
           })
           .catch(() => {
             dispatch({ type: VOTE_FAILURE });
@@ -44,9 +44,9 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
 // Reducer ------------------------------------------------
 
 const initialState = {
-  proposalAddress: "",
+  proposalAddress: '',
   fetching: false,
-  txHash: ""
+  txHash: ''
 };
 
 const vote = createReducer(initialState, {

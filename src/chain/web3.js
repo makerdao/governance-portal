@@ -1,7 +1,7 @@
-import Web3 from "web3";
+import Web3 from 'web3';
 
-import { netIdToName } from "../utils/ethereum";
-import addresses from "./addresses.json";
+import { netIdToName } from '../utils/ethereum';
+import addresses from './addresses.json';
 
 export const web3Instance = new Web3(
   new Web3.providers.HttpProvider(`https://mainnet.infura.io/`)
@@ -19,7 +19,7 @@ export const web3SetHttpProvider = provider => {
   }
   if (!providerObj) {
     throw new Error(
-      "function web3SetHttpProvider requires provider to match a valid HTTP/HTTPS endpoint"
+      'function web3SetHttpProvider requires provider to match a valid HTTP/HTTPS endpoint'
     );
   }
   return web3Instance.setProvider(providerObj);
@@ -40,7 +40,7 @@ export const getNetworkName = async () => {
  * @param {String} [_network]
  * @return {String}
  */
-export const getChief = async (_network = "") => {
+export const getChief = async (_network = '') => {
   const network = _network || (await getNetworkName());
   const chief = addresses[network].chief;
   return chief;
@@ -51,7 +51,7 @@ export const getChief = async (_network = "") => {
  * @param {String} [_network]
  * @return {String}
  */
-export const getProxyFactory = async (_network = "") => {
+export const getProxyFactory = async (_network = '') => {
   const network = _network || (await getNetworkName());
   const factory = addresses[network].proxy_factory;
   return factory;
@@ -62,7 +62,7 @@ export const getProxyFactory = async (_network = "") => {
  * @param {String} [_network]
  * @return {String}
  */
-export const getMkrAddress = async (_network = "") => {
+export const getMkrAddress = async (_network = '') => {
   const network = _network || (await getNetworkName());
   const mkr = addresses[network].mkr;
   return mkr;
@@ -82,7 +82,7 @@ export const getMethodSig = methodString =>
  * @return {Promise}
  */
 export const getTransactionCount = address =>
-  web3Instance.eth.getTransactionCount(address, "pending");
+  web3Instance.eth.getTransactionCount(address, 'pending');
 
 /**
  * @desc get Encodes a parameter based on its type to its ABI representation.
@@ -108,7 +108,7 @@ export const getTxDetails = async ({
 }) => {
   // getGasPrice gets median gas price of the last few blocks from some oracle
   const _gasPrice = gasPrice || (await web3Instance.eth.getGasPrice());
-  const estimateGasData = value === "0x00" ? { from, to, data } : { to, data };
+  const estimateGasData = value === '0x00' ? { from, to, data } : { to, data };
   // this fails if web3 thinks that the transaction will fail
   const _gasLimit =
     gasLimit || (await web3Instance.eth.estimateGas(estimateGasData));
@@ -133,10 +133,10 @@ export const getTxDetails = async ({
  */
 export const sendSignedTx = signedTx =>
   new Promise((resolve, reject) => {
-    const serializedTx = typeof signedTx === "string" ? signedTx : signedTx.raw;
+    const serializedTx = typeof signedTx === 'string' ? signedTx : signedTx.raw;
     web3Instance.eth
       .sendSignedTransaction(serializedTx)
-      .once("transactionHash", txHash => resolve(txHash))
+      .once('transactionHash', txHash => resolve(txHash))
       .catch(error => reject(error));
   });
 
@@ -167,7 +167,7 @@ export const awaitTx = (txnHash, { confirmations = 6 }) => {
           try {
             const [txBlock, currentBlock] = await Promise.all([
               web3Instance.eth.getBlock(resolvedReceipt.blockNumber),
-              web3Instance.eth.getBlock("latest")
+              web3Instance.eth.getBlock('latest')
             ]);
             if (currentBlock.number - txBlock.number >= confirmations) {
               const txn = await web3Instance.eth.getTransaction(txnHash);
@@ -175,9 +175,9 @@ export const awaitTx = (txnHash, { confirmations = 6 }) => {
               else
                 reject(
                   new Error(
-                    "Transaction with hash: " +
+                    'Transaction with hash: ' +
                       txnHash +
-                      " ended up in an uncle block."
+                      ' ended up in an uncle block.'
                   )
                 );
             } else
@@ -209,7 +209,7 @@ export const awaitTx = (txnHash, { confirmations = 6 }) => {
  * @return {Promise}
  */
 export const getMetamaskNetworkName = () => {
-  if (typeof window.web3 !== "undefined") {
+  if (typeof window.web3 !== 'undefined') {
     return new Promise((resolve, reject) => {
       window.web3.version.getNetwork((err, networkID) => {
         if (err) {
@@ -218,6 +218,10 @@ export const getMetamaskNetworkName = () => {
         const networkName = netIdToName(networkID);
         resolve(networkName);
       });
+      setTimeout(
+        () => reject('Taking too long to get metamask network name'),
+        10000
+      );
     });
   }
 };

@@ -46,19 +46,73 @@ class ProxySetup extends Component {
         );
       case 2:
         window.scrollTo(0, 0);
-        return <Link createProxy={this.props.createProxy} />;
+        return (
+          <Link
+            initiateLink={this.props.initiateLink}
+            activeAccount={this.props.activeAccount}
+          />
+        );
       case 3:
         return (
           <Fragment>
             <ProgressTabs progress={1} />
             <Transaction
-              txHash={this.props.proxyCreationTxHash}
+              txHash={this.props.initiateLinkTxHash}
               nextStep={this.nextStep}
               network={this.props.network}
             />
           </Fragment>
         );
       case 4:
+        return (
+          <Fragment>
+            <StyledTop>
+              <StyledTitle>
+                Please confirm the link with your hot wallet
+              </StyledTitle>
+            </StyledTop>
+            <StyledBlurb>
+              Your hot wallet address: {this.props.hotAddress}
+            </StyledBlurb>
+            <Styledinput
+              value={this.state.mkrAmountInput}
+              onChange={this.updateInputValue}
+              placeholder="MKR Amount"
+            />
+            <div
+              style={{
+                alignSelf: 'center',
+                marginTop: '18px'
+              }}
+            >
+              <Button
+                slim
+                disabled={
+                  this.props.activeAccount.address !== this.props.hotAddress
+                }
+                onClick={() =>
+                  this.props.approveLink({
+                    hotAccount: this.props.activeAccount
+                  })
+                }
+              >
+                Sign
+              </Button>
+            </div>
+          </Fragment>
+        );
+      case 5:
+        return (
+          <Fragment>
+            <ProgressTabs progress={1} />
+            <Transaction
+              txHash={this.props.approveLinkTxHash}
+              nextStep={this.nextStep}
+              network={this.props.network}
+            />
+          </Fragment>
+        );
+      case 6:
         return (
           <Fragment>
             <ProgressTabs progress={2} />
@@ -85,16 +139,16 @@ class ProxySetup extends Component {
             >
               <Button
                 slim
-                onClick={() => {
-                  this.props.userSendMkrToProxy(this.state.mkrAmountInput);
-                }}
+                onClick={() =>
+                  this.props.userSendMkrToProxy(this.state.mkrAmountInput)
+                }
               >
                 Lock
               </Button>
             </div>
           </Fragment>
         );
-      case 5:
+      case 7:
         return (
           <Fragment>
             <ProgressTabs progress={2} />
@@ -105,7 +159,7 @@ class ProxySetup extends Component {
             />
           </Fragment>
         );
-      case 6:
+      case 8:
         return (
           <Fragment>
             <ProgressTabs progress={3} />
@@ -127,7 +181,13 @@ class ProxySetup extends Component {
                 marginTop: '18px'
               }}
             >
-              <Button slim onClick={this.props.modalClose}>
+              <Button
+                slim
+                onClick={() => {
+                  this.props.modalClose();
+                  this.props.proxyClear();
+                }}
+              >
                 Finish and close
               </Button>
             </div>

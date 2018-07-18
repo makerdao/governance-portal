@@ -110,7 +110,7 @@ const initialState = {
   activeAccountUnlockedMkr: 0,
   allAccounts: [
     {
-      address: '0xfakefakefake',
+      address: '0xbeefed1bedded2dabbed3defaced4decade5dead',
       type: 'fake',
       proxy: {
         address: '0xproxyfake',

@@ -14,7 +14,9 @@ import {
   BannerContent,
   BannerButton
 } from './Banner';
+import Loader from './Loader';
 import { cutMiddle } from '../utils/misc';
+import { ethScanLink } from '../utils/ethereum';
 import Lock from './modals/Lock';
 import Withdraw from './modals/Withdraw';
 
@@ -49,15 +51,21 @@ const WelcomeBanner = ({ modalOpen }) => {
 };
 
 const Padding = styled.div`
-  height: 20px;
+  margin-top: 20px;
 `;
 
-const VoterStatus = ({ account, network, modalOpen }) => {
-  if (!account) return <Padding />;
+const VoterStatus = ({ account, network, modalOpen, fetching }) => {
+  if (fetching) {
+    return (
+      <Padding>
+        <Loader mt={34} mb={34} color="header" background="background" />
+      </Padding>
+    );
+  }
+  if (!account) return null;
   if (!account.proxy.isSetup) return <WelcomeBanner modalOpen={modalOpen} />;
 
-  const domain = `${network === 'kovan' ? 'kovan.' : ''}etherscan.io`;
-  const etherscanUrl = `https://${domain}/address/${account.address}`;
+  const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
   return (
     <SmallText>
       In voting contract <Value>{account.proxy.balance} MKR</Value>{' '}
@@ -67,7 +75,7 @@ const VoterStatus = ({ account, network, modalOpen }) => {
       <a onClick={() => modalOpen(Lock)}>Add to voting contract</a>
       <DotSpacer />
       Hot wallet address {cutMiddle(account.address)}{' '}
-      <a target="_blank" href={etherscanUrl}>
+      <a target="_blank" href={ethScanLink(account.address, networkShown)}>
         Etherscan
       </a>
       <br />
@@ -81,7 +89,8 @@ const VoterStatus = ({ account, network, modalOpen }) => {
 
 const mapStateToProps = state => ({
   account: getActiveAccount(state),
-  network: state.metamask.network
+  network: state.metamask.network,
+  fetching: state.accounts.fetching
 });
 
 export default connect(

@@ -1,11 +1,12 @@
 {
   "kovan": {
     "chief": "0xbbffc76e94b34f72d96d054b31f6424249c1337d",
-    "proxy_factory": "0x447Db2A7778171b8EA56051BD476CfBbDD37F971",
+    "proxy_factory": "0xc5d634939a9ba6b0794788a7f5e0634691061514",
     "mkr": "0xAaF64BFCC32d0F15873a02163e7E500671a4ffcD"
   },
   "mainnet": {
     "chief": "0x8e2a84d6ade1e7fffee039a35ef5f19f13057152",
+    "proxy_factory": "0x447Db2A7778171b8EA56051BD476CfBbDD37F971",
     "mkr": "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2"
   }
 }

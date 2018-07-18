@@ -13,6 +13,7 @@ import Card from '../components/Card';
 import { toSlug } from '../utils/misc';
 import { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
+import { getActiveAccount } from '../reducers/accounts';
 import Vote from '../components/modals/Vote';
 
 const Heading = styled.p`
@@ -59,14 +60,6 @@ const ProposalDetails = styled.div`
   justify-content: space-between;
 `;
 
-const StyledAnchor = styled.a`
-  color: #3080ed;
-  cursor: pointer;
-  padding-bottom: 3px;
-  margin-bottom: -3px;
-  border-bottom: ${({ noBorder }) => (noBorder ? '' : '1px dashed #317fed')};
-`;
-
 const StyledCard = styled(Card)`
   margin-bottom: 30px;
 `;
@@ -78,7 +71,7 @@ const RootWrapper = styled.div`
   align-items: center;
 `;
 
-const Timeline = ({ modalOpen, data }) => (
+const Timeline = ({ modalOpen, topics, activeAccount, fetching }) => (
   <Fragment>
     <VoterStatus />
     <StyledCard>
@@ -86,12 +79,14 @@ const Timeline = ({ modalOpen, data }) => (
         <div>
           <Heading>Current Root Proposal</Heading>
           <div style={{ display: 'flex' }}>
-            <StyledAnchor noBorder>See all system parameters</StyledAnchor>
+            <a>See all system parameters</a>
             <DotSpacer />
-            <StyledAnchor noBorder>What is the Root Proposal?</StyledAnchor>
+            <a>What is the Root Proposal?</a>
           </div>
         </div>
         <Button
+          disabled={!activeAccount || !activeAccount.proxy.isSetup}
+          loading={fetching}
           onClick={() =>
             modalOpen(Vote, {
               proposal: {
@@ -105,7 +100,7 @@ const Timeline = ({ modalOpen, data }) => (
         </Button>
       </RootWrapper>
     </StyledCard>
-    {data.map(topic => (
+    {topics.map(topic => (
       <StyledCard key={topic.topic}>
         <Card.Top
           active={topic.active}
@@ -139,6 +134,8 @@ const Timeline = ({ modalOpen, data }) => (
                 )}
               </WithTally>
               <Button
+                disabled={!activeAccount || !activeAccount.proxy.isSetup}
+                loading={fetching}
                 onClick={() =>
                   modalOpen(Vote, {
                     proposal: {
@@ -158,8 +155,10 @@ const Timeline = ({ modalOpen, data }) => (
   </Fragment>
 );
 
-const reduxProps = ({ topics }) => ({
-  data: topics
+const reduxProps = ({ topics, accounts }) => ({
+  topics,
+  fetching: accounts.fetching,
+  activeAccount: getActiveAccount({ accounts })
 });
 
 export default connect(

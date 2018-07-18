@@ -1,17 +1,20 @@
-import { createReducer } from "../utils/redux";
+import { createReducer } from '../utils/redux';
 import {
-  initateLink as _initateLink,
+  initiateLink as _initiateLink,
+  approveLink as _approveLink,
   sendMkrToProxy as _sendMkrToProxy
-} from "../chain/write";
+} from '../chain/write';
 
 // Constants ----------------------------------------------
 
-const INITIATE_LINK_REQUEST = "proxy/INITIATE_LINK_REQUEST";
-const INITIATE_LINK_SENT = "proxy/INITIATE_LINK_SENT";
+const INITIATE_LINK_REQUEST = 'proxy/INITIATE_LINK_REQUEST';
+const INITIATE_LINK_SENT = 'proxy/INITIATE_LINK_SENT';
+const APPROVE_LINK_REQUEST = 'proxy/APPROVE_LINK_REQUEST';
+const APPROVE_LINK_SENT = 'proxy/APPROVE_LINK_SENT';
 // const INITIATE_LINK_SUCCESS = "proxy/INITIATE_LINK_SUCCESS";
-const SEND_MKR_TO_PROXY_REQUEST = "proxy/SEND_MKR_TO_PROXY_REQUEST";
-const SEND_MKR_TO_PROXY_SENT = "proxy/SEND_MKR_TO_PROXY_SENT";
-const CLEAR = "proxy/CLEAR";
+const SEND_MKR_TO_PROXY_REQUEST = 'proxy/SEND_MKR_TO_PROXY_REQUEST';
+const SEND_MKR_TO_PROXY_SENT = 'proxy/SEND_MKR_TO_PROXY_SENT';
+const CLEAR = 'proxy/CLEAR';
 
 // Actions ------------------------------------------------
 
@@ -20,9 +23,22 @@ export const clear = () => ({
 });
 
 export const initiateLink = ({ coldAccount, hotAddress }) => dispatch => {
-  dispatch({ type: INITIATE_LINK_REQUEST });
-  _initateLink({ coldAccount, hotAddress }).then(txHash => {
+  dispatch({
+    type: INITIATE_LINK_REQUEST,
+    payload: { hot: hotAddress, cold: coldAccount.address }
+  });
+  _initiateLink({ coldAccount, hotAddress }).then(txHash => {
     dispatch({ type: INITIATE_LINK_SENT, payload: { txHash } });
+  });
+};
+
+export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
+  dispatch({
+    type: APPROVE_LINK_REQUEST
+  });
+  const coldAddress = getState().proxy.cold;
+  _approveLink({ hotAccount, coldAddress }).then(txHash => {
+    dispatch({ type: APPROVE_LINK_SENT, payload: { txHash } });
   });
 };
 
@@ -37,17 +53,29 @@ export const sendMkrToProxy = value => (dispatch, getState) => {
 // Reducer ------------------------------------------------
 
 const initialState = {
-  sendMkrTxHash: "",
-  initateLinkTxHash: ""
+  sendMkrTxHash: '',
+  initiateLinkTxHash: '',
+  approveLinkTxHash: '',
+  hot: '',
+  cold: ''
 };
 
 const proxy = createReducer(initialState, {
-  [INITIATE_LINK_REQUEST]: state => ({
-    ...state
+  [INITIATE_LINK_REQUEST]: (state, { payload }) => ({
+    ...state,
+    hot: payload.hot,
+    cold: payload.cold
   }),
   [INITIATE_LINK_SENT]: (state, { payload }) => ({
     ...state,
-    initateLinkTxHash: payload.txHash
+    initiateLinkTxHash: payload.txHash
+  }),
+  [APPROVE_LINK_REQUEST]: state => ({
+    ...state
+  }),
+  [APPROVE_LINK_SENT]: (state, { payload }) => ({
+    ...state,
+    approveLinkTxHash: payload.txHash
   }),
   [SEND_MKR_TO_PROXY_REQUEST]: state => ({
     ...state

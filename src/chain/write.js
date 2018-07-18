@@ -7,18 +7,17 @@ import {
   getMethodSig,
   getProxyFactory,
   getMkrAddress,
-  getChief,
   encodeParameter,
   sendSignedTx
-} from "./web3";
-import { getProxyStatus } from "./read";
+} from './web3';
+import { getProxyStatus } from './read';
 import {
   generateCallData,
   removeHexPrefix,
   stringToHex,
   etherToWei
-} from "../utils/ethereum";
-import ledgerSubprovider from "./ledger";
+} from '../utils/ethereum';
+import ledgerSubprovider from './ledger';
 
 /**
  * @desc metamask send transaction
@@ -28,15 +27,15 @@ import ledgerSubprovider from "./ledger";
 export const metamaskSendTx = transaction =>
   new Promise((resolve, reject) => {
     const from =
-      transaction.from.substr(0, 2) === "0x"
+      transaction.from.substr(0, 2) === '0x'
         ? transaction.from
         : `0x${transaction.from}`;
     const to =
-      transaction.to.substr(0, 2) === "0x"
+      transaction.to.substr(0, 2) === '0x'
         ? transaction.to
         : `0x${transaction.to}`;
-    const value = transaction.value ? etherToWei(transaction.value) : "0x00";
-    const data = transaction.data ? transaction.data : "0x";
+    const value = transaction.value ? etherToWei(transaction.value) : '0x00';
+    const data = transaction.data ? transaction.data : '0x';
     getTxDetails({
       from,
       to,
@@ -46,7 +45,7 @@ export const metamaskSendTx = transaction =>
       gasLimit: transaction.gasLimit
     })
       .then(txDetails => {
-        if (typeof window.web3 !== "undefined") {
+        if (typeof window.web3 !== 'undefined') {
           window.web3.eth.sendTransaction(txDetails, (err, txHash) => {
             if (err) {
               reject(err);
@@ -68,15 +67,15 @@ export const metamaskSendTx = transaction =>
 export const ledgerSendTransaction = transaction =>
   new Promise((resolve, reject) => {
     const from =
-      transaction.from.substr(0, 2) === "0x"
+      transaction.from.substr(0, 2) === '0x'
         ? transaction.from
         : `0x${transaction.from}`;
     const to =
-      transaction.to.substr(0, 2) === "0x"
+      transaction.to.substr(0, 2) === '0x'
         ? transaction.to
         : `0x${transaction.to}`;
-    const value = transaction.value ? etherToWei(transaction.value) : "0x00";
-    const data = transaction.data ? transaction.data : "0x";
+    const value = transaction.value ? etherToWei(transaction.value) : '0x00';
+    const data = transaction.data ? transaction.data : '0x';
     getTxDetails({
       from,
       to,
@@ -101,9 +100,9 @@ export const ledgerSendTransaction = transaction =>
 export const sendTransactionMulti = (type, tranasction) => {
   console.log(type);
   switch (type) {
-    case "METAMASK":
+    case 'METAMASK':
       return metamaskSendTx(tranasction);
-    case "LEDGER":
+    case 'LEDGER':
       return ledgerSendTransaction(tranasction);
     default:
       return metamaskSendTx(tranasction);
@@ -112,19 +111,19 @@ export const sendTransactionMulti = (type, tranasction) => {
 
 /**
  * @async @desc initate vote-proxy link
- * @param  {Object} wallets { acccount: { address, type }, hot }
+ * @param  {Object} wallets { acccount: { address, type }, hotAddress }
  * @return {Promise} tx
  */
-export const initateLink = async ({ account, hot }) => {
-  const cold = account.address;
+export const initiateLink = async ({ coldAccount, hotAddress }) => {
+  const cold = coldAccount.address;
   const factory = await getProxyFactory();
-  const methodSig = getMethodSig("initiateLink(address)");
+  const methodSig = getMethodSig('initiateLink(address)');
   const callData = generateCallData({
     method: methodSig,
-    args: [removeHexPrefix(hot)]
+    args: [removeHexPrefix(hotAddress)]
   });
   const tx = { to: factory, from: cold, data: callData };
-  return sendTransactionMulti(account.type, tx);
+  return sendTransactionMulti(coldAccount.type, tx);
 };
 
 /**
@@ -135,7 +134,7 @@ export const initateLink = async ({ account, hot }) => {
 export const approveLink = async ({ account, cold }) => {
   const hot = account.address;
   const factory = await getProxyFactory();
-  const methodSig = getMethodSig("approveLink(address)");
+  const methodSig = getMethodSig('approveLink(address)');
   const callData = generateCallData({
     method: methodSig,
     args: [removeHexPrefix(cold)]
@@ -150,32 +149,66 @@ export const approveLink = async ({ account, cold }) => {
  * @return {Promise} tx
  */
 export const sendMkrToProxy = async ({ account, value }) => {
-  const { proxy } = await getProxyStatus(account.address);
+  const { address: proxyAddress, hasProxy } = await getProxyStatus(
+    account.address
+  );
+  if (!hasProxy)
+    throw new Error(
+      `${account.address} cannot send MKR to its proxy because none exists`
+    );
   const mkrToken = await getMkrAddress();
-  const methodSig = getMethodSig("transfer(address,uint256)");
-  // TODO error handle if isCold is false
+  const methodSig = getMethodSig('transfer(address,uint256)');
   const weiAmtHex = stringToHex(etherToWei(value));
   const callData = generateCallData({
     method: methodSig,
-    args: [removeHexPrefix(proxy), removeHexPrefix(weiAmtHex)]
+    args: [removeHexPrefix(proxyAddress), removeHexPrefix(weiAmtHex)]
   });
   const tx = { to: mkrToken, from: account.address, data: callData };
   return sendTransactionMulti(account.type, tx);
 };
 
 /**
- * @async @desc vote for a single proposal (in the form of an address)
- * @param {Object} voteDetails { acccount: { address, type }, proposal }
+ * @async @desc vote for a single proposal via a vote-proxy
+ * @param {Object} voteDetails { acccount: { address, type }, proposalAddress }
  * @return {Promise} tx
  */
-export const voteProposal = async ({ account, proposalAddress }) => {
-  const chief = await getChief();
-  const methodSig = getMethodSig("vote(address[])");
-  const proposalParam = encodeParameter("address[]", [proposalAddress]);
+export const voteViaProxy = async ({ account, proposalAddress }) => {
+  const { address: proxyAddress, hasProxy } = await getProxyStatus(
+    account.address
+  );
+  if (!hasProxy)
+    throw new Error(
+      `${account.address} cannot vote because it doesn't have a proxy`
+    );
+  const methodSig = getMethodSig('vote(address[])');
+  const proposalParam = encodeParameter('address[]', [proposalAddress]);
   const callData = generateCallData({
     method: methodSig,
     args: [removeHexPrefix(proposalParam)]
   });
-  const tx = { to: chief, from: account.address, data: callData };
+  const tx = { to: proxyAddress, from: account.address, data: callData };
+  return sendTransactionMulti(account.type, tx);
+};
+
+/**
+ * @async @desc lock all MKR in a vote-proxy vote for a single proposal
+ * @param {Object} voteDetails { acccount: { address, type }, proposalAddress }
+ * @return {Promise} tx
+ */
+export const voteAndLockViaProxy = async ({ account, proposalAddress }) => {
+  const { address: proxyAddress, hasProxy } = await getProxyStatus(
+    account.address
+  );
+  if (!hasProxy)
+    throw new Error(
+      `${account.address} cannot vote and lock because it doesn't have a proxy`
+    );
+  const methodSig = getMethodSig('voteAndLock(address[])');
+  const proposalParam = encodeParameter('address[]', [proposalAddress]);
+  const callData = generateCallData({
+    method: methodSig,
+    args: [removeHexPrefix(proposalParam)]
+  });
+  const tx = { to: proxyAddress, from: account.address, data: callData };
   return sendTransactionMulti(account.type, tx);
 };
