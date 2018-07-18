@@ -1,18 +1,19 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import find from "ramda/src/find";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import find from 'ramda/src/find';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
-import NotFound from "./NotFound";
-import VoteMeta from "../components/VoteMeta";
-import Button from "../components/Button";
-import Card from "../components/Card";
-import VoteTally from "../components/VoteTally";
-import WithTally from "../components/hocs/WithTally";
-import { toSlug } from "../utils/misc";
-import { colors, fonts } from "../theme";
+import NotFound from './NotFound';
+import VoteMeta from '../components/VoteMeta';
+import Button from '../components/Button';
+import Card from '../components/Card';
+import VoteTally from '../components/VoteTally';
+import WithTally from '../components/hocs/WithTally';
+import { getActiveAccount } from '../reducers/accounts';
+import { toSlug } from '../utils/misc';
+import { colors, fonts } from '../theme';
 
 const ProposalDetails = styled.div`
   max-width: 59%;
@@ -77,7 +78,7 @@ const SubHeading = styled.p`
   flex: none;
   position: relative;
   @media screen and (max-width: 736px) {
-    display: ${({ isAlwaysVisible }) => (isAlwaysVisible ? "block" : "none")};
+    display: ${({ isAlwaysVisible }) => (isAlwaysVisible ? 'block' : 'none')};
   }
 `;
 
@@ -91,7 +92,7 @@ const Body = styled.p`
 
 // TODO Styled body & body are confusingly similar
 
-const Topic = ({ match, topics }) => {
+const Topic = ({ match, topics, fetching, activeAccount }) => {
   // fetching
   const topicSlug = match.params.topicSlug;
   const topic = find(({ topic }) => toSlug(topic) === topicSlug, topics);
@@ -141,7 +142,12 @@ const Topic = ({ match, topics }) => {
                   />
                 )}
               </WithTally>
-              <Button>Vote for this Proposal</Button>
+              <Button
+                disabled={!activeAccount || !activeAccount.proxy.isSetup}
+                loading={fetching}
+              >
+                Vote for this Proposal
+              </Button>
             </div>
           </Card.Element>
         ))}
@@ -156,12 +162,14 @@ Topic.propTypes = {
 };
 
 Topic.defaultProps = {
-  match: "",
+  match: '',
   topics: []
 };
 
-const reduxProps = ({ topics }) => ({
-  topics: topics
+const reduxProps = ({ topics, accounts }) => ({
+  topics: topics,
+  fetching: accounts.fetching,
+  activeAccount: getActiveAccount({ accounts })
 });
 
 export default connect(

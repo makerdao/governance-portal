@@ -1,9 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
-import Loader from "./Loader";
-import { colors, fonts, transitions } from "../theme";
+import Loader from './Loader';
+import { colors, fonts, transitions } from '../theme';
 
 const StyledButton = styled.button`
   transition: ${transitions.button};
@@ -18,14 +18,15 @@ const StyledButton = styled.button`
   font-weight: ${fonts.weight.semibold};
   padding: 0 15px;
   height: 40px;
-  width: ${({ wide, slim }) => (wide ? "320px" : slim ? "166px" : "240px")};
-  cursor: ${({ disabled }) => (disabled ? "auto" : "pointer")};
+  width: ${({ wide, slim }) => (wide ? '320px' : slim ? '166px' : '240px')};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   &:disabled {
     opacity: 0.6;
   }
   @media (hover: hover) {
     &:hover {
-      box-shadow: rgba(5, 45, 73, 0.1) 0px 0.25rem 0.75rem;
+      box-shadow: ${({ disabled }) =>
+        disabled ? '' : 'rgba(5, 45, 73, 0.1) 0px 0.25rem 0.75rem'};
       background-color: ${({ disabled, hoverColor, color }) =>
         !disabled
           ? hoverColor
@@ -80,9 +81,9 @@ Button.propTypes = {
 
 Button.defaultProps = {
   loading: false,
-  color: "green",
-  hoverColor: "darkGrey",
-  activeColor: "green",
+  color: 'green',
+  hoverColor: 'darkGrey',
+  activeColor: 'green',
   disabled: false,
   wide: false,
   slim: false

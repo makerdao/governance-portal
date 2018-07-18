@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
-import takeLast from "ramda/src/takeLast";
+import BigNumber from 'bignumber.js';
+import takeLast from 'ramda/src/takeLast';
 
 export const WEI = 1;
 export const ETHER = 1000000000000000000;
@@ -12,8 +12,8 @@ export const ETHER = 1000000000000000000;
  * @return {String}
  */
 export const padLeft = (n, width, z) => {
-  z = z || "0";
-  n = n + "";
+  z = z || '0';
+  n = n + '';
   return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 };
 
@@ -23,7 +23,7 @@ export const padLeft = (n, width, z) => {
  * @return {String}
  */
 export const paddedBytes32ToAddress = hex =>
-  hex.length > 42 ? "0x" + takeLast(40, hex) : hex;
+  hex.length > 42 ? '0x' + takeLast(40, hex) : hex;
 
 /**
  * @desc get ethereum contract call data string
@@ -33,7 +33,7 @@ export const paddedBytes32ToAddress = hex =>
  * @return {String}
  */
 export const generateCallData = ({ method, args = [] }) => {
-  let val = "";
+  let val = '';
   for (let i = 0; i < args.length; i++) val += padLeft(args[i], 64);
   const data = method + val;
   return data;
@@ -44,7 +44,7 @@ export const generateCallData = ({ method, args = [] }) => {
  * @param  {String} hex
  * @return {String}
  */
-export const removeHexPrefix = hex => hex.toLowerCase().replace("0x", "");
+export const removeHexPrefix = hex => hex.toLowerCase().replace('0x', '');
 
 /**
  * @desc convert hex to number string
@@ -81,11 +81,11 @@ export const etherToWei = value =>
 export const netIdToName = id => {
   switch (parseInt(id, 10)) {
     case 1:
-      return "mainnet";
+      return 'mainnet';
     case 42:
-      return "kovan";
+      return 'kovan';
     default:
-      return "";
+      return '';
   }
 };
 
@@ -96,12 +96,12 @@ export const netIdToName = id => {
  */
 export const netNameToId = name => {
   switch (name) {
-    case "mainnet":
+    case 'mainnet':
       return 1;
-    case "kovan":
+    case 'kovan':
       return 42;
     default:
-      return "";
+      return '';
   }
 };
 
@@ -140,8 +140,8 @@ export const validAddressString = addressString =>
  * @param  {String} network
  * @return {String} link
  */
-export const ethScanLink = (string, network = "mainnet") => {
-  const pathPrefix = network === "mainnet" ? "" : "network.";
+export const ethScanLink = (string, network = 'mainnet') => {
+  const pathPrefix = network === 'mainnet' ? '' : 'network.';
   if (validAddressString(string))
     return `https://${pathPrefix}etherscan.io/address/${string}`;
   else if (validTxString(string))

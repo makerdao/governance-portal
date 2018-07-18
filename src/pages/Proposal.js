@@ -13,6 +13,7 @@ import Button from '../components/Button';
 import Card from '../components/Card';
 import Loader from '../components/Loader';
 import WithTally from '../components/hocs/WithTally';
+import { getActiveAccount } from '../reducers/accounts';
 import NotFound from './NotFound';
 import { colors } from '../theme';
 import { modalOpen } from '../reducers/modal';
@@ -176,7 +177,13 @@ class Proposal extends Component {
   render() {
     const { proposal, markdown } = this.state;
     if (Object.keys(proposal).length === 0) return <NotFound />;
-    const { voteState, voteStateFetching, modalOpen } = this.props;
+    const {
+      voteState,
+      voteStateFetching,
+      modalOpen,
+      activeAccount,
+      accountDataFetching
+    } = this.props;
     const supporters = voteState[proposal.source] || null;
     return (
       <React.Fragment>
@@ -204,7 +211,12 @@ class Proposal extends Component {
                   />
                 )}
               </WithTally>
-              <Button wide={true} onClick={() => modalOpen(Vote, { proposal })}>
+              <Button
+                disabled={!activeAccount || !activeAccount.proxy.isSetup}
+                loading={accountDataFetching}
+                wide={true}
+                onClick={() => modalOpen(Vote, { proposal })}
+              >
                 Vote for this Proposal
               </Button>
             </div>
@@ -261,10 +273,12 @@ class Proposal extends Component {
   }
 }
 
-const reduxProps = ({ topics, tally }) => ({
+const reduxProps = ({ topics, tally, accounts }) => ({
   topics,
   voteStateFetching: tally.fetching,
-  voteState: tally.tally
+  voteState: tally.tally,
+  accountDataFetching: accounts.fetching,
+  activeAccount: getActiveAccount({ accounts })
 });
 
 export default connect(

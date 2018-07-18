@@ -108,7 +108,6 @@ const initialState = {
   activeAccountCurrentVote: '',
   activeAccountVotableMkr: 0,
   activeAccountUnlockedMkr: 0,
-  fetching: false,
   allAccounts: [
     {
       address: '0xfakefakefake',
