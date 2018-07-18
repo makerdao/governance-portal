@@ -2,11 +2,11 @@
 //// Read chain state & get event logs ////
 ///////////////////////////////////////////
 
-import last from "ramda/src/last";
-import nth from "ramda/src/nth";
-import uniq from "ramda/src/uniq";
-import memoizeWith from "ramda/src/memoizeWith";
-import identity from "ramda/src/identity";
+import last from 'ramda/src/last';
+import nth from 'ramda/src/nth';
+import uniq from 'ramda/src/uniq';
+import memoizeWith from 'ramda/src/memoizeWith';
+import identity from 'ramda/src/identity';
 
 import {
   getMethodSig,
@@ -15,15 +15,15 @@ import {
   getNetworkName,
   web3Instance,
   getMkrAddress
-} from "./web3";
+} from './web3';
 import {
   generateCallData,
   removeHexPrefix,
   weiToEther,
   paddedBytes32ToAddress,
   isZeroAddress
-} from "../utils/ethereum";
-import chiefInfo from "./chief-info.json";
+} from '../utils/ethereum';
+import chiefInfo from './chief-info.json';
 
 /**
  * @async @desc get address approval count
@@ -32,7 +32,7 @@ import chiefInfo from "./chief-info.json";
  */
 export const getApprovalCount = async address => {
   const chief = await getChief();
-  const methodSig = getMethodSig("approvals(address)");
+  const methodSig = getMethodSig('approvals(address)');
   const callData = generateCallData({
     method: methodSig,
     args: [removeHexPrefix(address)]
@@ -52,7 +52,7 @@ export const getApprovalCount = async address => {
  */
 export const getVotedSlate = async address => {
   const chief = await getChief();
-  const methodSig = getMethodSig("votes(address)");
+  const methodSig = getMethodSig('votes(address)');
   const callData = generateCallData({
     method: methodSig,
     args: [removeHexPrefix(address)]
@@ -71,7 +71,7 @@ export const getVotedSlate = async address => {
  */
 export const getNumDeposits = async address => {
   const chief = await getChief();
-  const methodSig = getMethodSig("deposits(address)");
+  const methodSig = getMethodSig('deposits(address)');
   const callData = generateCallData({
     method: methodSig,
     args: [removeHexPrefix(address)]
@@ -91,7 +91,7 @@ export const getNumDeposits = async address => {
  */
 export const getSlateAddresses = async slateHex => {
   const chief = await getChief();
-  const methodSig = getMethodSig("slates(bytes32,uint256)");
+  const methodSig = getMethodSig('slates(bytes32,uint256)');
   /**
    * @async @param  {Number} [i] index
    * @param  {String[]} [arr] array
@@ -109,7 +109,7 @@ export const getSlateAddresses = async slateHex => {
       to: chief,
       data: callData
     });
-    if (slateElement === "0x") return arr;
+    if (slateElement === '0x') return arr;
     const slateAddress = paddedBytes32ToAddress(slateElement);
     return traverseSlate(i + 1, [...arr, slateAddress]);
   };
@@ -123,7 +123,7 @@ export const getSlateAddresses = async slateHex => {
  */
 export const getHat = async () => {
   const chief = await getChief();
-  const methodSig = getMethodSig("hat()");
+  const methodSig = getMethodSig('hat()');
   const callData = generateCallData({
     method: methodSig,
     args: []
@@ -144,7 +144,7 @@ export const getEtchedSlates = async () => {
   const chief = await getChief(network);
   const etches = await web3Instance.eth.getPastLogs({
     fromBlock: chiefInfo.inception_block[network],
-    toBlock: "latest",
+    toBlock: 'latest',
     address: chief,
     topics: [chiefInfo.events.etch]
   });
@@ -159,7 +159,7 @@ export const getEtchedSlates = async () => {
  */
 export const getProxyAddressHot = async address => {
   const factory = await getProxyFactory();
-  const methodSig = getMethodSig("hotMap(address)");
+  const methodSig = getMethodSig('hotMap(address)');
   const callData = generateCallData({
     method: methodSig,
     args: [removeHexPrefix(address)]
@@ -179,7 +179,7 @@ export const getProxyAddressHot = async address => {
  */
 export const getProxyAddressCold = async address => {
   const factory = await getProxyFactory();
-  const methodSig = getMethodSig("coldMap(address)");
+  const methodSig = getMethodSig('coldMap(address)');
   const callData = generateCallData({
     method: methodSig,
     args: [removeHexPrefix(address)]
@@ -195,18 +195,18 @@ export const getProxyAddressCold = async address => {
 /**
  * @async @desc get the address of associated vote proxy if this wallet were cold
  * @param {String} address
- * @return {Object}
+ * @return {Object} { type, address }
  */
 export const getProxyStatus = async address => {
   const proxyAddressHot = await getProxyAddressHot(address);
   if (!isZeroAddress(proxyAddressHot)) {
-    return { isHot: true, isCold: false, proxy: proxyAddressHot };
+    return { type: 'hot', address: proxyAddressHot, hasProxy: true };
   }
   const proxyAddressCold = await getProxyAddressCold(address);
   if (!isZeroAddress(proxyAddressCold)) {
-    return { isHot: false, isCold: true, proxy: proxyAddressCold };
+    return { type: 'cold', address: proxyAddressCold, hasProxy: true };
   }
-  return { isHot: false, isCold: false, proxy: "" };
+  return { type: '', address: '', hasProxy: false };
 };
 
 /**
@@ -218,7 +218,7 @@ export const getLockLogs = async () => {
   const chief = await getChief(network);
   const locks = await web3Instance.eth.getPastLogs({
     fromBlock: chiefInfo.inception_block[network],
-    toBlock: "latest",
+    toBlock: 'latest',
     address: chief,
     topics: [chiefInfo.events.lock]
   });
@@ -303,7 +303,7 @@ export const getVoteTally = async () => {
  */
 export const getMkrBalance = async address => {
   const mkr = await getMkrAddress();
-  const methodSig = getMethodSig("balanceOf(address)");
+  const methodSig = getMethodSig('balanceOf(address)');
   const callData = generateCallData({
     method: methodSig,
     args: [removeHexPrefix(address)]
