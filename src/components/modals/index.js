@@ -11,7 +11,7 @@ import {
 } from '../../reducers/proxy';
 import { sendVote } from '../../reducers/vote';
 import { getActiveAccount } from '../../reducers/accounts';
-import ProxySetup from './PoxySetup';
+import ProxySetup from './ProxySetup';
 import Card from '../Card';
 import close from '../../imgs/close.svg';
 import { colors, transitions, responsive } from '../../theme';
