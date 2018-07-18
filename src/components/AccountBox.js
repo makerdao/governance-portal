@@ -12,14 +12,15 @@ import { fonts, colors, shadows } from '../theme';
 import { getActiveAccount, setActiveAccount } from '../reducers/accounts';
 
 const StyledArrow = styled.img`
-  position: absolute;
-  right: 10px;
+  margin-left: 0.7em;
+  position: relative;
+  top: 1px;
   cursor: pointer;
   width: 14px;
   height: 14px;
   mask: url(${arrow}) center no-repeat;
   mask-size: 90%;
-  background-color: rgba(${colors.white}, 0.8);
+  background-color: #627685;
 `;
 
 const Account = styled.div`
@@ -30,7 +31,6 @@ const Account = styled.div`
 const StyledDropdownWrapper = styled.div`
   min-width: 70px;
   border-radius: 4px;
-  position: relative;
   font-size: ${fonts.size.small};
   font-weight: ${fonts.weight.medium};
   text-align: center;
@@ -39,8 +39,9 @@ const StyledDropdownWrapper = styled.div`
   background: rgb(${colors.dark});
   color: rgb(${colors.dark_grey});
   border-radius: 4px;
-  width: 100%;
+  width: 220px;
   top: 110%;
+  right: 0;
   z-index: 1;
   opacity: ${({ show }) => (show ? 1 : 0)};
   visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
@@ -51,14 +52,11 @@ const StyledDropdownWrapper = styled.div`
 `;
 
 const StyledAccount = styled.div`
-  color: white;
+  color: #627685;
   cursor: pointer;
-  background: ${({ dark }) => (dark ? '#053C4B' : '#435367')};
-  border-radius: 4px;
   padding: 6px 10px;
   font-size: 15px;
   display: flex;
-  width: 220px;
   align-items: center;
   font-weight: ${fonts.weight.normal};
   font-family: ${fonts.family.SFProText};
@@ -102,16 +100,12 @@ class AccountBox extends Component {
     this.setState(state => ({ dropdownOpen: !state.dropdownOpen }));
   };
   render() {
-    const { dark, allAccounts, activeAccount, ...props } = this.props;
+    const { allAccounts, activeAccount, ...props } = this.props;
 
     if (this.props.fetching)
       return (
-        <StyledAccount dark={dark} {...this.props}>
-          <Loader
-            size={20}
-            color="background"
-            background={dark ? 'box_dark' : 'box_light'}
-          />
+        <StyledAccount {...this.props}>
+          <Loader size={20} color="background" background="box_dark" />
         </StyledAccount>
       );
 
@@ -119,7 +113,7 @@ class AccountBox extends Component {
 
     if (!activeAccount)
       return (
-        <StyledAccount dark={dark} {...this.props}>
+        <StyledAccount {...this.props}>
           <Account noAccounts>No Accounts</Account>
         </StyledAccount>
       );
@@ -127,7 +121,7 @@ class AccountBox extends Component {
     return (
       <ClickOutside onOutsideClick={this.clickOutside}>
         <AccountWrapper {...props}>
-          <StyledAccount dark={dark} onClick={this.toggleDropdown}>
+          <StyledAccount onClick={this.toggleDropdown}>
             <Blockies
               seed={activeAccount.address}
               size={5}
@@ -147,7 +141,7 @@ class AccountBox extends Component {
                 key={address}
                 onClick={() => this.onChange({ address, type })}
                 selected={address === activeAccount.address}
-                dark={dark}
+                dark
               >
                 <Blockies
                   seed={address}
