@@ -16,7 +16,7 @@ const NOT_AVAILABLE = 'metamask/NOT_AVAILABLE';
 
 // Actions ------------------------------------------------
 
-export const updateMetamaskAccount = () => (dispatch, getState) => {
+export const updateMetamaskAccount = () => async (dispatch, getState) => {
   const oldAddress = getState().metamask.accountAddress;
   if (
     window.web3.eth.defaultAccount !== undefined &&
@@ -30,7 +30,7 @@ export const updateMetamaskAccount = () => (dispatch, getState) => {
     if (oldAddress === newAddress)
       dispatch(updateAccount({ address: newAddress, type: 'METAMASK' }));
     else {
-      dispatch(addAccount({ address: newAddress, type: 'METAMASK' }));
+      await dispatch(addAccount({ address: newAddress, type: 'METAMASK' }));
       // default to our metamask account
     }
     dispatch(setActiveAccount(newAddress));

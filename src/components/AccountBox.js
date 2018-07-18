@@ -182,9 +182,10 @@ AccountBox.defaultProps = {
   fetching: false
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, props) => ({
   allAccounts: state.accounts.allAccounts,
-  activeAccount: getActiveAccount(state)
+  activeAccount: getActiveAccount(state),
+  fetching: props.fetching || state.accounts.fetching
 });
 
 export default connect(

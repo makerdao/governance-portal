@@ -5,13 +5,15 @@ import append from 'ramda/src/append';
 import differenceWith from 'ramda/src/differenceWith';
 
 import { createReducer } from '../utils/redux';
-import { getMkrBalance } from '../chain/read';
+import { getMkrBalance, getProxyAddressHot } from '../chain/read';
+import { isZeroAddress } from '../utils/ethereum';
 
 // Constants ----------------------------------------------
 
 const ADD_ACCOUNTS = 'accounts/ADD_ACCOUNTS';
 const REMOVE_ACCOUNTS = 'accounts/REMOVE_ACCOUNTS';
 const SET_ACTIVE_ACCOUNT = 'accounts/SET_ACTIVE_ACCOUNT';
+const FETCHING_ACCOUNT_DATA = 'accounts/FETCHING_ACCOUNT_DATA';
 const UPDATE_ACCOUNT = 'accounts/UPDATE_ACCOUNT';
 const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
 const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
@@ -39,12 +41,32 @@ export const removeAccounts = accounts => ({
   }
 });
 
-export const addAccount = account => ({
-  type: ADD_ACCOUNT,
-  payload: {
-    account
-  }
-});
+export const addAccount = account => async dispatch => {
+  dispatch({
+    type: FETCHING_ACCOUNT_DATA,
+    payload: true
+  });
+  const proxyAddress = await getProxyAddressHot(account.address);
+  const isSetup = !isZeroAddress(proxyAddress);
+  const balance = isSetup ? await getMkrBalance(proxyAddress) : 0;
+  await dispatch({
+    type: ADD_ACCOUNT,
+    payload: {
+      account: {
+        ...account,
+        proxy: {
+          address: proxyAddress,
+          isSetup: !isZeroAddress(proxyAddress),
+          balance
+        }
+      }
+    }
+  });
+  dispatch({
+    type: FETCHING_ACCOUNT_DATA,
+    payload: false
+  });
+};
 
 export const updateAccount = account => ({
   type: UPDATE_ACCOUNT,
@@ -55,15 +77,10 @@ export const updateAccount = account => ({
 
 // After the initial load, this will generally be called when an account
 // is selected in the account box dropdown
-export const setActiveAccount = address => {
-  // get proxy info if it's not present
-  // const accountInfo = getState().accounts. TODO
-
-  return {
-    type: SET_ACTIVE_ACCOUNT,
-    payload: address
-  };
-};
+export const setActiveAccount = address => ({
+  type: SET_ACTIVE_ACCOUNT,
+  payload: address
+});
 
 export const accountDataInit = () => (dispatch, getState) => {
   const account = getState().accounts.activeAccount;
@@ -97,7 +114,8 @@ const initialState = {
       type: 'fake',
       proxy: {
         address: '0xproxyfake',
-        balance: 111
+        balance: 111,
+        isSetup: true
       },
       coldWallet: {
         address: '0xcoldfake',
@@ -141,6 +159,10 @@ const accounts = createReducer(initialState, {
   [SET_UNLOCKED_MKR]: (state, { payload }) => ({
     ...state,
     activeAccountUnlockedMkr: payload.mkr
+  }),
+  [FETCHING_ACCOUNT_DATA]: (state, { payload }) => ({
+    ...state,
+    fetching: payload
   })
 });
 

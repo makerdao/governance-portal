@@ -1,9 +1,10 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+
 import { modalOpen } from '../reducers/modal';
 import { getActiveAccount } from '../reducers/accounts';
-import { Link } from 'react-router-dom';
 import theme, { colors, fonts } from '../theme';
 import DotSpacer from './DotSpacer';
 import { Banner, BannerHeader, BannerBody, BannerContent } from './Banner';
@@ -52,7 +53,7 @@ const WelcomeBanner = ({ modalOpen }) => {
 
 const VoterStatus = ({ account, network, modalOpen }) => {
   if (!account) return null;
-  if (account && !account.proxy) return <WelcomeBanner modalOpen={modalOpen} />;
+  if (!account.proxy.isSetup) return <WelcomeBanner modalOpen={modalOpen} />;
 
   const domain = `${network === 'kovan' ? 'kovan.' : ''}etherscan.io`;
   const etherscanUrl = `https://${domain}/address/${account.address}`;
@@ -61,7 +62,7 @@ const VoterStatus = ({ account, network, modalOpen }) => {
       In voting contract <Value>{account.proxy.balance} MKR</Value>{' '}
       <a onClick={() => modalOpen(Withdraw)}>Withdraw to wallet</a>
       <DotSpacer />
-      In wallet <Value>{account.coldWallet.balance || 0} MKR</Value>{' '}
+      In wallet <Value>{account.coldWallet.balance} MKR</Value>{' '}
       <a onClick={() => modalOpen(Lock)}>Add to voting contract</a>
       <DotSpacer />
       Hot wallet address {cutMiddle(account.address)}{' '}
