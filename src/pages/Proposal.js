@@ -16,6 +16,7 @@ import WithTally from '../components/hocs/WithTally';
 import { getActiveAccount } from '../reducers/accounts';
 import NotFound from './NotFound';
 import { colors } from '../theme';
+import { formatDate, cutMiddle } from '../utils/misc';
 import { modalOpen } from '../reducers/modal';
 
 const WhiteBackground = styled.div`
@@ -98,12 +99,14 @@ const SupporterCard = styled(Card)`
   height: 334px;
 `;
 
-const Percentage = styled.p`
-  color: #546978;
+const Detail = styled.p`
+  color: ${({ theme }) => theme.text.dim_grey};
+  overflow: hidden;
+  text-overflow: ellipsis;
   line-height: 26px;
   font-size: 14px;
   &::after {
-    content: '%';
+    content: ${({ pct }) => (pct ? '%' : '')};
   }
 `;
 
@@ -182,8 +185,10 @@ class Proposal extends Component {
       voteStateFetching,
       modalOpen,
       activeAccount,
-      accountDataFetching
+      accountDataFetching,
+      network
     } = this.props;
+    const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
     const supporters = voteState[proposal.source] || null;
     return (
       <React.Fragment>
@@ -237,10 +242,22 @@ class Proposal extends Component {
           <RightPanels>
             <DetailsCard>
               <CardTitle>Details</CardTitle>
-              {/* <Supporter>
-                <Percentage>Topic</Percentage>
-                <Address>poasidjf aoisdjf </Address>
-              </Supporter> */}
+              <Supporter>
+                <Detail>Topic</Detail>
+              </Supporter>
+              <Supporter>
+                <Detail>Started</Detail>
+                <Detail>{formatDate(proposal.date)}</Detail>
+              </Supporter>
+              <Supporter>
+                <Detail>Source</Detail>
+                <Address
+                  target="_blank"
+                  href={ethScanLink(proposal.source, networkShown)}
+                >
+                  {cutMiddle(proposal.source, 8, 8)}
+                </Address>
+              </Supporter>
             </DetailsCard>
             <SupporterCard>
               <CardTitle>Top Supporters</CardTitle>
@@ -248,10 +265,10 @@ class Proposal extends Component {
                 {supporters ? (
                   supporters.map(supporter => (
                     <Supporter key={supporter.address}>
-                      <Percentage>{supporter.percent}</Percentage>
+                      <Detail pct>{supporter.percent}</Detail>
                       <Address
                         target="_blank"
-                        href={ethScanLink(supporter.address)}
+                        href={ethScanLink(supporter.address, networkShown)}
                       >
                         {supporter.address}
                       </Address>
@@ -273,12 +290,13 @@ class Proposal extends Component {
   }
 }
 
-const reduxProps = ({ topics, tally, accounts }) => ({
+const reduxProps = ({ topics, tally, accounts, metamask }) => ({
   topics,
   voteStateFetching: tally.fetching,
   voteState: tally.tally,
   accountDataFetching: accounts.fetching,
-  activeAccount: getActiveAccount({ accounts })
+  activeAccount: getActiveAccount({ accounts }),
+  network: metamask.network
 });
 
 export default connect(
