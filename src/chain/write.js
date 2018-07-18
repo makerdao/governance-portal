@@ -7,7 +7,6 @@ import {
   getMethodSig,
   getProxyFactory,
   getMkrAddress,
-  getChief,
   encodeParameter,
   sendSignedTx
 } from './web3';
@@ -112,19 +111,19 @@ export const sendTransactionMulti = (type, tranasction) => {
 
 /**
  * @async @desc initate vote-proxy link
- * @param  {Object} wallets { acccount: { address, type }, hot }
+ * @param  {Object} wallets { acccount: { address, type }, hotAddress }
  * @return {Promise} tx
  */
-export const initateLink = async ({ account, hot }) => {
-  const cold = account.address;
+export const initiateLink = async ({ coldAccount, hotAddress }) => {
+  const cold = coldAccount.address;
   const factory = await getProxyFactory();
   const methodSig = getMethodSig('initiateLink(address)');
   const callData = generateCallData({
     method: methodSig,
-    args: [removeHexPrefix(hot)]
+    args: [removeHexPrefix(hotAddress)]
   });
   const tx = { to: factory, from: cold, data: callData };
-  return sendTransactionMulti(account.type, tx);
+  return sendTransactionMulti(coldAccount.type, tx);
 };
 
 /**

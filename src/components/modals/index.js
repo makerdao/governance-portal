@@ -3,8 +3,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { modalClose } from '../../reducers/modal';
-import { initiateLink, sendMkrToProxy } from '../../reducers/proxy';
+import {
+  initiateLink,
+  sendMkrToProxy,
+  approveLink,
+  clear as proxyClear
+} from '../../reducers/proxy';
 import { sendVote } from '../../reducers/vote';
+import { getActiveAccount } from '../../reducers/accounts';
 import ProxySetup from './PoxySetup';
 import Card from '../Card';
 import close from '../../imgs/close.svg';
@@ -55,7 +61,7 @@ const ModalCard = Card.extend`
 
 const Centered = styled.div`
   position: fixed;
-  top: 9%;
+  top: 3%;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -69,7 +75,6 @@ const StyledClose = styled.div`
   margin-top: -8px;
   margin-bottom: 8px;
   cursor: pointer;
-  visibility: ${({ modal }) => (modal ? 'visible' : 'hidden')};
   background: url(${close}) no-repeat;
 `;
 
@@ -101,12 +106,12 @@ class Modal extends Component {
     }
 
     return (
-      <StyledLightbox modal={modal}>
+      <StyledLightbox modal={!!modal}>
         <Centered>
           <StyledHitbox onClick={modalClose} />
           <Column maxWidth={600} center>
             <ModalTopper>
-              <StyledClose modal={modal} onClick={modalClose} />
+              <StyledClose onClick={modalClose} />
             </ModalTopper>
             <ModalCard maxWidth={600} background="white">
               {this.modalController()}
@@ -120,15 +125,27 @@ class Modal extends Component {
 
 Modal.propTypes = {};
 
-const reduxProps = ({ modal, metamask, vote }) => ({
+const reduxProps = ({ modal, metamask, vote, accounts, proxy }) => ({
   modal: modal.modal,
   modalProps: modal.modalProps,
   account: metamask.accountAddress,
+  activeAccount: getActiveAccount({ accounts }),
   network: metamask.network === 'kovan' ? 'kovan' : 'mainnet',
+  initiateLinkTxHash: proxy.initiateLinkTxHash,
+  sendMkrTxHash: proxy.sendMkrTxHash,
+  approveLinkTxHash: proxy.approveLinkTxHash,
+  hotAddress: proxy.hot,
   voteTxHash: vote.txHash
 });
 
 export default connect(
   reduxProps,
-  { modalClose, initiateLink, sendMkrToProxy, sendVote }
+  {
+    modalClose,
+    initiateLink,
+    approveLink,
+    sendMkrToProxy,
+    sendVote,
+    proxyClear
+  }
 )(Modal);

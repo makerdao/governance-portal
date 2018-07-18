@@ -5,16 +5,20 @@ import {
   StyledBlurb,
   StyledTop,
   StyledAnchor,
-  Styledinput
+  Styledinput,
+  Note
 } from '../shared/styles';
 import Button from '../../Button';
 import ProgressTabs from './ProgressTabs';
 
 class Link extends Component {
-  state = {
-    hot: '',
-    cold: ''
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      hot: '',
+      cold: props.activeAccount.address
+    };
+  }
 
   updateInputValueHot = evt => {
     this.setState({ hot: evt.target.value });
@@ -39,9 +43,11 @@ class Link extends Component {
         </StyledBlurb>
         <Styledinput
           value={this.state.cold}
-          onChange={this.updateInputValueCold}
+          readOnly
+          // onChange={this.updateInputValueCold}
           placeholder="Cold wallet"
         />
+        <Note>^ forced to be current active account for now</Note>
         <Styledinput
           value={this.state.hot}
           onChange={this.updateInputValueHot}
@@ -55,10 +61,12 @@ class Link extends Component {
         >
           <Button
             slim
-            // onClick={this.props.createProxy({
-            //   hot: this.state.hot,
-            //   cold: this.state.cold
-            // })}
+            onClick={() =>
+              this.props.initiateLink({
+                coldAccount: this.props.activeAccount,
+                hotAddress: this.state.hot
+              })
+            }
           >
             Link Wallets
           </Button>

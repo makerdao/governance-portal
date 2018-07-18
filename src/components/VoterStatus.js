@@ -59,7 +59,7 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
   if (!account) return null;
   if (!account.proxy.isSetup) return <WelcomeBanner modalOpen={modalOpen} />;
 
-  const networkConstrained = network === 'kovan' ? 'kovan' : 'mainnet';
+  const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
   return (
     <SmallText>
       In voting contract <Value>{account.proxy.balance} MKR</Value>{' '}
@@ -69,10 +69,7 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
       <a onClick={() => modalOpen(Lock)}>Add to voting contract</a>
       <DotSpacer />
       Hot wallet address {cutMiddle(account.address)}{' '}
-      <a
-        target="_blank"
-        href={ethScanLink(account.address, networkConstrained)}
-      >
+      <a target="_blank" href={ethScanLink(account.address, networkShown)}>
         Etherscan
       </a>
       <br />
