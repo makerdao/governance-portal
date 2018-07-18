@@ -1,12 +1,12 @@
-import { createReducer } from "../utils/redux";
-import { addAccounts } from "./accounts";
-import ledgerSubprovider from "../chain/ledger";
+import { createReducer } from '../utils/redux';
+import { addAccounts } from './accounts';
+import ledgerSubprovider from '../chain/ledger';
 
 // Constants ----------------------------------------------
 
-const CONNECT_REQUEST = "ledger/CONNECT_REQUEST";
-const CONNECT_SUCCESS = "ledger/CONNECT_SUCCESS";
-const CONNECT_FAILURE = "ledger/CONNECT_FAILURE";
+const CONNECT_REQUEST = 'ledger/CONNECT_REQUEST';
+const CONNECT_SUCCESS = 'ledger/CONNECT_SUCCESS';
+const CONNECT_FAILURE = 'ledger/CONNECT_FAILURE';
 
 // Actions ------------------------------------------------
 
@@ -18,7 +18,7 @@ export const ledgerConnectInit = () => dispatch => {
       dispatch({ type: CONNECT_SUCCESS, payload: { addresses } });
       const accounts = addresses.map(address => ({
         address,
-        type: "LEDGER"
+        type: 'LEDGER'
       }));
       dispatch(addAccounts(accounts));
     })
@@ -32,7 +32,7 @@ export const ledgerConnectInit = () => dispatch => {
 
 const initialState = {
   fetching: false,
-  addresses: ""
+  addresses: ''
 };
 
 const ledger = createReducer(initialState, {
@@ -46,7 +46,7 @@ const ledger = createReducer(initialState, {
     fetching: false
   }),
   [CONNECT_FAILURE]: () => ({
-    addresses: "",
+    addresses: '',
     web3Available: false
   })
 });

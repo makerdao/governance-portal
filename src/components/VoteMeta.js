@@ -1,9 +1,9 @@
-import React, { Fragment } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import DotSpacer from "./DotSpacer";
-import verified from "../imgs/verified.svg";
-import { formatDate } from "../utils/misc";
+import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import DotSpacer from './DotSpacer';
+import verified from '../imgs/verified.svg';
+import { formatDate } from '../utils/misc';
 
 const VerifiedMark = styled.div`
   height: 20px;
@@ -16,7 +16,7 @@ const Created = styled.div`
   color: ${({ theme }) => theme.text.green};
   &::before {
     color: ${({ theme }) => theme.text.dim_grey};
-    content: "Created ";
+    content: 'Created ';
   }
 `;
 
@@ -28,7 +28,7 @@ const Footer = styled.div`
 const Submitter = styled.div`
   &::before {
     color: ${({ theme }) => theme.text.dim_grey};
-    content: "Submitted by ";
+    content: 'Submitted by ';
   }
 `;
 
@@ -59,10 +59,10 @@ VoteMeta.propTypes = {
 VoteMeta.defaultProps = {
   verified: false,
   submitted_by: {
-    name: "",
-    link: ""
+    name: '',
+    link: ''
   },
-  date: ""
+  date: ''
 };
 
 export default VoteMeta;

@@ -1,8 +1,8 @@
-import React, { Fragment } from "react";
-import { ethScanLink } from "../../../utils/ethereum";
+import React, { Fragment } from 'react';
+import { ethScanLink } from '../../../utils/ethereum';
 
-import { StyledTitle, StyledTop, TxHash } from "./styles";
-import Button from "../../Button";
+import { StyledTitle, StyledTop, TxHash } from './styles';
+import Button from '../../Button';
 
 const Transaction = ({ txHash, nextStep, network, lastCard }) => (
   <Fragment>
@@ -14,12 +14,12 @@ const Transaction = ({ txHash, nextStep, network, lastCard }) => (
     </TxHash>
     <div
       style={{
-        alignSelf: "center",
-        marginTop: "18px"
+        alignSelf: 'center',
+        marginTop: '18px'
       }}
     >
       <Button slim onClick={nextStep}>
-        {lastCard ? "Finish and close" : "Continue"}
+        {lastCard ? 'Finish and close' : 'Continue'}
       </Button>
     </div>
   </Fragment>

@@ -1,6 +1,6 @@
-import styled, { keyframes } from "styled-components";
-import React from "react";
-import PropTypes from "prop-types";
+import styled, { keyframes } from 'styled-components';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 const loading = keyframes`
   0% {
@@ -32,7 +32,7 @@ const ResizeSpin = styled.div`
     background: rgba(255, 255, 255, 0.5);
     border-radius: 50%;
     border-radius: 10.2em 0 0 10.2em;
-    content: "";
+    content: '';
     height: 10.2em;
     left: -0.1em;
     position: absolute;
@@ -45,7 +45,7 @@ const ResizeSpin = styled.div`
     background: transparent;
     border-radius: 50%;
     border-radius: 0 10.2em 10.2em 0;
-    content: "";
+    content: '';
     height: 10.2em;
     left: 5.1em;
     position: absolute;
@@ -74,7 +74,7 @@ const ResizeSpinBacker = styled.div`
 `;
 
 const ResizeSpinLoader = props => (
-  <div style={{ position: "relative" }}>
+  <div style={{ position: 'relative' }}>
     <ResizeSpinBacker {...props} />
     <ResizeSpin {...props} />
   </div>
@@ -88,8 +88,8 @@ ResizeSpinLoader.propTypes = {
 };
 
 ResizeSpinLoader.defaultProps = {
-  background: "#fff",
-  color: "#000",
+  background: '#fff',
+  color: '#000',
   duration: 2,
   size: 11
 };

@@ -1,9 +1,9 @@
-import { createReducer } from "../utils/redux";
+import { createReducer } from '../utils/redux';
 
 // Constants ----------------------------------------------
 
-const MODAL_OPEN = "modal/MODAL_OPEN";
-const MODAL_CLOSE = "modal/MODAL_CLOSE";
+const MODAL_OPEN = 'modal/MODAL_OPEN';
+const MODAL_CLOSE = 'modal/MODAL_CLOSE';
 
 // Actions ------------------------------------------------
 
@@ -17,7 +17,7 @@ export const modalClose = () => ({ type: MODAL_CLOSE });
 // Reducer ------------------------------------------------
 
 const initialState = {
-  modal: "",
+  modal: '',
   modalProps: {}
 };
 
@@ -27,7 +27,7 @@ const modal = createReducer(initialState, {
     modal: payload.name,
     modalProps: payload.props
   }),
-  [MODAL_CLOSE]: state => ({ ...state, modal: "", modalProps: {} })
+  [MODAL_CLOSE]: state => ({ ...state, modal: '', modalProps: {} })
 });
 
 export default modal;

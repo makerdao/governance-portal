@@ -1,14 +1,14 @@
-import { combineReducers } from "redux";
-import metamask from "./metamask";
-import modal from "./modal";
-import topics from "./topics";
-import tally from "./tally";
-import approvals from "./approvals";
-import proxy from "./proxy";
-import accounts from "./accounts";
-import ledger from "./ledger";
-import vote from "./vote";
-import hat from "./hat";
+import { combineReducers } from 'redux';
+import metamask from './metamask';
+import modal from './modal';
+import topics from './topics';
+import tally from './tally';
+import approvals from './approvals';
+import proxy from './proxy';
+import accounts from './accounts';
+import ledger from './ledger';
+import vote from './vote';
+import hat from './hat';
 
 const rootReducer = combineReducers({
   metamask,

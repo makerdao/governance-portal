@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 import {
   StyledTitle,
@@ -12,8 +12,8 @@ import {
   GuideTitle,
   GuideInfo,
   SetupLater
-} from "../shared/styles";
-import Button from "../../Button";
+} from '../shared/styles';
+import Button from '../../Button';
 
 const Intro = ({ modalClose, nextStep }) => (
   <Column center maxWidth={540}>
@@ -48,7 +48,7 @@ const Intro = ({ modalClose, nextStep }) => (
       </Section>
     </GuideWrapper>
     <StyledBlurb>
-      Its extremely secure and set up takes 5 minutes.{" "}
+      Its extremely secure and set up takes 5 minutes.{' '}
       <StyledAnchor blue>FAQ’s for more</StyledAnchor>
     </StyledBlurb>
     <Button slim onClick={nextStep}>

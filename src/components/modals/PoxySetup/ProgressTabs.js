@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
 import {
   CircledNum,
   ProgressTabsWrapper,
   TabsTitle,
   TabsTitleWrapper
-} from "../shared/styles";
+} from '../shared/styles';
 
 const ProgressTabs = ({ progress }) => (
   <ProgressTabsWrapper>

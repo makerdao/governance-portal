@@ -1,13 +1,13 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class OutsideClickHandler extends Component {
   componentDidMount() {
-    document.addEventListener("mousedown", this.handleClickOutside);
+    document.addEventListener('mousedown', this.handleClickOutside);
   }
 
   componentWillUnmount() {
-    document.removeEventListener("mousedown", this.handleClickOutside);
+    document.removeEventListener('mousedown', this.handleClickOutside);
   }
 
   /**

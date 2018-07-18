@@ -1,5 +1,5 @@
-import takeLast from "ramda/src/takeLast";
-import take from "ramda/src/take";
+import takeLast from 'ramda/src/takeLast';
+import take from 'ramda/src/take';
 
 /**
  * @desc returns whether current device is mobile
@@ -18,8 +18,8 @@ export const isMobile = () => {
  * @param {Number} right - how many characters to keep from the end
  * @return {String}
  */
-export const cutMiddle = (text = "", left = 3, right = 4) =>
-  `${take(left, text)}${text ? "..." : ""}${takeLast(right, text)}`;
+export const cutMiddle = (text = '', left = 3, right = 4) =>
+  `${take(left, text)}${text ? '...' : ''}${takeLast(right, text)}`;
 
 /**
  * @desc returns a url slugged version of some text
@@ -28,9 +28,9 @@ export const cutMiddle = (text = "", left = 3, right = 4) =>
  */
 export const toSlug = text =>
   text
-    .split(" ")
-    .map(word => word.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").toLowerCase())
-    .join("-");
+    .split(' ')
+    .map(word => word.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '').toLowerCase())
+    .join('-');
 
 /**
  * @desc if the number is bigger than 1000, truncate and add a "k"
@@ -39,7 +39,7 @@ export const toSlug = text =>
  */
 export const kFormat = n => {
   const num = parseFloat(n);
-  return num > 999 ? (num / 1000).toFixed(1) + "k" : num.toFixed(2);
+  return num > 999 ? (num / 1000).toFixed(1) + 'k' : num.toFixed(2);
 };
 
 /**
@@ -74,11 +74,11 @@ export const promiseRetry = ({ times, fn, delay }) => {
 export const formatDate = dateString => {
   const date = new Date(dateString);
   const options = {
-    year: "numeric",
-    month: "short",
-    day: "numeric"
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
   };
-  return new Intl.DateTimeFormat("en-US", options).format(date);
+  return new Intl.DateTimeFormat('en-US', options).format(date);
 };
 
 /**

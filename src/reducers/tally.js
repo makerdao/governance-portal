@@ -1,12 +1,12 @@
-import { createReducer } from "../utils/redux";
-import { getVoteTally } from "../chain/read";
-import { promiseRetry } from "../utils/misc";
+import { createReducer } from '../utils/redux';
+import { getVoteTally } from '../chain/read';
+import { promiseRetry } from '../utils/misc';
 
 // Constants ----------------------------------------------
 
-const TALLY_REQUEST = "voteTally/TALLY_REQUEST";
-const TALLY_SUCCESS = "voteTally/TALLY_SUCCESS";
-const TALLY_FAILURE = "voteTally/TALLY_FAILURE";
+const TALLY_REQUEST = 'voteTally/TALLY_REQUEST';
+const TALLY_SUCCESS = 'voteTally/TALLY_SUCCESS';
+const TALLY_FAILURE = 'voteTally/TALLY_FAILURE';
 
 // Actions ------------------------------------------------
 

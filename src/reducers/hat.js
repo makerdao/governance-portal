@@ -1,11 +1,11 @@
-import { createReducer } from "../utils/redux";
-import { getHat } from "../chain/read";
+import { createReducer } from '../utils/redux';
+import { getHat } from '../chain/read';
 
 // Constants ----------------------------------------------
 
-const HAT_REQUEST = "hat/HAT_REQUEST";
-const HAT_SUCCESS = "hat/HAT_SUCCESS";
-const HAT_FAILURE = "hat/HAT_FAILURE";
+const HAT_REQUEST = 'hat/HAT_REQUEST';
+const HAT_SUCCESS = 'hat/HAT_SUCCESS';
+const HAT_FAILURE = 'hat/HAT_FAILURE';
 
 // Actions ------------------------------------------------
 
@@ -25,7 +25,7 @@ export const hatInit = () => dispatch => {
 
 const initialState = {
   fetching: false,
-  hatAddress: ""
+  hatAddress: ''
 };
 
 const hat = createReducer(initialState, {
@@ -38,7 +38,7 @@ const hat = createReducer(initialState, {
     fetching: false
   }),
   [HAT_FAILURE]: () => ({
-    addresses: "",
+    addresses: '',
     fetching: false
   })
 });

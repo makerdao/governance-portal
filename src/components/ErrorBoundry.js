@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
-import Button from "./Button";
+import Button from './Button';
 
 export const FillSpaceError = styled.div`
   display: flex;
@@ -13,25 +13,25 @@ export const FillSpaceError = styled.div`
   flex-direction: column;
   align-self: stretch;
   text-align: center;
-  padding: ${props => (props.small ? "16px 12px" : "32px 24px")};
+  padding: ${props => (props.small ? '16px 12px' : '32px 24px')};
   border-radius: 12px;
 `;
 
 export const Heading = styled.h3`
-  font-size: ${props => (props.small ? "18px" : "24px")};
-  font-weight: ${props => (props.small ? "500" : "600")};
+  font-size: ${props => (props.small ? '18px' : '24px')};
+  font-weight: ${props => (props.small ? '500' : '600')};
   color: ${props => props.theme.text.default};
   max-width: 600px;
   margin-bottom: 8px;
 `;
 
 export const Subheading = styled.h4`
-  font-size: ${props => (props.small ? "14px" : "18px")};
-  font-weight: ${props => (props.small ? "400" : "500")};
+  font-size: ${props => (props.small ? '14px' : '18px')};
+  font-weight: ${props => (props.small ? '400' : '500')};
   line-height: 1.4;
   color: ${({ theme }) => theme.text.alt};
   max-width: 540px;
-  margin-bottom: ${props => (props.small ? "16px" : "32px")};
+  margin-bottom: ${props => (props.small ? '16px' : '32px')};
 `;
 
 class ErrorBoundary extends Component {
