@@ -7,19 +7,16 @@ import { modalOpen } from '../reducers/modal';
 import { getActiveAccount } from '../reducers/accounts';
 import theme, { colors, fonts } from '../theme';
 import DotSpacer from './DotSpacer';
-import { Banner, BannerHeader, BannerBody, BannerContent } from './Banner';
+import {
+  Banner,
+  BannerHeader,
+  BannerBody,
+  BannerContent,
+  BannerButton
+} from './Banner';
 import { cutMiddle } from '../utils/misc';
 import Lock from './modals/Lock';
 import Withdraw from './modals/Withdraw';
-
-// duplicated in Timeline
-const StyledAnchor = styled.a`
-  color: #3080ed;
-  cursor: pointer;
-  padding-bottom: 3px;
-  margin-bottom: -3px;
-  border-bottom: ${({ noBorder }) => (noBorder ? '' : '1px dashed #317fed')};
-`;
 
 const SmallText = styled.p`
   margin-top: 20px;
@@ -37,22 +34,26 @@ const Value = styled.span`
 const WelcomeBanner = ({ modalOpen }) => {
   return (
     <Banner>
-      <BannerHeader>Welcome to the governance voting dashboard </BannerHeader>
       <BannerBody>
+        <BannerHeader>Welcome to the governance voting dashboard</BannerHeader>
         <BannerContent>
           Before you can get started voting you will need to set up a secure
           voting contract
         </BannerContent>
-        <StyledAnchor onClick={() => modalOpen('PROXY_SETUP')}>
-          Set up secure voting contract
-        </StyledAnchor>
       </BannerBody>
+      <BannerButton onClick={() => modalOpen('PROXY_SETUP')}>
+        Set up now
+      </BannerButton>
     </Banner>
   );
 };
 
+const Padding = styled.div`
+  height: 20px;
+`;
+
 const VoterStatus = ({ account, network, modalOpen }) => {
-  if (!account) return null;
+  if (!account) return <Padding />;
   if (!account.proxy.isSetup) return <WelcomeBanner modalOpen={modalOpen} />;
 
   const domain = `${network === 'kovan' ? 'kovan.' : ''}etherscan.io`;
