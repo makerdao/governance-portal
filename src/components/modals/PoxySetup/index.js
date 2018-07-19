@@ -68,17 +68,15 @@ class ProxySetup extends Component {
           <Fragment>
             <StyledTop>
               <StyledTitle>
-                Please confirm the link with your hot wallet
+                Please confirm link with your hot wallet
               </StyledTitle>
             </StyledTop>
             <StyledBlurb>
               Your hot wallet address: {this.props.hotAddress}
             </StyledBlurb>
-            <Styledinput
-              value={this.state.mkrAmountInput}
-              onChange={this.updateInputValue}
-              placeholder="MKR Amount"
-            />
+            {this.props.activeAccount.address !== this.props.hotAddress ? (
+              <StyledBlurb>Please switch to the above wallet</StyledBlurb>
+            ) : null}
             <div
               style={{
                 alignSelf: 'center',
@@ -140,7 +138,7 @@ class ProxySetup extends Component {
               <Button
                 slim
                 onClick={() =>
-                  this.props.userSendMkrToProxy(this.state.mkrAmountInput)
+                  this.props.sendMkrToProxy(this.state.mkrAmountInput)
                 }
               >
                 Lock

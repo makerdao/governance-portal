@@ -98,7 +98,6 @@ export const ledgerSendTransaction = transaction =>
   });
 
 export const sendTransactionMulti = (type, tranasction) => {
-  console.log(type);
   switch (type) {
     case 'METAMASK':
       return metamaskSendTx(tranasction);
@@ -131,16 +130,16 @@ export const initiateLink = async ({ coldAccount, hotAddress }) => {
  * @param  {Object} wallets { acccount: { address, type }, hot }
  * @return {Promise} tx
  */
-export const approveLink = async ({ account, cold }) => {
-  const hot = account.address;
+export const approveLink = async ({ hotAccount, coldAddress }) => {
+  const hot = hotAccount.address;
   const factory = await getProxyFactory();
   const methodSig = getMethodSig('approveLink(address)');
   const callData = generateCallData({
     method: methodSig,
-    args: [removeHexPrefix(cold)]
+    args: [removeHexPrefix(coldAddress)]
   });
   const tx = { to: factory, from: hot, data: callData };
-  return sendTransactionMulti(account.type, tx);
+  return sendTransactionMulti(hotAccount.type, tx);
 };
 
 /**

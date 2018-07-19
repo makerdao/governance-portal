@@ -141,7 +141,7 @@ export const validAddressString = addressString =>
  * @return {String} link
  */
 export const ethScanLink = (string, network = 'mainnet') => {
-  const pathPrefix = network === 'mainnet' ? '' : 'network.';
+  const pathPrefix = network === 'mainnet' ? '' : `${network}.`;
   if (validAddressString(string))
     return `https://${pathPrefix}etherscan.io/address/${string}`;
   else if (validTxString(string))

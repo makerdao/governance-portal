@@ -20,6 +20,11 @@ class Link extends Component {
     };
   }
 
+  componentDidUpdate(prev) {
+    if (prev.activeAccount.address !== this.props.activeAccount.address)
+      this.setState({ cold: this.props.activeAccount.address });
+  }
+
   updateInputValueHot = evt => {
     this.setState({ hot: evt.target.value });
   };
