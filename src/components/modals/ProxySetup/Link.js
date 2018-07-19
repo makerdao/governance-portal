@@ -16,8 +16,8 @@ class Link extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hot: '',
-      cold: props.activeAccount.address
+      hot: props.activeAccount.address,
+      cold: ''
     };
   }
 
@@ -52,17 +52,20 @@ class Link extends Component {
           value={this.state.cold}
           onChange={this.updateInputValueCold}
           placeholder="Cold wallet"
-          readOnly
         />
-        <Note>^ forced to be current active account for now</Note>
+        <Note>
+          This wallet must be connected.{' '}
+          <a onClick={this.props.trezorConnectInit}>Connect to Trezor</a>
+        </Note>
 
         <InputLabels>Select hot wallet</InputLabels>
         <StyledInput
           value={this.state.hot}
           onChange={this.updateInputValueHot}
           placeholder="Hot wallet"
+          readOnly
         />
-        <Note>This wallet must be connected.</Note>
+        <Note>^ forced to be current active account for now</Note>
         <div
           style={{
             alignSelf: 'center',

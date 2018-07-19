@@ -7,6 +7,7 @@ import approvals from './approvals';
 import proxy from './proxy';
 import accounts from './accounts';
 import ledger from './ledger';
+import trezor from './trezor';
 import vote from './vote';
 import hat from './hat';
 
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   proxy,
   accounts,
   ledger,
+  trezor,
   vote,
   hat
 });

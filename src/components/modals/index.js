@@ -2,14 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { modalClose } from '../../reducers/modal';
-import {
-  initiateLink,
-  sendMkrToProxy,
-  approveLink,
-  clear as proxyClear
-} from '../../reducers/proxy';
-import { sendVote } from '../../reducers/vote';
-import { getActiveAccount } from '../../reducers/accounts';
 import Card from '../Card';
 import { colors, transitions, responsive } from '../../theme';
 
@@ -77,7 +69,7 @@ const CloseButton = styled(props => <div {...props}>&times;</div>)`
 
 const Modal = props => {
   const body = document.body || document.getElementsByTagName('body')[0];
-  const { modal: ModalClass, modalClose } = props;
+  const { modal: ModalClass, modalClose, ...otherProps } = props;
   body.style.overflow = ModalClass ? 'hidden' : 'auto';
 
   return (
@@ -86,38 +78,14 @@ const Modal = props => {
       <Column maxWidth={600}>
         <ModalCard background="white">
           <CloseButton onClick={modalClose} />
-          {typeof ModalClass === 'function' ? (
-            <ModalClass {...props} />
-          ) : (
-            <div {...props} />
-          )}
+          {typeof ModalClass === 'function' && <ModalClass {...otherProps} />}
         </ModalCard>
       </Column>
     </StyledLightbox>
   );
 };
 
-const reduxProps = ({ modal, metamask, vote, accounts, proxy }) => ({
-  modal: modal.modal,
-  modalProps: modal.modalProps,
-  account: metamask.accountAddress,
-  activeAccount: getActiveAccount({ accounts }),
-  network: metamask.network === 'kovan' ? 'kovan' : 'mainnet',
-  initiateLinkTxHash: proxy.initiateLinkTxHash,
-  sendMkrTxHash: proxy.sendMkrTxHash,
-  approveLinkTxHash: proxy.approveLinkTxHash,
-  hotAddress: proxy.hot,
-  voteTxHash: vote.txHash
-});
-
 export default connect(
-  reduxProps,
-  {
-    modalClose,
-    initiateLink,
-    approveLink,
-    sendMkrToProxy,
-    sendVote,
-    proxyClear
-  }
+  state => ({ modal: state.modal.modal }),
+  { modalClose }
 )(Modal);

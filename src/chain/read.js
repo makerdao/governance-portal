@@ -206,7 +206,7 @@ export const getProxyStatus = async address => {
   if (!isZeroAddress(proxyAddressCold)) {
     return { type: 'cold', address: proxyAddressCold, hasProxy: true };
   }
-  return { type: '', address: '', hasProxy: false };
+  return { type: null, address: '', hasProxy: false };
 };
 
 /**

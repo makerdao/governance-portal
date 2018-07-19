@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import {
   StyledTitle,
@@ -12,6 +13,16 @@ import Intro from './Intro';
 import Link from './Link';
 import Transaction from '../shared/Transaction';
 import ProgressTabs from './ProgressTabs';
+import { getActiveAccount } from '../../../reducers/accounts';
+import { trezorConnectInit } from '../../../reducers/trezor';
+import {
+  initiateLink,
+  sendMkrToProxy,
+  approveLink,
+  clear as proxyClear
+} from '../../../reducers/proxy';
+import { sendVote } from '../../../reducers/vote';
+import { modalClose } from '../../../reducers/modal';
 
 class ProxySetup extends Component {
   state = {
@@ -49,6 +60,7 @@ class ProxySetup extends Component {
           <Link
             initiateLink={this.props.initiateLink}
             activeAccount={this.props.activeAccount}
+            trezorConnectInit={this.props.trezorConnectInit}
           />
         );
       case 3:
@@ -216,4 +228,30 @@ ProxySetup.defaultProps = {
   sendMkrToProxyTxHash: ''
 };
 
-export default ProxySetup;
+const stateProps = ({ modal, metamask, vote, accounts, proxy }) => ({
+  modal: modal.modal,
+  modalProps: modal.modalProps,
+  account: metamask.accountAddress,
+  activeAccount: getActiveAccount({ accounts }),
+  network: metamask.network === 'kovan' ? 'kovan' : 'mainnet',
+  initiateLinkTxHash: proxy.initiateLinkTxHash,
+  sendMkrTxHash: proxy.sendMkrTxHash,
+  approveLinkTxHash: proxy.approveLinkTxHash,
+  hotAddress: proxy.hot,
+  voteTxHash: vote.txHash
+});
+
+const dispatchProps = {
+  modalClose,
+  initiateLink,
+  approveLink,
+  sendMkrToProxy,
+  sendVote,
+  proxyClear,
+  trezorConnectInit
+};
+
+export default connect(
+  stateProps,
+  dispatchProps
+)(ProxySetup);

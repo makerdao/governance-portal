@@ -14,7 +14,6 @@ import { getProxyStatus } from './read';
 import {
   generateCallData,
   removeHexPrefix,
-  stringToHex,
   etherToWei
 } from '../utils/ethereum';
 import ledgerSubprovider from './ledger';
@@ -53,7 +52,7 @@ export const metamaskSendTx = transaction =>
             resolve(txHash);
           });
         } else {
-          throw new Error(`Metamask is not installed`);
+          throw new Error('Metamask is not installed');
         }
       })
       .catch(error => reject(error));
@@ -97,14 +96,14 @@ export const ledgerSendTransaction = transaction =>
       .catch(error => reject(error));
   });
 
-export const sendTransactionMulti = (type, tranasction) => {
+export const sendTransactionMulti = (type, transaction) => {
   switch (type) {
     case 'METAMASK':
-      return metamaskSendTx(tranasction);
+      return metamaskSendTx(transaction);
     case 'LEDGER':
-      return ledgerSendTransaction(tranasction);
+      return ledgerSendTransaction(transaction);
     default:
-      return metamaskSendTx(tranasction);
+      return metamaskSendTx(transaction);
   }
 };
 
