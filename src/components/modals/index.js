@@ -19,6 +19,7 @@ const Column = styled.div`
   height: ${({ spanHeight }) => (spanHeight ? '100%' : 'auto')};
   max-width: ${({ maxWidth }) => `${maxWidth}px`};
   margin: 0 auto;
+  padding-top: 10vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,11 +27,12 @@ const Column = styled.div`
 `;
 
 const StyledLightbox = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: scroll;
   transition: ${transitions.base};
   opacity: ${({ modal }) => (modal ? 1 : 0)};
   visibility: ${({ modal }) => (modal ? 'visible' : 'hidden')};
@@ -58,15 +60,6 @@ const ModalCard = Card.extend`
   }
 `;
 
-const Centered = styled.div`
-  position: fixed;
-  top: 8%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  padding: 15px;
-`;
-
 const CloseButton = styled(props => <div {...props}>&times;</div>)`
   height: 28px;
   width: 28px;
@@ -90,18 +83,16 @@ const Modal = props => {
   return (
     <StyledLightbox modal={!!ModalClass}>
       <StyledHitbox onClick={modalClose} />
-      <Centered>
-        <Column maxWidth={600} center>
-          <ModalCard maxWidth={600} background="white">
-            <CloseButton onClick={modalClose} />
-            {typeof ModalClass === 'function' ? (
-              <ModalClass {...props} />
-            ) : (
-              <div {...props} />
-            )}
-          </ModalCard>
-        </Column>
-      </Centered>
+      <Column maxWidth={600}>
+        <ModalCard background="white">
+          <CloseButton onClick={modalClose} />
+          {typeof ModalClass === 'function' ? (
+            <ModalClass {...props} />
+          ) : (
+            <div {...props} />
+          )}
+        </ModalCard>
+      </Column>
     </StyledLightbox>
   );
 };
