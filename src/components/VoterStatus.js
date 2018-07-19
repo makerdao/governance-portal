@@ -63,7 +63,7 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
       </Padding>
     );
   }
-  if (!account) return null;
+  if (!account) return <Padding>No accounts found</Padding>;
   if (!account.proxy.isSetup) return <WelcomeBanner modalOpen={modalOpen} />;
   const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
   return (

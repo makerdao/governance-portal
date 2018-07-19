@@ -33,8 +33,7 @@ class ProxySetup extends Component {
       this.nextStep();
     if (this.props.approveLinkTxHash !== prevProps.approveLinkTxHash)
       this.nextStep();
-    if (this.props.sendMkrToProxyTxHash !== prevProps.sendMkrToProxyTxHash)
-      this.nextStep();
+    if (this.props.sendMkrTxHash !== prevProps.sendMkrTxHash) this.nextStep();
   }
 
   // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, check balances, etc
@@ -74,7 +73,8 @@ class ProxySetup extends Component {
             <StyledBlurb>
               Your hot wallet address: {this.props.hotAddress}
             </StyledBlurb>
-            {this.props.activeAccount.address !== this.props.hotAddress ? (
+            {this.props.activeAccount.address.toLowerCase() !==
+            this.props.hotAddress.toLowerCase() ? (
               <StyledBlurb>Please switch to the above wallet</StyledBlurb>
             ) : null}
             <div
@@ -86,7 +86,8 @@ class ProxySetup extends Component {
               <Button
                 slim
                 disabled={
-                  this.props.activeAccount.address !== this.props.hotAddress
+                  this.props.activeAccount.address.toLowerCase() !==
+                  this.props.hotAddress.toLowerCase()
                 }
                 onClick={() =>
                   this.props.approveLink({
@@ -121,8 +122,11 @@ class ProxySetup extends Component {
               Please select how much MKR you would like to lock in the secure
               voting contract. You can withdraw it at anytime
             </StyledBlurb>
+            <StyledBlurb>
+              (change back to your cold address if you'd like)
+            </StyledBlurb>
             <div style={{ textAlign: 'center' }}>
-              {/* Your MKR Balance: {this.props.mkrBalance} */}
+              Your MKR Balance: {this.props.activeAccount.mkrBalance}
             </div>
             <StyledInput
               value={this.state.mkrAmountInput}
@@ -151,7 +155,7 @@ class ProxySetup extends Component {
           <Fragment>
             <ProgressTabs progress={2} />
             <Transaction
-              txHash={this.props.mkrToProxyTxHash}
+              txHash={this.props.sendMkrTxHash}
               nextStep={this.nextStep}
               network={this.props.network}
             />
@@ -184,6 +188,8 @@ class ProxySetup extends Component {
                 onClick={() => {
                   this.props.modalClose();
                   this.props.proxyClear();
+                  // temp measure to update proxy status
+                  window.location.reload();
                 }}
               >
                 Finish and close

@@ -106,7 +106,7 @@ const Detail = styled.p`
   line-height: 26px;
   font-size: 14px;
   &::after {
-    content: ${({ pct }) => (pct ? '%' : '')};
+    content: ${({ pct }) => (pct ? '"%"' : '')};
   }
 `;
 

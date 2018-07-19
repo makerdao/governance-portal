@@ -16,6 +16,7 @@ const WithTally = ({
   let percentage = 0;
   let approvals = 0;
   if (approvalObj[candidate] !== undefined) approvals = approvalObj[candidate];
+  candidate = candidate.toLowerCase();
   if (voteTally[candidate] === undefined)
     return children({
       loadingPercentage,

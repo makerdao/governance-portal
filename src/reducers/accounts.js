@@ -48,16 +48,18 @@ export const addAccount = account => async dispatch => {
   });
   const proxyAddress = await getProxyAddressHot(account.address);
   const isSetup = !isZeroAddress(proxyAddress);
-  const balance = isSetup ? await getMkrBalance(proxyAddress) : 0;
+  const proxyMkrbalance = isSetup ? await getMkrBalance(proxyAddress) : 0;
+  const accountMkrBalance = await getMkrBalance(account.address);
   await dispatch({
     type: ADD_ACCOUNT,
     payload: {
       account: {
         ...account,
+        mkrBalance: accountMkrBalance,
         proxy: {
           address: proxyAddress,
           isSetup: !isZeroAddress(proxyAddress),
-          balance
+          balance: proxyMkrbalance
         },
         coldWallet: {
           address: '0xcoldfake',
@@ -114,19 +116,19 @@ const initialState = {
   activeAccountUnlockedMkr: 0,
   activeAccount: '0xbeefed1bedded2dabbed3defaced4decade5dead', // just for dev
   allAccounts: [
-    {
-      address: '0xbeefed1bedded2dabbed3defaced4decade5dead',
-      type: 'fake',
-      proxy: {
-        address: '0xproxyfake',
-        balance: 111,
-        isSetup: true
-      },
-      coldWallet: {
-        address: '0xcoldfake',
-        balance: 222
-      }
-    }
+    // {
+    //   address: '0xbeefed1bedded2dabbed3defaced4decade5dead',
+    //   type: 'fake',
+    //   proxy: {
+    //     address: '0xproxyfake',
+    //     balance: 111,
+    //     isSetup: true
+    //   },
+    //   coldWallet: {
+    //     address: '0xcoldfake',
+    //     balance: 222
+    //   }
+    // }
   ]
 };
 

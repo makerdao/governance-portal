@@ -4,6 +4,7 @@ import {
   approveLink as _approveLink,
   sendMkrToProxy as _sendMkrToProxy
 } from '../chain/write';
+import { getActiveAccount } from './accounts';
 
 // Constants ----------------------------------------------
 
@@ -44,7 +45,7 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
 
 export const sendMkrToProxy = value => (dispatch, getState) => {
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST });
-  const account = getState().accounts.activeAccount;
+  const account = getActiveAccount(getState());
   _sendMkrToProxy({ account, value }).then(txHash => {
     dispatch({ type: SEND_MKR_TO_PROXY_SENT, payload: { txHash } });
   });

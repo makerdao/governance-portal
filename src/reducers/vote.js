@@ -1,6 +1,7 @@
 import { createReducer } from '../utils/redux';
 import { voteAndLockViaProxy } from '../chain/write';
 import { awaitTx } from '../chain/web3';
+import { getActiveAccount } from './accounts';
 
 // Constants ----------------------------------------------
 
@@ -18,7 +19,7 @@ export const clear = () => ({
 
 export const sendVote = proposalAddress => (dispatch, getState) => {
   dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
-  const activeAccount = getState().accounts.activeAccount;
+  const activeAccount = getActiveAccount(getState());
   if (activeAccount) {
     voteAndLockViaProxy({ account: activeAccount, proposalAddress })
       .then(txHash => {

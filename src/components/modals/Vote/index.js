@@ -20,7 +20,6 @@ class Vote extends Component {
 
   // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, reject transaction, why did this tx fail
   render() {
-    console.log(this.props.network);
     let proposal;
     switch (this.state.step) {
       case 1:
@@ -34,6 +33,9 @@ class Vote extends Component {
               You will be voting for{' '}
               <strong style={{ color: '#212536' }}>{proposal.title}</strong>{' '}
               please confirm vote below. Vote can be withdrawn at anytime
+            </StyledBlurb>
+            <StyledBlurb>
+              Your voting power: {this.props.activeAccount.proxy.balance} MKR
             </StyledBlurb>
             <div
               style={{

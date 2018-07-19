@@ -157,10 +157,11 @@ export const sendMkrToProxy = async ({ account, value }) => {
     );
   const mkrToken = await getMkrAddress();
   const methodSig = getMethodSig('transfer(address,uint256)');
-  const weiAmtHex = stringToHex(etherToWei(value));
+  const addressParam = encodeParameter('address', proxyAddress);
+  const valueParam = encodeParameter('uint256', etherToWei(value));
   const callData = generateCallData({
     method: methodSig,
-    args: [removeHexPrefix(proxyAddress), removeHexPrefix(weiAmtHex)]
+    args: [removeHexPrefix(addressParam), removeHexPrefix(valueParam)]
   });
   const tx = { to: mkrToken, from: account.address, data: callData };
   return sendTransactionMulti(account.type, tx);
@@ -202,7 +203,7 @@ export const voteAndLockViaProxy = async ({ account, proposalAddress }) => {
     throw new Error(
       `${account.address} cannot vote and lock because it doesn't have a proxy`
     );
-  const methodSig = getMethodSig('voteAndLock(address[])');
+  const methodSig = getMethodSig('lockAllVote(address[])');
   const proposalParam = encodeParameter('address[]', [proposalAddress]);
   const callData = generateCallData({
     method: methodSig,
