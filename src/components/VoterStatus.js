@@ -19,6 +19,7 @@ import { cutMiddle } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
 import Lock from './modals/Lock';
 import Withdraw from './modals/Withdraw';
+import ProxySetup from './modals/ProxySetup';
 
 const SmallText = styled.p`
   margin-top: 20px;
@@ -43,7 +44,7 @@ const WelcomeBanner = ({ modalOpen }) => {
           voting contract
         </BannerContent>
       </BannerBody>
-      <BannerButton onClick={() => modalOpen('PROXY_SETUP')}>
+      <BannerButton onClick={() => modalOpen(ProxySetup)}>
         Set up now
       </BannerButton>
     </Banner>

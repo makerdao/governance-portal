@@ -102,6 +102,7 @@ const theme = {
     darker_default: '#0e1029',
     green: '#30bd9f',
     dim_grey: '#848484',
+    dim_grey_2: '#868997',
     alt: '#546978'
   }
 };

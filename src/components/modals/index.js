@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-// import PropTypes from "prop-types";
+import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { modalClose } from '../../reducers/modal';
@@ -11,7 +10,6 @@ import {
 } from '../../reducers/proxy';
 import { sendVote } from '../../reducers/vote';
 import { getActiveAccount } from '../../reducers/accounts';
-import ProxySetup from './ProxySetup';
 import Card from '../Card';
 import { colors, transitions, responsive } from '../../theme';
 
@@ -50,6 +48,8 @@ const StyledHitbox = styled.div`
 
 const ModalCard = Card.extend`
   padding: 30px 26px;
+  display: flex;
+  flex-direction: column;
   @media screen and (${responsive.sm.max}) {
     padding: 15px;
     & h4 {
@@ -82,45 +82,29 @@ const CloseButton = styled(props => <div {...props}>&times;</div>)`
   text-align: center;
 `;
 
-class Modal extends Component {
-  modalController = () => {
-    switch (this.props.modal) {
-      case 'PROXY_SETUP':
-        return <ProxySetup {...this.props} />;
-      default:
-        if (typeof this.props.modal === 'function')
-          return <this.props.modal {...this.props} />;
-        return <div />;
-    }
-  };
+const Modal = props => {
+  const body = document.body || document.getElementsByTagName('body')[0];
+  const { modal: ModalClass, modalClose } = props;
+  body.style.overflow = ModalClass ? 'hidden' : 'auto';
 
-  render() {
-    const body = document.body || document.getElementsByTagName('body')[0];
-    const { modal, modalClose } = this.props;
-
-    if (modal) {
-      body.style.overflow = 'hidden';
-    } else {
-      body.style.overflow = 'auto';
-    }
-
-    return (
-      <StyledLightbox modal={!!modal}>
-        <StyledHitbox onClick={modalClose} />
-        <Centered>
-          <Column maxWidth={600} center>
-            <ModalCard maxWidth={600} background="white">
-              <CloseButton onClick={modalClose} />
-              {this.modalController()}
-            </ModalCard>
-          </Column>
-        </Centered>
-      </StyledLightbox>
-    );
-  }
-}
-
-Modal.propTypes = {};
+  return (
+    <StyledLightbox modal={!!ModalClass}>
+      <StyledHitbox onClick={modalClose} />
+      <Centered>
+        <Column maxWidth={600} center>
+          <ModalCard maxWidth={600} background="white">
+            <CloseButton onClick={modalClose} />
+            {typeof ModalClass === 'function' ? (
+              <ModalClass {...props} />
+            ) : (
+              <div {...props} />
+            )}
+          </ModalCard>
+        </Column>
+      </Centered>
+    </StyledLightbox>
+  );
+};
 
 const reduxProps = ({ modal, metamask, vote, accounts, proxy }) => ({
   modal: modal.modal,

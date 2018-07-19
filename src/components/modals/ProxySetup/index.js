@@ -2,11 +2,10 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 
 import {
-  StyledCenter,
   StyledTitle,
   StyledBlurb,
   StyledTop,
-  Styledinput
+  StyledInput
 } from '../shared/styles';
 import Button from '../../Button';
 import Intro from './Intro';
@@ -38,7 +37,8 @@ class ProxySetup extends Component {
       this.nextStep();
   }
 
-  renderStep() {
+  // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, check balances, etc
+  render() {
     switch (this.state.step) {
       case 1:
         return (
@@ -74,7 +74,7 @@ class ProxySetup extends Component {
             <StyledBlurb>
               Your hot wallet address: {this.props.hotAddress}
             </StyledBlurb>
-            <Styledinput
+            <StyledInput
               value={this.state.mkrAmountInput}
               onChange={this.updateInputValue}
               placeholder="MKR Amount"
@@ -126,7 +126,7 @@ class ProxySetup extends Component {
             <div style={{ textAlign: 'center' }}>
               {/* Your MKR Balance: {this.props.mkrBalance} */}
             </div>
-            <Styledinput
+            <StyledInput
               value={this.state.mkrAmountInput}
               onChange={this.updateInputValue}
               placeholder="MKR Amount"
@@ -197,12 +197,9 @@ class ProxySetup extends Component {
         return null;
     }
   }
-  // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, check balances, etc
-  render = () => <StyledCenter>{this.renderStep()}</StyledCenter>;
 }
 
 ProxySetup.propTypes = {
-  modalClose: PropTypes.func.isRequired,
   sendMkrToProxy: PropTypes.func.isRequired,
   initiateLinkTxHash: PropTypes.string,
   approveLinkTxHash: PropTypes.string,

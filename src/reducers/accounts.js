@@ -108,6 +108,7 @@ const initialState = {
   activeAccountCurrentVote: '',
   activeAccountVotableMkr: 0,
   activeAccountUnlockedMkr: 0,
+  activeAccount: '0xbeefed1bedded2dabbed3defaced4decade5dead', // just for dev
   allAccounts: [
     {
       address: '0xbeefed1bedded2dabbed3defaced4decade5dead',
