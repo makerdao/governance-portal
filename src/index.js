@@ -1,15 +1,15 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { Provider } from "react-redux";
-import { createStore, applyMiddleware } from "redux";
-import ReduxThunk from "redux-thunk";
-import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import ReduxThunk from 'redux-thunk';
+import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 
-import rootReducer from "./reducers";
-import { isMobile } from "./utils/misc";
-import Router from "./Routes";
-import Init from "./Init";
-import "./global.css.js";
+import rootReducer from './reducers';
+import { isMobile } from './utils/misc';
+import Router from './Routes';
+import Init from './Init';
+import './global.css.js';
 
 const store = createStore(
   rootReducer,
@@ -29,5 +29,5 @@ ReactDOM.render(
   <Provider store={store}>
     <Init>{isMobile() ? <div>No mobile support yet</div> : <Router />}</Init>
   </Provider>,
-  document.getElementById("root")
+  document.getElementById('root')
 );

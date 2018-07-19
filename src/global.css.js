@@ -1,5 +1,5 @@
-import { injectGlobal } from "styled-components";
-import { fonts, colors } from "./theme";
+import { injectGlobal } from 'styled-components';
+import { fonts, colors } from './theme';
 
 const globalStyles = `  
     * {
