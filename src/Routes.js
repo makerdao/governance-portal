@@ -1,18 +1,18 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   withRouter
-} from "react-router-dom";
-import { ThemeProvider } from "styled-components";
-import BaseLayout from "./layouts/base";
-import theme from "./theme";
-import Timeline from "./pages/Timeline";
-import Topic from "./pages/Topic";
-import Proposal from "./pages/Proposal";
-import NotFound from "./pages/NotFound";
-import ErrorBoundary from "./components/ErrorBoundry";
+} from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
+import BaseLayout from './layouts/base';
+import theme from './theme';
+import Timeline from './pages/Timeline';
+import Topic from './pages/Topic';
+import Proposal from './pages/Proposal';
+import NotFound from './pages/NotFound';
+import ErrorBoundary from './components/ErrorBoundry';
 
 class ScrollToTopUtil extends Component {
   componentDidUpdate(prevProps) {

@@ -1,7 +1,7 @@
-import React from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { transitions } from "../theme";
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { transitions } from '../theme';
 
 const ProgressBar = styled.div`
   height: 8px;

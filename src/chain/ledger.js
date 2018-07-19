@@ -1,8 +1,8 @@
-import AppEth from "@ledgerhq/hw-app-eth";
-import HookedWalletSubprovider from "web3-provider-engine/dist/es5/subproviders/hooked-wallet";
-import { removeHexPrefix, netNameToId } from "../utils/ethereum";
-import EthereumTx from "ethereumjs-tx";
-import TransportU2F from "@ledgerhq/hw-transport-u2f";
+import AppEth from '@ledgerhq/hw-app-eth';
+import HookedWalletSubprovider from 'web3-provider-engine/dist/es5/subproviders/hooked-wallet';
+import { removeHexPrefix, netNameToId } from '../utils/ethereum';
+import EthereumTx from 'ethereumjs-tx';
+import TransportU2F from '@ledgerhq/hw-transport-u2f';
 
 const allowedHdPaths = ["44'/1'", "44'/60'", "44'/61'"];
 
@@ -19,7 +19,7 @@ function obtainPathComponentsFromDerivationPath(derivationPath) {
   if (matchResult === null) {
     throw makeError(
       "To get multiple accounts your derivation path must follow pattern 44'/60|61'/x'/n ",
-      "InvalidDerivationPath"
+      'InvalidDerivationPath'
     );
   }
   return {
@@ -47,9 +47,9 @@ export function createLedgerSubprovider(options) {
   if (!allowedHdPaths.some(hdPref => path.startsWith(hdPref))) {
     throw makeError(
       `Ledger derivation path allowed are ${allowedHdPaths.join(
-        ", "
+        ', '
       )}. ${path} is not supported`,
-      "InvalidDerivationPath"
+      'InvalidDerivationPath'
     );
   }
 
@@ -64,7 +64,7 @@ export function createLedgerSubprovider(options) {
       const addresses = [];
       for (let i = accountsOffset; i < accountsOffset + accountsLength; i++) {
         const path = `${pathComponents.basePath}${pathComponents.index + i}`;
-        const { address = "" } = await eth.getAddress(path);
+        const { address = '' } = await eth.getAddress(path);
         addresses.push(address);
         addressToPathMap[address.toLowerCase()] = path;
       }
@@ -111,13 +111,13 @@ export function createLedgerSubprovider(options) {
       // Pass hex-rlp to ledger for signing
       const result = await eth.signTransaction(
         path,
-        tx.serialize().toString("hex")
+        tx.serialize().toString('hex')
       );
 
       // Store signature in transaction
-      tx.v = Buffer.from(result.v, "hex");
-      tx.r = Buffer.from(result.r, "hex");
-      tx.s = Buffer.from(result.s, "hex");
+      tx.v = Buffer.from(result.v, 'hex');
+      tx.r = Buffer.from(result.r, 'hex');
+      tx.s = Buffer.from(result.s, 'hex');
 
       // EIP155: v should be chain_id * 2 + {35, 36}
       const signedChainId = Math.floor((tx.v[0] - 35) / 2);
@@ -125,11 +125,11 @@ export function createLedgerSubprovider(options) {
       if (signedChainId !== validChainId) {
         throw makeError(
           `Invalid networkId signature returned. Expected: ${networkId}, Got: ${signedChainId}`,
-          "InvalidNetworkId"
+          'InvalidNetworkId'
         );
       }
 
-      return `0x${tx.serialize().toString("hex")}`;
+      return `0x${tx.serialize().toString('hex')}`;
     } finally {
       transport.close();
     }

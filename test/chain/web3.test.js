@@ -1,6 +1,6 @@
-import { getNetworkName } from "../../src/chain/web3";
+import { getNetworkName } from '../../src/chain/web3';
 
-test("getNetworkName", async () => {
+test('getNetworkName', async () => {
   const name = await getNetworkName();
-  expect(name).toBe("mainnet");
+  expect(name).toBe('mainnet');
 });

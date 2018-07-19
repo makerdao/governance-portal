@@ -58,6 +58,10 @@ export const addAccount = account => async dispatch => {
           address: proxyAddress,
           isSetup: !isZeroAddress(proxyAddress),
           balance
+        },
+        coldWallet: {
+          address: '0xcoldfake',
+          balance: 222
         }
       }
     }
@@ -108,9 +112,10 @@ const initialState = {
   activeAccountCurrentVote: '',
   activeAccountVotableMkr: 0,
   activeAccountUnlockedMkr: 0,
+  activeAccount: '0xbeefed1bedded2dabbed3defaced4decade5dead', // just for dev
   allAccounts: [
     {
-      address: '0xfakefakefake',
+      address: '0xbeefed1bedded2dabbed3defaced4decade5dead',
       type: 'fake',
       proxy: {
         address: '0xproxyfake',

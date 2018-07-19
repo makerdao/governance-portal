@@ -5,7 +5,8 @@ import {
   StyledBlurb,
   StyledTop,
   StyledAnchor,
-  Styledinput,
+  StyledInput,
+  InputLabels,
   Note
 } from '../shared/styles';
 import Button from '../../Button';
@@ -15,8 +16,8 @@ class Link extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hot: '',
-      cold: props.activeAccount.address
+      hot: props.activeAccount.address,
+      cold: ''
     };
   }
 
@@ -46,18 +47,21 @@ class Link extends Component {
           support MetaMask, Ledger and Trezor. Then select the{' '}
           <StyledAnchor>hot wallet</StyledAnchor> you would like to link it to.
         </StyledBlurb>
-        <Styledinput
+        <InputLabels>Select cold wallet</InputLabels>
+        <StyledInput
           value={this.state.cold}
-          readOnly
-          // onChange={this.updateInputValueCold}
+          onChange={this.updateInputValueCold}
           placeholder="Cold wallet"
         />
-        <Note>^ forced to be current active account for now</Note>
-        <Styledinput
+        <Note>This wallet must be connected.</Note>
+        <InputLabels>Select hot wallet</InputLabels>
+        <StyledInput
           value={this.state.hot}
+          readOnly
           onChange={this.updateInputValueHot}
           placeholder="Hot wallet"
         />
+        <Note>^ forced to be current active account for now</Note>
         <div
           style={{
             alignSelf: 'center',

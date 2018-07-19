@@ -1,10 +1,10 @@
-import React, { Fragment } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
+import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
-import { kFormat } from "../utils/misc";
-import StatusBar from "./StatusBar";
-import Loader from "./Loader";
+import { kFormat } from '../utils/misc';
+import StatusBar from './StatusBar';
+import Loader from './Loader';
 
 const StyledVoteTally = styled.div`
   line-height: 20px;

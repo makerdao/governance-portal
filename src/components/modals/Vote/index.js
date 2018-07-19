@@ -2,12 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import Button from '../../Button';
 
-import {
-  StyledCenter,
-  StyledTitle,
-  StyledBlurb,
-  StyledTop
-} from '../shared/styles';
+import { StyledTitle, StyledBlurb, StyledTop } from '../shared/styles';
 import Transaction from '../shared/Transaction';
 
 class Vote extends Component {
@@ -23,7 +18,8 @@ class Vote extends Component {
     this.setState(state => ({ step: state.step + 1 }));
   };
 
-  renderStep() {
+  // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, reject transaction, why did this tx fail
+  render() {
     console.log(this.props.network);
     let proposal;
     switch (this.state.step) {
@@ -67,8 +63,6 @@ class Vote extends Component {
         return null;
     }
   }
-  // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, reject transaction, why did this tx fail
-  render = () => <StyledCenter>{this.renderStep()}</StyledCenter>;
 }
 
 Vote.propTypes = {

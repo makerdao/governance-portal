@@ -1,5 +1,5 @@
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 // this thing takes a candidate and passes on its approvals and its percentage of total approvals
 // if we have that info in the redux store
@@ -45,7 +45,7 @@ WithTally.propTypes = {
 };
 
 WithTally.defaultProps = {
-  candidate: ""
+  candidate: ''
 };
 
 const reduxProps = ({ tally, approvals }) => ({

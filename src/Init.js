@@ -1,8 +1,8 @@
-import { Component } from "react";
-import { connect } from "react-redux";
+import { Component } from 'react';
+import { connect } from 'react-redux';
 
-import { metamaskConnectInit } from "./reducers/metamask";
-import { ledgerConnectInit } from "./reducers/ledger";
+import { metamaskConnectInit } from './reducers/metamask';
+import { ledgerConnectInit } from './reducers/ledger';
 
 class Init extends Component {
   componentDidMount() {

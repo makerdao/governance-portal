@@ -1,11 +1,11 @@
-import { createReducer } from "../utils/redux";
-import { getApprovalCount } from "../chain/read";
+import { createReducer } from '../utils/redux';
+import { getApprovalCount } from '../chain/read';
 
 // Constants ----------------------------------------------
 
-const APPROVALS_REQUEST = "voteTally/APPROVALS_REQUEST";
-const APPROVALS_SUCCESS = "voteTally/APPROVALS_SUCCESS";
-const APPROVALS_FAILURE = "voteTally/APPROVALS_FAILURE";
+const APPROVALS_REQUEST = 'voteTally/APPROVALS_REQUEST';
+const APPROVALS_SUCCESS = 'voteTally/APPROVALS_SUCCESS';
+const APPROVALS_FAILURE = 'voteTally/APPROVALS_FAILURE';
 
 // Actions ------------------------------------------------
 
