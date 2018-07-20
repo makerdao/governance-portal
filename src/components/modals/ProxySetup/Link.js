@@ -1,4 +1,5 @@
 import React, { Fragment, Component } from 'react';
+import differenceWith from 'ramda/src/differenceWith';
 
 import {
   StyledTitle,
@@ -12,6 +13,7 @@ import {
 import ProgressTabs from './ProgressTabs';
 import Dropdown from '../../Dropdown';
 import { AccountBlurb } from '../../AccountBox';
+import { AccountTypes } from '../../../utils/constants';
 
 class Link extends Component {
   constructor(props) {
@@ -20,6 +22,22 @@ class Link extends Component {
       hot: props.activeAccount,
       cold: null
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!this.state.cold) {
+      const newAccounts = differenceWith(
+        (a, b) => a.address === b.address,
+        this.props.accounts,
+        prevProps.accounts
+      );
+
+      const hardwareAccount = newAccounts.find(
+        a => a.type === AccountTypes.LEDGER || a.type === AccountTypes.TREZOR
+      );
+
+      if (hardwareAccount) this.setState({ cold: hardwareAccount });
+    }
   }
 
   render() {
@@ -42,7 +60,7 @@ class Link extends Component {
 
         <InputLabels>Select cold wallet</InputLabels>
         <Dropdown
-          initialValue={this.state.cold}
+          value={this.state.cold}
           onSelect={account => this.setState({ cold: account })}
           items={this.props.accounts}
           itemKey="address"
@@ -52,12 +70,12 @@ class Link extends Component {
         />
         <Note>
           This wallet must be connected.{' '}
-          {/* <a onClick={this.props.trezorConnectInit}>Connect to Trezor</a> */}
+          <a onClick={this.props.trezorConnectInit}>Connect to Trezor</a>
         </Note>
 
         <InputLabels>Select hot wallet</InputLabels>
         <Dropdown
-          initialValue={this.state.hot}
+          value={this.state.hot}
           onSelect={account => this.setState({ hot: account })}
           items={this.props.accounts}
           itemKey="address"

@@ -14,20 +14,19 @@ export default class Dropdown extends Component {
   };
 
   select(item) {
-    this.setState({ selected: item, shown: false });
+    this.setState({ shown: false });
     this.props.onSelect(item);
   }
 
   render() {
-    const { selected, shown } = this.state;
-    const { items, itemKey, renderItem } = this.props;
+    const { items, itemKey, renderItem, value } = this.props;
     return (
       <Wrapper>
         <Selection onClick={this.toggle}>
-          {selected ? renderItem(selected) : <div />}
+          {value ? renderItem(value) : <div />}
           <Arrow />
         </Selection>
-        {shown && (
+        {this.state.shown && (
           <List>
             {items.map(item => (
               <Row key={item[itemKey]} onClick={() => this.select(item)}>

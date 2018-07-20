@@ -60,7 +60,7 @@ class ProxySetup extends Component {
           <Link
             initiateLink={this.props.initiateLink}
             activeAccount={this.props.activeAccount}
-            // trezorConnectInit={this.props.trezorConnectInit}
+            trezorConnectInit={this.props.trezorConnectInit}
             accounts={this.props.accounts}
           />
         );
