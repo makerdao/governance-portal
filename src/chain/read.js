@@ -152,45 +152,33 @@ export const getEtchedSlates = async () => {
   return slates;
 };
 
+const getProxyAddressFrom = hotOrCold => async address => {
+  const factory = await getProxyFactory();
+  const methodSig = getMethodSig(`${hotOrCold}Map(address)`);
+  const callData = generateCallData({
+    method: methodSig,
+    args: [removeHexPrefix(address)]
+  });
+  const value = await web3Instance.eth.call({
+    to: factory,
+    data: callData
+  });
+  return paddedBytes32ToAddress(value);
+};
+
 /**
  * @async @desc get the address of associated vote proxy if this wallet were hot
  * @param {String} address
  * @return {String} address
  */
-export const getProxyAddressHot = async address => {
-  const factory = await getProxyFactory();
-  const methodSig = getMethodSig('hotMap(address)');
-  const callData = generateCallData({
-    method: methodSig,
-    args: [removeHexPrefix(address)]
-  });
-  const hotMapVal = await web3Instance.eth.call({
-    to: factory,
-    data: callData
-  });
-  const proxyAddress = paddedBytes32ToAddress(hotMapVal);
-  return proxyAddress;
-};
+export const getProxyAddressFromHot = getProxyAddressFrom('hot');
 
 /**
  * @async @desc get the address of associated vote proxy if this wallet were cold
  * @param {String} address
  * @return {String} address
  */
-export const getProxyAddressCold = async address => {
-  const factory = await getProxyFactory();
-  const methodSig = getMethodSig('coldMap(address)');
-  const callData = generateCallData({
-    method: methodSig,
-    args: [removeHexPrefix(address)]
-  });
-  const coldMapVal = await web3Instance.eth.call({
-    to: factory,
-    data: callData
-  });
-  const proxyAddress = paddedBytes32ToAddress(coldMapVal);
-  return proxyAddress;
-};
+export const getProxyAddressFromCold = getProxyAddressFrom('cold');
 
 /**
  * @async @desc get the address of associated vote proxy if this wallet were cold
@@ -198,14 +186,17 @@ export const getProxyAddressCold = async address => {
  * @return {Object} { type, address }
  */
 export const getProxyStatus = async address => {
-  const proxyAddressHot = await getProxyAddressHot(address);
-  if (!isZeroAddress(proxyAddressHot)) {
-    return { type: 'hot', address: proxyAddressHot, hasProxy: true };
+  let proxyAddress;
+  proxyAddress = await getProxyAddressFromHot(address);
+  if (!isZeroAddress(proxyAddress)) {
+    return { type: 'hot', address: proxyAddress, hasProxy: true };
   }
-  const proxyAddressCold = await getProxyAddressCold(address);
-  if (!isZeroAddress(proxyAddressCold)) {
-    return { type: 'cold', address: proxyAddressCold, hasProxy: true };
+
+  proxyAddress = await getProxyAddressFromCold(address);
+  if (!isZeroAddress(proxyAddress)) {
+    return { type: 'cold', address: proxyAddress, hasProxy: true };
   }
+
   return { type: null, address: '', hasProxy: false };
 };
 

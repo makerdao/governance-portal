@@ -23,12 +23,12 @@ export const clear = () => ({
   type: CLEAR
 });
 
-export const initiateLink = ({ coldAccount, hotAddress }) => dispatch => {
+export const initiateLink = ({ cold, hot }) => dispatch => {
   dispatch({
     type: INITIATE_LINK_REQUEST,
-    payload: { hot: hotAddress, cold: coldAccount.address }
+    payload: { hot, cold }
   });
-  _initiateLink({ coldAccount, hotAddress }).then(txHash => {
+  _initiateLink({ coldAccount: cold, hotAddress: hot.address }).then(txHash => {
     dispatch({ type: INITIATE_LINK_SENT, payload: { txHash } });
   });
 };

@@ -4,18 +4,18 @@ import Transport from '@ledgerhq/hw-transport-u2f';
 import LedgerSubProvider from './vendor/ledger-subprovider';
 import TrezorSubProvider from './vendor/trezor-subprovider';
 
-// deviceOptions: networkId, path, accountsLength, accountsOffset
-export function createSubProvider(device, deviceOptions) {
-  if (!['trezor', 'ledger'].includes(device)) {
-    throw new Error(`Unrecognized device type: "${device}"`);
-  }
+export const TREZOR = 'TREZOR';
+export const LEDGER = 'LEDGER';
 
-  return device === 'ledger'
-    ? LedgerSubProvider(Transport.create, deviceOptions)
-    : TrezorSubProvider(deviceOptions);
+export async function useTrezor(web3, deviceOptions, rpcUrl) {
+  return useHardwareWallet(web3, TREZOR, deviceOptions, rpcUrl);
 }
 
-export async function setHardwareWallet(web3, device, deviceOptions, rpcUrl) {
+export async function useLedger(web3, deviceOptions, rpcUrl) {
+  return useHardwareWallet(web3, LEDGER, deviceOptions, rpcUrl);
+}
+
+export async function useHardwareWallet(web3, device, deviceOptions, rpcUrl) {
   web3.stop();
   web3.setProvider(new Web3ProviderEngine());
   web3.currentProvider.name = device;
@@ -27,4 +27,15 @@ export async function setHardwareWallet(web3, device, deviceOptions, rpcUrl) {
   web3.useLogs = false;
 
   return true;
+}
+
+// deviceOptions: networkId, path, accountsLength, accountsOffset
+export function createSubProvider(device, deviceOptions) {
+  if (![TREZOR, LEDGER].includes(device)) {
+    throw new Error(`Unrecognized device type: "${device}"`);
+  }
+
+  return device === LEDGER
+    ? LedgerSubProvider(Transport.create, deviceOptions)
+    : TrezorSubProvider(deviceOptions);
 }

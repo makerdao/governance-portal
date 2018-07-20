@@ -61,6 +61,7 @@ class ProxySetup extends Component {
             initiateLink={this.props.initiateLink}
             activeAccount={this.props.activeAccount}
             trezorConnectInit={this.props.trezorConnectInit}
+            accounts={this.props.accounts}
           />
         );
       case 3:
@@ -232,6 +233,7 @@ const stateProps = ({ modal, metamask, vote, accounts, proxy }) => ({
   modal: modal.modal,
   modalProps: modal.modalProps,
   account: metamask.accountAddress,
+  accounts: accounts.allAccounts,
   activeAccount: getActiveAccount({ accounts }),
   network: metamask.network === 'kovan' ? 'kovan' : 'mainnet',
   initiateLinkTxHash: proxy.initiateLinkTxHash,

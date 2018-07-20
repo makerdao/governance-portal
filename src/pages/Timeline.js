@@ -71,7 +71,7 @@ const RootWrapper = styled.div`
   align-items: center;
 `;
 
-const Timeline = ({ modalOpen, topics, activeAccount, fetching }) => (
+const Timeline = ({ modalOpen, topics, activeAccount, canVote, fetching }) => (
   <Fragment>
     <VoterStatus />
     <StyledCard>
@@ -85,7 +85,7 @@ const Timeline = ({ modalOpen, topics, activeAccount, fetching }) => (
           </div>
         </div>
         <Button
-          disabled={!activeAccount || !activeAccount.proxy.isSetup}
+          disabled={!canVote}
           loading={fetching}
           onClick={() =>
             modalOpen(Vote, {
@@ -134,7 +134,7 @@ const Timeline = ({ modalOpen, topics, activeAccount, fetching }) => (
                 )}
               </WithTally>
               <Button
-                disabled={!activeAccount || !activeAccount.proxy.isSetup}
+                disabled={!canVote}
                 loading={fetching}
                 onClick={() =>
                   modalOpen(Vote, {
@@ -155,11 +155,15 @@ const Timeline = ({ modalOpen, topics, activeAccount, fetching }) => (
   </Fragment>
 );
 
-const reduxProps = ({ topics, accounts }) => ({
-  topics,
-  fetching: accounts.fetching,
-  activeAccount: getActiveAccount({ accounts })
-});
+const reduxProps = ({ topics, accounts }) => {
+  const activeAccount = getActiveAccount({ accounts });
+  return {
+    topics,
+    fetching: accounts.fetching,
+    activeAccount,
+    canVote: activeAccount && activeAccount.hasProxy
+  };
+};
 
 export default connect(
   reduxProps,

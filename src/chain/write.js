@@ -16,129 +16,73 @@ import {
   removeHexPrefix,
   etherToWei
 } from '../utils/ethereum';
-import ledgerSubprovider from './ledger';
+import { AccountTypes } from '../utils/constants';
 
-/**
- * @desc metamask send transaction
- * @param  {Object} transaction { from, to, value, data, gasPrice, gasLimit }
- * @return {Promise} tx
- */
-export const metamaskSendTx = transaction =>
-  new Promise((resolve, reject) => {
-    const from =
-      transaction.from.substr(0, 2) === '0x'
-        ? transaction.from
-        : `0x${transaction.from}`;
-    const to =
-      transaction.to.substr(0, 2) === '0x'
-        ? transaction.to
-        : `0x${transaction.to}`;
-    const value = transaction.value ? etherToWei(transaction.value) : '0x00';
-    const data = transaction.data ? transaction.data : '0x';
-    getTxDetails({
-      from,
-      to,
-      data,
-      value,
-      gasPrice: transaction.gasPrice,
-      gasLimit: transaction.gasLimit
-    })
-      .then(txDetails => {
-        if (typeof window.web3 !== 'undefined') {
+async function sendTransactionWithAccount(account, tx) {
+  const from = tx.from.substr(0, 2) === '0x' ? tx.from : `0x${tx.from}`;
+  const to = tx.to.substr(0, 2) === '0x' ? tx.to : `0x${tx.to}`;
+  const value = tx.value ? etherToWei(tx.value) : '0x00';
+  const data = tx.data ? tx.data : '0x';
+  const txDetails = await getTxDetails({
+    from,
+    to,
+    data,
+    value,
+    gasPrice: tx.gasPrice,
+    gasLimit: tx.gasLimit
+  });
+  switch (account.type) {
+    case AccountTypes.METAMASK:
+      if (typeof window.web3 !== 'undefined') {
+        return new Promise((resolve, reject) => {
           window.web3.eth.sendTransaction(txDetails, (err, txHash) => {
-            if (err) {
-              reject(err);
-            }
+            if (err) reject(err);
             resolve(txHash);
           });
-        } else {
-          throw new Error('Metamask is not installed');
-        }
-      })
-      .catch(error => reject(error));
-  });
-
-/**
- * @desc ledger send transaction
- * @param  {Object}  transaction { from, to, value, data, gasPrice}
- * @return {Promise}
- */
-export const ledgerSendTransaction = transaction =>
-  new Promise((resolve, reject) => {
-    const from =
-      transaction.from.substr(0, 2) === '0x'
-        ? transaction.from
-        : `0x${transaction.from}`;
-    const to =
-      transaction.to.substr(0, 2) === '0x'
-        ? transaction.to
-        : `0x${transaction.to}`;
-    const value = transaction.value ? etherToWei(transaction.value) : '0x00';
-    const data = transaction.data ? transaction.data : '0x';
-    getTxDetails({
-      from,
-      to,
-      data,
-      value,
-      gasPrice: transaction.gasPrice,
-      gasLimit: transaction.gasLimit
-    })
-      .then(txDetails => {
-        ledgerSubprovider
-          .signTransaction(txDetails)
-          .then(signedTx =>
-            sendSignedTx(signedTx)
-              .then(txHash => resolve(txHash))
-              .catch(error => reject(error))
-          )
-          .catch(error => reject(error));
-      })
-      .catch(error => reject(error));
-  });
-
-export const sendTransactionMulti = (type, transaction) => {
-  switch (type) {
-    case 'METAMASK':
-      return metamaskSendTx(transaction);
-    case 'LEDGER':
-      return ledgerSendTransaction(transaction);
+        });
+      } else {
+        throw new Error('Metamask is not installed');
+      }
+    case AccountTypes.TREZOR:
+    case AccountTypes.LEDGER: {
+      const signedTx = await account.subprovider.signTransaction(txDetails);
+      return sendSignedTx(signedTx);
+    }
     default:
-      return metamaskSendTx(transaction);
+      throw new Error(`Unrecognized account type: "${account.type}"`);
   }
-};
+}
 
 /**
  * @async @desc initate vote-proxy link
- * @param  {Object} wallets { acccount: { address, type }, hotAddress }
+ * @param  {Object} wallets { coldAccount: { address, type }, hotAddress }
  * @return {Promise} tx
  */
 export const initiateLink = async ({ coldAccount, hotAddress }) => {
-  const cold = coldAccount.address;
   const factory = await getProxyFactory();
   const methodSig = getMethodSig('initiateLink(address)');
   const callData = generateCallData({
     method: methodSig,
     args: [removeHexPrefix(hotAddress)]
   });
-  const tx = { to: factory, from: cold, data: callData };
-  return sendTransactionMulti(coldAccount.type, tx);
+  const tx = { to: factory, from: coldAccount.address, data: callData };
+  return sendTransactionWithAccount(coldAccount, tx);
 };
 
 /**
  * @async @desc approve vote-proxy link
- * @param  {Object} wallets { acccount: { address, type }, hot }
+ * @param  {Object} wallets { hotAccount: { address, type }, coldAddress }
  * @return {Promise} tx
  */
 export const approveLink = async ({ hotAccount, coldAddress }) => {
-  const hot = hotAccount.address;
   const factory = await getProxyFactory();
   const methodSig = getMethodSig('approveLink(address)');
   const callData = generateCallData({
     method: methodSig,
     args: [removeHexPrefix(coldAddress)]
   });
-  const tx = { to: factory, from: hot, data: callData };
-  return sendTransactionMulti(hotAccount.type, tx);
+  const tx = { to: factory, from: hotAccount.address, data: callData };
+  return sendTransactionWithAccount(hotAccount, tx);
 };
 
 /**
@@ -163,7 +107,7 @@ export const sendMkrToProxy = async ({ account, value }) => {
     args: [removeHexPrefix(addressParam), removeHexPrefix(valueParam)]
   });
   const tx = { to: mkrToken, from: account.address, data: callData };
-  return sendTransactionMulti(account.type, tx);
+  return sendTransactionWithAccount(account, tx);
 };
 
 /**
@@ -186,7 +130,7 @@ export const voteViaProxy = async ({ account, proposalAddress }) => {
     args: [removeHexPrefix(proposalParam)]
   });
   const tx = { to: proxyAddress, from: account.address, data: callData };
-  return sendTransactionMulti(account.type, tx);
+  return sendTransactionWithAccount(account, tx);
 };
 
 /**
@@ -209,5 +153,5 @@ export const voteAndLockViaProxy = async ({ account, proposalAddress }) => {
     args: [removeHexPrefix(proposalParam)]
   });
   const tx = { to: proxyAddress, from: account.address, data: callData };
-  return sendTransactionMulti(account.type, tx);
+  return sendTransactionWithAccount(account, tx);
 };

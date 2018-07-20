@@ -217,7 +217,7 @@ class Proposal extends Component {
                 )}
               </WithTally>
               <Button
-                disabled={!activeAccount || !activeAccount.proxy.isSetup}
+                disabled={!activeAccount || !activeAccount.hasProxy}
                 loading={accountDataFetching}
                 wide={true}
                 onClick={() => modalOpen(Vote, { proposal })}

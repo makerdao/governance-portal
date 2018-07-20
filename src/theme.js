@@ -2,7 +2,7 @@ export const colors = {
   white: '255, 255, 255',
   green: '48, 189, 159',
   header: '31, 44, 60',
-  background: '246,248,249',
+  background: '246, 248, 249',
   light_grey: '234, 239, 247',
   box_dark: '5, 60, 75',
   box_light: '67, 83, 103',

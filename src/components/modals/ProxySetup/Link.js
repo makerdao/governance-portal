@@ -5,37 +5,26 @@ import {
   StyledBlurb,
   StyledTop,
   StyledAnchor,
-  StyledInput,
   InputLabels,
+  EndButton,
   Note
 } from '../shared/styles';
-import Button from '../../Button';
 import ProgressTabs from './ProgressTabs';
+import Dropdown from '../../Dropdown';
+import { AccountBlurb } from '../../AccountBox';
 
 class Link extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hot: props.activeAccount.address,
-      cold: ''
+      hot: props.activeAccount,
+      cold: null
     };
   }
 
-  componentDidUpdate(prev) {
-    if (prev.activeAccount.address !== this.props.activeAccount.address)
-      this.setState({ cold: this.props.activeAccount.address });
-  }
-
-  updateInputValueHot = evt => {
-    this.setState({ hot: evt.target.value });
-  };
-
-  updateInputValueCold = evt => {
-    this.setState({ cold: evt.target.value });
-  };
-
   render() {
     // TODO: const ok = cold and hot are valid addresses - disable button otherwise
+    // TODO: show only valid addresses for each dropdown (i.e. unlinked)
     return (
       <Fragment>
         <ProgressTabs progress={1} />
@@ -47,11 +36,16 @@ class Link extends Component {
           support MetaMask, Ledger and Trezor. Then select the{' '}
           <StyledAnchor>hot wallet</StyledAnchor> you would like to link it to.
         </StyledBlurb>
+
         <InputLabels>Select cold wallet</InputLabels>
-        <StyledInput
-          value={this.state.cold}
-          onChange={this.updateInputValueCold}
-          placeholder="Cold wallet"
+        <Dropdown
+          initialValue={this.state.cold}
+          onSelect={account => this.setState({ cold: account })}
+          items={this.props.accounts}
+          itemKey="address"
+          renderItem={account => (
+            <AccountBlurb type={account.type} address={account.address} />
+          )}
         />
         <Note>
           This wallet must be connected.{' '}
@@ -59,31 +53,28 @@ class Link extends Component {
         </Note>
 
         <InputLabels>Select hot wallet</InputLabels>
-        <StyledInput
-          value={this.state.hot}
-          onChange={this.updateInputValueHot}
-          placeholder="Hot wallet"
-          readOnly
+        <Dropdown
+          initialValue={this.state.hot}
+          onSelect={account => this.setState({ hot: account })}
+          items={this.props.accounts}
+          itemKey="address"
+          renderItem={account => (
+            <AccountBlurb type={account.type} address={account.address} />
+          )}
         />
-        <Note>^ forced to be current active account for now</Note>
-        <div
-          style={{
-            alignSelf: 'center',
-            marginTop: '18px'
-          }}
+        <Note>This wallet will be able to vote with your MKR.</Note>
+
+        <EndButton
+          slim
+          onClick={() =>
+            this.props.initiateLink({
+              cold: this.state.cold,
+              hot: this.state.hot
+            })
+          }
         >
-          <Button
-            slim
-            onClick={() =>
-              this.props.initiateLink({
-                coldAccount: this.props.activeAccount,
-                hotAddress: this.state.hot
-              })
-            }
-          >
-            Link Wallets
-          </Button>
-        </div>
+          Link Wallets
+        </EndButton>
       </Fragment>
     );
   }

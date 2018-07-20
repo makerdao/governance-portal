@@ -1,6 +1,6 @@
 import { createReducer } from '../utils/redux';
 import { addAccounts } from './accounts';
-import { createSubProvider } from '../chain/hw-wallet';
+import { createSubProvider, LEDGER } from '../chain/hw-wallet';
 import { netNameToId } from '../utils/ethereum';
 
 // Constants ----------------------------------------------
@@ -13,7 +13,7 @@ const CONNECT_FAILURE = 'ledger/CONNECT_FAILURE';
 
 export const ledgerConnectInit = () => (dispatch, getState) => {
   dispatch({ type: CONNECT_REQUEST });
-  const ledger = createSubProvider('ledger', {
+  const ledger = createSubProvider(LEDGER, {
     networkId: netNameToId(getState().metamask.network),
     promisify: true
   });
@@ -24,7 +24,8 @@ export const ledgerConnectInit = () => (dispatch, getState) => {
       dispatch({ type: CONNECT_SUCCESS, payload: { addresses } });
       const accounts = addresses.map(address => ({
         address,
-        type: 'LEDGER'
+        type: 'LEDGER',
+        subprovider: ledger
       }));
       dispatch(addAccounts(accounts));
     })

@@ -28,7 +28,7 @@ const Account = styled.div`
   margin: ${({ noAccounts }) => (noAccounts ? 'auto' : '')};
 `;
 
-const StyledDropdownWrapper = styled.div`
+const DropdownList = styled.div`
   min-width: 70px;
   border-radius: 4px;
   font-size: ${fonts.size.small};
@@ -51,7 +51,7 @@ const StyledDropdownWrapper = styled.div`
   overflow-y: auto;
 `;
 
-const StyledAccount = styled.div`
+const SelectedItem = styled.div`
   color: #627685;
   cursor: pointer;
   padding: 6px 10px;
@@ -62,7 +62,33 @@ const StyledAccount = styled.div`
   font-family: ${fonts.family.SFProText};
 `;
 
-const StyledRow = styled.div`
+const Wrapper = styled.div`
+  position: relative;
+`;
+
+const AccountBlurbWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const AccountBlurb = ({ type, address }) => {
+  return (
+    <AccountBlurbWrapper>
+      <Blockies
+        seed={address}
+        size={5}
+        spotColor="#fc5e04"
+        color="#fc5e04"
+        bgColor="#fff"
+      />
+      <Account>
+        {firstLetterCapital(type)} {cutMiddle(address)}
+      </Account>
+    </AccountBlurbWrapper>
+  );
+};
+
+const DropdownRow = styled.div`
   display: flex;
   cursor: pointer;
   justify-content: flex-start;
@@ -81,10 +107,6 @@ const StyledRow = styled.div`
   }
 `;
 
-const AccountWrapper = styled.div`
-  position: relative;
-`;
-
 class AccountBox extends Component {
   state = {
     dropdownOpen: false
@@ -100,63 +122,47 @@ class AccountBox extends Component {
     this.setState(state => ({ dropdownOpen: !state.dropdownOpen }));
   };
   render() {
-    const { allAccounts, activeAccount, ...props } = this.props;
+    const { allAccounts, activeAccount, fetching } = this.props;
 
-    if (this.props.fetching)
+    if (fetching)
       return (
-        <StyledAccount {...this.props}>
+        <SelectedItem>
           <Loader size={20} color="background" background="header" />
-        </StyledAccount>
+        </SelectedItem>
       );
 
     const availableAccounts = allAccounts.filter(account => !!account.address);
 
     if (!activeAccount)
       return (
-        <StyledAccount {...this.props}>
+        <SelectedItem>
           <Account noAccounts>No Accounts</Account>
-        </StyledAccount>
+        </SelectedItem>
       );
 
     return (
       <ClickOutside onOutsideClick={this.clickOutside}>
-        <AccountWrapper {...props}>
-          <StyledAccount onClick={this.toggleDropdown}>
-            <Blockies
-              seed={activeAccount.address}
-              size={5}
-              spotColor="#fc5e04"
-              color="#fc5e04"
-              bgColor="#fff"
+        <Wrapper>
+          <SelectedItem onClick={this.toggleDropdown}>
+            <AccountBlurb
+              type={activeAccount.type}
+              address={activeAccount.address}
             />
-            <Account>
-              {firstLetterCapital(activeAccount.type)}{' '}
-              {cutMiddle(activeAccount.address)}
-            </Account>
             <StyledArrow />
-          </StyledAccount>
-          <StyledDropdownWrapper show={this.state.dropdownOpen}>
+          </SelectedItem>
+          <DropdownList show={this.state.dropdownOpen}>
             {availableAccounts.map(({ address, type }) => (
-              <StyledRow
+              <DropdownRow
                 key={address}
                 onClick={() => this.onChange({ address, type })}
                 selected={address === activeAccount.address}
                 dark
               >
-                <Blockies
-                  seed={address}
-                  size={5}
-                  spotColor="#fc5e04"
-                  color="#fc5e04"
-                  bgColor="#fff"
-                />
-                <Account>{`${firstLetterCapital(type)} ${cutMiddle(
-                  address
-                )}`}</Account>
-              </StyledRow>
+                <AccountBlurb type={type} address={address} />
+              </DropdownRow>
             ))}
-          </StyledDropdownWrapper>
-        </AccountWrapper>
+          </DropdownList>
+        </Wrapper>
       </ClickOutside>
     );
   }

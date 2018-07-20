@@ -1,6 +1,6 @@
 import { createReducer } from '../utils/redux';
 import { addAccount } from './accounts';
-import { createSubProvider } from '../chain/hw-wallet';
+import { createSubProvider, TREZOR } from '../chain/hw-wallet';
 import { netNameToId } from '../utils/ethereum';
 import uniq from 'ramda/src/uniq';
 import values from 'ramda/src/values';
@@ -15,7 +15,7 @@ const CONNECT_FAILURE = 'trezor/CONNECT_FAILURE';
 
 export const trezorConnectInit = () => (dispatch, getState) => {
   dispatch({ type: CONNECT_REQUEST });
-  const trezor = createSubProvider('trezor', {
+  const trezor = createSubProvider(TREZOR, {
     networkId: netNameToId(getState().metamask.network),
     promisify: true
   });
@@ -24,7 +24,9 @@ export const trezorConnectInit = () => (dispatch, getState) => {
     .then(addressesMap => {
       const address = values(addressesMap)[0];
       dispatch({ type: CONNECT_SUCCESS, payload: address });
-      return dispatch(addAccount({ address, type: 'TREZOR' }));
+      return dispatch(
+        addAccount({ address, type: 'TREZOR', subprovider: trezor })
+      );
     })
     .catch(err => {
       // maybe notify if trezor is supposed to be used, but we can't get it

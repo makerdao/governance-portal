@@ -143,7 +143,7 @@ const Topic = ({ match, topics, fetching, activeAccount }) => {
                 )}
               </WithTally>
               <Button
-                disabled={!activeAccount || !activeAccount.proxy.isSetup}
+                disabled={!activeAccount || !activeAccount.hasProxy}
                 loading={fetching}
               >
                 Vote for this Proposal
