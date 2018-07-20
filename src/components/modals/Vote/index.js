@@ -1,7 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import Button from '../../Button';
+import { connect } from 'react-redux';
 
+import Button from '../../Button';
+import { getActiveAccount } from '../../../reducers/accounts';
+import { modalClose } from '../../../reducers/modal';
+import { sendVote } from '../../../reducers/vote';
 import { StyledTitle, StyledBlurb, StyledTop } from '../shared/styles';
 import Transaction from '../shared/Transaction';
 
@@ -20,10 +24,9 @@ class Vote extends Component {
 
   // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, reject transaction, why did this tx fail
   render() {
-    let proposal;
     switch (this.state.step) {
       case 1:
-        proposal = this.props.modalProps.proposal;
+        const { proposal } = this.props.modalProps;
         return (
           <Fragment>
             <StyledTop>
@@ -56,7 +59,7 @@ class Vote extends Component {
         return (
           <Transaction
             txHash={this.props.voteTxHash}
-            nextStep={this.props.modalClose}
+            nextStep={() => window.location.reload()}
             network={this.props.network}
             lastCard={true}
           />
@@ -77,4 +80,11 @@ Vote.defaultProps = {
   voteTxHash: ''
 };
 
-export default Vote;
+export default connect(
+  state => ({
+    activeAccount: getActiveAccount(state),
+    voteTxHash: state.vote.txHash,
+    network: state.metamask.network === 'kovan' ? 'kovan' : 'mainnet'
+  }),
+  { modalClose, sendVote }
+)(Vote);

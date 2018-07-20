@@ -86,6 +86,6 @@ const Modal = props => {
 };
 
 export default connect(
-  state => ({ modal: state.modal.modal }),
+  state => ({ modal: state.modal.modal, modalProps: state.modal.modalProps }),
   { modalClose }
 )(Modal);

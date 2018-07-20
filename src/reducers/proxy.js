@@ -24,7 +24,10 @@ export const clear = () => ({
 });
 
 export const initiateLink = ({ cold, hot }) => dispatch => {
-  dispatch({ type: INITIATE_LINK_REQUEST, payload: { hot, cold } });
+  dispatch({
+    type: INITIATE_LINK_REQUEST,
+    payload: { hotAddress: hot.address, coldAddress: cold.address }
+  });
   _initiateLink({ coldAccount: cold, hotAddress: hot.address }).then(txHash => {
     dispatch({ type: INITIATE_LINK_SENT, payload: { txHash } });
   });
@@ -32,7 +35,7 @@ export const initiateLink = ({ cold, hot }) => dispatch => {
 
 export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
   dispatch({ type: APPROVE_LINK_REQUEST });
-  const coldAddress = getState().proxy.cold.address;
+  const { coldAddress } = getState().proxy;
   _approveLink({ hotAccount, coldAddress }).then(txHash => {
     dispatch({ type: APPROVE_LINK_SENT, payload: { txHash } });
   });
@@ -52,15 +55,15 @@ const initialState = {
   sendMkrTxHash: '',
   initiateLinkTxHash: '',
   approveLinkTxHash: '',
-  hot: '',
-  cold: ''
+  hotAddress: '',
+  coldAddress: ''
 };
 
 const proxy = createReducer(initialState, {
   [INITIATE_LINK_REQUEST]: (state, { payload }) => ({
     ...state,
-    hot: payload.hot,
-    cold: payload.cold
+    hotAddress: payload.hotAddress,
+    coldAddress: payload.coldAddress
   }),
   [INITIATE_LINK_SENT]: (state, { payload }) => ({
     ...state,

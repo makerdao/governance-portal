@@ -36,6 +36,9 @@ class Link extends Component {
           support MetaMask, Ledger and Trezor. Then select the{' '}
           <StyledAnchor>hot wallet</StyledAnchor> you would like to link it to.
         </StyledBlurb>
+        <Note>
+          (feel free to change your metamask account while on this modal)
+        </Note>
 
         <InputLabels>Select cold wallet</InputLabels>
         <Dropdown
@@ -49,7 +52,7 @@ class Link extends Component {
         />
         <Note>
           This wallet must be connected.{' '}
-          <a onClick={this.props.trezorConnectInit}>Connect to Trezor</a>
+          {/* <a onClick={this.props.trezorConnectInit}>Connect to Trezor</a> */}
         </Note>
 
         <InputLabels>Select hot wallet</InputLabels>
@@ -63,7 +66,9 @@ class Link extends Component {
           )}
         />
         <Note>This wallet will be able to vote with your MKR.</Note>
-
+        <Note>
+          (the first tx will be w/ your cold wallet, please have it active)
+        </Note>
         <EndButton
           slim
           onClick={() =>

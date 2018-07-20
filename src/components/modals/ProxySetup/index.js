@@ -60,7 +60,7 @@ class ProxySetup extends Component {
           <Link
             initiateLink={this.props.initiateLink}
             activeAccount={this.props.activeAccount}
-            trezorConnectInit={this.props.trezorConnectInit}
+            // trezorConnectInit={this.props.trezorConnectInit}
             accounts={this.props.accounts}
           />
         );
@@ -239,7 +239,7 @@ const stateProps = ({ modal, metamask, vote, accounts, proxy }) => ({
   initiateLinkTxHash: proxy.initiateLinkTxHash,
   sendMkrTxHash: proxy.sendMkrTxHash,
   approveLinkTxHash: proxy.approveLinkTxHash,
-  hotAddress: proxy.hot,
+  hotAddress: proxy.hotAddress,
   voteTxHash: vote.txHash
 });
 

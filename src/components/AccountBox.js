@@ -82,7 +82,7 @@ export const AccountBlurb = ({ type, address }) => {
         bgColor="#fff"
       />
       <Account>
-        {firstLetterCapital(type)} {cutMiddle(address)}
+        {firstLetterCapital(type)} {cutMiddle(address, 4, 3)}
       </Account>
     </AccountBlurbWrapper>
   );

@@ -220,7 +220,7 @@ export const getMetamaskNetworkName = () => {
       });
       setTimeout(
         () => reject('Taking too long to get metamask network name'),
-        10000
+        20000
       );
     });
   }

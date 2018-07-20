@@ -41,7 +41,12 @@ export const addAccounts = accounts => async dispatch => {
         proxyRole: status.type,
         proxy: {
           address: status.address,
+          // voting power = balance + mkr proxy has locked into chief
           balance: status.hasProxy ? await getMkrBalance(status.address) : 0
+        },
+        coldWallet: {
+          address: '0xcoldfake',
+          balance: 222
         }
       }
     });

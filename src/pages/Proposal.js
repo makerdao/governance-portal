@@ -189,7 +189,7 @@ class Proposal extends Component {
       network
     } = this.props;
     const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
-    const supporters = voteState[proposal.source] || null;
+    const supporters = voteState[proposal.source.toLowerCase()] || null;
     return (
       <React.Fragment>
         <WhiteBackground>

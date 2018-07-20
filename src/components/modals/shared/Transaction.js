@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { ethScanLink } from '../../../utils/ethereum';
 
-import { StyledTitle, StyledTop, TxHash } from './styles';
+import { StyledTitle, StyledTop, TxHash, Note } from './styles';
 import Button from '../../Button';
 
 const Transaction = ({ txHash, nextStep, network, lastCard }) => (
@@ -12,6 +12,7 @@ const Transaction = ({ txHash, nextStep, network, lastCard }) => (
     <TxHash href={ethScanLink(txHash, network)} target="_blank">
       {txHash}
     </TxHash>
+    <Note>Please wait for the tx to mine before continuing</Note>
     <div
       style={{
         alignSelf: 'center',
