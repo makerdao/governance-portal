@@ -24,20 +24,15 @@ export const clear = () => ({
 });
 
 export const initiateLink = ({ cold, hot }) => dispatch => {
-  dispatch({
-    type: INITIATE_LINK_REQUEST,
-    payload: { hot, cold }
-  });
+  dispatch({ type: INITIATE_LINK_REQUEST, payload: { hot, cold } });
   _initiateLink({ coldAccount: cold, hotAddress: hot.address }).then(txHash => {
     dispatch({ type: INITIATE_LINK_SENT, payload: { txHash } });
   });
 };
 
 export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
-  dispatch({
-    type: APPROVE_LINK_REQUEST
-  });
-  const coldAddress = getState().proxy.cold;
+  dispatch({ type: APPROVE_LINK_REQUEST });
+  const coldAddress = getState().proxy.cold.address;
   _approveLink({ hotAccount, coldAddress }).then(txHash => {
     dispatch({ type: APPROVE_LINK_SENT, payload: { txHash } });
   });
