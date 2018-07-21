@@ -136,7 +136,8 @@ class ProxySetup extends Component {
               voting contract. You can withdraw it at anytime
             </StyledBlurb>
             <StyledBlurb>
-              (change back to your cold address if you'd like)
+              (change back to your cold address if using Metamask)
+              {/* TODO check data, show message only if using Metamask */}
             </StyledBlurb>
             <div style={{ textAlign: 'center' }}>
               Your MKR Balance: {this.props.activeAccount.mkrBalance}

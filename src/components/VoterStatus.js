@@ -15,7 +15,7 @@ import {
   BannerButton
 } from './Banner';
 import Loader from './Loader';
-import { cutMiddle } from '../utils/misc';
+import { cutMiddle, firstLetterCapital } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
 import Lock from './modals/Lock';
 import Withdraw from './modals/Withdraw';
@@ -66,16 +66,22 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
   if (!account) return <Padding>No accounts found</Padding>;
   if (!account.hasProxy) return <WelcomeBanner modalOpen={modalOpen} />;
   const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
+  const { linkedAccount } = account.proxy;
+  const coldWallet = account.proxyRole === 'cold' ? account : linkedAccount;
   return (
     <SmallText>
-      In voting contract <Value>{account.proxy.balance} MKR</Value>{' '}
+      In voting contract <Value>{account.proxy.mkrBalance} MKR</Value>{' '}
       <a onClick={() => modalOpen(Withdraw)}>Withdraw to wallet</a>
       <DotSpacer />
-      In wallet <Value>{account.coldWallet.balance} MKR</Value>{' '}
+      In cold wallet <Value>{coldWallet.mkrBalance} MKR</Value>{' '}
       <a onClick={() => modalOpen(Lock)}>Add to voting contract</a>
       <DotSpacer />
-      Hot wallet address {cutMiddle(account.address)}{' '}
-      <a target="_blank" href={ethScanLink(account.address, networkShown)}>
+      {firstLetterCapital(linkedAccount.proxyRole)} wallet address{' '}
+      {cutMiddle(linkedAccount.address)}{' '}
+      <a
+        target="_blank"
+        href={ethScanLink(linkedAccount.address, networkShown)}
+      >
         Etherscan
       </a>
       <br />

@@ -4,7 +4,7 @@ import pipe from 'ramda/src/pipe';
 import differenceWith from 'ramda/src/differenceWith';
 
 import { createReducer } from '../utils/redux';
-import { getMkrBalance, getProxyStatus } from '../chain/read';
+import { getMkrBalance, getProxyStatus, getLinkedAddress } from '../chain/read';
 import { AccountTypes } from '../utils/constants';
 
 // Constants ----------------------------------------------
@@ -31,25 +31,34 @@ export const addAccounts = accounts => async dispatch => {
     payload: true
   });
   for (let account of accounts) {
-    const status = await getProxyStatus(account.address);
-    await dispatch({
-      type: ADD_ACCOUNT,
-      payload: {
-        ...account,
-        mkrBalance: await getMkrBalance(account.address),
-        hasProxy: status.hasProxy,
-        proxyRole: status.type,
-        proxy: {
-          address: status.address,
-          // voting power = balance + mkr proxy has locked into chief
-          balance: status.hasProxy ? await getMkrBalance(status.address) : 0
-        },
-        coldWallet: {
-          address: '0xcoldfake',
-          balance: 222
-        }
+    const {
+      hasProxy,
+      type: proxyRole,
+      address: proxyAddress
+    } = await getProxyStatus(account.address);
+    const payload = {
+      ...account,
+      mkrBalance: await getMkrBalance(account.address),
+      hasProxy,
+      proxyRole,
+      proxy: {
+        address: proxyAddress,
+        // voting power = balance + mkr proxy has locked into chief
+        mkrBalance: hasProxy ? await getMkrBalance(proxyAddress) : 0
       }
-    });
+    };
+
+    if (hasProxy) {
+      const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
+      const linkedAddress = await getLinkedAddress(proxyAddress, otherRole);
+      payload.proxy.linkedAccount = {
+        address: linkedAddress,
+        proxyRole: otherRole,
+        mkrBalance: await getMkrBalance(linkedAddress)
+      };
+    }
+
+    await dispatch({ type: ADD_ACCOUNT, payload });
   }
 };
 
@@ -107,13 +116,15 @@ const initialState = {
       type: 'fake',
       hasProxy: true,
       proxyRole: 'hot',
+      mkrBalance: 333,
       proxy: {
         address: '0xproxyfake',
-        balance: 111
-      },
-      coldWallet: {
-        address: '0xcoldfake',
-        balance: 222
+        mkrBalance: 111,
+        linkedAccount: {
+          address: '0xbeefed1bedded2dabbed3defaced4decade5feed',
+          proxyRole: 'cold',
+          mkrBalance: 222
+        }
       }
     }
   ]

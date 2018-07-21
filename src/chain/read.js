@@ -159,10 +159,7 @@ const getProxyAddressFrom = hotOrCold => async address => {
     method: methodSig,
     args: [removeHexPrefix(address)]
   });
-  const value = await web3Instance.eth.call({
-    to: factory,
-    data: callData
-  });
+  const value = await web3Instance.eth.call({ to: factory, data: callData });
   return paddedBytes32ToAddress(value);
 };
 
@@ -305,4 +302,11 @@ export const getMkrBalance = async address => {
   });
   const balanceStdUnits = weiToEther(hexBalance);
   return balanceStdUnits;
+};
+
+export const getLinkedAddress = async (proxyAddress, role) => {
+  const method = getMethodSig(role === 'hot' ? 'hot()' : 'cold()');
+  const data = generateCallData({ method, args: [] });
+  const value = await web3Instance.eth.call({ to: proxyAddress, data });
+  return paddedBytes32ToAddress(value);
 };
