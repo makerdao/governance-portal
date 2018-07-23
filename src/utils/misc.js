@@ -1,5 +1,6 @@
 import takeLast from 'ramda/src/takeLast';
 import take from 'ramda/src/take';
+import BigNumber from 'bignumber.js';
 
 /**
  * @desc returns whether current device is mobile
@@ -82,9 +83,20 @@ export const formatDate = dateString => {
 };
 
 /**
- * @desc capitalize this first letter and lowercase the rest
+ * @desc capitalize the first letter and lowercase the rest
  * @param  {String}
  * @return {String}
  */
 export const firstLetterCapital = string =>
   string.charAt(0).toUpperCase() + string.slice(1).toLocaleLowerCase();
+
+/**
+ * @desc safely add 2 numbers
+ * @param  {Number|String} a
+ * @param  {Number|String} b
+ * @return {String}
+ */
+export const add = (a, b) =>
+  BigNumber(`${a}`)
+    .plus(BigNumber(`${b}`))
+    .toString();

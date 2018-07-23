@@ -147,5 +147,8 @@ export const ethScanLink = (string, network = 'mainnet') => {
   else if (validTxString(string))
     return `https://${pathPrefix}etherscan.io/tx/${string}`;
   // TODO maybe log to raven instead of throwing
-  else throw new Error("Invalid address string; can't create etherescan link");
+  else
+    throw new Error(
+      "Invalid address or tx string; can't create etherescan link"
+    );
 };

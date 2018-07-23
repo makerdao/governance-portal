@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+
+import ClickOutside from './ClickOutside';
 import theme, { shadows, colors } from '../theme';
 import arrow from '../imgs/arrow.svg';
 
@@ -13,6 +15,10 @@ export default class Dropdown extends Component {
     this.setState({ shown: !this.state.shown });
   };
 
+  clickOutside = () => {
+    if (this.state.shown) this.setState({ shown: false });
+  };
+
   select(item) {
     this.setState({ shown: false });
     this.props.onSelect(item);
@@ -21,21 +27,23 @@ export default class Dropdown extends Component {
   render() {
     const { items, itemKey, renderItem, value } = this.props;
     return (
-      <Wrapper>
-        <Selection onClick={this.toggle}>
-          {value ? renderItem(value) : <div />}
-          <Arrow />
-        </Selection>
-        {this.state.shown && (
-          <List>
-            {items.map(item => (
-              <Row key={item[itemKey]} onClick={() => this.select(item)}>
-                {renderItem(item)}
-              </Row>
-            ))}
-          </List>
-        )}
-      </Wrapper>
+      <ClickOutside onOutsideClick={this.clickOutside}>
+        <Wrapper>
+          <Selection onClick={this.toggle}>
+            {value ? renderItem(value) : <div />}
+            <Arrow />
+          </Selection>
+          {this.state.shown && (
+            <List>
+              {items.map(item => (
+                <Row key={item[itemKey]} onClick={() => this.select(item)}>
+                  {renderItem(item)}
+                </Row>
+              ))}
+            </List>
+          )}
+        </Wrapper>
+      </ClickOutside>
     );
   }
 }

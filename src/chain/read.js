@@ -23,10 +23,11 @@ import {
   paddedBytes32ToAddress,
   isZeroAddress
 } from '../utils/ethereum';
+import { add } from '../utils/misc.js';
 import chiefInfo from './chief-info.json';
 
 /**
- * @async @desc get address approval count
+ * @async @desc get proposal address approval count
  * @param  {String} address
  * @return {String} number of approvals
  */
@@ -309,4 +310,18 @@ export const getLinkedAddress = async (proxyAddress, role) => {
   const data = generateCallData({ method, args: [] });
   const value = await web3Instance.eth.call({ to: proxyAddress, data });
   return paddedBytes32ToAddress(value);
+};
+
+/**
+ * @async @desc get voting power of user address
+ * @param {String} address user address
+ * @return {String} votingPower
+ */
+export const getVotingPower = async address => {
+  const { address: proxyAddress, hasProxy } = await getProxyStatus(address);
+  if (!hasProxy) return '0';
+  const proxyMkr = await getMkrBalance(proxyAddress);
+  const proxyDeposits = await getNumDeposits(proxyAddress);
+  const votingPower = add(proxyMkr, proxyDeposits);
+  return votingPower;
 };
