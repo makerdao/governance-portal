@@ -113,7 +113,7 @@ const initialState = {
     {
       address: '0xbeefed1bedded2dabbed3defaced4decade5dead',
       type: 'fake',
-      hasProxy: false,
+      hasProxy: true,
       proxyRole: 'hot',
       mkrBalance: 333,
       proxy: {

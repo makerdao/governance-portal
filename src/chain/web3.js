@@ -146,7 +146,7 @@ export const sendSignedTx = signedTx =>
  * @param  {Object} { confirmations }
  * @return {Promise}
  */
-export const awaitTx = (txnHash, { confirmations = 6 }) => {
+export const awaitTx = (txnHash, { confirmations = 3 }) => {
   const INTERVAL = 500;
   const transactionReceiptAsync = async function(txnHash, resolve, reject) {
     try {

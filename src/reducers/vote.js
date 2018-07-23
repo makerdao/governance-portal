@@ -29,9 +29,7 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
             dispatch({ type: VOTE_SUCCESS });
             console.log('mined', txReciept);
           })
-          .catch(() => {
-            dispatch({ type: VOTE_FAILURE });
-          });
+          .catch(() => dispatch({ type: VOTE_FAILURE }));
       })
       .catch(() => {
         // txRejected
@@ -39,14 +37,13 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
         dispatch({ type: VOTE_FAILURE });
       });
   }
-  // else  notify no account available
 };
 
 // Reducer ------------------------------------------------
 
 const initialState = {
   proposalAddress: '',
-  fetching: false,
+  confirming: false,
   txHash: ''
 };
 
@@ -57,15 +54,16 @@ const vote = createReducer(initialState, {
   }),
   [VOTE_SENT]: (state, { payload }) => ({
     ...state,
-    fetching: true,
+    confirming: true,
     txHash: payload.txHash
   }),
   [VOTE_SUCCESS]: state => ({
     ...state,
-    fetching: false
+    confirming: false
   }),
-  [VOTE_FAILURE]: () => ({
-    ...initialState
+  [VOTE_FAILURE]: state => ({
+    ...state,
+    confirming: false
   }),
   [CLEAR]: () => ({
     ...initialState
