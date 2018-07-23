@@ -12,7 +12,7 @@ import Button from '../../Button';
 import Intro from './Intro';
 import Link from './Link';
 import Transaction from '../shared/Transaction';
-import ProgressTabs from './ProgressTabs';
+import Stepper from './Stepper';
 import { getActiveAccount } from '../../../reducers/accounts';
 import { trezorConnectInit } from '../../../reducers/trezor';
 import {
@@ -67,7 +67,7 @@ class ProxySetup extends Component {
       case 3:
         return (
           <Fragment>
-            <ProgressTabs progress={1} />
+            <Stepper progress={1} />
             <Transaction
               txHash={this.props.initiateLinkTxHash}
               nextStep={this.nextStep}
@@ -116,7 +116,7 @@ class ProxySetup extends Component {
       case 5:
         return (
           <Fragment>
-            <ProgressTabs progress={1} />
+            <Stepper progress={1} />
             <Transaction
               txHash={this.props.approveLinkTxHash}
               nextStep={this.nextStep}
@@ -127,7 +127,7 @@ class ProxySetup extends Component {
       case 6:
         return (
           <Fragment>
-            <ProgressTabs progress={2} />
+            <Stepper progress={2} />
             <StyledTop>
               <StyledTitle>Lock MKR</StyledTitle>
             </StyledTop>
@@ -167,7 +167,7 @@ class ProxySetup extends Component {
       case 7:
         return (
           <Fragment>
-            <ProgressTabs progress={2} />
+            <Stepper progress={2} />
             <Transaction
               txHash={this.props.sendMkrTxHash}
               nextStep={this.nextStep}
@@ -178,7 +178,7 @@ class ProxySetup extends Component {
       case 8:
         return (
           <Fragment>
-            <ProgressTabs progress={3} />
+            <Stepper progress={3} />
             <StyledTop>
               <StyledTitle>Secure voting contract setup</StyledTitle>
             </StyledTop>

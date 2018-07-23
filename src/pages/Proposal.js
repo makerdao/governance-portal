@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import find from 'ramda/src/find';
 import styled from 'styled-components';
 import ReactMarkdown from 'react-markdown';
+import { Link } from 'react-router-dom';
 
 import { toSlug } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
@@ -91,6 +92,7 @@ const DescriptionCard = styled(Card)`
 const DetailsCard = styled(Card)`
   margin-bottom: 29px;
   height: 204px;
+  font-size: ${({ theme }) => theme.fonts.size.medium};
   padding: 14px 20px;
 `;
 
@@ -167,7 +169,7 @@ class Proposal extends Component {
       topic.proposals
     );
     if (proposal === undefined) return; //not found
-    this.setState({ proposal });
+    this.setState({ proposal, parent: topic.topic });
     fetch(proposal.about)
       .then(response => response.text())
       .then(markdown => {
@@ -178,7 +180,7 @@ class Proposal extends Component {
   }
 
   render() {
-    const { proposal, markdown } = this.state;
+    const { proposal, markdown, parent } = this.state;
     if (Object.keys(proposal).length === 0) return <NotFound />;
     const {
       voteState,
@@ -244,6 +246,7 @@ class Proposal extends Component {
               <CardTitle>Details</CardTitle>
               <Supporter>
                 <Detail>Topic</Detail>
+                <Link to={`/${toSlug(parent)}`}>{parent}</Link>
               </Supporter>
               <Supporter>
                 <Detail>Started</Detail>

@@ -101,9 +101,20 @@ const theme = {
     dark_default: '#c4c4c4',
     darker_default: '#0e1029',
     green: '#30bd9f',
+    dim_green: '#ACDAD0',
     dim_grey: '#848484',
     dim_grey_2: '#868997',
     alt: '#546978'
+  },
+  fonts: {
+    size: {
+      small: '12px',
+      medium: '14px',
+      large: '20px',
+      xlarge: '24px',
+      h1: '42px',
+      h2: '32px'
+    }
   }
 };
 

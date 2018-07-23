@@ -113,23 +113,14 @@ export const InfoBoxHeading = styled.div`
   color: ${theme.text.dim_grey_2};
 `;
 
-export const InfoBoxContent = styled.div``;
-
 export const ProgressTabsWrapper = styled.div`
-  height: 44px;
+  height: 78px;
   display: flex;
-  background: #f6f8f9;
-  border-radius: 4px 4px 0px 0px;
-  margin-top: -30px;
-  margin-bottom: 20px;
-  margin-right: -26px;
-  margin-left: -26px;
-  border-bottom: 1px solid #d3dadc;
+  background: inherit;
 `;
 
 export const TabsTitle = styled.p`
   font-size: 14px;
-  color: ${theme.text.dim_grey_2};
   height: 100%;
   display: flex;
   justify-content: center;
@@ -143,8 +134,8 @@ export const TabsTitleWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  border-right: ${({ borderRight }) =>
-    borderRight ? '1px solid #D3DADC' : ''};
+  color: ${({ active, theme }) =>
+    active ? theme.text.green : theme.text.dim_green};
 `;
 
 export const TxHash = styled.a`

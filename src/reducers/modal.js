@@ -33,7 +33,7 @@ const modal = createReducer(initialState, {
     modal: payload.modal,
     modalProps: payload.props
   }),
-  [MODAL_CLOSE]: state => ({ ...state, open: false, modalProps: {} }),
+  [MODAL_CLOSE]: state => ({ ...state, open: false }),
   [CLEAR]: () => ({ ...initialState })
 });
 
