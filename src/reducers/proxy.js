@@ -41,9 +41,9 @@ export const initiateLink = ({ cold, hot }) => dispatch => {
     .then(txHash => {
       dispatch({ type: INITIATE_LINK_SENT, payload: { txHash } });
       awaitTx(txHash, { confirmations: 1 })
-        .then(txReciept => {
+        .then(txReceipt => {
           dispatch({ type: INITIATE_LINK_SUCCESS });
-          console.log('mined', txReciept);
+          console.log('mined', txReceipt);
         })
         .catch(() => dispatch({ type: INITIATE_LINK_FAILURE }));
     })
@@ -57,9 +57,9 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
     .then(txHash => {
       dispatch({ type: APPROVE_LINK_SENT, payload: { txHash } });
       awaitTx(txHash, { confirmations: 1 })
-        .then(txReciept => {
+        .then(txReceipt => {
           dispatch({ type: APPROVE_LINK_SUCCESS });
-          console.log('mined', txReciept);
+          console.log('mined', txReceipt);
         })
         .catch(() => dispatch({ type: APPROVE_LINK_FAILURE }));
     })
@@ -73,9 +73,9 @@ export const sendMkrToProxy = value => (dispatch, getState) => {
     .then(txHash => {
       dispatch({ type: SEND_MKR_TO_PROXY_SENT, payload: { txHash } });
       awaitTx(txHash, { confirmations: 1 })
-        .then(txReciept => {
+        .then(txReceipt => {
           dispatch({ type: SEND_MKR_TO_PROXY_SUCCESS });
-          console.log('mined', txReciept);
+          console.log('mined', txReceipt);
         })
         .catch(() => dispatch({ type: SEND_MKR_TO_PROXY_FAILURE }));
     })
