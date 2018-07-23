@@ -75,7 +75,9 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
       <a onClick={() => modalOpen(Withdraw)}>Withdraw to wallet</a>
       <DotSpacer />
       In cold wallet <Value>{round(coldWallet.mkrBalance, 4)} MKR</Value>{' '}
-      <a onClick={() => modalOpen(Lock)}>Add to voting contract</a>
+      {account.proxyRole === 'cold' && (
+        <a onClick={() => modalOpen(Lock)}>Add to voting contract</a>
+      )}
       <DotSpacer />
       {firstLetterCapital(linkedAccount.proxyRole)} wallet address{' '}
       {cutMiddle(linkedAccount.address, 4)}{' '}
