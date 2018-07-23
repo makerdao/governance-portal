@@ -27,14 +27,16 @@ export async function setWeb3Network(network) {
  * @desc set a different web3 provider
  * @param {String} provider
  */
-const setWeb3Provider = provider => {
+export const setWeb3Provider = provider => {
   let providerObj = null;
-  if (provider.match(/(https?:\/\/)(\w+.)+/g)) {
+  if (typeof provider === 'string' && provider.match(/(https?:\/\/)(\w+.)+/g)) {
     providerObj = new Web3.providers.HttpProvider(provider);
+  } else if (typeof provider === 'object') {
+    providerObj = provider;
   }
   if (!providerObj) {
     throw new Error(
-      'function web3SetHttpProvider requires provider to match a valid HTTP/HTTPS endpoint'
+      'Provider must be a valid HTTP/HTTPS endpoint URL or a provider instance'
     );
   }
   if (!web3Instance) {
@@ -49,7 +51,7 @@ const setWeb3Provider = provider => {
  * @return {String}
  */
 export const getNetworkName = async () => {
-  const networkId = await web3Instance.eth.net.getId();
+  const networkId = await getWeb3Instance().eth.net.getId();
   const network = netIdToName(networkId);
   return network;
 };
@@ -93,7 +95,9 @@ export const getMkrAddress = async (_network = '') => {
  * @return {String}
  */
 export const getMethodSig = methodString =>
-  web3Instance.utils.sha3(methodString).substring(0, 10);
+  getWeb3Instance()
+    .utils.sha3(methodString)
+    .substring(0, 10);
 
 /**
  * @desc get address transaction count
@@ -101,7 +105,7 @@ export const getMethodSig = methodString =>
  * @return {Promise}
  */
 export const getTransactionCount = address =>
-  web3Instance.eth.getTransactionCount(address, 'pending');
+  getWeb3Instance().eth.getTransactionCount(address, 'pending');
 
 /**
  * @desc get Encodes a parameter based on its type to its ABI representation.
@@ -110,7 +114,7 @@ export const getTransactionCount = address =>
  * @return {Promise}
  */
 export const encodeParameter = (type, param) =>
-  web3Instance.eth.abi.encodeParameter(type, param);
+  getWeb3Instance().eth.abi.encodeParameter(type, param);
 
 /**
  * @async @desc get transaction details
@@ -126,20 +130,20 @@ export const getTxDetails = async ({
   gasLimit
 }) => {
   // getGasPrice gets median gas price of the last few blocks from some oracle
-  const _gasPrice = gasPrice || (await web3Instance.eth.getGasPrice());
+  const _gasPrice = gasPrice || (await getWeb3Instance().eth.getGasPrice());
   const estimateGasData = value === '0x00' ? { from, to, data } : { to, data };
   // this fails if web3 thinks that the transaction will fail
   const _gasLimit =
-    gasLimit || (await web3Instance.eth.estimateGas(estimateGasData));
+    gasLimit || (await getWeb3Instance().eth.estimateGas(estimateGasData));
   const nonce = await getTransactionCount(from);
   const tx = {
     from: from,
     to: to,
-    nonce: web3Instance.utils.toHex(nonce),
-    gasPrice: web3Instance.utils.toHex(_gasPrice),
-    gasLimit: web3Instance.utils.toHex(_gasLimit),
-    gas: web3Instance.utils.toHex(_gasLimit),
-    value: web3Instance.utils.toHex(value),
+    nonce: getWeb3Instance().utils.toHex(nonce),
+    gasPrice: getWeb3Instance().utils.toHex(_gasPrice),
+    gasLimit: getWeb3Instance().utils.toHex(_gasLimit),
+    gas: getWeb3Instance().utils.toHex(_gasLimit),
+    value: getWeb3Instance().utils.toHex(value),
     data: data
   };
   return tx;
@@ -153,8 +157,8 @@ export const getTxDetails = async ({
 export const sendSignedTx = signedTx =>
   new Promise((resolve, reject) => {
     const serializedTx = typeof signedTx === 'string' ? signedTx : signedTx.raw;
-    web3Instance.eth
-      .sendSignedTransaction(serializedTx)
+    getWeb3Instance()
+      .eth.sendSignedTransaction(serializedTx)
       .once('transactionHash', txHash => resolve(txHash))
       .catch(error => reject(error));
   });
@@ -169,7 +173,7 @@ export const awaitTx = (txnHash, { confirmations = 3 }) => {
   const INTERVAL = 500;
   const transactionReceiptAsync = async function(txnHash, resolve, reject) {
     try {
-      const receipt = web3Instance.eth.getTransactionReceipt(txnHash);
+      const receipt = getWeb3Instance().eth.getTransactionReceipt(txnHash);
       if (!receipt) {
         setTimeout(
           () => transactionReceiptAsync(txnHash, resolve, reject),
@@ -185,11 +189,11 @@ export const awaitTx = (txnHash, { confirmations = 3 }) => {
         } else {
           try {
             const [txBlock, currentBlock] = await Promise.all([
-              web3Instance.eth.getBlock(resolvedReceipt.blockNumber),
-              web3Instance.eth.getBlock('latest')
+              getWeb3Instance().eth.getBlock(resolvedReceipt.blockNumber),
+              getWeb3Instance().eth.getBlock('latest')
             ]);
             if (currentBlock.number - txBlock.number >= confirmations) {
-              const txn = await web3Instance.eth.getTransaction(txnHash);
+              const txn = await getWeb3Instance().eth.getTransaction(txnHash);
               if (txn.blockNumber != null) resolve(resolvedReceipt);
               else
                 reject(

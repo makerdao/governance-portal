@@ -9621,6 +9621,10 @@ web3-eth@1.0.0-beta.34:
     web3-net "1.0.0-beta.34"
     web3-utils "1.0.0-beta.34"
 
+web3-fake-provider@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/web3-fake-provider/-/web3-fake-provider-0.1.0.tgz#25aaee7524864c54b26929b5db725d29257af832"
+
 web3-net@1.0.0-beta.34:
   version "1.0.0-beta.34"
   resolved "https://registry.yarnpkg.com/web3-net/-/web3-net-1.0.0-beta.34.tgz#427cea2f431881449c8e38d523290f173f9ff63d"
