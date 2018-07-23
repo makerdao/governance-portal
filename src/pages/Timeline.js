@@ -10,6 +10,7 @@ import VoteTally from '../components/VoteTally';
 import WithTally from '../components/hocs/WithTally';
 import Button from '../components/Button';
 import Card from '../components/Card';
+import Loader from '../components/Loader';
 import { toSlug } from '../utils/misc';
 import { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
@@ -71,7 +72,11 @@ const RootWrapper = styled.div`
   align-items: center;
 `;
 
-const Timeline = ({ modalOpen, topics, activeAccount, canVote, fetching }) => (
+const RootDetail = styled.p`
+  color: ${({ theme }) => theme.text.dim_grey};
+`;
+
+const Timeline = ({ modalOpen, topics, hatAddress, canVote, fetching }) => (
   <Fragment>
     <VoterStatus />
     <StyledCard>
@@ -84,20 +89,27 @@ const Timeline = ({ modalOpen, topics, activeAccount, canVote, fetching }) => (
             <a>What is the Root Proposal?</a>
           </div>
         </div>
-        <Button
-          disabled={!canVote}
-          loading={fetching}
-          onClick={() =>
-            modalOpen(Vote, {
-              proposal: {
-                address: 0,
-                title: 'Root Proposal'
-              }
-            })
-          }
-        >
-          Vote for this Proposal
-        </Button>
+        <div>
+          <WithTally candidate={hatAddress}>
+            {({ loadingPercentage, percentage }) => (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
+                <RootDetail>PERCENT OF VOTES</RootDetail>
+                <div style={{ marginLeft: '8px' }}>
+                  {loadingPercentage ? (
+                    <Loader size={20} color="light_grey" background="white" />
+                  ) : (
+                    <p>{percentage}%</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </WithTally>
+        </div>
       </RootWrapper>
     </StyledCard>
     {topics.map(topic => (
@@ -155,13 +167,13 @@ const Timeline = ({ modalOpen, topics, activeAccount, canVote, fetching }) => (
   </Fragment>
 );
 
-const reduxProps = ({ topics, accounts }) => {
+const reduxProps = ({ topics, accounts, hat }) => {
   const activeAccount = getActiveAccount({ accounts });
   return {
     topics,
     fetching: accounts.fetching,
-    activeAccount,
-    canVote: activeAccount && activeAccount.hasProxy
+    canVote: activeAccount && activeAccount.hasProxy,
+    hatAddress: hat.hatAddress
   };
 };
 

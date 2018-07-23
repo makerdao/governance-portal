@@ -1,5 +1,6 @@
 import { createReducer } from '../utils/redux';
 import { getHat } from '../chain/read';
+import { paddedBytes32ToAddress } from '../utils/ethereum';
 
 // Constants ----------------------------------------------
 
@@ -12,7 +13,8 @@ const HAT_FAILURE = 'hat/HAT_FAILURE';
 export const hatInit = () => dispatch => {
   dispatch({ type: HAT_REQUEST });
   getHat()
-    .then(address => {
+    .then(bytes32 => {
+      const address = paddedBytes32ToAddress(bytes32);
       dispatch({ type: HAT_SUCCESS, payload: { address } });
     })
     .catch(() => {

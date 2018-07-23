@@ -114,6 +114,13 @@ const theme = {
       xlarge: '24px',
       h1: '42px',
       h2: '32px'
+    },
+    weight: {
+      thin: 300,
+      normal: 400,
+      medium: 500,
+      semibold: 600,
+      bold: 700
     }
   }
 };
