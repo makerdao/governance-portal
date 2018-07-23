@@ -18,7 +18,7 @@ const Column = styled.div`
   justify-content: ${({ center }) => (center ? 'center' : 'flex-start')};
 `;
 
-const StyledLightbox = styled.div`
+const LightBox = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -32,7 +32,7 @@ const StyledLightbox = styled.div`
   background: rgba(${colors.dark}, 0.2);
 `;
 
-const StyledHitbox = styled.div`
+const Hitbox = styled.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -69,23 +69,23 @@ const CloseButton = styled(props => <div {...props}>&times;</div>)`
 
 const Modal = props => {
   const body = document.body || document.getElementsByTagName('body')[0];
-  const { modal: ModalClass, modalClose, ...otherProps } = props;
-  body.style.overflow = ModalClass ? 'hidden' : 'auto';
+  const { modal: ModalClass, open, modalClose, ...otherProps } = props;
+  body.style.overflow = open ? 'hidden' : 'auto';
 
   return (
-    <StyledLightbox modal={!!ModalClass}>
-      <StyledHitbox onClick={modalClose} />
+    <LightBox modal={open}>
+      <Hitbox onClick={modalClose} />
       <Column maxWidth={600}>
         <ModalCard background="white">
           <CloseButton onClick={modalClose} />
-          {typeof ModalClass === 'function' && <ModalClass {...otherProps} />}
+          <ModalClass {...otherProps} />
         </ModalCard>
       </Column>
-    </StyledLightbox>
+    </LightBox>
   );
 };
 
 export default connect(
-  state => ({ modal: state.modal.modal, modalProps: state.modal.modalProps }),
+  state => ({ ...state.modal }),
   { modalClose }
 )(Modal);
