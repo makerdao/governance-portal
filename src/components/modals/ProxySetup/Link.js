@@ -90,7 +90,9 @@ class Link extends Component {
         </Note>
         <EndButton
           disabled={
-            this.props.activeAccount.toLowerCase() !== this.setState.cold
+            !this.state.cold ||
+            this.props.activeAccount.address.toLowerCase() !==
+              this.state.cold.address.toLowerCase()
           }
           slim
           onClick={() =>
