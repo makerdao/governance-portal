@@ -65,7 +65,7 @@ const Selection = styled.div`
 
 export const Input = styled.input`
   border: none;
-  color: ${theme.text.dim_grey_2};
+  color: ${theme.text.dim_grey_alt};
   font-size: 16px;
   display: block;
   flex-grow: 1;

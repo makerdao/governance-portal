@@ -103,7 +103,7 @@ const theme = {
     green: '#30bd9f',
     dim_green: '#ACDAD0',
     dim_grey: '#848484',
-    dim_grey_2: '#868997',
+    dim_grey_alt: '#868997',
     alt: '#546978'
   },
   fonts: {

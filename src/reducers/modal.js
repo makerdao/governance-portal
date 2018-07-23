@@ -8,14 +8,19 @@ const CLEAR = 'modal/CLEAR';
 
 // Actions ------------------------------------------------
 
-export const modalOpen = (modal, props = {}) => ({
-  type: MODAL_OPEN,
-  payload: { modal, props }
-});
+let timeout;
+
+export const modalOpen = (modal, props = {}) => {
+  clearTimeout(timeout);
+  return {
+    type: MODAL_OPEN,
+    payload: { modal, props }
+  };
+};
 
 export const modalClose = () => dispatch => {
   dispatch({ type: MODAL_CLOSE });
-  setTimeout(() => dispatch({ type: CLEAR }), 1000);
+  timeout = setTimeout(() => dispatch({ type: CLEAR }), 1000);
 };
 
 // Reducer ------------------------------------------------

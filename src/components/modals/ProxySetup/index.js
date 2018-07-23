@@ -72,6 +72,7 @@ class ProxySetup extends Component {
               txHash={this.props.initiateLinkTxHash}
               nextStep={this.nextStep}
               network={this.props.network}
+              confirming={this.props.confirming}
             />
           </Fragment>
         );
@@ -121,6 +122,7 @@ class ProxySetup extends Component {
               txHash={this.props.approveLinkTxHash}
               nextStep={this.nextStep}
               network={this.props.network}
+              confirming={this.props.confirming}
             />
           </Fragment>
         );
@@ -172,6 +174,7 @@ class ProxySetup extends Component {
               txHash={this.props.sendMkrTxHash}
               nextStep={this.nextStep}
               network={this.props.network}
+              confirming={this.props.confirming}
             />
           </Fragment>
         );
@@ -230,7 +233,7 @@ ProxySetup.defaultProps = {
   sendMkrToProxyTxHash: ''
 };
 
-const stateProps = ({ modal, metamask, vote, accounts, proxy }) => ({
+const stateProps = ({ modal, metamask, accounts, proxy }) => ({
   modal: modal.modal,
   modalProps: modal.modalProps,
   account: metamask.accountAddress,
@@ -240,8 +243,11 @@ const stateProps = ({ modal, metamask, vote, accounts, proxy }) => ({
   initiateLinkTxHash: proxy.initiateLinkTxHash,
   sendMkrTxHash: proxy.sendMkrTxHash,
   approveLinkTxHash: proxy.approveLinkTxHash,
-  hotAddress: proxy.hotAddress,
-  voteTxHash: vote.txHash
+  confirming:
+    proxy.confirmingInitiate ||
+    proxy.confirmingApprove ||
+    proxy.confirmingSendMkr,
+  hotAddress: proxy.hotAddress
 });
 
 const dispatchProps = {

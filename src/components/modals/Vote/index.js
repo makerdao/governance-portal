@@ -63,6 +63,7 @@ class Vote extends Component {
             nextStep={() => window.location.reload()}
             network={this.props.network}
             lastCard={true}
+            confirming={this.props.confirming}
           />
         );
       default:
@@ -85,6 +86,7 @@ export default connect(
   state => ({
     activeAccount: getActiveAccount(state),
     voteTxHash: state.vote.txHash,
+    confirming: state.vote.confirming,
     network: state.metamask.network === 'kovan' ? 'kovan' : 'mainnet'
   }),
   { modalClose, sendVote }

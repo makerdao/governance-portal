@@ -12,7 +12,7 @@ export const StyledTitle = styled.div`
 export const StyledBlurb = styled.p`
   line-height: 22px;
   font-size: 17px;
-  color: ${theme.text.dim_grey_2};
+  color: ${theme.text.dim_grey_alt};
   margin: 22px 0px 16px 0px;
 `;
 
@@ -37,7 +37,7 @@ export const StyledAnchor = styled.a`
   color: ${({ blue }) => (blue ? '#3080ed' : '#212536')};
   margin-bottom: -3px;
   border-bottom: 1px dashed
-    ${({ blue }) => (blue ? '#2F80ED' : theme.text.dim_grey_2)};
+    ${({ blue }) => (blue ? '#2F80ED' : theme.text.dim_grey_alt)};
 `;
 
 export const CircledNum = styled.div`
@@ -82,13 +82,13 @@ export const GuideTitle = styled.p`
 
 export const GuideInfo = styled.p`
   font-size: 15px;
-  color: ${theme.text.dim_grey_2};
+  color: ${theme.text.dim_grey_alt};
 `;
 
 export const SetupLater = styled.p`
   font-size: 16px;
   text-align: center;
-  color: ${theme.text.dim_grey_2};
+  color: ${theme.text.dim_grey_alt};
   cursor: pointer;
   margin-top: 18px;
 `;
@@ -110,7 +110,7 @@ export const InfoBoxSection = styled.div`
 export const InfoBoxHeading = styled.div`
   line-height: 26px;
   font-size: 14px;
-  color: ${theme.text.dim_grey_2};
+  color: ${theme.text.dim_grey_alt};
 `;
 
 export const ProgressTabsWrapper = styled.div`
@@ -147,7 +147,7 @@ export const TxHash = styled.a`
 export const StyledInput = styled.input`
   border: 1px solid #d1d8da;
   height: 40px;
-  color: ${theme.text.dim_grey_2};
+  color: ${theme.text.dim_grey_alt};
   padding: 10px;
   font-size: 16px;
   border-radius: 4px;
@@ -170,7 +170,7 @@ export const InputLabels = styled.div`
 `;
 
 export const ValueLabel = styled.span`
-  color: ${theme.text.dim_grey_2};
+  color: ${theme.text.dim_grey_alt};
 `;
 
 export const EndButton = styled(Button)`

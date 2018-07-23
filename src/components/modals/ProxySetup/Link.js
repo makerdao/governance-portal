@@ -85,9 +85,13 @@ class Link extends Component {
         />
         <Note>This wallet will be able to vote with your MKR.</Note>
         <Note>
-          (the first tx will be w/ your cold wallet, please have it active)
+          (the first tx will be w/ your cold wallet,{' '}
+          <strong style={{ fontWeight: 'bold' }}>please have it active</strong>)
         </Note>
         <EndButton
+          disabled={
+            this.props.activeAccount.toLowerCase() !== this.setState.cold
+          }
           slim
           onClick={() =>
             this.props.initiateLink({

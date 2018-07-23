@@ -1,7 +1,7 @@
 {
   "kovan": {
     "chief": "0xbbffc76e94b34f72d96d054b31f6424249c1337d",
-    "proxy_factory": "0xa18898d3f8ad94456a7619f2a838197af5cd801e",
+    "proxy_factory": "0xbd0b7062396cd303a3cb00096dc1cf301e0e4be1",
     "mkr": "0xAaF64BFCC32d0F15873a02163e7E500671a4ffcD"
   },
   "mainnet": {

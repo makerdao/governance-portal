@@ -34,7 +34,7 @@ const Lock = ({ balance }) => {
 };
 
 const mapStateToProps = state => ({
-  balance: getActiveAccount(state).coldWallet.balance
+  balance: getActiveAccount(state).mkrBalance
 });
 
 export default connect(mapStateToProps)(Lock);

@@ -1,10 +1,11 @@
 import React, { Fragment } from 'react';
+
 import { ethScanLink } from '../../../utils/ethereum';
-
-import { StyledTitle, StyledTop, TxHash, Note } from './styles';
+import { StyledTitle, StyledTop, TxHash } from './styles';
 import Button from '../../Button';
+import Loader from '../../Loader';
 
-const Transaction = ({ txHash, nextStep, network, lastCard }) => (
+const Transaction = ({ txHash, nextStep, network, confirming, lastCard }) => (
   <Fragment>
     <StyledTop>
       <StyledTitle>Transaction Hash</StyledTitle>
@@ -12,14 +13,18 @@ const Transaction = ({ txHash, nextStep, network, lastCard }) => (
     <TxHash href={ethScanLink(txHash, network)} target="_blank">
       {txHash}
     </TxHash>
-    <Note>Please wait for the tx to mine before continuing</Note>
+    {confirming ? (
+      <Loader size={20} color="header" background="white" />
+    ) : (
+      <div />
+    )}
     <div
       style={{
         alignSelf: 'center',
         marginTop: '18px'
       }}
     >
-      <Button slim onClick={nextStep}>
+      <Button slim disabled={confirming} onClick={nextStep}>
         {lastCard ? 'Finish and close' : 'Continue'}
       </Button>
     </div>

@@ -24,7 +24,7 @@ const Withdraw = ({ balance }) => {
       <InputLabels>
         <div>Enter MKR amount</div>
         <div>
-          <ValueLabel>MKR balance</ValueLabel> {balance} MKR
+          <ValueLabel>MKR in voting system</ValueLabel> {balance} MKR
         </div>
       </InputLabels>
       <StyledInput type="text" />

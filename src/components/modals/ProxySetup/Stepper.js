@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {
-  CircledNum,
   ProgressTabsWrapper,
   TabsTitle,
   TabsTitleWrapper
