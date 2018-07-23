@@ -38,7 +38,8 @@ class Vote extends Component {
               please confirm vote below. Vote can be withdrawn at anytime
             </StyledBlurb>
             <StyledBlurb>
-              Your voting power: {this.props.activeAccount.proxy.balance} MKR
+              Your voting power: {this.props.activeAccount.proxy.votingPower}{' '}
+              MKR
             </StyledBlurb>
             <div
               style={{

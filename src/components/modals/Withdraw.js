@@ -34,8 +34,7 @@ const Withdraw = ({ balance }) => {
 };
 
 const mapStateToProps = state => ({
-  // TODO this should include the balance in ds-chief too, I think
-  balance: getActiveAccount(state).proxy.mkrBalance
+  balance: getActiveAccount(state).proxy.votingPower
 });
 
 export default connect(mapStateToProps)(Withdraw);

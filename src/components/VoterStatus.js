@@ -70,14 +70,14 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
   const coldWallet = account.proxyRole === 'cold' ? account : linkedAccount;
   return (
     <SmallText>
-      In voting contract <Value>{account.proxy.mkrBalance} MKR</Value>{' '}
+      In voting contract <Value>{account.proxy.votingPower} MKR</Value>{' '}
       <a onClick={() => modalOpen(Withdraw)}>Withdraw to wallet</a>
       <DotSpacer />
       In cold wallet <Value>{coldWallet.mkrBalance} MKR</Value>{' '}
       <a onClick={() => modalOpen(Lock)}>Add to voting contract</a>
       <DotSpacer />
       {firstLetterCapital(linkedAccount.proxyRole)} wallet address{' '}
-      {cutMiddle(linkedAccount.address)}{' '}
+      {cutMiddle(linkedAccount.address, 4)}{' '}
       <a
         target="_blank"
         href={ethScanLink(linkedAccount.address, networkShown)}

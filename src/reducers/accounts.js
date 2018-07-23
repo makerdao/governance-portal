@@ -4,7 +4,12 @@ import pipe from 'ramda/src/pipe';
 import differenceWith from 'ramda/src/differenceWith';
 
 import { createReducer } from '../utils/redux';
-import { getMkrBalance, getProxyStatus, getLinkedAddress } from '../chain/read';
+import {
+  getMkrBalance,
+  getProxyStatus,
+  getLinkedAddress,
+  getVotingPower
+} from '../chain/read';
 import { AccountTypes } from '../utils/constants';
 
 // Constants ----------------------------------------------
@@ -43,7 +48,7 @@ export const addAccounts = accounts => async dispatch => {
       proxyRole,
       proxy: {
         address: proxyAddress,
-        // voting power = balance + mkr proxy has locked into chief
+        votingPower: hasProxy ? await getVotingPower(proxyAddress) : 0,
         mkrBalance: hasProxy ? await getMkrBalance(proxyAddress) : 0
       }
     };
@@ -102,13 +107,7 @@ const uniqConcat = pipe(
 );
 const addressCmp = (x, y) => x.address === y.address;
 
-// accounts look like { type: "METAMASK", address: "0x34a..." }
 const initialState = {
-  activeAccountHasProxy: false,
-  activeAccountProxyType: '',
-  activeAccountCurrentVote: '',
-  activeAccountVotableMkr: 0,
-  activeAccountUnlockedMkr: 0,
   activeAccount: '0xbeefed1bedded2dabbed3defaced4decade5dead', // just for dev
   allAccounts: [
     {

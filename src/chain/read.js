@@ -317,9 +317,7 @@ export const getLinkedAddress = async (proxyAddress, role) => {
  * @param {String} address user address
  * @return {String} votingPower
  */
-export const getVotingPower = async address => {
-  const { address: proxyAddress, hasProxy } = await getProxyStatus(address);
-  if (!hasProxy) return '0';
+export const getVotingPower = async proxyAddress => {
   const proxyMkr = await getMkrBalance(proxyAddress);
   const proxyDeposits = await getNumDeposits(proxyAddress);
   const votingPower = add(proxyMkr, proxyDeposits);
