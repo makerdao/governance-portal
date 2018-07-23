@@ -1,6 +1,6 @@
 import { createReducer } from '../utils/redux';
-import { getMetamaskNetworkName, web3SetHttpProvider } from '../chain/web3';
-import { updateAccount, addAccount, setActiveAccount } from './accounts';
+import { getMetamaskNetworkName, setWeb3Network } from '../chain/web3';
+import { addAccount, setActiveAccount } from './accounts';
 import { voteTallyInit } from './tally';
 import { topicsInit } from './topics';
 import { hatInit } from './hat';
@@ -16,82 +16,56 @@ const NOT_AVAILABLE = 'metamask/NOT_AVAILABLE';
 
 // Actions ------------------------------------------------
 
-export const updateMetamaskAccount = () => async (dispatch, getState) => {
-  const oldAddress = getState().metamask.accountAddress;
-  if (
-    window.web3.eth.defaultAccount !== undefined &&
-    window.web3.eth.defaultAccount !== oldAddress
-  ) {
-    const newAddress = window.web3.eth.defaultAccount;
-    dispatch({
-      type: UPDATE_ACCOUNT,
-      payload: { address: newAddress }
-    });
-    if (oldAddress === newAddress)
-      dispatch(updateAccount({ address: newAddress, type: 'METAMASK' }));
-    else {
-      await dispatch(addAccount({ address: newAddress, type: 'METAMASK' }));
-      // default to our metamask account
-    }
-    dispatch(setActiveAccount(newAddress));
+const pollForMetamaskChanges = () => async (dispatch, getState) => {
+  const {
+    metamask: { network, accountAddress }
+  } = getState();
+  const newNetwork = await getMetamaskNetworkName();
+  // all the data in the store could be wrong now. later on we could clear out
+  // any network-specific data from the store carefully, but for now the
+  // simplest thing is to start over from scratch.
+  if (newNetwork !== network) return window.reload();
+
+  const address = window.web3.eth.defaultAccount;
+  if (address !== undefined && address !== accountAddress) {
+    dispatch({ type: UPDATE_ACCOUNT, payload: address });
+    await dispatch(addAccount({ address, type: 'METAMASK' }));
+    dispatch(setActiveAccount(address));
   }
-  setTimeout(() => dispatch(updateMetamaskAccount()), 1000);
+  setTimeout(() => dispatch(pollForMetamaskChanges()), 2000);
 };
 
-export const updateMetamaskNetwork = () => (dispatch, getState) => {
-  getMetamaskNetworkName()
-    .then(network => {
-      if (network !== getState().metamask.network) {
-        if (network === 'kovan')
-          web3SetHttpProvider(`https://${network}.infura.io/`);
-        else web3SetHttpProvider(`https://mainnet.infura.io/`);
-        dispatch({ type: UPDATE_NETWORK, payload: { network } });
-      }
-      setTimeout(() => dispatch(updateMetamaskNetwork()), 2500);
-    })
-    .catch(error => {
+export const metamaskConnectInit = () => async dispatch => {
+  dispatch({ type: CONNECT_REQUEST });
+
+  // we default to mainnet so that if Metamask is unavailable, the user can at
+  // least read the list of proposals
+  let network = 'mainnet';
+  let networkIsSet = false;
+
+  if (typeof window.web3 !== 'undefined') {
+    try {
+      network = await getMetamaskNetworkName();
+      dispatch({ type: CONNECT_SUCCESS, payload: { network } });
+      setWeb3Network(network);
+      networkIsSet = true;
+
+      // don't await this, so that account lookup and voting data can occur in
+      // parallel
+      dispatch(pollForMetamaskChanges());
+    } catch (error) {
+      // TODO: notify user or throw to a fallback component
       console.error(error);
       dispatch({ type: CONNECT_FAILURE });
-    });
-};
-
-export const metamaskConnectInit = () => dispatch => {
-  dispatch({ type: CONNECT_REQUEST });
-  if (typeof window.web3 !== 'undefined') {
-    getMetamaskNetworkName()
-      .then(network => {
-        dispatch({ type: CONNECT_SUCCESS, payload: { network } });
-        if (network === 'kovan')
-          web3SetHttpProvider(`https://${network}.infura.io/`);
-        else web3SetHttpProvider(`https://mainnet.infura.io/`);
-        dispatch(updateMetamaskAccount());
-        dispatch(updateMetamaskNetwork());
-
-        // we're dispatching our state fetches here instead of in our init component because
-        // we choose what network to fetch from based on metamask, but maybe there's a better way...
-        dispatch(voteTallyInit());
-        dispatch(topicsInit(network));
-        dispatch(hatInit());
-      })
-      .catch(error => {
-        // TODO: notify user or throw to a fallback component
-        console.error(error);
-        dispatch({ type: CONNECT_FAILURE });
-
-        // we try to fetch mainnet state if we failed to connect to MetaMask
-        web3SetHttpProvider(`https://mainnet.infura.io/`);
-        dispatch(voteTallyInit());
-        dispatch(topicsInit('mainnet'));
-        dispatch(hatInit());
-      });
+    }
   } else {
     dispatch({ type: NOT_AVAILABLE });
-    // we also fetch mainnet state if MetaMask is unavailable
-    web3SetHttpProvider(`https://mainnet.infura.io/`);
-    dispatch(voteTallyInit());
-    dispatch(topicsInit('mainnet'));
-    dispatch(hatInit());
   }
+
+  if (!networkIsSet) setWeb3Network(network);
+  dispatch(voteTallyInit());
+  dispatch(topicsInit(network));
+  dispatch(hatInit());
 };
 
 // Reducer ------------------------------------------------
@@ -124,13 +98,13 @@ const metamask = createReducer(initialState, {
     ...initialState,
     fetching: false
   }),
-  [UPDATE_ACCOUNT]: (state, { payload }) => ({
+  [UPDATE_ACCOUNT]: (state, { payload: address }) => ({
     ...state,
-    accountAddress: payload.address
+    accountAddress: address
   }),
-  [UPDATE_NETWORK]: (state, { payload }) => ({
+  [UPDATE_NETWORK]: (state, { payload: network }) => ({
     ...state,
-    network: payload.network
+    network
   })
 });
 

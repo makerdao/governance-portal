@@ -3,16 +3,31 @@ import Web3 from 'web3';
 import { netIdToName } from '../utils/ethereum';
 import addresses from './addresses.json';
 
-export const web3Instance = new Web3(
-  new Web3.providers.HttpProvider(`https://mainnet.infura.io/`)
-);
-// mainnet
+let web3Instance;
+
+export function getWeb3Instance() {
+  if (!web3Instance) {
+    throw new Error(
+      'web3Instance was not initialized by calling setWeb3Network yet.'
+    );
+  }
+  return web3Instance;
+}
+
+// for all testnets except kovan, use mainnet instead
+export async function setWeb3Network(network) {
+  if (network === 'kovan') {
+    setWeb3Provider(`https://${network}.infura.io/`);
+  } else {
+    setWeb3Provider('https://mainnet.infura.io/');
+  }
+}
 
 /**
  * @desc set a different web3 provider
  * @param {String} provider
  */
-export const web3SetHttpProvider = provider => {
+const setWeb3Provider = provider => {
   let providerObj = null;
   if (provider.match(/(https?:\/\/)(\w+.)+/g)) {
     providerObj = new Web3.providers.HttpProvider(provider);
@@ -22,7 +37,11 @@ export const web3SetHttpProvider = provider => {
       'function web3SetHttpProvider requires provider to match a valid HTTP/HTTPS endpoint'
     );
   }
-  return web3Instance.setProvider(providerObj);
+  if (!web3Instance) {
+    web3Instance = new Web3(providerObj);
+  } else {
+    web3Instance.setProvider(providerObj);
+  }
 };
 
 /**
@@ -209,19 +228,13 @@ export const awaitTx = (txnHash, { confirmations = 3 }) => {
  * @return {Promise}
  */
 export const getMetamaskNetworkName = () => {
-  if (typeof window.web3 !== 'undefined') {
-    return new Promise((resolve, reject) => {
-      window.web3.version.getNetwork((err, networkID) => {
-        if (err) {
-          reject(err);
-        }
-        const networkName = netIdToName(networkID);
-        resolve(networkName);
-      });
-      setTimeout(
-        () => reject('Taking too long to get metamask network name'),
-        20000
-      );
-    });
-  }
+  return new Promise((resolve, reject) => {
+    window.web3.version.getNetwork(
+      (err, id) => (err ? reject(err) : resolve(netIdToName(id)))
+    );
+    setTimeout(
+      () => reject('Taking too long to get metamask network name'),
+      20000
+    );
+  });
 };

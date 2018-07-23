@@ -13,7 +13,7 @@ import {
   getChief,
   getProxyFactory,
   getNetworkName,
-  web3Instance,
+  getWeb3Instance,
   getMkrAddress
 } from './web3';
 import {
@@ -38,7 +38,7 @@ export const getApprovalCount = async address => {
     method: methodSig,
     args: [removeHexPrefix(address)]
   });
-  const approvalsHex = await web3Instance.eth.call({
+  const approvalsHex = await getWeb3Instance().eth.call({
     to: chief,
     data: callData
   });
@@ -58,7 +58,7 @@ export const getVotedSlate = async address => {
     method: methodSig,
     args: [removeHexPrefix(address)]
   });
-  const slateHex = await web3Instance.eth.call({
+  const slateHex = await getWeb3Instance().eth.call({
     to: chief,
     data: callData
   });
@@ -77,7 +77,7 @@ export const getNumDeposits = async address => {
     method: methodSig,
     args: [removeHexPrefix(address)]
   });
-  const depositsHexWei = await web3Instance.eth.call({
+  const depositsHexWei = await getWeb3Instance().eth.call({
     to: chief,
     data: callData
   });
@@ -106,7 +106,7 @@ export const getSlateAddresses = async slateHex => {
       method: methodSig,
       args: [removeHexPrefix(slateHex), i.toString()]
     });
-    const slateElement = await web3Instance.eth.call({
+    const slateElement = await getWeb3Instance().eth.call({
       to: chief,
       data: callData
     });
@@ -129,7 +129,7 @@ export const getHat = async () => {
     method: methodSig,
     args: []
   });
-  const hat = await web3Instance.eth.call({
+  const hat = await getWeb3Instance().eth.call({
     to: chief,
     data: callData
   });
@@ -143,7 +143,7 @@ export const getHat = async () => {
 export const getEtchedSlates = async () => {
   const network = await getNetworkName();
   const chief = await getChief(network);
-  const etches = await web3Instance.eth.getPastLogs({
+  const etches = await getWeb3Instance().eth.getPastLogs({
     fromBlock: chiefInfo.inception_block[network],
     toBlock: 'latest',
     address: chief,
@@ -160,7 +160,10 @@ const getProxyAddressFrom = hotOrCold => async address => {
     method: methodSig,
     args: [removeHexPrefix(address)]
   });
-  const value = await web3Instance.eth.call({ to: factory, data: callData });
+  const value = await getWeb3Instance().eth.call({
+    to: factory,
+    data: callData
+  });
   return paddedBytes32ToAddress(value);
 };
 
@@ -205,7 +208,7 @@ export const getProxyStatus = async address => {
 export const getLockLogs = async () => {
   const network = await getNetworkName();
   const chief = await getChief(network);
-  const locks = await web3Instance.eth.getPastLogs({
+  const locks = await getWeb3Instance().eth.getPastLogs({
     fromBlock: chiefInfo.inception_block[network],
     toBlock: 'latest',
     address: chief,
@@ -297,7 +300,7 @@ export const getMkrBalance = async address => {
     method: methodSig,
     args: [removeHexPrefix(address)]
   });
-  const hexBalance = await web3Instance.eth.call({
+  const hexBalance = await getWeb3Instance().eth.call({
     to: mkr,
     data: callData
   });
@@ -308,7 +311,7 @@ export const getMkrBalance = async address => {
 export const getLinkedAddress = async (proxyAddress, role) => {
   const method = getMethodSig(role === 'hot' ? 'hot()' : 'cold()');
   const data = generateCallData({ method, args: [] });
-  const value = await web3Instance.eth.call({ to: proxyAddress, data });
+  const value = await getWeb3Instance().eth.call({ to: proxyAddress, data });
   return paddedBytes32ToAddress(value);
 };
 

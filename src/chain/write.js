@@ -91,6 +91,9 @@ export const approveLink = async ({ hotAccount, coldAddress }) => {
  * @return {Promise} tx
  */
 export const sendMkrToProxy = async ({ account, value }) => {
+  // FIXME probably don't need to slow down the process with this extra check;
+  // just make sure the action can never be performed until we know we have a
+  // proxy to send to.
   const { address: proxyAddress, hasProxy } = await getProxyStatus(
     account.address
   );
