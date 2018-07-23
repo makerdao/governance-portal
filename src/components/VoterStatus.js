@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import round from 'lodash.round';
 
 import { modalOpen } from '../reducers/modal';
 import { getActiveAccount } from '../reducers/accounts';
@@ -73,7 +74,7 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
       In voting contract <Value>{account.proxy.votingPower} MKR</Value>{' '}
       <a onClick={() => modalOpen(Withdraw)}>Withdraw to wallet</a>
       <DotSpacer />
-      In cold wallet <Value>{coldWallet.mkrBalance} MKR</Value>{' '}
+      In cold wallet <Value>{round(coldWallet.mkrBalance, 4)} MKR</Value>{' '}
       <a onClick={() => modalOpen(Lock)}>Add to voting contract</a>
       <DotSpacer />
       {firstLetterCapital(linkedAccount.proxyRole)} wallet address{' '}
