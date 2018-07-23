@@ -8,7 +8,7 @@ import Loader from '../../Loader';
 const Transaction = ({ txHash, nextStep, network, confirming, lastCard }) => (
   <Fragment>
     <StyledTop>
-      <StyledTitle>Transaction Hash</StyledTitle>
+      <StyledTitle>Waiting for transaction...</StyledTitle>
     </StyledTop>
     <TxHash href={ethScanLink(txHash, network)} target="_blank">
       {txHash}
