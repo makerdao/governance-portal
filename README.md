@@ -6,6 +6,8 @@ Maker Governance Dashboard
 The Primary Interface for Dai Credit System Governance
 </h3>
 
+Live demo version: https://dai-gov.now.sh/
+
 ### Getting started
 
 Install project dependencies
