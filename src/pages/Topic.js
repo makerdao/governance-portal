@@ -11,6 +11,8 @@ import Button from '../components/Button';
 import Card from '../components/Card';
 import VoteTally from '../components/VoteTally';
 import WithTally from '../components/hocs/WithTally';
+import Vote from '../components/modals/Vote';
+import { modalOpen } from '../reducers/modal';
 import { getActiveAccount } from '../reducers/accounts';
 import { toSlug } from '../utils/misc';
 import { colors, fonts } from '../theme';
@@ -92,7 +94,7 @@ const Body = styled.p`
 
 // TODO Styled body & body are confusingly similar
 
-const Topic = ({ match, topics, fetching, activeAccount }) => {
+const Topic = ({ match, topics, fetching, activeAccount, modalOpen }) => {
   // fetching
   const topicSlug = match.params.topicSlug;
   const topic = find(({ topic }) => toSlug(topic) === topicSlug, topics);
@@ -145,6 +147,14 @@ const Topic = ({ match, topics, fetching, activeAccount }) => {
               <Button
                 disabled={!activeAccount || !activeAccount.hasProxy}
                 loading={fetching}
+                onClick={() =>
+                  modalOpen(Vote, {
+                    proposal: {
+                      address: proposal.source,
+                      title: proposal.title
+                    }
+                  })
+                }
               >
                 Vote for this Proposal
               </Button>
@@ -174,5 +184,5 @@ const reduxProps = ({ topics, accounts }) => ({
 
 export default connect(
   reduxProps,
-  {}
+  { modalOpen }
 )(Topic);

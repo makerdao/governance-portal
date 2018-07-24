@@ -8,7 +8,9 @@ import {
   getMkrBalance,
   getProxyStatus,
   getLinkedAddress,
-  getVotingPower
+  getVotingPower,
+  getVotedSlate,
+  getSlateAddresses
 } from '../chain/read';
 import { AccountTypes } from '../utils/constants';
 import { add, subtract } from '../utils/misc';
@@ -46,11 +48,21 @@ export const addAccounts = accounts => async dispatch => {
       type: proxyRole,
       address: proxyAddress
     } = await getProxyStatus(account.address);
+    let currProposal = Promise.resolve('');
+    if (hasProxy) {
+      currProposal = currProposal
+        .then(() => getVotedSlate(proxyAddress))
+        .then(slate => getSlateAddresses(slate))
+        // NOTE for now we just take the first address in the slate since we're assuming that they're only voting for one
+        // in the frontend. This should be changed if that changes
+        .then(addresses => addresses[0]);
+    }
     const payload = {
       ...account,
       mkrBalance: await getMkrBalance(account.address),
       hasProxy,
       proxyRole,
+      votingFor: await currProposal,
       proxy: {
         address: proxyAddress,
         votingPower: hasProxy ? await getVotingPower(proxyAddress) : 0

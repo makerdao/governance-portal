@@ -29,6 +29,9 @@ class Vote extends Component {
   // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, reject transaction, why did this tx fail
   render() {
     const { proposal } = this.props.modalProps;
+    const { proxy, votingFor } = this.props.activeAccount;
+    const alreadyVotingFor =
+      votingFor.toLowerCase() === proposal.address.toLowerCase();
     switch (this.state.step) {
       case 1:
         return (
@@ -42,9 +45,15 @@ class Vote extends Component {
               please confirm vote below. Vote can be withdrawn at anytime
             </StyledBlurb>
             <StyledBlurb>
-              Your voting power: {this.props.activeAccount.proxy.votingPower}{' '}
-              MKR
+              Your voting power: {proxy.votingPower} MKR
             </StyledBlurb>
+            {alreadyVotingFor ? (
+              <StyledBlurb>
+                You're already voting for this proposal!
+              </StyledBlurb>
+            ) : (
+              <div />
+            )}
             <div
               style={{
                 margin: 'auto',
@@ -53,6 +62,7 @@ class Vote extends Component {
             >
               <Button
                 slim
+                disabled={alreadyVotingFor}
                 onClick={() => this.props.sendVote(proposal.address)}
               >
                 Confirm

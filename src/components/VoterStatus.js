@@ -8,6 +8,7 @@ import { modalOpen } from '../reducers/modal';
 import { getActiveAccount } from '../reducers/accounts';
 import theme, { colors, fonts } from '../theme';
 import DotSpacer from './DotSpacer';
+import WithVote from './hocs/WithVote';
 import {
   Banner,
   BannerHeader,
@@ -33,6 +34,11 @@ const SmallText = styled.p`
 
 const Value = styled.span`
   color: rgb(${colors.black});
+`;
+
+const StyledLink = styled(Link)`
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+  color: ${({ disabled }) => (disabled ? 'black' : '')};
 `;
 
 const WelcomeBanner = ({ modalOpen }) => {
@@ -89,9 +95,13 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
       </a>
       <br />
       Currently voting for{' '}
-      <Link to="/foundation-proposal/vote-yes-to-the-five-core-principles-of-the-maker-governance-philosophy">
-        Vote YES to the five core principles of the Maker Governance philosophy
-      </Link>
+      <WithVote proposalAddress={account.votingFor}>
+        {({ proposalTitle, proposalSlug, noVote }) => (
+          <StyledLink disabled={noVote} to={proposalSlug}>
+            {proposalTitle}
+          </StyledLink>
+        )}
+      </WithVote>
     </SmallText>
   );
 };

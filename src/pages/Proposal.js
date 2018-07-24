@@ -222,7 +222,14 @@ class Proposal extends Component {
                 disabled={!activeAccount || !activeAccount.hasProxy}
                 loading={accountDataFetching}
                 wide={true}
-                onClick={() => modalOpen(Vote, { proposal })}
+                onClick={() =>
+                  modalOpen(Vote, {
+                    proposal: {
+                      address: proposal.source,
+                      title: proposal.title
+                    }
+                  })
+                }
               >
                 Vote for this Proposal
               </Button>
