@@ -4,3 +4,4 @@
 [submodule "gov-testchain/src/vote-proxy"]
 	path = gov-testchain/src/vote-proxy
 	url = https://github.com/makerdao/vote-proxy
+	branch = vote-proxy-factory

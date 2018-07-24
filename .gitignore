@@ -9,6 +9,11 @@
 # production
 /build
 
+# testchain
+**/ganache.out
+gov-testchain/addresses.json
+gov-testchain/node_modules
+
 # misc
 .DS_Store
 .env.local
