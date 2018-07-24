@@ -97,6 +97,11 @@ export const firstLetterCapital = string =>
  * @return {String}
  */
 export const add = (a, b) =>
-  BigNumber(`${a}`)
-    .plus(BigNumber(`${b}`))
+  BigNumber(a)
+    .plus(BigNumber(b))
+    .toString();
+
+export const subtract = (a, b) =>
+  BigNumber(a)
+    .minus(BigNumber(b))
     .toString();

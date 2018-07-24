@@ -89,11 +89,6 @@ class Link extends Component {
           <strong style={{ fontWeight: 'bold' }}>please have it active</strong>)
         </Note>
         <EndButton
-          disabled={
-            !this.state.cold ||
-            this.props.activeAccount.address.toLowerCase() !==
-              this.state.cold.address.toLowerCase()
-          }
           slim
           onClick={() =>
             this.props.initiateLink({

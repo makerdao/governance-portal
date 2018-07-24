@@ -158,3 +158,18 @@ export const voteAndLockViaProxy = async ({ account, proposalAddress }) => {
   const tx = { to: proxyAddress, from: account.address, data: callData };
   return sendTransactionWithAccount(account, tx);
 };
+
+export const withdrawMkr = async (account, value) => {
+  const methodSig = getMethodSig('withdraw(uint256)');
+  const valueParam = encodeParameter('uint256', etherToWei(value));
+  const callData = generateCallData({
+    method: methodSig,
+    args: [removeHexPrefix(valueParam)]
+  });
+  const tx = {
+    to: account.proxy.address,
+    from: account.address,
+    data: callData
+  };
+  return sendTransactionWithAccount(account, tx);
+};

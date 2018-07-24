@@ -11,6 +11,8 @@ import {
   getVotingPower
 } from '../chain/read';
 import { AccountTypes } from '../utils/constants';
+import { add, subtract } from '../utils/misc';
+import { SEND_MKR_TO_PROXY_SUCCESS, WITHDRAW_MKR_SUCCESS } from './proxy';
 
 // Constants ----------------------------------------------
 
@@ -23,9 +25,12 @@ const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
 
 // Selectors ----------------------------------------------
 
+export function getAccount(state, address) {
+  return state.accounts.allAccounts.find(a => a.address === address);
+}
+
 export function getActiveAccount(state) {
-  const { activeAccount, allAccounts } = state.accounts;
-  return allAccounts.find(a => a.address === activeAccount);
+  return getAccount(state, state.accounts.activeAccount);
 }
 
 // Actions ------------------------------------------------
@@ -48,8 +53,7 @@ export const addAccounts = accounts => async dispatch => {
       proxyRole,
       proxy: {
         address: proxyAddress,
-        votingPower: hasProxy ? await getVotingPower(proxyAddress) : 0,
-        mkrBalance: hasProxy ? await getMkrBalance(proxyAddress) : 0
+        votingPower: hasProxy ? await getVotingPower(proxyAddress) : 0
       }
     };
 
@@ -106,27 +110,78 @@ const uniqConcat = pipe(
   uniqByAddress
 );
 const addressCmp = (x, y) => x.address === y.address;
+const withUpdatedAccount = (accounts, updatedAccount) => {
+  return accounts.map(
+    account =>
+      account.address === updatedAccount.address &&
+      account.type === updatedAccount.type
+        ? {
+            ...account,
+            ...updatedAccount
+          }
+        : account
+  );
+};
+
+export const fakeAccount = {
+  address: '0xbeefed1bedded2dabbed3defaced4decade5dead',
+  type: 'fake',
+  hasProxy: true,
+  proxyRole: 'hot',
+  mkrBalance: 333,
+  proxy: {
+    address: '0xproxyfake',
+    votingPower: 111,
+    linkedAccount: {
+      address: '0xbeefed1bedded2dabbed3defaced4decade5feed',
+      proxyRole: 'cold',
+      mkrBalance: 222
+    }
+  }
+};
 
 const initialState = {
-  activeAccount: '0xbeefed1bedded2dabbed3defaced4decade5dead', // just for dev
+  // activeAccount: '0xbeefed1bedded2dabbed3defaced4decade5dead', // just for dev
+  fetching: true,
   allAccounts: [
-    {
-      address: '0xbeefed1bedded2dabbed3defaced4decade5dead',
-      type: 'fake',
-      hasProxy: true,
-      proxyRole: 'hot',
-      mkrBalance: 333,
-      proxy: {
-        address: '0xproxyfake',
-        mkrBalance: 111,
-        linkedAccount: {
-          address: '0xbeefed1bedded2dabbed3defaced4decade5feed',
-          proxyRole: 'cold',
-          mkrBalance: 222
-        }
-      }
-    }
+    // fakeAccount
   ]
+};
+
+const updateProxyBalance = adding => (state, { payload: amount }) => {
+  let account = getActiveAccount({ accounts: state });
+  if (!adding) {
+    if (typeof amount === 'number') amount = -1 * amount;
+    if (typeof amount === 'string') amount = '-' + amount;
+  }
+
+  account = {
+    ...account,
+    mkrBalance: subtract(account.mkrBalance, amount),
+    proxy: {
+      ...account.proxy,
+      votingPower: add(account.proxy.votingPower, amount)
+    }
+  };
+
+  let allAccounts = withUpdatedAccount(state.allAccounts, account);
+
+  let linkedAccount = getAccount(
+    { accounts: state },
+    account.proxy.linkedAccount.address
+  );
+  if (linkedAccount) {
+    linkedAccount = {
+      ...linkedAccount,
+      proxy: {
+        ...linkedAccount.proxy,
+        votingPower: add(linkedAccount.proxy.votingPower, amount)
+      }
+    };
+    allAccounts = withUpdatedAccount(allAccounts, linkedAccount);
+  }
+
+  return { ...state, allAccounts };
 };
 
 const accounts = createReducer(initialState, {
@@ -136,16 +191,7 @@ const accounts = createReducer(initialState, {
   }),
   [UPDATE_ACCOUNT]: (state, { payload: updatedAccount }) => ({
     ...state,
-    allAccounts: state.allAccounts.map(
-      account =>
-        account.address === updatedAccount.address &&
-        account.type === updatedAccount.type
-          ? {
-              ...account,
-              ...updatedAccount
-            }
-          : account
-    )
+    allAccounts: withUpdatedAccount(state.allAccounts, updatedAccount)
   }),
   [ADD_ACCOUNT]: (state, { payload: account }) => {
     if (!Object.keys(AccountTypes).includes(account.type)) {
@@ -161,7 +207,8 @@ const accounts = createReducer(initialState, {
   [SET_ACTIVE_ACCOUNT]: (state, { payload: address }) => ({
     ...initialState,
     allAccounts: state.allAccounts,
-    activeAccount: address
+    activeAccount: address,
+    fetching: false
   }),
   [SET_UNLOCKED_MKR]: (state, { payload }) => ({
     ...state,
@@ -170,7 +217,9 @@ const accounts = createReducer(initialState, {
   [FETCHING_ACCOUNT_DATA]: state => ({
     ...state,
     fetching: true
-  })
+  }),
+  [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),
+  [WITHDRAW_MKR_SUCCESS]: updateProxyBalance(false)
 });
 
 export default accounts;

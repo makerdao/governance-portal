@@ -10,6 +10,7 @@ import arrow from '../imgs/arrow.svg';
 import { firstLetterCapital } from '../utils/misc';
 import { fonts, colors, shadows } from '../theme';
 import { getActiveAccount, setActiveAccount } from '../reducers/accounts';
+import { trezorConnectInit } from '../reducers/trezor';
 
 const StyledArrow = styled.img`
   margin-left: 0.7em;
@@ -122,7 +123,12 @@ class AccountBox extends Component {
     this.setState(state => ({ dropdownOpen: !state.dropdownOpen }));
   };
   render() {
-    const { allAccounts, activeAccount, fetching } = this.props;
+    const {
+      allAccounts,
+      activeAccount,
+      fetching,
+      trezorConnectInit
+    } = this.props;
 
     if (fetching)
       return (
@@ -161,6 +167,9 @@ class AccountBox extends Component {
                 <AccountBlurb type={type} address={address} />
               </DropdownRow>
             ))}
+            <DropdownRow key="trezor">
+              <a onClick={trezorConnectInit}>Connect to Trezor</a>
+            </DropdownRow>
           </DropdownList>
         </Wrapper>
       </ClickOutside>
@@ -190,5 +199,5 @@ const mapStateToProps = (state, props) => ({
 
 export default connect(
   mapStateToProps,
-  { setActiveAccount }
+  { setActiveAccount, trezorConnectInit }
 )(AccountBox);

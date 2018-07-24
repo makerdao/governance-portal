@@ -24,9 +24,9 @@ class Vote extends Component {
 
   // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, reject transaction, why did this tx fail
   render() {
+    const { proposal } = this.props.modalProps;
     switch (this.state.step) {
       case 1:
-        const { proposal } = this.props.modalProps;
         return (
           <Fragment>
             <StyledTop>
