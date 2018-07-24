@@ -32,9 +32,9 @@ export default class Dropdown extends Component {
     return (
       <ClickOutside onOutsideClick={this.clickOutside}>
         <Wrapper>
-          <Selection onClick={hasItems ? this.toggle : () => {}}>
-            {hasItems ? selected : <Oblique>{noItemMsg}</Oblique>}
-            <Arrow />
+          <Selection onClick={this.toggle} clickable={hasItems} dim={!hasItems}>
+            {hasItems ? selected : noItemMsg}
+            <Arrow hide={!hasItems} />
           </Selection>
           {this.state.shown && (
             <List>
@@ -55,10 +55,6 @@ const Wrapper = styled.div`
   position: relative;
 `;
 
-const Oblique = styled.p`
-  font-style: oblique;
-`;
-
 const Selection = styled.div`
   border: 1px solid #d1d8da;
   border-radius: 4px;
@@ -67,7 +63,9 @@ const Selection = styled.div`
   padding: 10px;
   display: flex;
   justify-content: space-between;
-  cursor: pointer;
+  opacity: ${({ dim }) => (dim ? '0.75' : '1')};
+  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'auto')};
+  pointer-events: ${({ clickable }) => (clickable ? 'auto' : 'none')};
   align-items: center;
 `;
 
@@ -80,6 +78,7 @@ export const Input = styled.input`
 `;
 
 const Arrow = styled.img`
+  visibility: ${({ hide }) => (hide ? 'hidden' : 'visible')};
   mask: url(${arrow}) center no-repeat;
   mask-size: 90%;
   background-color: black;

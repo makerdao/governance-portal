@@ -76,7 +76,7 @@ class Link extends Component {
           onSelect={account => this.setState({ cold: account })}
           items={accountsMinusHot}
           itemKey="address"
-          emptyMsg="please activate another account"
+          emptyMsg="no other account detected"
           renderItem={account => (
             <AccountBlurb
               noAddressCut
