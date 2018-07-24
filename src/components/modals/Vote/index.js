@@ -18,6 +18,10 @@ class Vote extends Component {
     if (this.props.voteTxHash !== prevProps.voteTxHash) this.nextStep();
   }
 
+  componentWillUnmount() {
+    this.setState({ step: 1 });
+  }
+
   nextStep = () => {
     this.setState(state => ({ step: state.step + 1 }));
   };

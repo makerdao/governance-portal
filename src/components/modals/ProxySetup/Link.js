@@ -80,7 +80,11 @@ class Link extends Component {
           items={this.props.accounts}
           itemKey="address"
           renderItem={account => (
-            <AccountBlurb type={account.type} address={account.address} />
+            <AccountBlurb
+              noAddressCut
+              type={account.type}
+              address={account.address}
+            />
           )}
         />
         <Note>This wallet will be able to vote with your MKR.</Note>

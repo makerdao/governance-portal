@@ -42,6 +42,10 @@ class ProxySetup extends Component {
     this.props.proxyClear();
   }
 
+  componentWillUnmount() {
+    this.setState({ step: 1 });
+  }
+
   componentDidUpdate(prevProps) {
     // they've signed and sent a tx
     if (this.props.initiateLinkTxHash !== prevProps.initiateLinkTxHash)

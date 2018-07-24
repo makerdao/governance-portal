@@ -72,7 +72,7 @@ const AccountBlurbWrapper = styled.div`
   align-items: center;
 `;
 
-export const AccountBlurb = ({ type, address }) => {
+export const AccountBlurb = ({ type, address, noAddressCut }) => {
   return (
     <AccountBlurbWrapper>
       <Blockies
@@ -83,7 +83,8 @@ export const AccountBlurb = ({ type, address }) => {
         bgColor="#fff"
       />
       <Account>
-        {firstLetterCapital(type)} {cutMiddle(address, 4, 3)}
+        {firstLetterCapital(type)}{' '}
+        {noAddressCut ? address : cutMiddle(address, 4, 3)}
       </Account>
     </AccountBlurbWrapper>
   );
