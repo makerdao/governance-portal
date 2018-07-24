@@ -70,7 +70,7 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
       </Padding>
     );
   }
-  if (!account) return <Padding>No accounts found</Padding>;
+  if (!account) return <Padding />;
   if (!account.hasProxy) return <WelcomeBanner modalOpen={modalOpen} />;
   const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
   const { linkedAccount } = account.proxy;

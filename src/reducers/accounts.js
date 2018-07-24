@@ -154,7 +154,6 @@ export const fakeAccount = {
 
 const initialState = {
   // activeAccount: '0xbeefed1bedded2dabbed3defaced4decade5dead', // just for dev
-  fetching: true,
   allAccounts: [
     // fakeAccount
   ]
