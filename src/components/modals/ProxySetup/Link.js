@@ -41,6 +41,18 @@ class Link extends Component {
   }
 
   render() {
+    const accountsMinusHot = this.state.hot
+      ? differenceWith((a, b) => a.address === b.address, this.props.accounts, [
+          this.state.hot
+        ])
+      : this.props.accounts;
+
+    const accountsMinusCold = this.state.cold
+      ? differenceWith((a, b) => a.address === b.address, this.props.accounts, [
+          this.state.cold
+        ])
+      : this.props.accounts;
+
     // TODO: const ok = cold and hot are valid addresses - disable button otherwise
     // TODO: show only valid addresses for each dropdown (i.e. unlinked)
     return (
@@ -62,10 +74,15 @@ class Link extends Component {
         <Dropdown
           value={this.state.cold}
           onSelect={account => this.setState({ cold: account })}
-          items={this.props.accounts}
+          items={accountsMinusHot}
           itemKey="address"
+          emptyMsg="please activate another account"
           renderItem={account => (
-            <AccountBlurb type={account.type} address={account.address} />
+            <AccountBlurb
+              noAddressCut
+              type={account.type}
+              address={account.address}
+            />
           )}
         />
         <Note>
@@ -77,7 +94,7 @@ class Link extends Component {
         <Dropdown
           value={this.state.hot}
           onSelect={account => this.setState({ hot: account })}
-          items={this.props.accounts}
+          items={accountsMinusCold}
           itemKey="address"
           renderItem={account => (
             <AccountBlurb
@@ -93,6 +110,10 @@ class Link extends Component {
           <strong style={{ fontWeight: 'bold', textDecoration: 'underline' }}>
             please have it active
           </strong>)
+        </Note>
+        <Note>
+          (if it's not active, nothing will happen when you click that button
+          ¯\_(ツ)_/¯)
         </Note>
         <EndButton
           slim

@@ -25,12 +25,15 @@ export default class Dropdown extends Component {
   }
 
   render() {
-    const { items, itemKey, renderItem, value } = this.props;
+    const { items, itemKey, renderItem, value, emptyMsg } = this.props;
+    const hasItems = items.length > 0;
+    const noItemMsg = emptyMsg || 'nothing to show';
+    const selected = value ? renderItem(value) : <div />;
     return (
       <ClickOutside onOutsideClick={this.clickOutside}>
         <Wrapper>
-          <Selection onClick={this.toggle}>
-            {value ? renderItem(value) : <div />}
+          <Selection onClick={hasItems ? this.toggle : () => {}}>
+            {hasItems ? selected : <Oblique>{noItemMsg}</Oblique>}
             <Arrow />
           </Selection>
           {this.state.shown && (
@@ -52,6 +55,10 @@ const Wrapper = styled.div`
   position: relative;
 `;
 
+const Oblique = styled.p`
+  font-style: oblique;
+`;
+
 const Selection = styled.div`
   border: 1px solid #d1d8da;
   border-radius: 4px;
@@ -61,6 +68,7 @@ const Selection = styled.div`
   display: flex;
   justify-content: space-between;
   cursor: pointer;
+  align-items: center;
 `;
 
 export const Input = styled.input`
