@@ -1,12 +1,12 @@
 import { connect } from 'react-redux';
-import React from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import round from 'lodash.round';
 
 import { modalOpen } from '../reducers/modal';
 import { getActiveAccount } from '../reducers/accounts';
-import theme, { colors, fonts } from '../theme';
+import theme, { fonts } from '../theme';
 import DotSpacer from './DotSpacer';
 import WithVote from './hocs/WithVote';
 import {
@@ -32,8 +32,13 @@ const SmallText = styled.p`
   color: ${theme.text.dim_grey};
 `;
 
-const Value = styled.span`
-  color: rgb(${colors.black});
+const Black = styled.span`
+  color: ${theme.text.default};
+`;
+
+const Strong = Black.extend`
+  color: ${theme.text.default};
+  font-weight: bold;
 `;
 
 const StyledLink = styled(Link)`
@@ -74,18 +79,20 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
   if (!account.hasProxy) return <WelcomeBanner modalOpen={modalOpen} />;
   const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
   const { linkedAccount } = account.proxy;
-  const coldWallet = account.proxyRole === 'cold' ? account : linkedAccount;
+  const isColdWallet = account.proxyRole === 'cold';
+  const coldWallet = isColdWallet ? account : linkedAccount;
   return (
     <SmallText>
-      In voting contract <Value>{account.proxy.votingPower} MKR</Value>{' '}
-      <a onClick={() => modalOpen(Withdraw)}>Withdraw to wallet</a>
+      <Strong>{isColdWallet ? 'Cold wallet:' : 'Hot wallet:'}</Strong> In voting
+      contract <Black>{account.proxy.votingPower} MKR</Black>{' '}
+      <a onClick={() => modalOpen(Withdraw)}>Withdraw</a>
       <DotSpacer />
-      In cold wallet <Value>{round(coldWallet.mkrBalance, 4)} MKR</Value>{' '}
+      In cold wallet <Black>{round(coldWallet.mkrBalance, 4)} MKR</Black>{' '}
       {account.proxyRole === 'cold' && (
-        <a onClick={() => modalOpen(Lock)}>Add to voting contract</a>
+        <a onClick={() => modalOpen(Lock)}>Top-up</a>
       )}
       <DotSpacer />
-      {firstLetterCapital(linkedAccount.proxyRole)} wallet address{' '}
+      {firstLetterCapital(linkedAccount.proxyRole)} wallet:{' '}
       {cutMiddle(linkedAccount.address, 4)}{' '}
       <a
         target="_blank"
@@ -93,15 +100,21 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
       >
         Etherscan
       </a>
-      <br />
-      Currently voting for{' '}
-      <WithVote proposalAddress={account.votingFor}>
-        {({ proposalTitle, proposalSlug, noVote }) => (
-          <StyledLink disabled={noVote} to={proposalSlug}>
-            {proposalTitle}
-          </StyledLink>
-        )}
-      </WithVote>
+      <DotSpacer />
+      {account.votingFor ? (
+        <Fragment>
+          Currently voting for{' '}
+          <WithVote proposalAddress={account.votingFor}>
+            {({ proposalTitle, proposalSlug, noVote }) => (
+              <StyledLink disabled={noVote} to={proposalSlug}>
+                {proposalTitle}
+              </StyledLink>
+            )}
+          </WithVote>
+        </Fragment>
+      ) : (
+        'Currently not voting'
+      )}
     </SmallText>
   );
 };

@@ -5,7 +5,7 @@ import find from 'ramda/src/find';
 import { toSlug } from '../../utils/misc';
 
 // this thing takes a proposal address and returns its name if it's one of our topics
-const WithTally = ({ children, proposalAddress, topics }) => {
+const WithVote = ({ children, proposalAddress, topics }) => {
   for (let topic of topics) {
     const proposal = find(
       ({ source }) => source.toLowerCase() === proposalAddress.toLowerCase(),
@@ -25,12 +25,12 @@ const WithTally = ({ children, proposalAddress, topics }) => {
   });
 };
 
-WithTally.propTypes = {
+WithVote.propTypes = {
   children: PropTypes.func.isRequired,
   proposal: PropTypes.string
 };
 
-WithTally.defaultProps = {
+WithVote.defaultProps = {
   proposal: ''
 };
 
@@ -41,4 +41,4 @@ const reduxProps = ({ topics }) => ({
 export default connect(
   reduxProps,
   {}
-)(WithTally);
+)(WithVote);
