@@ -1,0 +1,9 @@
+{
+  "name": "gov-testchain",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "ganache-cli": "^6.1.6"
+  }
+}
