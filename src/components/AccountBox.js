@@ -53,7 +53,7 @@ const DropdownList = styled.div`
 `;
 
 const SelectedItem = styled.div`
-  color: #627685;
+  color: #9aa3ad;
   cursor: pointer;
   padding: 6px 10px;
   font-size: 15px;
