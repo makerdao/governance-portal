@@ -38,6 +38,10 @@ class ProxySetup extends Component {
     this.setState({ mkrAmountInput: evt.target.value });
   };
 
+  componentDidMount() {
+    this.props.proxyClear();
+  }
+
   componentDidUpdate(prevProps) {
     // they've signed and sent a tx
     if (this.props.initiateLinkTxHash !== prevProps.initiateLinkTxHash)

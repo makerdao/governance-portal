@@ -94,15 +94,15 @@ const DropdownRow = styled.div`
   cursor: pointer;
   justify-content: flex-start;
   border-top: ${({ selected }) =>
-    selected ? '' : `1px solid rgba(${colors.light_grey}, 0.15)`};
+    selected ? '' : `1px solid rgba(${colors.black}, 0.15)`};
   font-weight: ${({ selected }) =>
     selected ? fonts.weight.bold : fonts.weight.normal};
   padding: 6px;
   width: auto;
   font-size: 15px;
   padding-left: 11px;
-  color: white;
-  background: ${({ dark }) => (dark ? '#053C4B' : '#435367')};
+  color: black;
+  background: rgb(246, 248, 249);
   &:hover {
     opacity: 0.9;
   }
@@ -162,13 +162,20 @@ class AccountBox extends Component {
                 key={address}
                 onClick={() => this.onChange({ address, type })}
                 selected={address === activeAccount.address}
-                dark
               >
                 <AccountBlurb type={type} address={address} />
               </DropdownRow>
             ))}
             <DropdownRow key="trezor">
-              <a onClick={trezorConnectInit}>Connect to Trezor</a>
+              <a
+                style={{
+                  color: 'black',
+                  fontStyle: 'oblique'
+                }}
+                onClick={trezorConnectInit}
+              >
+                Connect to Trezor
+              </a>
             </DropdownRow>
           </DropdownList>
         </Wrapper>
@@ -179,14 +186,12 @@ class AccountBox extends Component {
 
 AccountBox.propTypes = {
   allAccounts: PropTypes.array,
-  dark: PropTypes.bool,
   fetching: PropTypes.bool,
   setActiveAccount: PropTypes.func
 };
 
 AccountBox.defaultProps = {
   allAccounts: [],
-  dark: false,
   onChange: () => {},
   fetching: false
 };

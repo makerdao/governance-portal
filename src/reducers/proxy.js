@@ -40,11 +40,11 @@ export const clear = () => ({
 
 // FIXME sometimes this causes an exception because of a null receipt; something
 // wrong with awaitTx logic?
-const handleTx = async (prefix, dispatch, action, successPayload) => {
+const handleTx = async (prefix, dispatch, action, successPayload = '') => {
   try {
     const txHash = await action;
     dispatch({ type: `proxy/${prefix}_SENT`, payload: { txHash } });
-    const receipt = awaitTx(txHash, { confirmations: 1 });
+    const receipt = await awaitTx(txHash, { confirmations: 1 });
     dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
     console.log('mined:', receipt);
   } catch (err) {

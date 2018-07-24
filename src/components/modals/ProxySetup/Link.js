@@ -86,7 +86,9 @@ class Link extends Component {
         <Note>This wallet will be able to vote with your MKR.</Note>
         <Note>
           (the first tx will be w/ your cold wallet,{' '}
-          <strong style={{ fontWeight: 'bold' }}>please have it active</strong>)
+          <strong style={{ fontWeight: 'bold', textDecoration: 'underline' }}>
+            please have it active
+          </strong>)
         </Note>
         <EndButton
           slim
