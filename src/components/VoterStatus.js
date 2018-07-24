@@ -107,7 +107,7 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
           <WithVote proposalAddress={account.votingFor}>
             {({ proposalTitle, proposalSlug, noVote }) => (
               <StyledLink disabled={noVote} to={proposalSlug}>
-                {proposalTitle}
+                {cutMiddle(proposalTitle, 20, 10)}
               </StyledLink>
             )}
           </WithVote>

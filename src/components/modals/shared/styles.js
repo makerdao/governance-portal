@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 import theme from '../../../theme';
 import Button from '../../Button';
@@ -144,12 +145,21 @@ export const TxHash = styled.a`
   font-size: 14px;
 `;
 
-export const StyledInput = styled.input`
-  border: 1px solid #d1d8da;
+const Input = styled.input`
+  border: 0;
+  padding: 0;
   height: 40px;
+  font-size: 16px;
+`;
+
+const WrappedInput = props => {
+  return <Input {...props} />;
+};
+
+export const StyledInput = styled(WrappedInput)`
+  border: 1px solid #d1d8da;
   color: ${theme.text.dim_grey_alt};
   padding: 10px;
-  font-size: 16px;
   border-radius: 4px;
   display: block;
 `;
@@ -177,4 +187,8 @@ export const EndButton = styled(Button)`
   align-self: flex-end;
   margin-top: 24px;
   width: auto;
+`;
+
+export const GreyLink = styled.a`
+  color: ${theme.text.dim_grey_alt};
 `;
