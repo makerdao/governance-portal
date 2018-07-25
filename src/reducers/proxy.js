@@ -10,7 +10,7 @@ import { getActiveAccount } from './accounts';
 
 // Constants ----------------------------------------------
 
-const INITIATE_LINK_REQUEST = 'proxy/INITIATE_LINK_REQUEST';
+export const INITIATE_LINK_REQUEST = 'proxy/INITIATE_LINK_REQUEST';
 const INITIATE_LINK_SENT = 'proxy/INITIATE_LINK_SENT';
 const INITIATE_LINK_SUCCESS = 'proxy/INITIATE_LINK_SUCCESS';
 const INITIATE_LINK_FAILURE = 'proxy/INITIATE_LINK_FAILURE';
@@ -31,12 +31,13 @@ export const WITHDRAW_MKR_SUCCESS = 'proxy/WITHDRAW_MKR_SUCCESS';
 const WITHDRAW_MKR_FAILURE = 'proxy/WITHDRAW_MKR_FAILURE';
 
 const CLEAR = 'proxy/CLEAR';
+const GO_TO_STEP = 'proxy/GO_TO_STEP';
 
 // Actions ------------------------------------------------
 
-export const clear = () => ({
-  type: CLEAR
-});
+export const clear = () => ({ type: CLEAR });
+
+export const goToStep = step => ({ type: GO_TO_STEP, payload: step });
 
 // FIXME sometimes this causes an exception because of a null receipt; something
 // wrong with awaitTx logic?
@@ -74,7 +75,7 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
 };
 
 export const sendMkrToProxy = value => (dispatch, getState) => {
-  dispatch({ type: SEND_MKR_TO_PROXY_REQUEST });
+  dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
   const account = getActiveAccount(getState());
   handleTx(
     'SEND_MKR_TO_PROXY',
@@ -107,6 +108,7 @@ const proxy = createReducer(initialState, {
   // Initiate ---------------------------------------
   [INITIATE_LINK_REQUEST]: (state, { payload }) => ({
     ...state,
+    setupProgress: 'initiate',
     hotAddress: payload.hotAddress,
     coldAddress: payload.coldAddress
   }),
@@ -115,70 +117,123 @@ const proxy = createReducer(initialState, {
     confirmingInitiate: true,
     initiateLinkTxHash: payload.txHash
   }),
-  [INITIATE_LINK_SUCCESS]: state => ({
-    ...state,
-    confirmingInitiate: false
-  }),
+  [INITIATE_LINK_SUCCESS]: state => ({ ...state, confirmingInitiate: false }),
   [INITIATE_LINK_FAILURE]: (state, payload) => ({
     ...state,
     confirmingInitiate: false,
     error: payload.message
   }),
   // Approve ----------------------------------------
-  [APPROVE_LINK_REQUEST]: state => ({
-    ...state
-  }),
   [APPROVE_LINK_SENT]: (state, { payload }) => ({
     ...state,
+    setupProgress: 'approve',
     confirmingApprove: true,
     approveLinkTxHash: payload.txHash
   }),
   [APPROVE_LINK_SUCCESS]: state => ({
     ...state,
-    confirmingApprove: false
+    confirmingApprove: false,
+    setupProgress: 'lockInput'
   }),
-  [APPROVE_LINK_FAILURE]: state => ({
-    ...state,
-    confirmingApprove: false
-  }),
+  [APPROVE_LINK_FAILURE]: state => ({ ...state, confirmingApprove: false }),
   // Send -------------------------------------------
-  [SEND_MKR_TO_PROXY_REQUEST]: state => ({
-    ...state
-  }),
+  [SEND_MKR_TO_PROXY_REQUEST]: (state, { payload: value }) => {
+    if (state.setupProgress === 'lockInput') {
+      return { ...state, setupProgress: 'lock', sendMkrAmount: value };
+    }
+
+    return { ...state, sendMkrAmount: value };
+  },
   [SEND_MKR_TO_PROXY_SENT]: (state, { payload }) => ({
     ...state,
     confirmingSendMkr: true,
     sendMkrTxHash: payload.txHash
   }),
-  [SEND_MKR_TO_PROXY_SUCCESS]: state => ({
-    ...state,
-    confirmingSendMkr: false
-  }),
+  [SEND_MKR_TO_PROXY_SUCCESS]: state => {
+    if (state.setupProgress === 'lock') {
+      return { ...state, setupProgress: 'summary', confirmingSendMkr: false };
+    }
+
+    return { ...state, confirmingSendMkr: false };
+  },
   [SEND_MKR_TO_PROXY_FAILURE]: state => ({
     ...state,
     confirmingSendMkr: false
   }),
   // Withdraw ---------------------------------------
-  [WITHDRAW_MKR_REQUEST]: state => ({
-    ...state
-  }),
   [WITHDRAW_MKR_SENT]: (state, { payload }) => ({
     ...state,
     confirmingWithdrawMkr: true,
     withdrawMkrTxHash: payload.txHash
   }),
-  [WITHDRAW_MKR_SUCCESS]: state => ({
-    ...state,
-    confirmingWithdrawMkr: false
-  }),
-  [WITHDRAW_MKR_FAILURE]: state => ({
-    ...state,
-    confirmingWithdrawMkr: false
-  }),
+  [WITHDRAW_MKR_SUCCESS]: state => ({ ...state, confirmingWithdrawMkr: false }),
+  [WITHDRAW_MKR_FAILURE]: state => ({ ...state, confirmingWithdrawMkr: false }),
   // Reset ------------------------------------------
   [CLEAR]: () => ({
     ...initialState
-  })
+  }),
+  [GO_TO_STEP]: (state, { payload }) => ({
+    ...state,
+    setupProgress: payload
+  }),
+  // Dev --------------------------------------------
+  MOCK_NEXT_STEP: state => {
+    const { setupProgress } = state;
+    const step = name => ({ ...state, setupProgress: name });
+
+    if (!setupProgress) return step('link');
+
+    if (setupProgress === 'link') return step('initiate');
+
+    if (setupProgress === 'initiate') {
+      if (!state.initiateLinkTxHash && !state.confirmingInitiate) {
+        return {
+          ...state,
+          confirmingInitiate: true,
+          initiateLinkTxHash: '0xbeefed1bedded2dabbed3defaced4decade5cafe'
+        };
+      }
+
+      if (state.confirmingInitiate)
+        return { ...state, confirmingInitiate: false };
+
+      return step('approve');
+    }
+
+    if (setupProgress === 'approve') {
+      if (!state.approveLinkTxHash && !state.confirmingApprove) {
+        return {
+          ...state,
+          confirmingApprove: true,
+          approveLinkTxHash: '0xbeefed1bedded2dabbed3defaced4decade5fade'
+        };
+      }
+
+      if (state.confirmingApprove)
+        return { ...state, confirmingApprove: false };
+
+      return step('lockInput');
+    }
+
+    if (setupProgress === 'lockInput') return step('lock');
+
+    if (setupProgress === 'lock') {
+      if (!state.sendMkrTxHash && !state.confirmingSendMkr) {
+        return {
+          ...state,
+          confirmingSendMkr: true,
+          sendMkrTxHash: '0xbeefed1bedded2dabbed3defaced4decade5fade'
+        };
+      }
+
+      if (state.confirmingSendMkr)
+        return { ...state, confirmingSendMkr: false };
+
+      return step('summary');
+    }
+
+    if (setupProgress === 'summary') return step(null);
+  }
 });
 
 export default proxy;

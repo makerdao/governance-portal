@@ -10,7 +10,6 @@ import {
   EndButton,
   Note
 } from '../shared/styles';
-import Stepper from './Stepper';
 import Dropdown from '../../Dropdown';
 import { AccountBlurb } from '../../AccountBox';
 import { AccountTypes } from '../../../utils/constants';
@@ -57,7 +56,6 @@ class Link extends Component {
     // TODO: show only valid addresses for each dropdown (i.e. unlinked)
     return (
       <Fragment>
-        <Stepper progress={1} />
         <StyledTop>
           <StyledTitle>Link cold and hot wallets</StyledTitle>
         </StyledTop>

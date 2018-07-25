@@ -18,6 +18,7 @@ import { SEND_MKR_TO_PROXY_SUCCESS, WITHDRAW_MKR_SUCCESS } from './proxy';
 import { createSubProvider } from '../chain/hw-wallet';
 import { netNameToId } from '../utils/ethereum';
 import values from 'ramda/src/values';
+import { INITIATE_LINK_REQUEST } from './proxy';
 
 // Constants ----------------------------------------------
 
@@ -243,7 +244,26 @@ const accounts = createReducer(initialState, {
     fetching: true
   }),
   [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),
-  [WITHDRAW_MKR_SUCCESS]: updateProxyBalance(false)
+  [WITHDRAW_MKR_SUCCESS]: updateProxyBalance(false),
+  [INITIATE_LINK_REQUEST]: (state, { payload }) => {
+    const hotAccount = {
+      ...getAccount({ accounts: state }, payload.hotAddress),
+      proxyRole: 'hot'
+    };
+
+    const coldAccount = {
+      ...getAccount({ accounts: state }, payload.coldAddress),
+      proxyRole: 'cold'
+    };
+
+    return {
+      ...state,
+      allAccounts: withUpdatedAccount(
+        withUpdatedAccount(state.allAccounts, hotAccount),
+        coldAccount
+      )
+    };
+  }
 });
 
 export default accounts;

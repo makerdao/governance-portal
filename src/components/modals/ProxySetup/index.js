@@ -2,226 +2,112 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import {
-  StyledTitle,
-  StyledBlurb,
-  StyledTop,
-  StyledInput
-} from '../shared/styles';
-import Button from '../../Button';
 import Intro from './Intro';
 import Link from './Link';
 import Transaction from '../shared/Transaction';
 import Stepper from './Stepper';
-import { getActiveAccount } from '../../../reducers/accounts';
+import { getActiveAccount, getAccount } from '../../../reducers/accounts';
 import {
   initiateLink,
   sendMkrToProxy,
   approveLink,
-  clear as proxyClear
+  clear as proxyClear,
+  goToStep
 } from '../../../reducers/proxy';
 import { sendVote } from '../../../reducers/vote';
 import { modalClose } from '../../../reducers/modal';
+import Summary from './Summary';
+import Lock from '../Lock';
 
 class ProxySetup extends Component {
-  state = {
-    step: 1,
-    mkrAmountInput: ''
-  };
-
-  nextStep = () => {
-    this.setState(state => ({ step: state.step + 1 }));
-  };
-
-  updateInputValue = evt => {
-    this.setState({ mkrAmountInput: evt.target.value });
-  };
-
   componentDidMount() {
     this.props.proxyClear();
   }
 
-  componentWillUnmount() {
-    this.setState({ step: 1 });
-  }
-
-  componentDidUpdate(prevProps) {
-    // they've signed and sent a tx
-    if (this.props.initiateLinkTxHash !== prevProps.initiateLinkTxHash)
-      this.nextStep();
-    if (this.props.approveLinkTxHash !== prevProps.approveLinkTxHash)
-      this.nextStep();
-    if (this.props.sendMkrTxHash !== prevProps.sendMkrTxHash) this.nextStep();
-  }
-
-  // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, check balances, etc
   render() {
-    switch (this.state.step) {
-      case 1:
+    return (
+      <Fragment>
+        <Stepper progress="1" /> {/* TODO */}
+        {this.renderContent()}
+        {this.props.mockGoToStep && (
+          <a
+            style={{
+              position: 'absolute',
+              fontSize: '8px'
+            }}
+            onClick={this.props.mockGoToStep}
+          >
+            Next step
+          </a>
+        )}
+      </Fragment>
+    );
+  }
+
+  renderContent() {
+    const {
+      confirming,
+      setupProgress,
+      modalClose,
+      initiateLink,
+      initiateLinkTxHash,
+      activeAccount,
+      accounts,
+      network,
+      coldAccount,
+      hotAccount,
+      approveLinkTxHash,
+      sendMkrTxHash,
+      sendMkrAmount,
+      proxyClear,
+      goToStep
+    } = this.props;
+
+    switch (setupProgress) {
+      case undefined:
+      case null:
         return (
-          <Intro modalClose={this.props.modalClose} nextStep={this.nextStep} />
+          <Intro modalClose={modalClose} nextStep={() => goToStep('link')} />
         );
-      case 2:
-        window.scrollTo(0, 0);
+      case 'link':
         return (
           <Link
-            initiateLink={this.props.initiateLink}
-            activeAccount={this.props.activeAccount}
-            accounts={this.props.accounts}
+            initiateLink={initiateLink}
+            activeAccount={activeAccount}
+            accounts={accounts}
           />
         );
-      case 3:
+      case 'initiate':
         return (
-          <Fragment>
-            <Stepper progress={1} />
-            <Transaction
-              txHash={this.props.initiateLinkTxHash}
-              nextStep={this.nextStep}
-              network={this.props.network}
-              confirming={this.props.confirming}
-            />
-          </Fragment>
+          <Transaction
+            confirming={confirming}
+            network={network}
+            txHash={initiateLinkTxHash}
+            account={coldAccount}
+          />
         );
-      case 4:
+      case 'approve':
         return (
-          <Fragment>
-            <StyledTop>
-              <StyledTitle>
-                Please confirm link with your hot wallet
-              </StyledTitle>
-            </StyledTop>
-            <StyledBlurb>
-              Your hot wallet address: {this.props.hotAddress}
-            </StyledBlurb>
-            {this.props.activeAccount.address.toLowerCase() !==
-            this.props.hotAddress.toLowerCase() ? (
-              <StyledBlurb>Please switch to the above wallet</StyledBlurb>
-            ) : null}
-            <div
-              style={{
-                alignSelf: 'center',
-                marginTop: '18px'
-              }}
-            >
-              <Button
-                slim
-                disabled={
-                  this.props.activeAccount.address.toLowerCase() !==
-                  this.props.hotAddress.toLowerCase()
-                }
-                onClick={() =>
-                  this.props.approveLink({
-                    hotAccount: this.props.activeAccount
-                  })
-                }
-              >
-                Sign
-              </Button>
-            </div>
-          </Fragment>
+          <Transaction
+            confirming={confirming}
+            network={network}
+            txHash={approveLinkTxHash}
+            account={hotAccount}
+          />
         );
-      case 5:
+      case 'lockInput':
+        return <Lock reset={false} />;
+      case 'lock':
         return (
-          <Fragment>
-            <Stepper progress={1} />
-            <Transaction
-              txHash={this.props.approveLinkTxHash}
-              nextStep={this.nextStep}
-              network={this.props.network}
-              confirming={this.props.confirming}
-            />
-          </Fragment>
+          <Transaction
+            confirming={confirming}
+            network={network}
+            txHash={sendMkrTxHash}
+            account={coldAccount}
+          />
         );
-      case 6:
-        return (
-          <Fragment>
-            <Stepper progress={2} />
-            <StyledTop>
-              <StyledTitle>Lock MKR</StyledTitle>
-            </StyledTop>
-            <StyledBlurb>
-              Please select how much MKR you would like to lock in the secure
-              voting contract. You can withdraw it at anytime
-            </StyledBlurb>
-            <StyledBlurb>
-              (change back to your cold address if using Metamask)
-              {/* TODO check data, show message only if using Metamask */}
-            </StyledBlurb>
-            <div style={{ textAlign: 'center' }}>
-              Your MKR Balance: {this.props.activeAccount.mkrBalance}
-            </div>
-            <StyledInput
-              value={this.state.mkrAmountInput}
-              onChange={this.updateInputValue}
-              placeholder="MKR Amount"
-            />
-            <div
-              style={{
-                alignSelf: 'center',
-                marginTop: '18px'
-              }}
-            >
-              <Button
-                slim
-                onClick={() =>
-                  this.props.sendMkrToProxy(this.state.mkrAmountInput)
-                }
-              >
-                Lock
-              </Button>
-            </div>
-          </Fragment>
-        );
-      case 7:
-        return (
-          <Fragment>
-            <Stepper progress={2} />
-            <Transaction
-              txHash={this.props.sendMkrTxHash}
-              nextStep={this.nextStep}
-              network={this.props.network}
-              confirming={this.props.confirming}
-            />
-          </Fragment>
-        );
-      case 8:
-        return (
-          <Fragment>
-            <Stepper progress={3} />
-            <StyledTop>
-              <StyledTitle>Secure voting contract setup</StyledTitle>
-            </StyledTop>
-            <StyledBlurb>
-              Your secure voting contract has been successfully set up. You can
-              now voting using your hot wallet below. You can manage your secure
-              voting contract by clicking Secure voting on the governance
-              dashboard
-            </StyledBlurb>
-            <div style={{ textAlign: 'center' }}>
-              Locked in voting contract: {this.state.mkrAmountInput}
-            </div>
-            <div
-              style={{
-                alignSelf: 'center',
-                marginTop: '18px'
-              }}
-            >
-              <Button
-                slim
-                onClick={() => {
-                  this.props.modalClose();
-                  this.props.proxyClear();
-                  // temp measure to update proxy status
-                  window.location.reload();
-                }}
-              >
-                Finish and close
-              </Button>
-            </div>
-          </Fragment>
-        );
-      default:
-        return null;
+      case 'summary':
+        return <Summary {...{ modalClose, proxyClear, sendMkrAmount }} />;
     }
   }
 }
@@ -230,31 +116,80 @@ ProxySetup.propTypes = {
   sendMkrToProxy: PropTypes.func.isRequired,
   initiateLinkTxHash: PropTypes.string,
   approveLinkTxHash: PropTypes.string,
-  sendMkrToProxyTxHash: PropTypes.string
+  sendMkrTxHash: PropTypes.string
 };
 
 ProxySetup.defaultProps = {
   initiateLinkTxHash: '',
   approveLinkTxHash: '',
-  sendMkrToProxyTxHash: ''
+  sendMkrTxHash: ''
 };
 
-const stateProps = ({ modal, metamask, accounts, proxy }) => ({
-  modal: modal.modal,
-  modalProps: modal.modalProps,
-  account: metamask.accountAddress,
-  accounts: accounts.allAccounts,
-  activeAccount: getActiveAccount({ accounts }),
-  network: metamask.network === 'kovan' ? 'kovan' : 'mainnet',
-  initiateLinkTxHash: proxy.initiateLinkTxHash,
-  sendMkrTxHash: proxy.sendMkrTxHash,
-  approveLinkTxHash: proxy.approveLinkTxHash,
-  confirming:
-    proxy.confirmingInitiate ||
-    proxy.confirmingApprove ||
-    proxy.confirmingSendMkr,
-  hotAddress: proxy.hotAddress
-});
+// flip this if you want to step through the setup steps without actually
+// making any changes
+let mock = false;
+
+const fakeColdAccount = {
+  address: '0xbeefed1bedded2dabbed3defaced4decade5babe',
+  type: 'TREZOR',
+  proxyRole: 'cold',
+  mkrBalance: 456
+};
+
+const fakeHotAccount = {
+  address: '0xbeefed1bedded2dabbed3defaced4decade5babe',
+  type: 'METAMASK',
+  proxyRole: 'hot',
+  mkrBalance: 123
+};
+
+const stateProps = state => {
+  const {
+    modal,
+    metamask,
+    accounts,
+    proxy: {
+      initiateLinkTxHash,
+      approveLinkTxHash,
+      sendMkrTxHash,
+      sendMkrAmount,
+      confirmingInitiate,
+      confirmingApprove,
+      confirmingSendMkr,
+      hotAddress,
+      coldAddress,
+      setupProgress
+    }
+  } = state;
+
+  let props = {
+    modal: modal.modal,
+    modalProps: modal.modalProps,
+    account: metamask.accountAddress,
+    accounts: accounts.allAccounts,
+    activeAccount: getActiveAccount({ accounts }),
+    network: metamask.network === 'kovan' ? 'kovan' : 'mainnet',
+    initiateLinkTxHash,
+    sendMkrTxHash,
+    sendMkrAmount,
+    approveLinkTxHash,
+    confirming: confirmingInitiate || confirmingApprove || confirmingSendMkr,
+    hotAccount: getAccount(state, hotAddress),
+    coldAccount: getAccount(state, coldAddress),
+    setupProgress
+  };
+
+  if (mock) {
+    props = {
+      ...props,
+      hotAccount: fakeHotAccount,
+      coldAccount: fakeColdAccount,
+      sendMkrAmount: 789
+    };
+  }
+
+  return props;
+};
 
 const dispatchProps = {
   modalClose,
@@ -262,8 +197,13 @@ const dispatchProps = {
   approveLink,
   sendMkrToProxy,
   sendVote,
-  proxyClear
+  proxyClear,
+  goToStep
 };
+
+if (mock) {
+  dispatchProps.mockGoToStep = () => ({ type: 'MOCK_NEXT_STEP' });
+}
 
 export default connect(
   stateProps,

@@ -18,7 +18,7 @@ export default class AmountInput extends Component {
   }
 
   componentDidMount() {
-    this.props.clearProxyState();
+    if (this.props.reset !== false) this.props.clearProxyState();
   }
 
   setAmount = event => {
