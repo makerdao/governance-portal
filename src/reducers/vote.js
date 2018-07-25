@@ -20,7 +20,7 @@ export const clear = () => ({
 export const sendVote = proposalAddress => (dispatch, getState) => {
   dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
   const activeAccount = getActiveAccount(getState());
-  if (activeAccount) {
+  if (activeAccount && activeAccount.hasProxy) {
     voteAndLockViaProxy({ account: activeAccount, proposalAddress })
       .then(txHash => {
         dispatch({ type: VOTE_SENT, payload: { txHash } });

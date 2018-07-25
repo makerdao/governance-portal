@@ -161,13 +161,11 @@ export const voteViaProxy = async ({ account, proposalAddress }) => {
  * @return {Promise} tx
  */
 export const voteAndLockViaProxy = async ({ account, proposalAddress }) => {
-  const { address: proxyAddress, hasProxy } = await getProxyStatus(
-    account.address
-  );
-  if (!hasProxy)
+  if (!account.hasProxy)
     throw new Error(
       `${account.address} cannot vote and lock because it doesn't have a proxy`
     );
+  const { address: proxyAddress } = account.proxy;
   return simpleSendTx(account, proxyAddress, 'lockAllVote(address[])', [
     ['address[]', [proposalAddress]]
   ]);
