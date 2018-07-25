@@ -9,8 +9,12 @@ import { cutMiddle } from '../utils/misc';
 import arrow from '../imgs/arrow.svg';
 import { firstLetterCapital } from '../utils/misc';
 import { fonts, colors, shadows } from '../theme';
-import { getActiveAccount, setActiveAccount } from '../reducers/accounts';
-import { trezorConnectInit } from '../reducers/trezor';
+import {
+  getActiveAccount,
+  setActiveAccount,
+  getHardwareAccount
+} from '../reducers/accounts';
+import { TREZOR, LEDGER } from '../chain/hw-wallet';
 
 const StyledArrow = styled.img`
   margin-left: 0.7em;
@@ -109,6 +113,11 @@ const DropdownRow = styled.div`
   }
 `;
 
+const ConnectLink = styled.a`
+  color: black;
+  font-style: oblique;
+`;
+
 class AccountBox extends Component {
   state = {
     dropdownOpen: false
@@ -128,7 +137,7 @@ class AccountBox extends Component {
       allAccounts,
       activeAccount,
       fetching,
-      trezorConnectInit
+      getHardwareAccount
     } = this.props;
 
     if (fetching)
@@ -140,21 +149,18 @@ class AccountBox extends Component {
 
     const availableAccounts = allAccounts.filter(account => !!account.address);
 
-    if (!activeAccount)
-      return (
-        <SelectedItem>
-          <Account noAccounts>No Accounts</Account>
-        </SelectedItem>
-      );
-
     return (
       <ClickOutside onOutsideClick={this.clickOutside}>
         <Wrapper>
           <SelectedItem onClick={this.toggleDropdown}>
-            <AccountBlurb
-              type={activeAccount.type}
-              address={activeAccount.address}
-            />
+            {activeAccount ? (
+              <AccountBlurb
+                type={activeAccount.type}
+                address={activeAccount.address}
+              />
+            ) : (
+              <Account noAccounts>No Accounts</Account>
+            )}
             <StyledArrow />
           </SelectedItem>
           <DropdownList show={this.state.dropdownOpen}>
@@ -162,21 +168,20 @@ class AccountBox extends Component {
               <DropdownRow
                 key={address}
                 onClick={() => this.onChange({ address, type })}
-                selected={address === activeAccount.address}
+                selected={activeAccount && address === activeAccount.address}
               >
                 <AccountBlurb type={type} address={address} />
               </DropdownRow>
             ))}
             <DropdownRow key="trezor">
-              <a
-                style={{
-                  color: 'black',
-                  fontStyle: 'oblique'
-                }}
-                onClick={trezorConnectInit}
-              >
+              <ConnectLink onClick={() => getHardwareAccount(TREZOR)}>
                 Connect to Trezor
-              </a>
+              </ConnectLink>
+            </DropdownRow>
+            <DropdownRow key="ledger">
+              <ConnectLink onClick={() => getHardwareAccount(LEDGER)}>
+                Connect to Ledger
+              </ConnectLink>
             </DropdownRow>
           </DropdownList>
         </Wrapper>
@@ -205,5 +210,5 @@ const mapStateToProps = (state, props) => ({
 
 export default connect(
   mapStateToProps,
-  { setActiveAccount, trezorConnectInit }
+  { setActiveAccount, getHardwareAccount }
 )(AccountBox);

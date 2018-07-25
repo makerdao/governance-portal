@@ -36,6 +36,6 @@ export function createSubProvider(device, deviceOptions) {
   }
 
   return device === LEDGER
-    ? LedgerSubProvider(Transport.create, deviceOptions)
+    ? LedgerSubProvider(() => Transport.create(), deviceOptions)
     : TrezorSubProvider(deviceOptions);
 }

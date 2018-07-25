@@ -85,10 +85,7 @@ class Link extends Component {
             />
           )}
         />
-        <Note>
-          This wallet must be connected.{' '}
-          <a onClick={this.props.trezorConnectInit}>Connect to Trezor</a>
-        </Note>
+        <Note>This wallet must be connected.</Note>
 
         <InputLabels>Select hot wallet</InputLabels>
         <Dropdown

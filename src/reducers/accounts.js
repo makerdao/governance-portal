@@ -15,6 +15,9 @@ import {
 import { AccountTypes } from '../utils/constants';
 import { add, subtract } from '../utils/misc';
 import { SEND_MKR_TO_PROXY_SUCCESS, WITHDRAW_MKR_SUCCESS } from './proxy';
+import { createSubProvider } from '../chain/hw-wallet';
+import { netNameToId } from '../utils/ethereum';
+import values from 'ramda/src/values';
 
 // Constants ----------------------------------------------
 
@@ -24,6 +27,8 @@ const FETCHING_ACCOUNT_DATA = 'accounts/FETCHING_ACCOUNT_DATA';
 const UPDATE_ACCOUNT = 'accounts/UPDATE_ACCOUNT';
 const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
 const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
+const FIND_HARDWARE_ACCOUNT = 'accounts/FIND_HARDWARE_ACCOUNT';
+const FIND_HARDWARE_ACCOUNT_FAILURE = 'accounts/FIND_HARDWARE_ACCOUNT_FAILURE';
 
 // Selectors ----------------------------------------------
 
@@ -53,9 +58,10 @@ export const addAccounts = accounts => async dispatch => {
       currProposal = currProposal
         .then(() => getVotedSlate(proxyAddress))
         .then(slate => getSlateAddresses(slate))
-        // NOTE for now we just take the first address in the slate since we're assuming that they're only voting for one
-        // in the frontend. This should be changed if that changes
-        .then(addresses => addresses[0]);
+        // NOTE for now we just take the first address in the slate since we're
+        // assuming that they're only voting for one in the frontend. This
+        // should be changed if that changes
+        .then(addresses => addresses[0] || '');
     }
     const payload = {
       ...account,
@@ -104,13 +110,20 @@ export const setActiveAccount = address => ({
   payload: address
 });
 
-export const accountDataInit = () => (dispatch, getState) => {
-  const account = getState().accounts.activeAccount;
-  // TODO if there's no active account, do something else
-  const accountAddress = account.address;
-  return getMkrBalance(accountAddress).then(mkr =>
-    dispatch({ type: SET_UNLOCKED_MKR, payload: { mkr } })
-  );
+export const getHardwareAccount = type => async (dispatch, getState) => {
+  dispatch({ type: FIND_HARDWARE_ACCOUNT });
+  const subprovider = createSubProvider(type, {
+    networkId: netNameToId(getState().metamask.network),
+    promisify: true
+  });
+  try {
+    const addressesMap = await subprovider.getAccounts();
+    const address = values(addressesMap)[0];
+    dispatch(addAccount({ address, type, subprovider }));
+  } catch (err) {
+    console.error(err);
+    dispatch({ type: FIND_HARDWARE_ACCOUNT_FAILURE, payload: err });
+  }
 };
 
 // Reducer ------------------------------------------------

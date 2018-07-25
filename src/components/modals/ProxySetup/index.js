@@ -14,7 +14,6 @@ import Link from './Link';
 import Transaction from '../shared/Transaction';
 import Stepper from './Stepper';
 import { getActiveAccount } from '../../../reducers/accounts';
-import { trezorConnectInit } from '../../../reducers/trezor';
 import {
   initiateLink,
   sendMkrToProxy,
@@ -68,7 +67,6 @@ class ProxySetup extends Component {
           <Link
             initiateLink={this.props.initiateLink}
             activeAccount={this.props.activeAccount}
-            trezorConnectInit={this.props.trezorConnectInit}
             accounts={this.props.accounts}
           />
         );
@@ -264,8 +262,7 @@ const dispatchProps = {
   approveLink,
   sendMkrToProxy,
   sendVote,
-  proxyClear,
-  trezorConnectInit
+  proxyClear
 };
 
 export default connect(
