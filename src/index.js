@@ -8,13 +8,15 @@ import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 import rootReducer from './reducers';
 import { isMobile } from './utils/misc';
 import Router from './Routes';
-import Init from './Init';
 import './global.css.js';
+import { metamaskConnectInit } from './reducers/metamask';
 
 const store = createStore(
   rootReducer,
   composeWithDevTools(applyMiddleware(ReduxThunk))
 );
+
+store.dispatch(metamaskConnectInit());
 
 // window.Raven.context(() =>
 //   ReactDOM.render(
@@ -27,7 +29,7 @@ const store = createStore(
 
 ReactDOM.render(
   <Provider store={store}>
-    <Init>{isMobile() ? <div>No mobile support yet</div> : <Router />}</Init>
+    {isMobile() ? <div>No mobile support yet</div> : <Router />}
   </Provider>,
   document.getElementById('root')
 );
