@@ -8,7 +8,8 @@ import {
   getProxyFactory,
   getMkrAddress,
   encodeParameter,
-  sendSignedTx
+  sendSignedTx,
+  getWeb3Instance
 } from './web3';
 import { getProxyStatus } from './read';
 import {
@@ -51,6 +52,24 @@ async function sendTransactionWithAccount(account, tx) {
     default:
       throw new Error(`Unrecognized account type: "${account.type}"`);
   }
+}
+
+export function encodeArgument(type, value) {
+  return removeHexPrefix(
+    getWeb3Instance().eth.abi.encodeParameter(type, value)
+  );
+}
+
+// TODO: refactor more methods to use this. but we should set up tests first
+async function simpleSendTx(account, to, method, args) {
+  return sendTransactionWithAccount(account, {
+    to,
+    from: account.address,
+    data: generateCallData({
+      method: getMethodSig(method),
+      args: args.map(([type, value]) => encodeArgument(type, value))
+    })
+  });
 }
 
 /**
@@ -149,27 +168,13 @@ export const voteAndLockViaProxy = async ({ account, proposalAddress }) => {
     throw new Error(
       `${account.address} cannot vote and lock because it doesn't have a proxy`
     );
-  const methodSig = getMethodSig('lockAllVote(address[])');
-  const proposalParam = encodeParameter('address[]', [proposalAddress]);
-  const callData = generateCallData({
-    method: methodSig,
-    args: [removeHexPrefix(proposalParam)]
-  });
-  const tx = { to: proxyAddress, from: account.address, data: callData };
-  return sendTransactionWithAccount(account, tx);
+  return simpleSendTx(account, proxyAddress, 'lockAllVote(address[])', [
+    ['address[]', [proposalAddress]]
+  ]);
 };
 
 export const withdrawMkr = async (account, value) => {
-  const methodSig = getMethodSig('withdraw(uint256)');
-  const valueParam = encodeParameter('uint256', etherToWei(value));
-  const callData = generateCallData({
-    method: methodSig,
-    args: [removeHexPrefix(valueParam)]
-  });
-  const tx = {
-    to: account.proxy.address,
-    from: account.address,
-    data: callData
-  };
-  return sendTransactionWithAccount(account, tx);
+  return simpleSendTx(account, account.proxy.address, 'withdraw(uint256)', [
+    ['uint256', etherToWei(value)]
+  ]);
 };
