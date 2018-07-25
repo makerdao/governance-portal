@@ -20,7 +20,7 @@ const Logo = styled.div`
 
 const InlineLoader = styled(Loader)`
   display: inline-block;
-  margin-left: 0.8em;
+  margin-left: 1em;
 `;
 
 const Transaction = ({

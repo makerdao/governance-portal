@@ -17,7 +17,7 @@ const INITIATE_LINK_FAILURE = 'proxy/INITIATE_LINK_FAILURE';
 
 const APPROVE_LINK_REQUEST = 'proxy/APPROVE_LINK_REQUEST';
 const APPROVE_LINK_SENT = 'proxy/APPROVE_LINK_SENT';
-const APPROVE_LINK_SUCCESS = 'proxy/APPROVE_LINK_SUCCESS';
+export const APPROVE_LINK_SUCCESS = 'proxy/APPROVE_LINK_SUCCESS';
 const APPROVE_LINK_FAILURE = 'proxy/APPROVE_LINK_FAILURE';
 
 const SEND_MKR_TO_PROXY_REQUEST = 'proxy/SEND_MKR_TO_PROXY_REQUEST';
@@ -71,7 +71,12 @@ export const initiateLink = ({ cold, hot }) => dispatch => {
 export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
   dispatch({ type: APPROVE_LINK_REQUEST });
   const { coldAddress } = getState().proxy;
-  handleTx('APPROVE_LINK', dispatch, _approveLink({ hotAccount, coldAddress }));
+  handleTx(
+    'APPROVE_LINK',
+    dispatch,
+    _approveLink({ hotAccount, coldAddress }),
+    { coldAddress, hotAddress: hotAccount.address }
+  );
 };
 
 export const sendMkrToProxy = value => (dispatch, getState) => {
@@ -124,9 +129,12 @@ const proxy = createReducer(initialState, {
     error: payload.message
   }),
   // Approve ----------------------------------------
+  [APPROVE_LINK_REQUEST]: state => ({
+    ...state,
+    setupProgress: 'approve'
+  }),
   [APPROVE_LINK_SENT]: (state, { payload }) => ({
     ...state,
-    setupProgress: 'approve',
     confirmingApprove: true,
     approveLinkTxHash: payload.txHash
   }),

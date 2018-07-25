@@ -2,6 +2,7 @@ import uniqWith from 'ramda/src/uniqWith';
 import concat from 'ramda/src/concat';
 import pipe from 'ramda/src/pipe';
 import differenceWith from 'ramda/src/differenceWith';
+import pick from 'ramda/src/pick';
 
 import { createReducer } from '../utils/redux';
 import {
@@ -18,7 +19,7 @@ import { SEND_MKR_TO_PROXY_SUCCESS, WITHDRAW_MKR_SUCCESS } from './proxy';
 import { createSubProvider } from '../chain/hw-wallet';
 import { netNameToId } from '../utils/ethereum';
 import values from 'ramda/src/values';
-import { INITIATE_LINK_REQUEST } from './proxy';
+import { INITIATE_LINK_REQUEST, APPROVE_LINK_SUCCESS } from './proxy';
 
 // Constants ----------------------------------------------
 
@@ -245,6 +246,7 @@ const accounts = createReducer(initialState, {
   }),
   [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),
   [WITHDRAW_MKR_SUCCESS]: updateProxyBalance(false),
+
   [INITIATE_LINK_REQUEST]: (state, { payload }) => {
     const hotAccount = {
       ...getAccount({ accounts: state }, payload.hotAddress),
@@ -254,6 +256,35 @@ const accounts = createReducer(initialState, {
     const coldAccount = {
       ...getAccount({ accounts: state }, payload.coldAddress),
       proxyRole: 'cold'
+    };
+
+    return {
+      ...state,
+      allAccounts: withUpdatedAccount(
+        withUpdatedAccount(state.allAccounts, hotAccount),
+        coldAccount
+      )
+    };
+  },
+
+  [APPROVE_LINK_SUCCESS]: (state, { payload }) => {
+    let hotAccount = getAccount({ accounts: state }, payload.hotAddress);
+    let coldAccount = getAccount({ accounts: state }, payload.coldAddress);
+
+    hotAccount = {
+      ...hotAccount,
+      proxy: {
+        ...hotAccount.proxy,
+        linkedAccount: pick(['address', 'mkrBalance', 'type'], coldAccount)
+      }
+    };
+
+    coldAccount = {
+      ...coldAccount,
+      proxy: {
+        ...coldAccount.proxy,
+        linkedAccount: pick(['address', 'mkrBalance', 'type'], hotAccount)
+      }
     };
 
     return {

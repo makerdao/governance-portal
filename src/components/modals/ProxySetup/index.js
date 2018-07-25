@@ -14,7 +14,6 @@ import {
   clear as proxyClear,
   goToStep
 } from '../../../reducers/proxy';
-import { sendVote } from '../../../reducers/vote';
 import { modalClose } from '../../../reducers/modal';
 import Summary from './Summary';
 import Lock from '../Lock';
@@ -46,21 +45,22 @@ class ProxySetup extends Component {
 
   renderContent() {
     const {
-      confirming,
       setupProgress,
+      goToStep,
       modalClose,
-      initiateLink,
-      initiateLinkTxHash,
       activeAccount,
       accounts,
       network,
       coldAccount,
       hotAccount,
+      initiateLink,
+      initiateLinkTxHash,
+      approveLink,
       approveLinkTxHash,
       sendMkrTxHash,
       sendMkrAmount,
-      proxyClear,
-      goToStep
+      confirming,
+      proxyClear
     } = this.props;
 
     switch (setupProgress) {
@@ -84,6 +84,7 @@ class ProxySetup extends Component {
             network={network}
             txHash={initiateLinkTxHash}
             account={coldAccount}
+            nextStep={() => approveLink({ hotAccount })}
           />
         );
       case 'approve':
@@ -93,6 +94,7 @@ class ProxySetup extends Component {
             network={network}
             txHash={approveLinkTxHash}
             account={hotAccount}
+            nextStep={() => goToStep('lockInput')}
           />
         );
       case 'lockInput':
@@ -104,6 +106,7 @@ class ProxySetup extends Component {
             network={network}
             txHash={sendMkrTxHash}
             account={coldAccount}
+            nextStep={() => goToStep('summary')}
           />
         );
       case 'summary':
@@ -196,7 +199,6 @@ const dispatchProps = {
   initiateLink,
   approveLink,
   sendMkrToProxy,
-  sendVote,
   proxyClear,
   goToStep
 };
