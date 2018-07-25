@@ -113,9 +113,16 @@ const DropdownRow = styled.div`
   }
 `;
 
+const DropdownRowForLink = DropdownRow.extend`
+  padding: 0;
+`;
+
 const ConnectLink = styled.a`
   color: black;
   font-style: oblique;
+  padding: 6px;
+  display: block;
+  width: 100%;
 `;
 
 class AccountBox extends Component {
@@ -173,16 +180,16 @@ class AccountBox extends Component {
                 <AccountBlurb type={type} address={address} />
               </DropdownRow>
             ))}
-            <DropdownRow key="trezor">
+            <DropdownRowForLink>
               <ConnectLink onClick={() => getHardwareAccount(TREZOR)}>
                 Connect to Trezor
               </ConnectLink>
-            </DropdownRow>
-            <DropdownRow key="ledger">
+            </DropdownRowForLink>
+            <DropdownRowForLink>
               <ConnectLink onClick={() => getHardwareAccount(LEDGER)}>
                 Connect to Ledger
               </ConnectLink>
-            </DropdownRow>
+            </DropdownRowForLink>
           </DropdownList>
         </Wrapper>
       </ClickOutside>
