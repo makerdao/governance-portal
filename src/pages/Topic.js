@@ -115,7 +115,7 @@ const Topic = ({ match, topics, fetching, activeAccount, modalOpen }) => {
           startCollapsed={false}
         />
         {proposals.map(proposal => (
-          <Card.Element key={proposal.title} height={163}>
+          <Card.Element key={proposal.title} height={137}>
             <ProposalDetails>
               <Link to={`/${toSlug(topicTitle)}/${toSlug(proposal.title)}`}>
                 <SubHeading>{proposal.title}</SubHeading>

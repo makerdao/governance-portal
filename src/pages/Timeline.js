@@ -103,7 +103,7 @@ const Timeline = ({ modalOpen, topics, hatAddress, canVote, fetching }) => (
           startCollapsed={false}
         />
         {topic.proposals.map(proposal => (
-          <Card.Element key={proposal.title} height={163}>
+          <Card.Element key={proposal.title} height={137}>
             <ProposalDetails>
               <Link to={`/${toSlug(topic.topic)}/${toSlug(proposal.title)}`}>
                 <SubHeading>{proposal.title}</SubHeading>

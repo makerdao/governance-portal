@@ -14,10 +14,13 @@ import { metamaskConnectInit } from './reducers/metamask';
 const localLinkProgress = store => next => action => {
   if (action.type === 'proxy/INITIATE_LINK_SUCCESS') {
     const { hotAddress, coldAddress } = store.getState().proxy;
-    localStorage.setItem('linkInitiated', {
-      coldAddress,
-      hotAddress
-    });
+    localStorage.setItem(
+      'linkInitiated',
+      JSON.stringify({
+        coldAddress,
+        hotAddress
+      })
+    );
   }
   if (action.type === 'proxy/APPROVE_LINK_SUCCESS') {
     localStorage.removeItem('linkInitiated');
