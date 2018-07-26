@@ -26,7 +26,6 @@ export default ({ modalClose, proxyClear, sendMkrAmount }) => {
           slim
           onClick={() => {
             modalClose();
-            proxyClear();
             // temp measure to update proxy status
             window.location.reload();
           }}

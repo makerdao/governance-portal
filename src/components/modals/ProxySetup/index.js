@@ -66,6 +66,7 @@ class ProxySetup extends Component {
     switch (setupProgress) {
       case undefined:
       case null:
+      default:
         return (
           <Intro modalClose={modalClose} nextStep={() => goToStep('link')} />
         );
@@ -168,7 +169,6 @@ const stateProps = state => {
   let props = {
     modal: modal.modal,
     modalProps: modal.modalProps,
-    account: metamask.accountAddress,
     accounts: accounts.allAccounts,
     activeAccount: getActiveAccount({ accounts }),
     network: metamask.network === 'kovan' ? 'kovan' : 'mainnet',

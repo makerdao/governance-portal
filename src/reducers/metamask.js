@@ -4,6 +4,7 @@ import { addAccount, setActiveAccount } from './accounts';
 import { voteTallyInit } from './tally';
 import { topicsInit } from './topics';
 import { hatInit } from './hat';
+import { NO_METAMASK_ACCOUNTS } from './accounts';
 
 // Constants ----------------------------------------------
 
@@ -18,7 +19,8 @@ const NOT_AVAILABLE = 'metamask/NOT_AVAILABLE';
 
 const pollForMetamaskChanges = () => async (dispatch, getState) => {
   const {
-    metamask: { network, accountAddress }
+    metamask: { network, activeAddress },
+    accounts: { fetching }
   } = getState();
   const newNetwork = await getMetamaskNetworkName();
   // all the data in the store could be wrong now. later on we could clear out
@@ -27,10 +29,12 @@ const pollForMetamaskChanges = () => async (dispatch, getState) => {
   if (newNetwork !== network) return window.reload();
 
   const address = window.web3.eth.defaultAccount;
-  if (address !== undefined && address !== accountAddress) {
+  if (address !== undefined && address !== activeAddress) {
     dispatch({ type: UPDATE_ACCOUNT, payload: address });
     await dispatch(addAccount({ address, type: 'METAMASK' }));
     dispatch(setActiveAccount(address));
+  } else if (fetching) {
+    dispatch({ type: NO_METAMASK_ACCOUNTS }); // accounts reducer
   }
   setTimeout(() => dispatch(pollForMetamaskChanges()), 2000);
 };
@@ -57,9 +61,11 @@ export const metamaskConnectInit = () => async dispatch => {
       // TODO: notify user or throw to a fallback component
       console.error(error);
       dispatch({ type: CONNECT_FAILURE });
+      dispatch({ type: NO_METAMASK_ACCOUNTS }); // accounts reducer
     }
   } else {
     dispatch({ type: NOT_AVAILABLE });
+    dispatch({ type: NO_METAMASK_ACCOUNTS }); // accounts reducer
   }
 
   if (!networkIsSet) setWeb3Network(network);
@@ -72,8 +78,8 @@ export const metamaskConnectInit = () => async dispatch => {
 
 const initialState = {
   fetching: false,
-  accountAddress: '',
-  web3Available: false,
+  activeAddress: '',
+  available: false,
   network: 'mainnet'
 };
 
@@ -81,18 +87,18 @@ const metamask = createReducer(initialState, {
   [CONNECT_REQUEST]: state => ({
     ...state,
     fetching: true,
-    web3Available: false
+    available: false
   }),
   [CONNECT_SUCCESS]: (state, { payload }) => ({
     ...state,
     fetching: false,
-    web3Available: true,
+    available: true,
     network: payload.network
   }),
   [CONNECT_FAILURE]: () => ({
     ...initialState,
     fetching: false,
-    web3Available: true
+    available: true
   }),
   [NOT_AVAILABLE]: () => ({
     ...initialState,
@@ -100,7 +106,7 @@ const metamask = createReducer(initialState, {
   }),
   [UPDATE_ACCOUNT]: (state, { payload: address }) => ({
     ...state,
-    accountAddress: address
+    activeAddress: address
   }),
   [UPDATE_NETWORK]: (state, { payload: network }) => ({
     ...state,

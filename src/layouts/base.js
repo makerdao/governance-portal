@@ -121,12 +121,7 @@ const BorderLine = styled.div`
   background-color: #445162;
 `;
 
-const BaseLayout = ({
-  children,
-  web3Available,
-  metamaskFetching,
-  topicsAvailable
-}) => {
+const BaseLayout = ({ children, metamaskFetching, topicsAvailable }) => {
   const childrenShouldMount = !metamaskFetching && topicsAvailable;
   return (
     <StyledLayout>
@@ -166,10 +161,7 @@ const BaseLayout = ({
             <StyledLink to="/">
               <HeaderBottomLeft>Governance</HeaderBottomLeft>
             </StyledLink>
-            <AccountBox
-              web3Available={web3Available}
-              fetching={metamaskFetching}
-            />
+            <AccountBox fetching={metamaskFetching} />
           </HeaderBottomContent>
         </HeaderBottom>
       </StyledHeader>
@@ -194,12 +186,10 @@ const BaseLayout = ({
 };
 
 BaseLayout.propTypes = {
-  children: PropTypes.node.isRequired,
-  web3Available: PropTypes.bool
+  children: PropTypes.node.isRequired
 };
 
 const reduxProps = ({ metamask, topics }) => ({
-  web3Available: metamask.web3Available,
   metamaskFetching: metamask.fetching,
   topicsAvailable: topics.length > 0
 });

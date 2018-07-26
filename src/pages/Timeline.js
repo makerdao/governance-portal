@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import DotSpacer from '../components/DotSpacer';
 import VoterStatus from '../components/VoterStatus';
 import VoteMeta from '../components/VoteMeta';
 import VoteTally from '../components/VoteTally';
@@ -84,8 +83,6 @@ const Timeline = ({ modalOpen, topics, hatAddress, canVote, fetching }) => (
         <div>
           <Heading>Current Root Proposal</Heading>
           <div style={{ display: 'flex' }}>
-            <a>See all system parameters</a>
-            <DotSpacer />
             <a>What is the Root Proposal?</a>
           </div>
         </div>

@@ -12,6 +12,7 @@ const Column = styled.div`
   max-width: ${({ maxWidth }) => `${maxWidth}px`};
   margin: 0 auto;
   padding-top: 10vh;
+  padding-bottom: 10vh;
   display: flex;
   flex-direction: column;
   align-items: center;

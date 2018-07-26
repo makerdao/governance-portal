@@ -43,7 +43,6 @@ const DropdownList = styled.div`
   position: absolute;
   background: rgb(${colors.dark});
   color: rgb(${colors.dark_grey});
-  border-radius: 4px;
   width: 220px;
   top: 110%;
   right: 0;
@@ -98,8 +97,8 @@ const DropdownRow = styled.div`
   display: flex;
   cursor: pointer;
   justify-content: flex-start;
-  border-top: ${({ selected }) =>
-    selected ? '' : `1px solid rgba(${colors.black}, 0.15)`};
+  border-top: ${({ top }) =>
+    top ? '' : `1px solid rgba(${colors.black}, 0.15)`};
   font-weight: ${({ selected }) =>
     selected ? fonts.weight.bold : fonts.weight.normal};
   padding: 6px;
@@ -171,11 +170,12 @@ class AccountBox extends Component {
             <StyledArrow />
           </SelectedItem>
           <DropdownList show={this.state.dropdownOpen}>
-            {availableAccounts.map(({ address, type }) => (
+            {availableAccounts.map(({ address, type }, i) => (
               <DropdownRow
                 key={address}
                 onClick={() => this.onChange({ address, type })}
                 selected={activeAccount && address === activeAccount.address}
+                top={i === 0}
               >
                 <AccountBlurb type={type} address={address} />
               </DropdownRow>
@@ -209,10 +209,10 @@ AccountBox.defaultProps = {
   fetching: false
 };
 
-const mapStateToProps = (state, props) => ({
-  allAccounts: state.accounts.allAccounts,
-  activeAccount: getActiveAccount(state),
-  fetching: props.fetching || state.accounts.fetching
+const mapStateToProps = ({ accounts, metamask }, props) => ({
+  allAccounts: accounts.allAccounts,
+  activeAccount: getActiveAccount({ accounts }),
+  fetching: props.fetching || accounts.fetching
 });
 
 export default connect(

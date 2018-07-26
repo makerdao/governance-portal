@@ -31,6 +31,7 @@ const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
 const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
 const FIND_HARDWARE_ACCOUNT = 'accounts/FIND_HARDWARE_ACCOUNT';
 const FIND_HARDWARE_ACCOUNT_FAILURE = 'accounts/FIND_HARDWARE_ACCOUNT_FAILURE';
+export const NO_METAMASK_ACCOUNTS = 'accounts/NO_METAMASK_ACCOUNTS';
 
 // Selectors ----------------------------------------------
 
@@ -89,6 +90,7 @@ export const addAccounts = accounts => async dispatch => {
 
     await dispatch({ type: ADD_ACCOUNT, payload });
   }
+  dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
 };
 
 export const addAccount = account => async dispatch => {
@@ -168,6 +170,8 @@ export const fakeAccount = {
 };
 
 const initialState = {
+  activeAccount: '',
+  fetching: true,
   // activeAccount: '0xbeefed1bedded2dabbed3defaced4decade5dead', // just for dev
   allAccounts: [
     // fakeAccount
@@ -226,27 +230,28 @@ const accounts = createReducer(initialState, {
 
     return {
       ...state,
-      allAccounts: uniqConcat(state.allAccounts, [account]),
-      fetching: false
+      allAccounts: uniqConcat(state.allAccounts, [account])
     };
   },
   [SET_ACTIVE_ACCOUNT]: (state, { payload: address }) => ({
-    ...initialState,
+    ...state,
     allAccounts: state.allAccounts,
-    activeAccount: address,
-    fetching: false
+    activeAccount: address
   }),
   [SET_UNLOCKED_MKR]: (state, { payload }) => ({
     ...state,
     activeAccountUnlockedMkr: payload.mkr
   }),
-  [FETCHING_ACCOUNT_DATA]: state => ({
+  [FETCHING_ACCOUNT_DATA]: (state, { payload }) => ({
     ...state,
-    fetching: true
+    fetching: payload
+  }),
+  [NO_METAMASK_ACCOUNTS]: state => ({
+    ...state,
+    fetching: false
   }),
   [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),
   [WITHDRAW_MKR_SUCCESS]: updateProxyBalance(false),
-
   [INITIATE_LINK_REQUEST]: (state, { payload }) => {
     const hotAccount = {
       ...getAccount({ accounts: state }, payload.hotAddress),
