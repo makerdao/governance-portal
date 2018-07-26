@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import round from 'lodash.round';
 
 import Button from '../../Button';
 import { getActiveAccount } from '../../../reducers/accounts';
@@ -45,7 +46,7 @@ class Vote extends Component {
               please confirm vote below. Vote can be withdrawn at anytime
             </StyledBlurb>
             <StyledBlurb>
-              Your voting power: {proxy.votingPower} MKR
+              Your voting power: {round(proxy.votingPower, 4)} MKR
             </StyledBlurb>
             {alreadyVotingFor ? (
               <StyledBlurb>

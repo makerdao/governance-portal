@@ -80,7 +80,6 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
 };
 
 export const sendMkrToProxy = value => (dispatch, getState) => {
-  if (value === '0' || value === 0) return;
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
   const account = getActiveAccount(getState());
   handleTx({
@@ -92,7 +91,6 @@ export const sendMkrToProxy = value => (dispatch, getState) => {
 };
 
 export const withdrawMkr = value => (dispatch, getState) => {
-  if (value === '0' || value === 0) return;
   dispatch({ type: WITHDRAW_MKR_REQUEST });
   const account = getActiveAccount(getState());
   handleTx({
@@ -112,6 +110,7 @@ const initialState = {
   confirmingInitiate: false,
   confirmingApprove: false,
   confirmingSendMkr: false,
+  setupProgress: 'intro',
   hotAddress: '',
   coldAddress: ''
 };
@@ -196,7 +195,7 @@ const proxy = createReducer(initialState, {
     const { setupProgress } = state;
     const step = name => ({ ...state, setupProgress: name });
 
-    if (!setupProgress) return step('link');
+    if (setupProgress === 'intro') return step('link');
 
     if (setupProgress === 'link') return step('initiate');
 

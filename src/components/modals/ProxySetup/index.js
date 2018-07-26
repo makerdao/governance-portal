@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Intro from './Intro';
 import Link from './Link';
 import Transaction from '../shared/Transaction';
-import Stepper from './Stepper';
+import Stepper, { progressMap } from './Stepper';
 import { getActiveAccount, getAccount } from '../../../reducers/accounts';
 import {
   initiateLink,
@@ -26,7 +26,7 @@ class ProxySetup extends Component {
   render() {
     return (
       <Fragment>
-        <Stepper progress="1" /> {/* TODO */}
+        <Stepper progress={progressMap[this.props.setupProgress]} />
         {this.renderContent()}
         {this.props.mockGoToStep && (
           <a
@@ -64,8 +64,7 @@ class ProxySetup extends Component {
     } = this.props;
 
     switch (setupProgress) {
-      case undefined:
-      case null:
+      case 'intro':
       default:
         return (
           <Intro modalClose={modalClose} nextStep={() => goToStep('link')} />

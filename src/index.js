@@ -11,9 +11,23 @@ import Router from './Routes';
 import './global.css.js';
 import { metamaskConnectInit } from './reducers/metamask';
 
+const localLinkProgress = store => next => action => {
+  if (action.type === 'proxy/INITIATE_LINK_SUCCESS') {
+    const { hotAddress, coldAddress } = store.getState().proxy;
+    localStorage.setItem('linkInitiated', {
+      coldAddress,
+      hotAddress
+    });
+  }
+  if (action.type === 'proxy/APPROVE_LINK_SUCCESS') {
+    localStorage.removeItem('linkInitiated');
+  }
+  next(action);
+};
+
 const store = createStore(
   rootReducer,
-  composeWithDevTools(applyMiddleware(ReduxThunk))
+  composeWithDevTools(applyMiddleware(ReduxThunk, localLinkProgress))
 );
 
 store.dispatch(metamaskConnectInit());

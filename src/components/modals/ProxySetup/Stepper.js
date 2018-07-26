@@ -20,4 +20,22 @@ const Stepper = ({ progress }) => (
   </ProgressTabsWrapper>
 );
 
+export const progressMap = new Proxy(
+  {
+    link: 1,
+    initiate: 1,
+    approve: 1,
+    lockInput: 2,
+    lock: 2,
+    summary: 3
+  },
+  {
+    get(target, name) {
+      if (name === null || name === undefined || !target.hasOwnProperty(name))
+        return 1;
+      else return target[name];
+    }
+  }
+);
+
 export default Stepper;
