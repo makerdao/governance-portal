@@ -114,31 +114,6 @@ export const InfoBoxHeading = styled.div`
   color: ${theme.text.dim_grey_alt};
 `;
 
-export const ProgressTabsWrapper = styled.div`
-  height: 78px;
-  display: flex;
-  background: inherit;
-`;
-
-export const TabsTitle = styled.p`
-  font-size: 14px;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-left: 5px;
-`;
-
-export const TabsTitleWrapper = styled.div`
-  width: 100%;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: ${({ active, theme }) =>
-    active ? theme.text.green : theme.text.dim_green};
-`;
-
 export const TxHash = styled.a`
   padding: 6px;
   padding-top: 20px;

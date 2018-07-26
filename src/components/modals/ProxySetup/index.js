@@ -32,6 +32,8 @@ class ProxySetup extends Component {
           <a
             style={{
               position: 'absolute',
+              top: '1px',
+              left: '1px',
               fontSize: '8px'
             }}
             onClick={this.props.mockGoToStep}
