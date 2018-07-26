@@ -30,6 +30,32 @@ const StyledStatusBar = styled(StatusBar)`
   margin-top: -15px;
 `;
 
+const GreyedText = styled.p`
+  color: ${({ theme }) => theme.text.dim_grey};
+`;
+
+const PercentageWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: ${({ noMargins }) => (noMargins ? '' : '8px')};
+  margin-top: ${({ noMargins }) => (noMargins ? '' : '-8px')};
+`;
+
+export const VotePercentage = ({ loadingPercentage, percentage, ...props }) => (
+  <Fragment>
+    <PercentageWrapper {...props}>
+      <GreyedText>PERCENT OF VOTES</GreyedText>
+      <div style={{ marginLeft: '8px' }}>
+        {loadingPercentage ? (
+          <Loader size={20} color="light_grey" background="white" />
+        ) : (
+          <p>{percentage}%</p>
+        )}
+      </div>
+    </PercentageWrapper>
+  </Fragment>
+);
+
 const VoteTally = ({
   statusBar,
   loadingApprovals,

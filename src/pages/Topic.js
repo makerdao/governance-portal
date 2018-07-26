@@ -9,7 +9,7 @@ import NotFound from './NotFound';
 import VoteMeta from '../components/VoteMeta';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import VoteTally from '../components/VoteTally';
+import { VotePercentage } from '../components/VoteTally';
 import WithTally from '../components/hocs/WithTally';
 import Vote from '../components/modals/Vote';
 import { modalOpen } from '../reducers/modal';
@@ -130,16 +130,9 @@ const Topic = ({ match, topics, fetching, activeAccount, modalOpen }) => {
             </ProposalDetails>
             <div>
               <WithTally candidate={proposal.source}>
-                {({
-                  loadingApprovals,
-                  loadingPercentage,
-                  approvals,
-                  percentage
-                }) => (
-                  <VoteTally
+                {({ loadingPercentage, percentage }) => (
+                  <VotePercentage
                     loadingPercentage={loadingPercentage}
-                    loadingApprovals={loadingApprovals}
-                    approvals={approvals}
                     percentage={percentage}
                   />
                 )}

@@ -5,11 +5,10 @@ import { Link } from 'react-router-dom';
 
 import VoterStatus from '../components/VoterStatus';
 import VoteMeta from '../components/VoteMeta';
-import VoteTally from '../components/VoteTally';
+import { VotePercentage } from '../components/VoteTally';
 import WithTally from '../components/hocs/WithTally';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import Loader from '../components/Loader';
 import { toSlug } from '../utils/misc';
 import { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
@@ -71,10 +70,6 @@ const RootWrapper = styled.div`
   align-items: center;
 `;
 
-const RootDetail = styled.p`
-  color: ${({ theme }) => theme.text.dim_grey};
-`;
-
 const Timeline = ({ modalOpen, topics, hatAddress, canVote, fetching }) => (
   <Fragment>
     <VoterStatus />
@@ -89,21 +84,11 @@ const Timeline = ({ modalOpen, topics, hatAddress, canVote, fetching }) => (
         <div>
           <WithTally candidate={hatAddress}>
             {({ loadingPercentage, percentage }) => (
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-              >
-                <RootDetail>PERCENT OF VOTES</RootDetail>
-                <div style={{ marginLeft: '8px' }}>
-                  {loadingPercentage ? (
-                    <Loader size={20} color="light_grey" background="white" />
-                  ) : (
-                    <p>{percentage}%</p>
-                  )}
-                </div>
-              </div>
+              <VotePercentage
+                loadingPercentage={loadingPercentage}
+                percentage={percentage}
+                noMargins
+              />
             )}
           </WithTally>
         </div>
@@ -128,16 +113,9 @@ const Timeline = ({ modalOpen, topics, hatAddress, canVote, fetching }) => (
             </ProposalDetails>
             <div>
               <WithTally candidate={proposal.source}>
-                {({
-                  loadingApprovals,
-                  loadingPercentage,
-                  approvals,
-                  percentage
-                }) => (
-                  <VoteTally
+                {({ loadingPercentage, percentage }) => (
+                  <VotePercentage
                     loadingPercentage={loadingPercentage}
-                    loadingApprovals={loadingApprovals}
-                    approvals={approvals}
                     percentage={percentage}
                   />
                 )}

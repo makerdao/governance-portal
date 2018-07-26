@@ -80,6 +80,7 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
 };
 
 export const sendMkrToProxy = value => (dispatch, getState) => {
+  if (value === '0' || value === 0) return;
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
   const account = getActiveAccount(getState());
   handleTx({
@@ -91,6 +92,7 @@ export const sendMkrToProxy = value => (dispatch, getState) => {
 };
 
 export const withdrawMkr = value => (dispatch, getState) => {
+  if (value === '0' || value === 0) return;
   dispatch({ type: WITHDRAW_MKR_REQUEST });
   const account = getActiveAccount(getState());
   handleTx({
