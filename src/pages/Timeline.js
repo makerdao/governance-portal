@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import VoterStatus from '../components/VoterStatus';
-import VoteMeta from '../components/VoteMeta';
 import { VotePercentage } from '../components/VoteTally';
 import WithTally from '../components/hocs/WithTally';
 import Button from '../components/Button';
@@ -56,7 +55,7 @@ const ProposalDetails = styled.div`
   flex-direction: column;
   height: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 `;
 
 const StyledCard = styled(Card)`
@@ -97,6 +96,7 @@ const Timeline = ({ modalOpen, topics, hatAddress, canVote, fetching }) => (
     {topics.map(topic => (
       <StyledCard key={topic.topic}>
         <Card.Top
+          govVote={topic.govVote}
           active={topic.active}
           topicTitle={topic.topic}
           collapsable={true}
@@ -108,8 +108,9 @@ const Timeline = ({ modalOpen, topics, hatAddress, canVote, fetching }) => (
               <Link to={`/${toSlug(topic.topic)}/${toSlug(proposal.title)}`}>
                 <SubHeading>{proposal.title}</SubHeading>
               </Link>
-              <Body>{proposal.proposal_blurb}</Body>
-              <VoteMeta {...proposal} />
+              <Body
+                dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
+              />
             </ProposalDetails>
             <div>
               <WithTally candidate={proposal.source}>

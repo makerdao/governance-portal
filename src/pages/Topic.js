@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 import NotFound from './NotFound';
-import VoteMeta from '../components/VoteMeta';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import { VotePercentage } from '../components/VoteTally';
@@ -22,7 +21,7 @@ const ProposalDetails = styled.div`
   flex-direction: column;
   height: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 `;
 
 const StyledTop = styled.div`
@@ -50,13 +49,9 @@ const StyledBody = styled.p`
   line-height: 30px;
   font-size: 17px;
   color: #546978;
-  height: 90px;
+  height: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
-`;
-
-const StyledVoteMeta = styled(VoteMeta)`
-  margin-top: 10px;
 `;
 
 const WhiteBackground = styled.div`
@@ -99,15 +94,14 @@ const Topic = ({ match, topics, fetching, activeAccount, modalOpen }) => {
   const topicSlug = match.params.topicSlug;
   const topic = find(({ topic }) => toSlug(topic) === topicSlug, topics);
   if (topic === undefined) return <NotFound />;
-  const { topic: topicTitle, topic_blurb, active, proposals } = topic;
+  const { topic: topicTitle, topic_blurb, active, govVote, proposals } = topic;
   return (
     <React.Fragment>
       <WhiteBackground>
         <StyledTop>
           <StyledCenter>
             <StyledTitle>{topicTitle}</StyledTitle>
-            <StyledBody>{topic_blurb}</StyledBody>
-            <StyledVoteMeta {...topic} />
+            <StyledBody dangerouslySetInnerHTML={{ __html: topic_blurb }} />
           </StyledCenter>
         </StyledTop>
       </WhiteBackground>
@@ -115,6 +109,7 @@ const Topic = ({ match, topics, fetching, activeAccount, modalOpen }) => {
       <Card>
         <Card.Top
           active={active}
+          govVote={govVote}
           topicTitle={topicTitle}
           collapsable={true}
           startCollapsed={false}
@@ -125,8 +120,10 @@ const Topic = ({ match, topics, fetching, activeAccount, modalOpen }) => {
               <Link to={`/${toSlug(topicTitle)}/${toSlug(proposal.title)}`}>
                 <SubHeading>{proposal.title}</SubHeading>
               </Link>
-              <Body>{proposal.proposal_blurb}</Body>
-              <VoteMeta {...proposal} />
+              <Body
+                dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
+              />
+              {/* <VoteMeta {...proposal} /> */}
             </ProposalDetails>
             <div>
               <WithTally candidate={proposal.source}>

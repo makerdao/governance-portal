@@ -1,10 +1,11 @@
 export default {
   mainnet: [
     {
-      topic: 'Foundation Proposal',
+      topic: 'Foundation Proposal Governance Vote',
       active: true,
-      topic_blurb:
-        'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+      govVote: true,
+      topic_blurb: `Here you can you YES or NO to the proposed five core principles of the Maker Governance philosophy as <a target="_blank" href="https://medium.com/makerdao/foundation-proposal-caeb382465c1"> published on Medium</a> June 20, 2018
+        This type of vote is a <strong style="font-weight:bold;">Governance Vote</strong>, and its objective is to represent resolution on a matter or collection of matters. This vote will not result in changes to the Dai Credit System (to change the state of the system, for example to change the debt ceiling, a second type of vote called an <strong style="font-weight:bold;">Executive Vote</strong> is used).`,
       date: '2018-03-12', //yyyy-mm-dd
       verified: true,
       submitted_by: {
@@ -15,8 +16,8 @@ export default {
         {
           title:
             'Vote YES to the five core principles of the Maker Governance philosophy',
-          proposal_blurb: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vehicula sapien mi, vitae suscipit felis pellentesque a. Aenean condimentum vitae neque quis sagittis. Duis nec purus neque. Duis quis ultricies magna, in facilisis nisl. Suspendisse aliquet nisl et nisl mattis dictum. Donec varius sed lacus sit amet mollis. `,
-          about: require('./demo.md'),
+          proposal_blurb: `Voting for this proposal means voting YES to the five core principles of the Maker Governance philosophy as <a target="_blank" href="https://medium.com/makerdao/foundation-proposal-caeb382465c1"> published on Medium</a> June 20, 2018`,
+          about: require('./yes-proposal.md'),
           source: '0x305505C8C9D51602f3Ebe0CE984aB2AEb0df3172',
           date: '2018-03-12', //yyyy-mm-dd
           verified: true,
@@ -34,8 +35,8 @@ export default {
         {
           title:
             'Vote NO to the five core principles of the Maker Governance philosophy',
-          proposal_blurb: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vehicula sapien mi, vitae suscipit felis pellentesque a. Aenean condimentum vitae neque quis sagittis. Duis nec purus neque. Duis quis ultricies magna, in facilisis nisl. Suspendisse aliquet nisl et nisl mattis dictum. Donec varius sed lacus sit amet mollis. `,
-          about: require('./demo.md'),
+          proposal_blurb: `Voting for this proposal means voting NO to the five core principles of the Maker Governance philosophy as <a target="_blank" href="https://medium.com/makerdao/foundation-proposal-caeb382465c1"> published on Medium</a> June 20, 2018`,
+          about: require('./no-proposal.md'),
           source: '0xA9eB03F3a499E274170c378f958E4A0cBea2c7ef',
           date: '2018-03-12',
           verified: true,
@@ -55,6 +56,7 @@ export default {
     {
       topic: 'OSM, Debt Ceiling',
       active: false,
+      govVote: false,
       topic_blurb:
         'With the introduction of the OSMs, we add an additional layer of security to our price feeds. ETH/USD and MKR/USD prices are now delayed by one hour, so we have time to react in the event the price feeds are compromised.',
       date: '2018-03-12', //yyyy-mm-dd
@@ -88,10 +90,11 @@ export default {
   ],
   kovan: [
     {
-      topic: 'Foundation Proposal',
+      topic: 'Foundation Proposal Governance Vote',
       active: true,
-      topic_blurb:
-        'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+      govVote: true,
+      topic_blurb: `Here you can you YES or NO to the proposed five core principles of the Maker Governance philosophy as <a target="_blank" href="https://medium.com/makerdao/foundation-proposal-caeb382465c1"> published on Medium</a> June 20, 2018
+      This type of vote is a <strong style="font-weight:bold;">Governance Vote</strong>, and its objective is to represent resolution on a matter or collection of matters. This vote will not result in changes to the Dai Credit System (to change the state of the system, for example to change the debt ceiling, a second type of vote called an <strong style="font-weight:bold;">Executive Vote</strong> is used).`,
       date: '2018-03-12', //yyyy-mm-dd
       verified: true,
       submitted_by: {
@@ -102,8 +105,8 @@ export default {
         {
           title:
             'Vote YES to the five core principles of the Maker Governance philosophy',
-          proposal_blurb: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vehicula sapien mi, vitae suscipit felis pellentesque a. Aenean condimentum vitae neque quis sagittis. Duis nec purus neque. Duis quis ultricies magna, in facilisis nisl. Suspendisse aliquet nisl et nisl mattis dictum. Donec varius sed lacus sit amet mollis. `,
-          about: require('./demo.md'),
+          proposal_blurb: `Voting for this proposal means voting YES to the five core principles of the Maker Governance philosophy as <a target="_blank" href="https://medium.com/makerdao/foundation-proposal-caeb382465c1"> published on Medium</a> June 20, 2018`,
+          about: require('./yes-proposal.md'),
           source: '0x0c0fC0952790A96D60CD82cA865C7bb1233477C3',
           date: '2018-03-12', //yyyy-mm-dd
           verified: true,
@@ -121,8 +124,8 @@ export default {
         {
           title:
             'Vote NO to the five core principles of the Maker Governance philosophy',
-          proposal_blurb: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vehicula sapien mi, vitae suscipit felis pellentesque a. Aenean condimentum vitae neque quis sagittis. Duis nec purus neque. Duis quis ultricies magna, in facilisis nisl. Suspendisse aliquet nisl et nisl mattis dictum. Donec varius sed lacus sit amet mollis. `,
-          about: require('./demo.md'),
+          proposal_blurb: `Voting for this proposal means voting NO to the five core principles of the Maker Governance philosophy as <a target="_blank" href="https://medium.com/makerdao/foundation-proposal-caeb382465c1"> published on Medium</a> June 20, 2018`,
+          about: require('./no-proposal.md'),
           source: '0x66fF2801fDfEa24db2873abf977cA32226c175BD',
           date: '2018-03-12',
           verified: true,

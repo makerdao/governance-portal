@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom';
 
 import { toSlug } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
-import VoteMeta from '../components/VoteMeta';
 import VoteTally from '../components/VoteTally';
 import Vote from '../components/modals/Vote';
 import Button from '../components/Button';
@@ -57,10 +56,6 @@ const StyledBody = styled.p`
   height: 90px;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-top: 10px;
-`;
-
-const StyledVoteMeta = styled(VoteMeta)`
   margin-top: 10px;
 `;
 
@@ -198,8 +193,9 @@ class Proposal extends Component {
           <StyledTop>
             <StyledCenter>
               <StyledTitle>{proposal.title}</StyledTitle>
-              <StyledBody>{proposal.proposal_blurb}</StyledBody>
-              <StyledVoteMeta {...proposal} />
+              <StyledBody
+                dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
+              />
             </StyledCenter>
             <div>
               <WithTally candidate={proposal.source}>

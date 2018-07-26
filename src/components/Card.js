@@ -127,12 +127,25 @@ const CardTopWrapper = styled.div`
   }
 `;
 
-const TopicStatus = styled.div`
-  line-height: 24px;
-  align-self: center;
-  background-color: ${({ active }) => (active ? '#d2f9f1' : '#EAEFF7')};
+const Tag = styled.div`
   padding: 2px 15px;
   border-radius: 20px;
+  line-height: 24px;
+  align-self: center;
+  margin-left: ${({ ml }) => (ml ? `${ml}px` : '')};
+`;
+
+const VoteType = Tag.extend`
+  background-color: ${({ governance }) => (governance ? '#FFE3DB' : '#EAEFF7')};
+  color: ${({ governance }) => (governance ? '#F77249' : '#546978')};
+  &::after {
+    content: ${({ governance }) =>
+      governance ? `"Governance vote"` : `"Executive vote"`};
+  }
+`;
+
+const TopicStatus = Tag.extend`
+  background-color: ${({ active }) => (active ? '#d2f9f1' : '#EAEFF7')};
   color: ${({ active }) => (active ? '#30bd9f' : '#546978')};
   &::after {
     content: ${({ active }) => (active ? `"Topic active"` : `"Topic closed"`)};
@@ -172,7 +185,7 @@ class CardTop extends React.Component {
     this.setState(state => ({ collapse: !state.collapse }));
   };
   render() {
-    const { minHeight, topicTitle, active, collapsable } = this.props;
+    const { minHeight, topicTitle, active, govVote, collapsable } = this.props;
     const { collapse } = this.state;
     return (
       <CardTopWrapper minHeight={minHeight} collapse={collapse}>
@@ -184,7 +197,10 @@ class CardTop extends React.Component {
             <Heading>{topicTitle}</Heading>
           </Link>
         </div>
-        <TopicStatus active={active} />
+        <div style={{ display: 'flex' }}>
+          <VoteType governance={govVote} />
+          <TopicStatus ml={8} active={active} />
+        </div>
       </CardTopWrapper>
     );
   }
