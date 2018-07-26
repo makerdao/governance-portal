@@ -32,6 +32,7 @@ export default class AmountInput extends Component {
   render() {
     const {
       txHash,
+      txSent,
       confirming,
       network,
       modalClose,
@@ -43,7 +44,7 @@ export default class AmountInput extends Component {
       balance,
       buttonLabel
     } = this.props;
-    if (txHash)
+    if (txSent)
       return (
         <Transaction
           lastCard

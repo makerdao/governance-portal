@@ -91,7 +91,7 @@ export const sendMkrToProxy = value => (dispatch, getState) => {
 };
 
 export const withdrawMkr = value => (dispatch, getState) => {
-  dispatch({ type: WITHDRAW_MKR_REQUEST });
+  dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
   const account = getActiveAccount(getState());
   handleTx({
     prefix: 'WITHDRAW_MKR',
@@ -175,6 +175,10 @@ const proxy = createReducer(initialState, {
     confirmingSendMkr: false
   }),
   // Withdraw ---------------------------------------
+  [WITHDRAW_MKR_REQUEST]: (state, { payload: value }) => ({
+    ...state,
+    withdrawMkrAmount: value
+  }),
   [WITHDRAW_MKR_SENT]: (state, { payload }) => ({
     ...state,
     confirmingWithdrawMkr: true,

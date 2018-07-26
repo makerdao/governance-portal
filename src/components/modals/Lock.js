@@ -18,7 +18,8 @@ const mapStateToProps = state => {
     blurb:
       'Please select the amount of MKR to lock in the secure voting contract. You can withdraw it at any time.',
     amountLabel: 'MKR balance',
-    buttonLabel: 'Lock MKR'
+    buttonLabel: 'Lock MKR',
+    txSent: !!state.proxy.sendMkrAmount
   };
 };
 
