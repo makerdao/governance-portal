@@ -31,7 +31,6 @@ export default class AmountInput extends Component {
 
   render() {
     const {
-      balance,
       txHash,
       confirming,
       network,
@@ -40,13 +39,15 @@ export default class AmountInput extends Component {
       blurb,
       amountLabel,
       action,
+      account,
+      balance,
       buttonLabel
     } = this.props;
     if (txHash)
       return (
         <Transaction
           lastCard
-          {...{ txHash, confirming, network }}
+          {...{ txHash, confirming, network, account }}
           nextStep={() => modalClose()}
         />
       );

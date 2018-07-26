@@ -3,7 +3,7 @@ import {
   initiateLink as _initiateLink,
   approveLink as _approveLink,
   sendMkrToProxy as _sendMkrToProxy,
-  withdrawMkr as _withdrawMkr
+  unlockWithdrawMkr as _unlockWithdrawMkr
 } from '../chain/write';
 import { awaitTx } from '../chain/web3';
 import { getActiveAccount } from './accounts';
@@ -41,7 +41,7 @@ export const goToStep = step => ({ type: GO_TO_STEP, payload: step });
 
 // FIXME sometimes this causes an exception because of a null receipt; something
 // wrong with awaitTx logic?
-const handleTx = async (prefix, dispatch, action, successPayload = '') => {
+const handleTx = async ({ prefix, dispatch, action, successPayload = '' }) => {
   try {
     const txHash = await action;
     dispatch({ type: `proxy/${prefix}_SENT`, payload: { txHash } });
@@ -61,39 +61,44 @@ export const initiateLink = ({ cold, hot }) => dispatch => {
     type: INITIATE_LINK_REQUEST,
     payload: { hotAddress: hot.address, coldAddress: cold.address }
   });
-  handleTx(
-    'INITIATE_LINK',
+  handleTx({
+    prefix: 'INITIATE_LINK',
     dispatch,
-    _initiateLink({ coldAccount: cold, hotAddress: hot.address })
-  );
+    action: _initiateLink({ coldAccount: cold, hotAddress: hot.address })
+  });
 };
 
 export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
   dispatch({ type: APPROVE_LINK_REQUEST });
   const { coldAddress } = getState().proxy;
-  handleTx(
-    'APPROVE_LINK',
+  handleTx({
+    prefix: 'APPROVE_LINK',
     dispatch,
-    _approveLink({ hotAccount, coldAddress }),
-    { coldAddress, hotAddress: hotAccount.address }
-  );
+    action: _approveLink({ hotAccount, coldAddress }),
+    successPayload: { coldAddress, hotAddress: hotAccount.address }
+  });
 };
 
 export const sendMkrToProxy = value => (dispatch, getState) => {
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
   const account = getActiveAccount(getState());
-  handleTx(
-    'SEND_MKR_TO_PROXY',
+  handleTx({
+    prefix: 'SEND_MKR_TO_PROXY',
     dispatch,
-    _sendMkrToProxy({ account, value }),
-    value
-  );
+    action: _sendMkrToProxy({ account, value }),
+    successPayload: value
+  });
 };
 
 export const withdrawMkr = value => (dispatch, getState) => {
   dispatch({ type: WITHDRAW_MKR_REQUEST });
   const account = getActiveAccount(getState());
-  handleTx('WITHDRAW_MKR', dispatch, _withdrawMkr(account, value), value);
+  handleTx({
+    prefix: 'WITHDRAW_MKR',
+    dispatch,
+    action: _unlockWithdrawMkr(account, value),
+    successPayload: value
+  });
 };
 
 // Reducer ------------------------------------------------

@@ -1,6 +1,8 @@
 import BigNumber from 'bignumber.js';
 import takeLast from 'ramda/src/takeLast';
 
+BigNumber.config({ DECIMAL_PLACES: 18, ROUNDING_MODE: 1 });
+
 export const WEI = 1;
 export const ETHER = 1000000000000000000;
 

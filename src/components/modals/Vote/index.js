@@ -77,6 +77,7 @@ class Vote extends Component {
             nextStep={() => window.location.reload()}
             network={this.props.network}
             lastCard={true}
+            account={this.props.activeAccount}
             confirming={this.props.confirming}
           />
         );

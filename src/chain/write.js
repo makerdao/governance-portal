@@ -133,29 +133,6 @@ export const sendMkrToProxy = async ({ account, value }) => {
 };
 
 /**
- * @async @desc vote for a single proposal via a vote-proxy
- * @param {Object} voteDetails { acccount: { address, type }, proposalAddress }
- * @return {Promise} tx
- */
-export const voteViaProxy = async ({ account, proposalAddress }) => {
-  const { address: proxyAddress, hasProxy } = await getProxyStatus(
-    account.address
-  );
-  if (!hasProxy)
-    throw new Error(
-      `${account.address} cannot vote because it doesn't have a proxy`
-    );
-  const methodSig = getMethodSig('vote(address[])');
-  const proposalParam = encodeParameter('address[]', [proposalAddress]);
-  const callData = generateCallData({
-    method: methodSig,
-    args: [removeHexPrefix(proposalParam)]
-  });
-  const tx = { to: proxyAddress, from: account.address, data: callData };
-  return sendTransactionWithAccount(account, tx);
-};
-
-/**
  * @async @desc lock all MKR in a vote-proxy vote for a single proposal
  * @param {Object} voteDetails { acccount: { address, type }, proposalAddress }
  * @return {Promise} tx
@@ -175,4 +152,19 @@ export const withdrawMkr = async (account, value) => {
   return simpleSendTx(account, account.proxy.address, 'withdraw(uint256)', [
     ['uint256', etherToWei(value)]
   ]);
+};
+
+/**
+ * @async @desc withdraw mkr from proxy; unlock from chief if necessary
+ * @param {Object} account
+ * @param {String} value
+ * @return {Promise} tx
+ */
+export const unlockWithdrawMkr = async (account, value) => {
+  return simpleSendTx(
+    account,
+    account.proxy.address,
+    'unlockWithdraw(uint256)',
+    [['uint256', etherToWei(value)]]
+  );
 };

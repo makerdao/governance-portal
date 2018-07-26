@@ -2,6 +2,8 @@ import takeLast from 'ramda/src/takeLast';
 import take from 'ramda/src/take';
 import BigNumber from 'bignumber.js';
 
+BigNumber.config({ DECIMAL_PLACES: 18, ROUNDING_MODE: 1 });
+
 /**
  * @desc returns whether current device is mobile
  * @return {Boolean}
