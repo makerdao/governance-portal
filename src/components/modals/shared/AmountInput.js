@@ -29,6 +29,15 @@ export default class AmountInput extends Component {
     this.setState({ amount: this.props.balance });
   };
 
+  submit(amount) {
+    const { action, balance } = this.props;
+    if (amount === 0 || amount > balance) {
+      window.alert('Enter a valid amount.');
+    } else {
+      action(amount);
+    }
+  }
+
   render() {
     const {
       txHash,
@@ -39,7 +48,6 @@ export default class AmountInput extends Component {
       title,
       blurb,
       amountLabel,
-      action,
       account,
       balance,
       buttonLabel
@@ -71,7 +79,7 @@ export default class AmountInput extends Component {
           onChange={this.setAmount}
           button={<GreyLink onClick={this.setMaxAmount}>Set max</GreyLink>}
         />
-        <EndButton onClick={() => action(this.state.amount)}>
+        <EndButton onClick={() => this.submit(this.state.amount)}>
           {buttonLabel}
         </EndButton>
       </Fragment>
