@@ -7,6 +7,7 @@ import {
 } from '../chain/write';
 import { awaitTx } from '../chain/web3';
 import { getActiveAccount } from './accounts';
+import { AccountTypes } from '../utils/constants';
 
 // Constants ----------------------------------------------
 
@@ -56,7 +57,21 @@ const handleTx = async ({ prefix, dispatch, action, successPayload = '' }) => {
   }
 };
 
-export const initiateLink = ({ cold, hot }) => dispatch => {
+function requireCorrectAccount(state, requiredAccount) {
+  const { address, type, proxyRole } = requiredAccount;
+  if (type !== AccountTypes.METAMASK) return true;
+  const activeAccount = getActiveAccount(state);
+  if (activeAccount.address === address) return true;
+
+  window.alert(
+    `Switch to your ${proxyRole} wallet in Metamask before continuing.`
+  );
+  return false;
+}
+
+export const initiateLink = ({ cold, hot }) => (dispatch, getState) => {
+  if (!requireCorrectAccount(getState(), cold)) return;
+
   dispatch({
     type: INITIATE_LINK_REQUEST,
     payload: { hotAddress: hot.address, coldAddress: cold.address }
@@ -69,6 +84,8 @@ export const initiateLink = ({ cold, hot }) => dispatch => {
 };
 
 export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
+  if (!requireCorrectAccount(getState(), hotAccount)) return;
+
   dispatch({ type: APPROVE_LINK_REQUEST });
   const { coldAddress } = getState().proxy;
   handleTx({
@@ -80,8 +97,14 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
 };
 
 export const sendMkrToProxy = value => (dispatch, getState) => {
-  dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
   const account = getActiveAccount(getState());
+  if (account.proxyRole !== 'cold') {
+    window.alert('Switch to your cold wallet in Metamask before continuing.');
+    return;
+  }
+
+  dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
+
   handleTx({
     prefix: 'SEND_MKR_TO_PROXY',
     dispatch,
