@@ -12,6 +12,7 @@ import Vote from '../components/modals/Vote';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Loader from '../components/Loader';
+import Timer from '../components/Timer';
 import WithTally from '../components/hocs/WithTally';
 import { getActiveAccount } from '../reducers/accounts';
 import NotFound from './NotFound';
@@ -196,6 +197,7 @@ class Proposal extends Component {
               <StyledBody
                 dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
               />
+              <Timer endTimestamp={1532792087269} small mt="-22" />
             </StyledCenter>
             <div>
               <WithTally candidate={proposal.source}>

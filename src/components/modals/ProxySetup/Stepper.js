@@ -46,16 +46,18 @@ const Step = ({ active, title, line, zIndex }) => (
   </StepWrapper>
 );
 
-const Stepper = ({ progress }) => (
-  <Wrapper>
-    <Step active={progress >= 1} title="LINK WALLETS" zIndex={2} />
-    <Step active={progress >= 2} title="LOCK MKR" line zIndex={1} />
-    <Step active={progress >= 3} title="CONFIRMATION" line />
-  </Wrapper>
-);
+const Stepper = ({ progress }) =>
+  progress !== 0 ? (
+    <Wrapper>
+      <Step active={progress >= 1} title="LINK WALLETS" zIndex={2} />
+      <Step active={progress >= 2} title="LOCK MKR" line zIndex={1} />
+      <Step active={progress >= 3} title="CONFIRMATION" line />
+    </Wrapper>
+  ) : null;
 
 export const progressMap = new Proxy(
   {
+    intro: 0,
     link: 1,
     initiate: 1,
     approve: 1,

@@ -11,6 +11,7 @@ import Card from '../components/Card';
 import { VotePercentage } from '../components/VoteTally';
 import WithTally from '../components/hocs/WithTally';
 import Vote from '../components/modals/Vote';
+import Timer from '../components/Timer';
 import { modalOpen } from '../reducers/modal';
 import { getActiveAccount } from '../reducers/accounts';
 import { toSlug } from '../utils/misc';
@@ -69,6 +70,7 @@ const SubHeading = styled.p`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  margin-top: -10px;
   font-size: ${fonts.size.large};
   font-weight: ${fonts.weight.medium};
   opacity: ${({ disabled }) => (disabled ? 0.7 : 1)};
@@ -115,7 +117,7 @@ const Topic = ({ match, topics, fetching, activeAccount, modalOpen }) => {
           startCollapsed={false}
         />
         {proposals.map(proposal => (
-          <Card.Element key={proposal.title} height={137}>
+          <Card.Element key={proposal.title} height={151}>
             <ProposalDetails>
               <Link to={`/${toSlug(topicTitle)}/${toSlug(proposal.title)}`}>
                 <SubHeading>{proposal.title}</SubHeading>
@@ -123,7 +125,7 @@ const Topic = ({ match, topics, fetching, activeAccount, modalOpen }) => {
               <Body
                 dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
               />
-              {/* <VoteMeta {...proposal} /> */}
+              <Timer endTimestamp={1532792087269} small mb="-6" />
             </ProposalDetails>
             <div>
               <WithTally candidate={proposal.source}>

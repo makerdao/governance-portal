@@ -8,29 +8,19 @@ import { VotePercentage } from '../components/VoteTally';
 import WithTally from '../components/hocs/WithTally';
 import Button from '../components/Button';
 import Card from '../components/Card';
+import Timer from '../components/Timer';
 import { toSlug } from '../utils/misc';
 import { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
 import { getActiveAccount } from '../reducers/accounts';
 import Vote from '../components/modals/Vote';
 
-const Heading = styled.p`
-  color: #1f2c3c;
-  font-size: ${fonts.size.xlarge};
-  font-weight: ${fonts.weight.medium};
-  opacity: ${({ disabled }) => (disabled ? 0.7 : 1)};
-  flex: none;
-  position: relative;
-  @media screen and (max-width: 736px) {
-    display: ${({ isAlwaysVisible }) => (isAlwaysVisible ? 'block' : 'none')};
-  }
-`;
-
 const SubHeading = styled.p`
   color: #1f2c3c;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  margin-top: ${({ mt }) => (mt ? `${mt}px` : '')};
   font-size: ${fonts.size.large};
   font-weight: ${fonts.weight.medium};
   opacity: ${({ disabled }) => (disabled ? 0.7 : 1)};
@@ -62,37 +52,10 @@ const StyledCard = styled(Card)`
   margin-bottom: 30px;
 `;
 
-const RootWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 20px 26px;
-  align-items: center;
-`;
-
-const Timeline = ({ modalOpen, topics, hatAddress, canVote, fetching }) => (
+const Timeline = ({ modalOpen, topics, canVote, fetching }) => (
   <Fragment>
     <VoterStatus />
-    <StyledCard>
-      <RootWrapper>
-        <div>
-          <Heading>Current Root Proposal</Heading>
-          <div style={{ display: 'flex' }}>
-            <a>What is the Root Proposal?</a>
-          </div>
-        </div>
-        <div>
-          <WithTally candidate={hatAddress}>
-            {({ loadingPercentage, percentage }) => (
-              <VotePercentage
-                loadingPercentage={loadingPercentage}
-                percentage={percentage}
-                noMargins
-              />
-            )}
-          </WithTally>
-        </div>
-      </RootWrapper>
-    </StyledCard>
+    <Timer endTimestamp={1532792087269} />
     {topics.map(topic => (
       <StyledCard key={topic.topic}>
         <Card.Top
@@ -103,14 +66,15 @@ const Timeline = ({ modalOpen, topics, hatAddress, canVote, fetching }) => (
           startCollapsed={false}
         />
         {topic.proposals.map(proposal => (
-          <Card.Element key={proposal.title} height={137}>
+          <Card.Element key={proposal.title} height={151}>
             <ProposalDetails>
               <Link to={`/${toSlug(topic.topic)}/${toSlug(proposal.title)}`}>
-                <SubHeading>{proposal.title}</SubHeading>
+                <SubHeading mt="-10">{proposal.title}</SubHeading>
               </Link>
               <Body
                 dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
               />
+              <Timer endTimestamp={1532792087269} small mb="-6" />
             </ProposalDetails>
             <div>
               <WithTally candidate={proposal.source}>
