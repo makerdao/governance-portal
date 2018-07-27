@@ -167,3 +167,29 @@ export const EndButton = styled(Button)`
 export const GreyLink = styled.a`
   color: ${theme.text.dim_grey_alt};
 `;
+
+export const MkrAmt = styled.p`
+  color: #212536;
+  font-size: 16px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  &:after {
+    content: 'MKR';
+    color: #939393;
+    margin-left: 4px;
+  }
+`;
+
+export const VoteImpact = styled.div`
+  display: flex;
+  overflow: hidden;
+  background-color: #fdfdfd;
+  border-radius: 4px;
+  border: solid 1px #dfe1e3;
+`;
+
+export const VoteImpactHeading = styled.p`
+  color: #868997;
+  font-size: 14px;
+  white-space: nowrap;
+`;

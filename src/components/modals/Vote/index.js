@@ -3,11 +3,20 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import round from 'lodash.round';
 
+import { add } from '../../../utils/misc';
 import Button from '../../Button';
+import WithTally from '../../hocs/WithTally';
 import { getActiveAccount } from '../../../reducers/accounts';
 import { modalClose } from '../../../reducers/modal';
 import { sendVote } from '../../../reducers/vote';
-import { StyledTitle, StyledBlurb, StyledTop } from '../shared/styles';
+import {
+  StyledTitle,
+  StyledBlurb,
+  StyledTop,
+  MkrAmt,
+  VoteImpact,
+  VoteImpactHeading
+} from '../shared/styles';
 import Transaction from '../shared/Transaction';
 
 class Vote extends Component {
@@ -45,19 +54,56 @@ class Vote extends Component {
               <strong style={{ color: '#212536' }}>{proposal.title}</strong>{' '}
               please confirm vote below. Vote can be withdrawn at anytime
             </StyledBlurb>
-            <StyledBlurb>
-              Your voting power: {round(proxy.votingPower, 4)} MKR
-            </StyledBlurb>
             {alreadyVotingFor ? (
               <StyledBlurb>
                 You're already voting for this proposal!
               </StyledBlurb>
             ) : (
-              <div />
+              <WithTally candidate={proposal.address}>
+                {({ approvals }) => (
+                  <VoteImpact>
+                    <div
+                      style={{
+                        width: '100%',
+                        maxWidth: '180px',
+                        padding: '8px 18px'
+                      }}
+                    >
+                      <VoteImpactHeading>In secure contract</VoteImpactHeading>
+                      <MkrAmt>{round(proxy.votingPower, 4)}</MkrAmt>
+                    </div>
+
+                    <div
+                      style={{
+                        width: '100%',
+                        padding: '8px 30px',
+                        maxWidth: '180px',
+                        borderLeft: '1px solid #DFE1E3'
+                      }}
+                    >
+                      <VoteImpactHeading>Current vote</VoteImpactHeading>
+                      <MkrAmt>{round(approvals, 4)}</MkrAmt>
+                    </div>
+                    <div
+                      style={{
+                        width: '100%',
+                        padding: '8px 30px',
+                        maxWidth: '180px',
+                        borderLeft: '1px solid #DFE1E3'
+                      }}
+                    >
+                      <VoteImpactHeading>After vote cast</VoteImpactHeading>
+                      <MkrAmt>
+                        {round(add(approvals, proxy.votingPower), 4)}{' '}
+                      </MkrAmt>
+                    </div>
+                  </VoteImpact>
+                )}
+              </WithTally>
             )}
             <div
               style={{
-                margin: 'auto',
+                marginLeft: 'auto',
                 marginTop: '18px'
               }}
             >
