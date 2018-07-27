@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -57,44 +57,55 @@ class Timer extends Component {
     if (this.state.timeLeft > 0)
       this.setState(state => ({ timeLeft: state.timeLeft - 1 }));
   };
-  render() {
-    const { small } = this.props;
+
+  renderCore() {
     let { timeLeft } = this.state;
     const days = Math.floor(timeLeft / (3600 * 24));
-    const Sday = days > 1 ? 's' : '';
+    const Sday = days !== 1 ? 's' : '';
     timeLeft -= days * 3600 * 24;
     const hours = Math.floor(timeLeft / 3600);
-    const Shour = hours > 1 ? 's' : '';
+    const Shour = hours !== 1 ? 's' : '';
     timeLeft -= hours * 3600;
     const minutes = Math.floor(timeLeft / 60);
-    const Sminute = minutes > 1 ? 's' : '';
+    const Sminute = minutes !== 1 ? 's' : '';
     timeLeft -= minutes * 60;
     const seconds = timeLeft;
-    const Ssecond = seconds > 1 ? 's' : '';
+    const Ssecond = seconds !== 1 ? 's' : '';
+
+    return (
+      <div>
+        Time left to vote{' '}
+        <Bold>
+          {days > 0 && (
+            <Fragment>
+              {days} day{Sday}{' '}
+            </Fragment>
+          )}
+          {hours > 0 && (
+            <Fragment>
+              {hours} hour{Shour}{' '}
+            </Fragment>
+          )}
+          {minutes} minute{Sminute} {seconds} second{Ssecond}
+        </Bold>
+      </div>
+    );
+  }
+
+  render() {
+    const { small } = this.props;
     if (small) {
       return (
         <WrapperSmall mb={this.props.mb} mt={this.props.mt}>
           <SmallClock />
-          <div>
-            Time left to vote{' '}
-            <Bold>
-              {days} day{Sday} {hours} hour{Shour} {minutes} minute{Sminute}{' '}
-              {seconds} second{Ssecond}
-            </Bold>
-          </div>
+          {this.renderCore()}
         </WrapperSmall>
       );
     }
     return (
       <Wrapper mb={this.props.mb} mt={this.props.mt}>
         <Clock />
-        <div>
-          Time left to vote{' '}
-          <Bold>
-            {days} day{Sday} {hours} hour{Shour} {minutes} minute{Sminute}{' '}
-            {seconds} second{Ssecond}
-          </Bold>
-        </div>
+        {this.renderCore()}
       </Wrapper>
     );
   }
