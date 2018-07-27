@@ -93,7 +93,7 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
       )}
       <DotSpacer />
       {firstLetterCapital(linkedAccount.proxyRole)} wallet:{' '}
-      {cutMiddle(linkedAccount.address, 4)}{' '}
+      {cutMiddle(linkedAccount.address)}{' '}
       <a
         target="_blank"
         href={ethScanLink(linkedAccount.address, networkShown)}

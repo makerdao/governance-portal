@@ -104,7 +104,6 @@ export const sendMkrToProxy = value => (dispatch, getState) => {
   }
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
-
   handleTx({
     prefix: 'SEND_MKR_TO_PROXY',
     dispatch,
