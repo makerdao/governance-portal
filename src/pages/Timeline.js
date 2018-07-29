@@ -57,7 +57,7 @@ const Timeline = ({ modalOpen, topics, canVote, fetching }) => (
     <VoterStatus />
     {topics.map(topic => (
       <Fragment key={topic.topic}>
-        <Timer endTimestamp={topic.end_timestamp} />
+        {topic.active ? <Timer endTimestamp={topic.end_timestamp} /> : null}
         <StyledCard key={topic.topic}>
           <Card.Top
             govVote={topic.govVote}

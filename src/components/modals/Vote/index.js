@@ -8,7 +8,7 @@ import Button from '../../Button';
 import WithTally from '../../hocs/WithTally';
 import { getActiveAccount } from '../../../reducers/accounts';
 import { modalClose } from '../../../reducers/modal';
-import { sendVote } from '../../../reducers/vote';
+import { sendVote, clear as voteClear } from '../../../reducers/vote';
 import {
   StyledTitle,
   StyledBlurb,
@@ -20,21 +20,9 @@ import {
 import Transaction from '../shared/Transaction';
 
 class Vote extends Component {
-  state = {
-    step: 1
-  };
-
-  componentDidUpdate(prevProps) {
-    if (this.props.voteTxHash !== prevProps.voteTxHash) this.nextStep();
+  componentDidMount() {
+    this.props.voteClear();
   }
-
-  componentWillUnmount() {
-    this.setState({ step: 1 });
-  }
-
-  nextStep = () => {
-    this.setState(state => ({ step: state.step + 1 }));
-  };
 
   // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs, reject transaction, why did this tx fail
   render() {
@@ -42,8 +30,9 @@ class Vote extends Component {
     const { proxy, votingFor } = this.props.activeAccount;
     const alreadyVotingFor =
       votingFor.toLowerCase() === proposal.address.toLowerCase();
-    switch (this.state.step) {
-      case 1:
+    switch (this.props.voteProgress) {
+      case 'confirm':
+      default:
         return (
           <Fragment>
             <StyledTop>
@@ -72,7 +61,6 @@ class Vote extends Component {
                       <VoteImpactHeading>In secure contract</VoteImpactHeading>
                       <MkrAmt>{round(proxy.votingPower, 4)}</MkrAmt>
                     </div>
-
                     <div
                       style={{
                         width: '100%',
@@ -117,19 +105,17 @@ class Vote extends Component {
             </div>
           </Fragment>
         );
-      case 2:
+      case 'signTx':
         return (
           <Transaction
             txHash={this.props.voteTxHash}
-            nextStep={() => window.location.reload()}
+            nextStep={() => this.props.modalClose()}
             network={this.props.network}
             lastCard={true}
             account={this.props.activeAccount}
             confirming={this.props.confirming}
           />
         );
-      default:
-        return null;
     }
   }
 }
@@ -141,7 +127,8 @@ Vote.propTypes = {
 };
 
 Vote.defaultProps = {
-  voteTxHash: ''
+  voteTxHash: '',
+  modalProps: {}
 };
 
 export default connect(
@@ -149,7 +136,8 @@ export default connect(
     activeAccount: getActiveAccount(state),
     voteTxHash: state.vote.txHash,
     confirming: state.vote.confirming,
+    voteProgress: state.vote.voteProgress,
     network: state.metamask.network === 'kovan' ? 'kovan' : 'mainnet'
   }),
-  { modalClose, sendVote }
+  { modalClose, sendVote, voteClear }
 )(Vote);

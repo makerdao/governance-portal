@@ -62,7 +62,7 @@ export default {
       govVote: false,
       topic_blurb:
         'With the introduction of the OSMs, we add an additional layer of security to our price feeds. ETH/USD and MKR/USD prices are now delayed by one hour, so we have time to react in the event the price feeds are compromised.',
-      end_timestamp: 1535673600000,
+      end_timestamp: 1531633600000,
       date: '2018-03-12', //yyyy-mm-dd
       verified: true,
       submitted_by: {
@@ -76,7 +76,7 @@ export default {
           proposal_blurb: `Yesterday there was a sudden spike in CDP creation and we saw, in the span of just a few hours, the largest amount of Dai created in the shortest time in our history. A total of 7 Million Dai was drawn across a few CDPs representing a 16.27% increase in circulating Dai.`,
           about: require('./raise-roof.md'),
           source: '0x8ffb52208c08d4254e06737be0e1f0fe271b76b2',
-          end_timestamp: 1535673600000,
+          end_timestamp: 1531633600000,
           date: '2018-03-12',
           verified: true,
           submitted_by: {

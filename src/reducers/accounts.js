@@ -26,7 +26,7 @@ import { INITIATE_LINK_REQUEST, APPROVE_LINK_SUCCESS } from './proxy';
 const REMOVE_ACCOUNTS = 'accounts/REMOVE_ACCOUNTS';
 const SET_ACTIVE_ACCOUNT = 'accounts/SET_ACTIVE_ACCOUNT';
 const FETCHING_ACCOUNT_DATA = 'accounts/FETCHING_ACCOUNT_DATA';
-const UPDATE_ACCOUNT = 'accounts/UPDATE_ACCOUNT';
+export const UPDATE_ACCOUNT = 'accounts/UPDATE_ACCOUNT';
 const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
 const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
 const FIND_HARDWARE_ACCOUNT = 'accounts/FIND_HARDWARE_ACCOUNT';
@@ -157,6 +157,7 @@ export const fakeAccount = {
   type: 'fake',
   hasProxy: true,
   proxyRole: 'hot',
+  votingFor: '0xbeefed1bedded2dabbed3defaced4decade5feed',
   mkrBalance: 333,
   proxy: {
     address: '0xproxyfake',
