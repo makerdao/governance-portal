@@ -197,7 +197,9 @@ class Proposal extends Component {
               <StyledBody
                 dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
               />
-              <Timer endTimestamp={1532792087269} small mt="-22" />
+              {parent.active ? (
+                <Timer endTimestamp={proposal.end_timestamp} small mt="-22" />
+              ) : null}
             </StyledCenter>
             <div>
               <WithTally candidate={proposal.source}>

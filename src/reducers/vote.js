@@ -27,7 +27,7 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
         awaitTx(txHash, { confirmations: 1 })
           .then(txReciept => {
             dispatch({ type: VOTE_SUCCESS });
-            console.log('mined', txReciept);
+            console.log('mined:', txReciept);
           })
           .catch(() => dispatch({ type: VOTE_FAILURE }));
       })

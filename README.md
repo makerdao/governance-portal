@@ -14,8 +14,6 @@ Install project dependencies
 
 ```
 yarn
-- or -
-npm install
 ```
 
 ## Running the Gov Dashboard
@@ -24,16 +22,12 @@ For development
 
 ```
 yarn start
-- or -
-npm run start
 ```
 
 For production
 
 ```
 yarn build
-- or -
-npm run build
 ```
 
 ## Code Style

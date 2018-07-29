@@ -46,13 +46,20 @@ class Timer extends Component {
     const timeLeft =
       Math.floor(props.endTimestamp / 1000) -
       Math.floor(new Date().getTime() / 1000);
-    console.log(timeLeft, 'timeLeft');
     if (timeLeft <= 0) this.state = { timeLeft: 0 };
     else this.state = { timeLeft };
   }
+
+  interval = null;
+
   componentDidMount() {
-    setInterval(this.countDown, 1000);
+    this.interval = setInterval(this.countDown, 1000);
   }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
   countDown = () => {
     if (this.state.timeLeft > 0)
       this.setState(state => ({ timeLeft: state.timeLeft - 1 }));
@@ -112,15 +119,13 @@ class Timer extends Component {
 }
 
 Timer.propTypes = {
-  size: PropTypes.number,
-  color: PropTypes.string,
-  background: PropTypes.string
+  small: PropTypes.bool,
+  mb: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  mt: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 Timer.defaultProps = {
-  size: 20,
-  color: 'dark',
-  background: 'white'
+  small: false
 };
 
 export default Timer;

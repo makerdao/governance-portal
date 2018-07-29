@@ -125,7 +125,9 @@ const Topic = ({ match, topics, fetching, activeAccount, modalOpen }) => {
               <Body
                 dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
               />
-              <Timer endTimestamp={1532792087269} small mb="-6" />
+              {active ? (
+                <Timer endTimestamp={proposal.end_timestamp} small mb="-6" />
+              ) : null}
             </ProposalDetails>
             <div>
               <WithTally candidate={proposal.source}>

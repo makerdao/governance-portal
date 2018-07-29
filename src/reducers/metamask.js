@@ -26,7 +26,7 @@ const pollForMetamaskChanges = () => async (dispatch, getState) => {
   // all the data in the store could be wrong now. later on we could clear out
   // any network-specific data from the store carefully, but for now the
   // simplest thing is to start over from scratch.
-  if (newNetwork !== network) return window.reload();
+  if (newNetwork !== network) return window.location.reload();
 
   const address = window.web3.eth.defaultAccount;
   if (address !== undefined && address !== activeAddress) {

@@ -55,54 +55,59 @@ const StyledCard = styled(Card)`
 const Timeline = ({ modalOpen, topics, canVote, fetching }) => (
   <Fragment>
     <VoterStatus />
-    <Timer endTimestamp={1532792087269} />
     {topics.map(topic => (
-      <StyledCard key={topic.topic}>
-        <Card.Top
-          govVote={topic.govVote}
-          active={topic.active}
-          topicTitle={topic.topic}
-          collapsable={true}
-          startCollapsed={false}
-        />
-        {topic.proposals.map(proposal => (
-          <Card.Element key={proposal.title} height={151}>
-            <ProposalDetails>
-              <Link to={`/${toSlug(topic.topic)}/${toSlug(proposal.title)}`}>
-                <SubHeading mt="-10">{proposal.title}</SubHeading>
-              </Link>
-              <Body
-                dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
-              />
-              <Timer endTimestamp={1532792087269} small mb="-6" />
-            </ProposalDetails>
-            <div>
-              <WithTally candidate={proposal.source}>
-                {({ loadingPercentage, percentage }) => (
-                  <VotePercentage
-                    loadingPercentage={loadingPercentage}
-                    percentage={percentage}
-                  />
-                )}
-              </WithTally>
-              <Button
-                disabled={!canVote}
-                loading={fetching}
-                onClick={() =>
-                  modalOpen(Vote, {
-                    proposal: {
-                      address: proposal.source,
-                      title: proposal.title
-                    }
-                  })
-                }
-              >
-                Vote for this Proposal
-              </Button>
-            </div>
-          </Card.Element>
-        ))}
-      </StyledCard>
+      <Fragment key={topic.topic}>
+        <Timer endTimestamp={topic.end_timestamp} />
+        <StyledCard key={topic.topic}>
+          <Card.Top
+            govVote={topic.govVote}
+            active={topic.active}
+            topicTitle={topic.topic}
+            collapsable={true}
+            startCollapsed={false}
+          />
+
+          {topic.proposals.map(proposal => (
+            <Card.Element key={proposal.title} height={151}>
+              <ProposalDetails>
+                <Link to={`/${toSlug(topic.topic)}/${toSlug(proposal.title)}`}>
+                  <SubHeading mt="-10">{proposal.title}</SubHeading>
+                </Link>
+                <Body
+                  dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
+                />
+                {topic.active ? (
+                  <Timer endTimestamp={proposal.end_timestamp} small mb="-6" />
+                ) : null}
+              </ProposalDetails>
+              <div>
+                <WithTally candidate={proposal.source}>
+                  {({ loadingPercentage, percentage }) => (
+                    <VotePercentage
+                      loadingPercentage={loadingPercentage}
+                      percentage={percentage}
+                    />
+                  )}
+                </WithTally>
+                <Button
+                  disabled={!canVote}
+                  loading={fetching}
+                  onClick={() =>
+                    modalOpen(Vote, {
+                      proposal: {
+                        address: proposal.source,
+                        title: proposal.title
+                      }
+                    })
+                  }
+                >
+                  Vote for this Proposal
+                </Button>
+              </div>
+            </Card.Element>
+          ))}
+        </StyledCard>
+      </Fragment>
     ))}
   </Fragment>
 );
