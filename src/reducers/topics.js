@@ -3,7 +3,6 @@
 /////////////////////////////////////////////////
 
 import { createReducer } from '../utils/redux';
-import flatten from 'ramda/src/flatten';
 import { initApprovalsFetch } from './approvals';
 import mocked from '../_mock/topics';
 
@@ -16,8 +15,7 @@ const TOPICS_SUCCESS = 'toics/TOPICS_SUCCESS';
 export const topicsInit = network => (dispatch, getState) => {
   const networkToShow = network === 'kovan' ? 'kovan' : 'mainnet';
   dispatch({ type: TOPICS_SUCCESS, payload: { network: networkToShow } });
-  const proposals = flatten(getState().topics.map(topic => topic.proposals));
-  dispatch(initApprovalsFetch(proposals));
+  dispatch(initApprovalsFetch());
 };
 
 // Reducer ------------------------------------------------

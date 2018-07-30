@@ -1,5 +1,6 @@
 import { createReducer } from '../utils/redux';
 import { getApprovalCount } from '../chain/read';
+import flatten from 'ramda/src/flatten';
 
 // Constants ----------------------------------------------
 
@@ -9,7 +10,11 @@ const APPROVALS_FAILURE = 'voteTally/APPROVALS_FAILURE';
 
 // Actions ------------------------------------------------
 
-export const initApprovalsFetch = proposals => dispatch => {
+export const initApprovalsFetch = () => (dispatch, getState) => {
+  const topics = getState().topics;
+  if (!topics || topics.length === 0)
+    throw new Error('cannot get approvals before we have the topics');
+  const proposals = flatten(topics.map(topic => topic.proposals));
   dispatch({ type: APPROVALS_REQUEST });
   Promise.all(
     proposals.map(({ source }) =>
@@ -41,8 +46,8 @@ const initialState = {
 };
 
 const approvals = createReducer(initialState, {
-  [APPROVALS_REQUEST]: state => ({
-    ...state,
+  [APPROVALS_REQUEST]: _ => ({
+    ...initialState,
     fetching: true
   }),
   [APPROVALS_SUCCESS]: (_, { payload }) => ({

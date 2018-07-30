@@ -7,12 +7,12 @@ import { promiseRetry } from '../utils/misc';
 const TALLY_REQUEST = 'voteTally/TALLY_REQUEST';
 const TALLY_SUCCESS = 'voteTally/TALLY_SUCCESS';
 const TALLY_FAILURE = 'voteTally/TALLY_FAILURE';
+export const TALLY_UPDATE = 'voteTally/TALLY_UPDATE';
 
 // Actions ------------------------------------------------
 
 export const voteTallyInit = () => dispatch => {
   dispatch({ type: TALLY_REQUEST });
-  // NOTE: sometimes the following call will lose its reference of "getVoteTally" on hot reloads
   promiseRetry({ times: 3, fn: getVoteTally, delay: 500 })
     .then(tally => {
       dispatch({ type: TALLY_SUCCESS, payload: { tally } });
@@ -33,8 +33,8 @@ const initialState = {
 };
 
 const tally = createReducer(initialState, {
-  [TALLY_REQUEST]: state => ({
-    ...state,
+  [TALLY_REQUEST]: _ => ({
+    ...initialState,
     fetching: true
   }),
   [TALLY_SUCCESS]: (_, { payload }) => ({

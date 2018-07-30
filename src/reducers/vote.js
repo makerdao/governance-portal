@@ -3,6 +3,8 @@ import { voteAndLockViaProxy } from '../chain/write';
 import { awaitTx } from '../chain/web3';
 import { getActiveAccount, getAccount, UPDATE_ACCOUNT } from './accounts';
 import { addToastWithTimeout, ToastTypes } from './toasts';
+import { voteTallyInit } from './tally';
+import { initApprovalsFetch } from './approvals';
 
 // Constants ----------------------------------------------
 
@@ -31,6 +33,11 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
     const txReciept = await awaitTx(txHash, { confirmations: 1 });
     console.log('mined:', txReciept);
     dispatch({ type: VOTE_SUCCESS });
+
+    // update vote tally and approval nums
+    dispatch(voteTallyInit());
+    dispatch(initApprovalsFetch());
+
     // update accounts in our store w/ newly voted proposal
     const updatedActiveAcc = {
       ...activeAccount,
