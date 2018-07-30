@@ -184,7 +184,8 @@ class Proposal extends Component {
       modalOpen,
       activeAccount,
       accountDataFetching,
-      network
+      network,
+      hatApprovals
     } = this.props;
     const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
     const supporters = voteState[proposal.source.toLowerCase()] || null;
@@ -268,6 +269,20 @@ class Proposal extends Component {
                   {cutMiddle(proposal.source, 8, 8)}
                 </Address>
               </Supporter>
+              <WithTally candidate={proposal.source}>
+                {({ approvals }) => (
+                  <Supporter>
+                    <Detail>Till Hat</Detail>
+                    {hatApprovals !== 0 ? (
+                      <Detail>
+                        {(hatApprovals - approvals).toLocaleString()} MKR
+                      </Detail>
+                    ) : (
+                      <Detail>---</Detail>
+                    )}
+                  </Supporter>
+                )}
+              </WithTally>
             </DetailsCard>
             <SupporterCard>
               <CardTitle>Top Supporters</CardTitle>
@@ -300,13 +315,14 @@ class Proposal extends Component {
   }
 }
 
-const reduxProps = ({ topics, tally, accounts, metamask }) => ({
+const reduxProps = ({ topics, tally, accounts, metamask, hat }) => ({
   topics,
   voteStateFetching: tally.fetching,
   voteState: tally.tally,
   accountDataFetching: accounts.fetching,
   activeAccount: getActiveAccount({ accounts }),
-  network: metamask.network
+  network: metamask.network,
+  hatApprovals: hat.hatApprovals
 });
 
 export default connect(

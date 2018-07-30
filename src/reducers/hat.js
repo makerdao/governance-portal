@@ -1,5 +1,5 @@
 import { createReducer } from '../utils/redux';
-import { getHat } from '../chain/read';
+import { getHat, getApprovalCount } from '../chain/read';
 import { paddedBytes32ToAddress } from '../utils/ethereum';
 
 // Constants ----------------------------------------------
@@ -10,24 +10,24 @@ const HAT_FAILURE = 'hat/HAT_FAILURE';
 
 // Actions ------------------------------------------------
 
-export const hatInit = () => dispatch => {
-  dispatch({ type: HAT_REQUEST });
-  getHat()
-    .then(bytes32 => {
-      const address = paddedBytes32ToAddress(bytes32);
-      dispatch({ type: HAT_SUCCESS, payload: { address } });
-    })
-    .catch(() => {
-      // notify user of error or throw to fallback. Network disconnect?
-      dispatch({ type: HAT_FAILURE });
-    });
+export const hatInit = () => async dispatch => {
+  try {
+    dispatch({ type: HAT_REQUEST });
+    const bytes32 = await getHat();
+    const address = paddedBytes32ToAddress(bytes32);
+    const approvals = await getApprovalCount(address);
+    dispatch({ type: HAT_SUCCESS, payload: { address, approvals } });
+  } catch (err) {
+    dispatch({ type: HAT_FAILURE });
+  }
 };
 
 // Reducer ------------------------------------------------
 
 const initialState = {
   fetching: false,
-  hatAddress: ''
+  hatAddress: '',
+  hatApprovals: 0
 };
 
 const hat = createReducer(initialState, {
@@ -37,11 +37,11 @@ const hat = createReducer(initialState, {
   }),
   [HAT_SUCCESS]: (_, { payload }) => ({
     hatAddress: payload.address,
+    hatApprovals: payload.approvals,
     fetching: false
   }),
   [HAT_FAILURE]: () => ({
-    addresses: '',
-    fetching: false
+    ...initialState
   })
 });
 
