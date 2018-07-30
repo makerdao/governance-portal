@@ -2,6 +2,7 @@ import { createReducer } from '../utils/redux';
 import { voteAndLockViaProxy } from '../chain/write';
 import { awaitTx } from '../chain/web3';
 import { getActiveAccount, getAccount, UPDATE_ACCOUNT } from './accounts';
+import { addToastWithTimeout, ToastTypes } from './toasts';
 
 // Constants ----------------------------------------------
 
@@ -27,32 +28,27 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
       proposalAddress
     });
     dispatch({ type: VOTE_SENT, payload: { txHash } });
-    try {
-      const txReciept = await awaitTx(txHash, { confirmations: 1 });
-      console.log('mined:', txReciept);
-      dispatch({ type: VOTE_SUCCESS });
-      // update accounts in our store w/ newly voted proposal
-      const updatedActiveAcc = {
-        ...activeAccount,
-        votingFor: proposalAddress
-      };
-      dispatch({ type: UPDATE_ACCOUNT, payload: updatedActiveAcc });
-      const linkedAccount = getAccount(
-        getState(),
-        activeAccount.proxy.linkedAccount.address
-      );
-      if (!linkedAccount) return;
-      const updatedLinkedAcc = {
-        ...linkedAccount,
-        votingFor: proposalAddress
-      };
-      dispatch({ type: UPDATE_ACCOUNT, payload: updatedLinkedAcc });
-    } catch (err) {
-      // tx not mined
-      dispatch({ type: VOTE_FAILURE });
-    }
+    const txReciept = await awaitTx(txHash, { confirmations: 1 });
+    console.log('mined:', txReciept);
+    dispatch({ type: VOTE_SUCCESS });
+    // update accounts in our store w/ newly voted proposal
+    const updatedActiveAcc = {
+      ...activeAccount,
+      votingFor: proposalAddress
+    };
+    dispatch({ type: UPDATE_ACCOUNT, payload: updatedActiveAcc });
+    const linkedAccount = getAccount(
+      getState(),
+      activeAccount.proxy.linkedAccount.address
+    );
+    if (!linkedAccount) return;
+    const updatedLinkedAcc = {
+      ...linkedAccount,
+      votingFor: proposalAddress
+    };
+    dispatch({ type: UPDATE_ACCOUNT, payload: updatedLinkedAcc });
   } catch (err) {
-    // txRejected
+    dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
     dispatch({ type: VOTE_FAILURE });
   }
 };

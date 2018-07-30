@@ -3,3 +3,9 @@ export const AccountTypes = {
   TREZOR: 'TREZOR',
   METAMASK: 'METAMASK'
 };
+
+export const Toasts = {
+  ERROR: 'ERROR',
+  NEUTRAL: 'NEUTRAL',
+  SUCCESS: 'SUCCESS'
+};

@@ -109,3 +109,27 @@ export const subtract = (a, b) =>
   BigNumber(a)
     .minus(BigNumber(b))
     .toString();
+
+/**
+ * @desc make error messages more understandable
+ * @param  {String} errorMsg
+ * @return {String}
+ */
+export const cleanErrorMsg = errorMsg => {
+  if (errorMsg.search('Error: ') === 0) {
+    return errorMsg.replace('Error: ', '');
+  } else return errorMsg;
+};
+
+/**
+ * @desc find the error message
+ * @param  {String||Object} error
+ * @return {String}
+ */
+export const parseError = error => {
+  if (typeof error === 'string') {
+    return cleanErrorMsg(error);
+  } else if (typeof error.message === 'string') {
+    return cleanErrorMsg(error.message);
+  }
+};

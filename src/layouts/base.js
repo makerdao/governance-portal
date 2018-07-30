@@ -10,6 +10,7 @@ import Modals from '../components/modals';
 // import Footer from "../components/Footer";
 import Loader from '../components/Loader';
 import AccountBox from '../components/AccountBox';
+import Toasts from '../components/Toasts';
 import logo from '../imgs/logo.svg';
 
 const StyledLayout = styled.div`
@@ -181,6 +182,7 @@ const BaseLayout = ({ children, metamaskFetching, topicsAvailable }) => {
         </StyledColumn>
       </AppWrapper>
       <Modals />
+      <Toasts />
     </StyledLayout>
   );
 };

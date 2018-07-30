@@ -8,6 +8,7 @@ import proxy from './proxy';
 import accounts from './accounts';
 import vote from './vote';
 import hat from './hat';
+import toasts from './toasts';
 
 const rootReducer = combineReducers({
   metamask,
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
   proxy,
   accounts,
   vote,
-  hat
+  hat,
+  toasts
 });
 
 export default rootReducer;

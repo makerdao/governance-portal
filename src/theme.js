@@ -106,6 +106,10 @@ const theme = {
     dim_grey_alt: '#868997',
     alt: '#546978'
   },
+  warn: {
+    default: '#c21f3a',
+    alt: '#E2197A'
+  },
   fonts: {
     size: {
       small: '12px',

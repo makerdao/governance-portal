@@ -8,6 +8,7 @@ import {
 import { awaitTx } from '../chain/web3';
 import { getActiveAccount } from './accounts';
 import { AccountTypes } from '../utils/constants';
+import { addToastWithTimeout, ToastTypes } from './toasts';
 
 // Constants ----------------------------------------------
 
@@ -51,7 +52,7 @@ const handleTx = async ({ prefix, dispatch, action, successPayload = '' }) => {
     console.log('mined:', receipt);
   } catch (err) {
     dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
-    console.error(err);
+    dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
     // TODO display this error to the user; it could require user intervention,
     // e.g. it could be due to insufficient funds
   }
