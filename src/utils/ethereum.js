@@ -86,6 +86,8 @@ export const netIdToName = id => {
       return 'mainnet';
     case 42:
       return 'kovan';
+    case 999:
+      return 'ganache';
     default:
       return '';
   }

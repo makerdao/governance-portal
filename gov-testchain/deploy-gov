@@ -6,7 +6,9 @@ set -e
 START_TIME=`date +%s`
 CWD=`dirname $0`
 
-./node_modules/.bin/ganache-cli -i 999 -p 2000 -a 1000 -m "hill law jazz limb penalty escape public dish stand bracket blue jar" >./ganache.out 2>&1 & netpid=$!
+./node_modules/.bin/ganache-cli -i 999 -p 2000 -a 1000 \
+  -m "hill law jazz limb penalty escape public dish stand bracket blue jar" \
+  >./ganache.out & netpid=$!
 trap "kill $netpid" EXIT
 
 # Wait until it's up, then use it for the deployment.
@@ -21,33 +23,38 @@ export ETH_FROM=${ETH_FROM:-$(seth rpc eth_coinbase)}
 export SETH_STATUS=yes
 export ETH_RPC_ACCOUNTS=yes # Don't use ethsign
 
-cd src/ds-chief; dapp update; dapp build; 
-
+cd $CWD/src/ds-chief
+dapp update 2>/dev/null
+dapp build 2>/dev/null
 export SETH_ASYNC=yes
 test -z $GOV && GOVtx=$(dapp create DSToken $(seth --to-bytes32 $(seth --from-ascii 'GOV')))
 test -z $IOU && IOUtx=$(dapp create DSToken $(seth --to-bytes32 $(seth --from-ascii 'IOU')))
 export SETH_ASYNC=no
 test -z $GOV && GOV=$(seth receipt $GOVtx contractAddress)
 test -z $IOU && IOU=$(seth receipt $IOUtx contractAddress)
-
 MAX_YAYS=5
+CHIEF=$(dapp create DSChief $GOV $IOU $MAX_YAYS)
+cd -
 
-CHIEF=$(dapp create DSChief $GOV $IOU $MAX_YAYS) 
-
-cd ../vote-proxy; dapp update; dapp build; 
-PROXY_FACTORY=$(dapp create VoteProxyFactory $CHIEF) 
-
-cd ../..
+cd ../vote-proxy
+dapp update 2>/dev/null
+dapp build 2>/dev/null
+PROXY_FACTORY=$(dapp create VoteProxyFactory $CHIEF)
+cd -
 
 # Save the contract addresses to a JSON file
-cat > ./addresses.json <<- EOM
+cat > $CWD/../src/chain/testnet-addresses.json <<- EOM
 {
-  "GOV": "$GOV",
-  "IOU": "$IOU",
-  "CHIEF": "$CHIEF",
-  "PROXY_FACTORY": "$PROXY_FACTORY"
+  "mkr": "$GOV",
+  "iou": "$IOU",
+  "chief": "$CHIEF",
+  "proxy_factory": "$PROXY_FACTORY"
 }
 EOM
+
+END_TIME=`date +%s`
+ELAPSED=`echo $END_TIME - $START_TIME | bc`
+echo "Created testnet in" $ELAPSED "seconds."
 
 echo "Press Ctrl-C to kill the testnet"
     while [ "$key" != "\n" ]; do

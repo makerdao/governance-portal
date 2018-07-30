@@ -3,6 +3,13 @@ import Web3 from 'web3';
 import { netIdToName } from '../utils/ethereum';
 import addresses from './addresses.json';
 
+try {
+  const testnetAddresses = require('./testnet-addresses.json');
+  addresses.ganache = testnetAddresses;
+} catch (err) {
+  // do nothing here; throw an error only if we later attempt to use ganache
+}
+
 let web3Instance;
 
 export function getWeb3Instance() {
@@ -56,38 +63,39 @@ export const getNetworkName = async () => {
   return network;
 };
 
+const getContractAddress = name => async network => {
+  if (!['chief', 'proxy_factory', 'mkr'].includes(name)) {
+    throw new Error(`Unrecognized contract name: "${name}"`);
+  }
+  if (!network) network = await getNetworkName();
+  if (network === 'ganache' && !addresses.ganache) {
+    throw new Error(
+      'No testnet contract addresses are configured. Did you run deploy-gov?'
+    );
+  }
+  return addresses[network][name];
+};
+
 /**
  * @async @desc get chief's address
  * @param {String} [_network]
  * @return {String}
  */
-export const getChief = async (_network = '') => {
-  const network = _network || (await getNetworkName());
-  const chief = addresses[network].chief;
-  return chief;
-};
+export const getChief = getContractAddress('chief');
 
 /**
  * @async @desc get vote proxy factory's address
  * @param {String} [_network]
  * @return {String}
  */
-export const getProxyFactory = async (_network = '') => {
-  const network = _network || (await getNetworkName());
-  const factory = addresses[network].proxy_factory;
-  return factory;
-};
+export const getProxyFactory = getContractAddress('proxy_factory');
 
 /**
  * @async @desc get vote MKR address
  * @param {String} [_network]
  * @return {String}
  */
-export const getMkrAddress = async (_network = '') => {
-  const network = _network || (await getNetworkName());
-  const mkr = addresses[network].mkr;
-  return mkr;
-};
+export const getMkrAddress = getContractAddress('mkr');
 
 /**
  * @desc get method's ethereum hash signature
