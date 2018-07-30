@@ -11,7 +11,8 @@ import {
   getLinkedAddress,
   getVotingPower,
   getVotedSlate,
-  getSlateAddresses
+  getSlateAddresses,
+  getNumDeposits
 } from '../chain/read';
 import { AccountTypes } from '../utils/constants';
 import { add, subtract } from '../utils/misc';
@@ -59,7 +60,12 @@ export const addAccounts = accounts => async dispatch => {
     let currProposal = Promise.resolve('');
     if (hasProxy) {
       currProposal = currProposal
-        .then(() => getVotedSlate(proxyAddress))
+        .then(() => getNumDeposits(proxyAddress))
+        .then(deposits => {
+          // if there's nothing locked in chief, we take this address as not voting for anything
+          if (deposits === 0 || deposits === '0') return '';
+          return getVotedSlate(proxyAddress);
+        })
         .then(slate => getSlateAddresses(slate))
         // NOTE for now we just take the first address in the slate since we're
         // assuming that they're only voting for one in the frontend. This

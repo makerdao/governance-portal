@@ -9,7 +9,7 @@ import WithTally from '../components/hocs/WithTally';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Timer from '../components/Timer';
-import { toSlug } from '../utils/misc';
+import { toSlug, eq } from '../utils/misc';
 import { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
 import { getActiveAccount } from '../reducers/accounts';
@@ -52,7 +52,7 @@ const StyledCard = styled(Card)`
   margin-bottom: 30px;
 `;
 
-const Timeline = ({ modalOpen, topics, canVote, fetching }) => (
+const Timeline = ({ modalOpen, topics, canVote, fetching, votingFor }) => (
   <Fragment>
     <VoterStatus />
     {topics.map(topic => (
@@ -66,7 +66,6 @@ const Timeline = ({ modalOpen, topics, canVote, fetching }) => (
             collapsable={true}
             startCollapsed={false}
           />
-
           {topic.proposals.map(proposal => (
             <Card.Element key={proposal.title} height={151}>
               <ProposalDetails>
@@ -101,7 +100,9 @@ const Timeline = ({ modalOpen, topics, canVote, fetching }) => (
                     })
                   }
                 >
-                  Vote for this Proposal
+                  {eq(votingFor, proposal.source)
+                    ? 'Withdraw vote'
+                    : 'Vote for this Proposal'}
                 </Button>
               </div>
             </Card.Element>
@@ -118,7 +119,8 @@ const reduxProps = ({ topics, accounts, hat }) => {
     topics,
     fetching: accounts.fetching,
     canVote: activeAccount && activeAccount.hasProxy,
-    hatAddress: hat.hatAddress
+    hatAddress: hat.hatAddress,
+    votingFor: activeAccount ? activeAccount.votingFor : ''
   };
 };
 

@@ -2,13 +2,13 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import find from 'ramda/src/find';
 
-import { toSlug } from '../../utils/misc';
+import { toSlug, eq } from '../../utils/misc';
 
 // this thing takes a proposal address and returns its name if it's one of our topics
 const WithVote = ({ children, proposalAddress, topics }) => {
   for (let topic of topics) {
     const proposal = find(
-      ({ source }) => source.toLowerCase() === proposalAddress.toLowerCase(),
+      ({ source }) => eq(source, proposalAddress),
       topic.proposals
     );
     if (proposal !== undefined)

@@ -133,3 +133,11 @@ export const parseError = error => {
     return cleanErrorMsg(error.message);
   }
 };
+
+/**
+ * @desc compare two strings w/o worrying about case
+ * @param  {String} a
+ * @param  {String} b
+ * @return {Boolean}
+ */
+export const eq = (a, b) => a.toLowerCase() === b.toLowerCase();

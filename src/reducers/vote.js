@@ -1,5 +1,5 @@
 import { createReducer } from '../utils/redux';
-import { voteAndLockViaProxy } from '../chain/write';
+import { voteAndLockViaProxy, freeAll } from '../chain/write';
 import { awaitTx } from '../chain/web3';
 import { getActiveAccount, getAccount, UPDATE_ACCOUNT } from './accounts';
 import { addToastWithTimeout, ToastTypes } from './toasts';
@@ -12,6 +12,12 @@ const VOTE_REQUEST = 'vote/VOTE_REQUEST';
 const VOTE_SENT = 'vote/VOTE_SENT';
 const VOTE_SUCCESS = 'vote/VOTE_SUCCESS';
 const VOTE_FAILURE = 'vote/VOTE_FAILURE';
+
+const WITHDRAW_REQUEST = 'vote/WITHDRAW_REQUEST';
+const WITHDRAW_SENT = 'vote/WITHDRAW_SENT';
+const WITHDRAW_SUCCESS = 'vote/WITHDRAW_SUCCESS';
+const WITHDRAW_FAILURE = 'vote/WITHDRAW_FAILURE';
+
 const CLEAR = 'vote/CLEAR';
 
 // Actions ------------------------------------------------
@@ -20,11 +26,36 @@ export const clear = () => ({
   type: CLEAR
 });
 
+const updateVotingFor = (
+  dispatch,
+  getState,
+  activeAccount,
+  proposalAddress
+) => {
+  // update accounts in our store w/ newly voted proposal
+  const updatedActiveAcc = {
+    ...activeAccount,
+    votingFor: proposalAddress
+  };
+  dispatch({ type: UPDATE_ACCOUNT, payload: updatedActiveAcc });
+  const linkedAccount = getAccount(
+    getState(),
+    activeAccount.proxy.linkedAccount.address
+  );
+  if (!linkedAccount) return;
+  const updatedLinkedAcc = {
+    ...linkedAccount,
+    votingFor: proposalAddress
+  };
+  dispatch({ type: UPDATE_ACCOUNT, payload: updatedLinkedAcc });
+};
+
 export const sendVote = proposalAddress => async (dispatch, getState) => {
   dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
   const activeAccount = getActiveAccount(getState());
-  if (!activeAccount || !activeAccount.hasProxy) return;
   try {
+    if (!activeAccount || !activeAccount.hasProxy)
+      throw new Error('must have account active');
     const txHash = await voteAndLockViaProxy({
       account: activeAccount,
       proposalAddress
@@ -38,25 +69,33 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
     dispatch(voteTallyInit());
     dispatch(initApprovalsFetch());
 
-    // update accounts in our store w/ newly voted proposal
-    const updatedActiveAcc = {
-      ...activeAccount,
-      votingFor: proposalAddress
-    };
-    dispatch({ type: UPDATE_ACCOUNT, payload: updatedActiveAcc });
-    const linkedAccount = getAccount(
-      getState(),
-      activeAccount.proxy.linkedAccount.address
-    );
-    if (!linkedAccount) return;
-    const updatedLinkedAcc = {
-      ...linkedAccount,
-      votingFor: proposalAddress
-    };
-    dispatch({ type: UPDATE_ACCOUNT, payload: updatedLinkedAcc });
+    updateVotingFor(dispatch, getState, activeAccount, proposalAddress);
   } catch (err) {
     dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
     dispatch({ type: VOTE_FAILURE });
+  }
+};
+
+export const withdrawVote = () => async (dispatch, getState) => {
+  dispatch({ type: WITHDRAW_REQUEST });
+  const activeAccount = getActiveAccount(getState());
+  try {
+    if (!activeAccount || !activeAccount.hasProxy)
+      throw new Error('must have account active');
+    const txHash = await freeAll(activeAccount);
+    dispatch({ type: WITHDRAW_SENT, payload: { txHash } });
+    const txReciept = await awaitTx(txHash, { confirmations: 1 });
+    console.log('mined:', txReciept);
+    dispatch({ type: WITHDRAW_SUCCESS });
+
+    // update vote tally and approval nums
+    dispatch(voteTallyInit());
+    dispatch(initApprovalsFetch());
+
+    updateVotingFor(dispatch, getState, activeAccount, '');
+  } catch (err) {
+    dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+    dispatch({ type: WITHDRAW_FAILURE });
   }
 };
 
@@ -82,9 +121,29 @@ const vote = createReducer(initialState, {
   }),
   [VOTE_SUCCESS]: state => ({
     ...state,
+    proposalAddress: '',
     confirming: false
   }),
   [VOTE_FAILURE]: state => ({
+    ...state,
+    proposalAddress: '',
+    confirming: false,
+    voteProgress: 'confirm'
+  }),
+  [WITHDRAW_REQUEST]: state => ({
+    ...state,
+    voteProgress: 'signTx'
+  }),
+  [WITHDRAW_SENT]: (state, { payload }) => ({
+    ...state,
+    confirming: true,
+    txHash: payload.txHash
+  }),
+  [WITHDRAW_SUCCESS]: state => ({
+    ...state,
+    confirming: false
+  }),
+  [WITHDRAW_FAILURE]: state => ({
     ...state,
     confirming: false,
     voteProgress: 'confirm'

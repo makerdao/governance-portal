@@ -168,3 +168,12 @@ export const unlockWithdrawMkr = async (account, value) => {
     [['uint256', etherToWei(value)]]
   );
 };
+
+/**
+ * @async @desc free all mkr from chief w/o withdrawing
+ * @param {Object} account
+ * @return {Promise} tx
+ */
+export const freeAll = async account => {
+  return simpleSendTx(account, account.proxy.address, 'freeAll()', []);
+};
