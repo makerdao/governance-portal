@@ -13,7 +13,7 @@ import WithTally from '../components/hocs/WithTally';
 import Vote from '../components/modals/Vote';
 import Timer from '../components/Timer';
 import { modalOpen } from '../reducers/modal';
-import { getActiveAccount } from '../reducers/accounts';
+import { activeCanVote } from '../reducers/accounts';
 import { toSlug } from '../utils/misc';
 import { colors, fonts } from '../theme';
 
@@ -91,7 +91,7 @@ const Body = styled.p`
 
 // TODO Styled body & body are confusingly similar
 
-const Topic = ({ match, topics, fetching, activeAccount, modalOpen }) => {
+const Topic = ({ match, topics, fetching, canVote, modalOpen }) => {
   // fetching
   const topicSlug = match.params.topicSlug;
   const topic = find(({ topic }) => toSlug(topic) === topicSlug, topics);
@@ -139,7 +139,7 @@ const Topic = ({ match, topics, fetching, activeAccount, modalOpen }) => {
                 )}
               </WithTally>
               <Button
-                disabled={!activeAccount || !activeAccount.hasProxy}
+                disabled={!canVote}
                 loading={fetching}
                 onClick={() =>
                   modalOpen(Vote, {
@@ -173,7 +173,7 @@ Topic.defaultProps = {
 const reduxProps = ({ topics, accounts }) => ({
   topics: topics,
   fetching: accounts.fetching,
-  activeAccount: getActiveAccount({ accounts })
+  canVote: activeCanVote({ accounts })
 });
 
 export default connect(

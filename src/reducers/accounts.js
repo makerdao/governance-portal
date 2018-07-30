@@ -44,6 +44,20 @@ export function getActiveAccount(state) {
   return getAccount(state, state.accounts.activeAccount);
 }
 
+export function getActiveVotingFor(state) {
+  const activeAccount = getActiveAccount(state);
+  return activeAccount ? activeAccount.votingFor : '';
+}
+
+export function activeCanVote(state) {
+  const activeAccount = getActiveAccount(state);
+  return (
+    activeAccount &&
+    activeAccount.hasProxy &&
+    parseFloat(activeAccount.proxy.votingPower) > 0
+  );
+}
+
 // Actions ------------------------------------------------
 
 export const addAccounts = accounts => async dispatch => {

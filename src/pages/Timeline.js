@@ -12,7 +12,7 @@ import Timer from '../components/Timer';
 import { toSlug, eq } from '../utils/misc';
 import { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
-import { getActiveAccount } from '../reducers/accounts';
+import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import Vote from '../components/modals/Vote';
 
 const SubHeading = styled.p`
@@ -113,16 +113,13 @@ const Timeline = ({ modalOpen, topics, canVote, fetching, votingFor }) => (
   </Fragment>
 );
 
-const reduxProps = ({ topics, accounts, hat }) => {
-  const activeAccount = getActiveAccount({ accounts });
-  return {
-    topics,
-    fetching: accounts.fetching,
-    canVote: activeAccount && activeAccount.hasProxy,
-    hatAddress: hat.hatAddress,
-    votingFor: activeAccount ? activeAccount.votingFor : ''
-  };
-};
+const reduxProps = ({ topics, accounts, hat }) => ({
+  topics,
+  canVote: activeCanVote({ accounts }),
+  fetching: accounts.fetching,
+  hatAddress: hat.hatAddress,
+  votingFor: getActiveVotingFor({ accounts })
+});
 
 export default connect(
   reduxProps,

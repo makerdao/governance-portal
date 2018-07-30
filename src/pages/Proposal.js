@@ -14,7 +14,7 @@ import Card from '../components/Card';
 import Loader from '../components/Loader';
 import Timer from '../components/Timer';
 import WithTally from '../components/hocs/WithTally';
-import { getActiveAccount } from '../reducers/accounts';
+import { activeCanVote } from '../reducers/accounts';
 import NotFound from './NotFound';
 import { colors } from '../theme';
 import { formatDate, cutMiddle } from '../utils/misc';
@@ -182,9 +182,9 @@ class Proposal extends Component {
       voteState,
       voteStateFetching,
       modalOpen,
-      activeAccount,
       accountDataFetching,
       network,
+      canVote,
       hatApprovals
     } = this.props;
     const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
@@ -220,7 +220,7 @@ class Proposal extends Component {
                 )}
               </WithTally>
               <Button
-                disabled={!activeAccount || !activeAccount.hasProxy}
+                disabled={!canVote}
                 loading={accountDataFetching}
                 wide={true}
                 onClick={() =>
@@ -320,7 +320,7 @@ const reduxProps = ({ topics, tally, accounts, metamask, hat }) => ({
   voteStateFetching: tally.fetching,
   voteState: tally.tally,
   accountDataFetching: accounts.fetching,
-  activeAccount: getActiveAccount({ accounts }),
+  canVote: activeCanVote({ accounts }),
   network: metamask.network,
   hatApprovals: hat.hatApprovals
 });
