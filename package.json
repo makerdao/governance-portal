@@ -32,6 +32,7 @@
     "build": "react-scripts build && npm run remove-sourcemaps",
     "test": "jest",
     "testnet": "./gov-testchain/deploy-gov",
+    "ci": "./gov-testchain/deploy-gov --ci jest --coverage",
     "cover": "jest --coverage",
     "eject": "react-scripts eject",
     "precommit": "lint-staged",

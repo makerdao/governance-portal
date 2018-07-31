@@ -56,7 +56,12 @@ END_TIME=`date +%s`
 ELAPSED=`echo $END_TIME - $START_TIME | bc`
 echo "Created testnet in" $ELAPSED "seconds."
 
-echo "Press Ctrl-C to kill the testnet"
-    while [ "$key" != "\n" ]; do
-read
-done
+if [[ "$1" != '--ci' ]]; then
+  echo "Press Ctrl-C to kill the testnet"
+      while [ "$key" != "\n" ]; do
+  read
+  done
+else
+    # Proceed to the command given as arguments (but first strip --ci).
+    $(echo "$@" | sed 's/^\-\-ci //')
+fi
