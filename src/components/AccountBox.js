@@ -63,7 +63,7 @@ const SelectedItem = styled.div`
   display: flex;
   align-items: center;
   font-weight: ${fonts.weight.normal};
-  font-family: ${fonts.family.SFProText};
+  font-family: ${fonts.family.System};
 `;
 
 const Wrapper = styled.div`

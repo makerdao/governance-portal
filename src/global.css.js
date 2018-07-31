@@ -28,11 +28,11 @@ const globalStyles = `
     padding: 0;
     margin: 0;
     -webkit-font-smoothing: antialiased;
-    font-family: ${fonts.family.SFProText};
+    font-family: ${fonts.family.System};
   }
 
   body {
-    font-family: ${fonts.family.SFProText};
+    font-family: ${fonts.family.System};
     font-style: normal;
     font-stretch: normal;
     font-weight: ${fonts.weight.normal};

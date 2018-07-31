@@ -29,8 +29,8 @@ export const fonts = {
     bold: 700
   },
   family: {
-    SFProText:
-      '-apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif'
+    System:
+      '-apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
   }
 };
 
