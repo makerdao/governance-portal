@@ -61,8 +61,8 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
       proposalAddress
     });
     dispatch({ type: VOTE_SENT, payload: { txHash } });
-    const txReciept = await awaitTx(txHash, { confirmations: 1 });
-    console.log('mined:', txReciept);
+    const txReceipt = await awaitTx(txHash, { confirmations: 1 });
+    console.log('mined:', txReceipt);
     dispatch({ type: VOTE_SUCCESS });
 
     // update vote tally and approval nums
@@ -84,8 +84,8 @@ export const withdrawVote = () => async (dispatch, getState) => {
       throw new Error('must have account active');
     const txHash = await freeAll(activeAccount);
     dispatch({ type: WITHDRAW_SENT, payload: { txHash } });
-    const txReciept = await awaitTx(txHash, { confirmations: 1 });
-    console.log('mined:', txReciept);
+    const txReceipt = await awaitTx(txHash, { confirmations: 1 });
+    console.log('mined:', txReceipt);
     dispatch({ type: WITHDRAW_SUCCESS });
 
     // update vote tally and approval nums
