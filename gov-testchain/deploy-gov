@@ -36,7 +36,7 @@ MAX_YAYS=5
 CHIEF=$(dapp create DSChief $GOV $IOU $MAX_YAYS)
 cd -
 
-cd ../vote-proxy
+cd  $CWD/src/vote-proxy
 dapp update 2>/dev/null
 dapp build 2>/dev/null
 PROXY_FACTORY=$(dapp create VoteProxyFactory $CHIEF)

@@ -99,6 +99,11 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
 
 export const sendMkrToProxy = value => (dispatch, getState) => {
   const account = getActiveAccount(getState());
+  if (value === 0 || value === '0') {
+    dispatch(goToStep('summary'));
+    return;
+  }
+
   if (account.proxyRole !== 'cold') {
     window.alert('Switch to your cold wallet in Metamask before continuing.');
     return;
@@ -114,6 +119,8 @@ export const sendMkrToProxy = value => (dispatch, getState) => {
 };
 
 export const withdrawMkr = value => (dispatch, getState) => {
+  if (value === 0 || value === '0') return;
+
   dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
   const account = getActiveAccount(getState());
   handleTx({
@@ -126,6 +133,10 @@ export const withdrawMkr = value => (dispatch, getState) => {
 
 // Reducer ------------------------------------------------
 
+// const existingState = localStorage.getItem('linkInitiatedState')
+//   ? JSON.parse(localStorage.getItem('linkInitiatedState'))
+//   : {};
+
 const initialState = {
   sendMkrTxHash: '',
   initiateLinkTxHash: '',
@@ -135,7 +146,9 @@ const initialState = {
   confirmingSendMkr: false,
   setupProgress: 'intro',
   hotAddress: '',
-  coldAddress: ''
+  coldAddress: '',
+  sendMkrAmount: 0
+  // ...existingState
 };
 
 const proxy = createReducer(initialState, {

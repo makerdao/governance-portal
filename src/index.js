@@ -13,12 +13,19 @@ import { metamaskConnectInit } from './reducers/metamask';
 
 const localLinkProgress = store => next => action => {
   if (action.type === 'proxy/INITIATE_LINK_SUCCESS') {
-    const { hotAddress, coldAddress } = store.getState().proxy;
+    const {
+      initiateLinkTxHash,
+      setupProgress,
+      hotAddress,
+      coldAddress
+    } = store.getState().proxy;
     localStorage.setItem(
-      'linkInitiated',
+      'linkInitiatedState',
       JSON.stringify({
-        coldAddress,
-        hotAddress
+        initiateLinkTxHash,
+        setupProgress,
+        hotAddress,
+        coldAddress
       })
     );
   }

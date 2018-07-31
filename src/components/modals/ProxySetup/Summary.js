@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { StyledTitle, StyledBlurb, StyledTop } from '../shared/styles';
 import Button from '../../Button';
 
-export default ({ modalClose, proxyClear, sendMkrAmount }) => {
+export default ({ modalClose, sendMkrAmount }) => {
   return (
     <Fragment>
       <StyledTop>
