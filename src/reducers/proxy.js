@@ -8,6 +8,7 @@ import {
 import { awaitTx } from '../chain/web3';
 import { getActiveAccount } from './accounts';
 import { AccountTypes } from '../utils/constants';
+import { cutMiddle } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 
 // Constants ----------------------------------------------
@@ -65,7 +66,9 @@ function requireCorrectAccount(state, requiredAccount) {
   if (activeAccount.address === address) return true;
 
   window.alert(
-    `Switch to your ${proxyRole} wallet (w/ address ${address}) before continuing.`
+    `Switch to your ${proxyRole || 'other'} wallet (with address ${cutMiddle(
+      address
+    )}) before continuing.`
   );
   return false;
 }
@@ -98,17 +101,19 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
 };
 
 export const sendMkrToProxy = value => (dispatch, getState) => {
-  const account = getActiveAccount(getState());
-  if (value === 0 || value === '0') {
-    dispatch(goToStep('summary'));
-    return;
+  const state = getState();
+  const account = getActiveAccount(state);
+  const { setupProgress } = state.proxy;
+  if (setupProgress === 'lockInput' && Number(value) === 0) {
+    return dispatch(goToStep('summary'));
   }
 
   if (account.proxyRole !== 'cold') {
-    window.alert(
-      `Switch to your cold wallet (w/ address ${account}) before continuing.`
+    return window.alert(
+      `Switch to your cold wallet (with address ${cutMiddle(
+        account
+      )}) before continuing.`
     );
-    return;
   }
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
