@@ -65,7 +65,7 @@ function requireCorrectAccount(state, requiredAccount) {
   if (activeAccount.address === address) return true;
 
   window.alert(
-    `Switch to your ${proxyRole} wallet in Metamask before continuing.`
+    `Switch to your ${proxyRole} wallet (w/ address ${address}) before continuing.`
   );
   return false;
 }
@@ -105,7 +105,9 @@ export const sendMkrToProxy = value => (dispatch, getState) => {
   }
 
   if (account.proxyRole !== 'cold') {
-    window.alert('Switch to your cold wallet in Metamask before continuing.');
+    window.alert(
+      `Switch to your cold wallet (w/ address ${account}) before continuing.`
+    );
     return;
   }
 
@@ -180,11 +182,7 @@ const proxy = createReducer(initialState, {
     confirmingApprove: true,
     approveLinkTxHash: payload.txHash
   }),
-  [APPROVE_LINK_SUCCESS]: state => ({
-    ...state,
-    confirmingApprove: false,
-    setupProgress: 'lockInput'
-  }),
+  [APPROVE_LINK_SUCCESS]: state => ({ ...state, confirmingApprove: false }),
   [APPROVE_LINK_FAILURE]: state => ({ ...state, confirmingApprove: false }),
   // Send -------------------------------------------
   [SEND_MKR_TO_PROXY_REQUEST]: (state, { payload: value }) => {
