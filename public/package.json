@@ -1,5 +1,5 @@
 {
-  "name": "maker-governance-dashboard",
+  "name": "maker-governance-dashboard-server",
   "version": "1.0.0",
   "scripts": {
     "start": "serve --single"
