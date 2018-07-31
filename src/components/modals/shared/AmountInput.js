@@ -29,6 +29,10 @@ export default class AmountInput extends Component {
     this.setState({ amount: this.props.balance });
   };
 
+  handleKeyPress = event => {
+    if (event.key === 'Enter') this.submit(this.state.amount);
+  };
+
   submit(amount) {
     const { action, balance } = this.props;
     if (amount === 0 || amount > balance) {
@@ -75,6 +79,7 @@ export default class AmountInput extends Component {
         </InputLabels>
         <Input
           type="text"
+          onKeyPress={this.handleKeyPress}
           value={this.state.amount}
           onChange={this.setAmount}
           button={<GreyLink onClick={this.setMaxAmount}>Set max</GreyLink>}
