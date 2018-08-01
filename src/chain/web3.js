@@ -29,10 +29,15 @@ export function getWeb3Instance() {
 
 // for all testnets except kovan, use mainnet instead
 export function setWeb3Network(network) {
-  if (network === 'kovan') {
-    setWeb3Provider(`https://${network}.infura.io/`);
-  } else {
-    setWeb3Provider('https://mainnet.infura.io/');
+  switch (network) {
+    case 'kovan':
+      setWeb3Provider(`https://${network}.infura.io/`);
+      break;
+    case 'ganache':
+      setWeb3Provider('http://127.0.0.1:2000/');
+      break;
+    default:
+      setWeb3Provider('https://mainnet.infura.io/');
   }
 }
 
