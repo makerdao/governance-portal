@@ -12,7 +12,7 @@ import Timeline from './pages/Timeline';
 import Topic from './pages/Topic';
 import Proposal from './pages/Proposal';
 import NotFound from './pages/NotFound';
-import ErrorBoundary from './components/ErrorBoundry';
+import ErrorBoundary from './components/ErrorBoundary';
 
 class ScrollToTopUtil extends Component {
   componentDidUpdate(prevProps) {
