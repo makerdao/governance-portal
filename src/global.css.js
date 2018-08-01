@@ -106,14 +106,13 @@ const globalStyles = `
   }
   .markdown {
     font-size: 16px;
-    line-height: 24px;
+    line-height: 30px;
     color: #546978;
     font-family: ${fonts.family.System};
   }
   .markdown p {
     color: inherit;
     font-size: 16px;
-    line-height: 1.5;
     font-weight: 400;
     display: block;
   }
@@ -213,14 +212,15 @@ const globalStyles = `
   }
   .markdown hr {
     width: 100%;
-    height: 1px;
-    background: #dfe7ef;
+    height: 2px;
+    background: #EAEAEA;
     display: block;
     margin: 32px 0;
+
   }
   .markdown h1 {
     font-size: 28px;
-    line-height: 40px;
+    line-height: normal;
     font-weight: 500;
     margin-top: 1rem;
     margin-bottom: 8px;
@@ -228,7 +228,7 @@ const globalStyles = `
   }
   .markdown h2 {
     font-size: 20px;
-    line-height: 32px;
+    line-height: normal;
     font-weight: 500;
     margin-top: 1rem;
     margin-bottom: 8px;
@@ -236,7 +236,7 @@ const globalStyles = `
   }
   .markdown h3 {
     font-size: 18px;
-    line-height: 28px;
+    line-height: normal;
     font-weight: 500;
     margin-top: 1rem;
     margin-bottom: 8px;
@@ -244,12 +244,10 @@ const globalStyles = `
   }
   .markdown h4 {
     font-size: 16px;
-    line-height: 20px;
+    line-height: 26px;
     font-weight: 500;
     margin-top: 1rem;
     margin-bottom: 8px;
-    text-transform: lowercase;
-    font-variant: small-caps;
     color: #0E1029;
   }
   .markdown h5 {
