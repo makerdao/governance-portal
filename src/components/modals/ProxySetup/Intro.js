@@ -11,11 +11,13 @@ import {
   Guide,
   GuideTitle,
   GuideInfo,
-  SetupLater
+  IntroTxBox,
+  Bold
 } from '../shared/styles';
+import round from 'lodash.round';
 import Button from '../../Button';
 
-const Intro = ({ modalClose, nextStep }) => (
+const Intro = ({ nextStep, linkCost }) => (
   <Column center maxWidth={540}>
     <StyledTitle>Welcome to the secure voting setup</StyledTitle>
     <StyledBlurb>
@@ -47,14 +49,27 @@ const Intro = ({ modalClose, nextStep }) => (
         </Guide>
       </Section>
     </GuideWrapper>
-    <StyledBlurb>
-      Its extremely secure and set up takes 5 minutes.{' '}
-      <StyledAnchor blue>FAQ’s for more</StyledAnchor>
-    </StyledBlurb>
+    <IntroTxBox>
+      <div>
+        <p>Transactions required to set up</p> <p>Estimated transaction fees</p>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          marginLeft: '8px'
+        }}
+      >
+        <Bold>3</Bold>
+        <Bold>${round(linkCost, 2)}</Bold>
+      </div>
+    </IntroTxBox>
+    <StyledAnchor style={{ margin: '15px 0px' }} blue>
+      Read more on our FAQ’s page
+    </StyledAnchor>
     <Button slim onClick={nextStep}>
       Great get started
     </Button>
-    <SetupLater onClick={modalClose}>Set up later</SetupLater>
   </Column>
 );
 

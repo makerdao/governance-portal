@@ -1,18 +1,13 @@
 import {
   getNetworkName,
+  setWeb3Network,
   setWeb3Provider,
-  getChief
+  getChief,
+  getWeb3Instance,
+  encodeParameter
 } from '../../src/chain/web3';
 import FakeProvider from 'web3-fake-provider';
-
-test('singleton error message', async () => {
-  expect.assertions(1);
-  try {
-    await getNetworkName();
-  } catch (err) {
-    expect(err.message).toMatch(/web3Instance was not initialized/);
-  }
-});
+import { useGanache } from '../helpers';
 
 test('singleton setup', async () => {
   const provider = new FakeProvider();
@@ -27,7 +22,7 @@ test('singleton setup', async () => {
 });
 
 test('getNetworkName', async () => {
-  setWeb3Provider('http://127.0.0.1:2000');
+  useGanache();
   const name = await getNetworkName();
   expect(name).toEqual('ganache');
 });
@@ -38,7 +33,26 @@ test('getChief', async () => {
   provider.injectResult('42');
   const kovanAddr = await getChief();
 
-  setWeb3Provider('http://127.0.0.1:2000');
+  useGanache();
   const ganacheAddr = await getChief();
   expect(kovanAddr).not.toEqual(ganacheAddr);
+});
+
+test('setWeb3Network', () => {
+  setWeb3Network('kovan');
+  expect(getWeb3Instance().currentProvider.host).toEqual(
+    'https://kovan.infura.io/'
+  );
+
+  setWeb3Network('mainnet');
+  expect(getWeb3Instance().currentProvider.host).toEqual(
+    'https://mainnet.infura.io/'
+  );
+});
+
+test('parameter encoding', () => {
+  const value = encodeParameter('uint256', 7, true);
+  const expected =
+    '0000000000000000000000000000000000000000000000000000000000000007';
+  expect(value).toEqual(expected);
 });

@@ -1,6 +1,11 @@
 import Web3 from 'web3';
 
-import { netIdToName } from '../utils/ethereum';
+import {
+  generateCallData,
+  netIdToName,
+  removeHexPrefix,
+  weiToEther
+} from '../utils/ethereum';
 import addresses from './addresses.json';
 
 try {
@@ -12,6 +17,8 @@ try {
 
 let web3Instance;
 
+// this is exported for use in tests; it should not be used outside this file
+// otherwise.
 export function getWeb3Instance() {
   if (!web3Instance) {
     throw new Error(
@@ -22,11 +29,16 @@ export function getWeb3Instance() {
 }
 
 // for all testnets except kovan, use mainnet instead
-export async function setWeb3Network(network) {
-  if (network === 'kovan') {
-    setWeb3Provider(`https://${network}.infura.io/`);
-  } else {
-    setWeb3Provider('https://mainnet.infura.io/');
+export function setWeb3Network(network) {
+  switch (network) {
+    case 'kovan':
+      setWeb3Provider(`https://${network}.infura.io/`);
+      break;
+    case 'ganache':
+      setWeb3Provider('http://127.0.0.1:2000/');
+      break;
+    default:
+      setWeb3Provider('https://mainnet.infura.io/');
   }
 }
 
@@ -54,6 +66,15 @@ export const setWeb3Provider = provider => {
 };
 
 /**
+ * @async @desc get avg gas price of last couple blocs
+ * @return {Promise}
+ */
+export const getGasPriceEstimate = () =>
+  getWeb3Instance()
+    .eth.getGasPrice()
+    .then(weiToEther);
+
+/**
  * @async @desc get current network name
  * @return {String}
  */
@@ -64,7 +85,7 @@ export const getNetworkName = async () => {
 };
 
 const getContractAddress = name => async network => {
-  if (!['chief', 'proxy_factory', 'mkr'].includes(name)) {
+  if (!['chief', 'proxy_factory', 'mkr', 'pip'].includes(name)) {
     throw new Error(`Unrecognized contract name: "${name}"`);
   }
   if (!network) network = await getNetworkName();
@@ -98,6 +119,13 @@ export const getProxyFactory = getContractAddress('proxy_factory');
 export const getMkrAddress = getContractAddress('mkr');
 
 /**
+ * @async @desc get eth price oracle address
+ * @param {String} [_network]
+ * @return {String}
+ */
+export const getPip = getContractAddress('pip');
+
+/**
  * @desc get method's ethereum hash signature
  * @param  {String} methodString
  * @return {String}
@@ -121,40 +149,43 @@ export const getTransactionCount = address =>
  * @param {String} param
  * @return {Promise}
  */
-export const encodeParameter = (type, param) =>
-  getWeb3Instance().eth.abi.encodeParameter(type, param);
+export const encodeParameter = (type, param, removePrefix) => {
+  const value = getWeb3Instance().eth.abi.encodeParameter(type, param);
+  return removePrefix ? removeHexPrefix(value) : value;
+};
 
 /**
  * @async @desc get transaction details
  * @param  {Object} transaction { from, to, data, value, gasPrice, gasLimit }
  * @return {Object}
  */
-export const getTxDetails = async ({
-  from,
-  to,
-  data,
-  value,
-  gasPrice,
-  gasLimit
-}) => {
-  // getGasPrice gets median gas price of the last few blocks from some oracle
-  const _gasPrice = gasPrice || (await getWeb3Instance().eth.getGasPrice());
-  const estimateGasData = value === '0x00' ? { from, to, data } : { to, data };
-  // this fails if web3 thinks that the transaction will fail
-  const _gasLimit =
-    gasLimit || (await getWeb3Instance().eth.estimateGas(estimateGasData));
+export const getTxDetails = async ({ from, to, data, value }) => {
+  const { gasLimit, gasPrice } = await estimateGas({ from, to, data, value });
   const nonce = await getTransactionCount(from);
-  const tx = {
+  return {
     from: from,
     to: to,
     nonce: getWeb3Instance().utils.toHex(nonce),
-    gasPrice: getWeb3Instance().utils.toHex(_gasPrice),
-    gasLimit: getWeb3Instance().utils.toHex(_gasLimit),
-    gas: getWeb3Instance().utils.toHex(_gasLimit),
+    gasPrice: getWeb3Instance().utils.toHex(gasPrice),
+    gasLimit: getWeb3Instance().utils.toHex(gasPrice),
+    gas: getWeb3Instance().utils.toHex(gasLimit),
     value: getWeb3Instance().utils.toHex(value),
     data: data
   };
-  return tx;
+};
+
+/**
+ * @async @desc get estimated gas limit and gas price
+ * @param  {String} { from, to, data, value }
+ * @return {Object} { gasPrice, gasLimit }
+ */
+export const estimateGas = async ({ from, to, data, value }) => {
+  // getGasPrice gets median gas price of the last few blocks from some oracle
+  const gasPrice = await getGasPriceEstimate();
+  const estimateGasData = value === '0x00' ? { from, to, data } : { to, data };
+  // this fails if web3 thinks that the transaction will fail
+  const gasLimit = await getWeb3Instance().eth.estimateGas(estimateGasData);
+  return { gasPrice, gasLimit };
 };
 
 /**
@@ -172,66 +203,68 @@ export const sendSignedTx = signedTx =>
   });
 
 /**
- * @async returns a promise that resolves after a transaction has a set number of confirmations
+ * @async resolves after a transaction has a set number of confirmations
  * @param  {String} transaction
  * @param  {Object} { confirmations }
  * @return {Promise}
  */
-export const awaitTx = (txnHash, { confirmations = 3 }) => {
-  const INTERVAL = 500;
-  const transactionReceiptAsync = async function(txnHash, resolve, reject) {
-    try {
-      const receipt = getWeb3Instance().eth.getTransactionReceipt(txnHash);
-      if (!receipt) {
-        setTimeout(
-          () => transactionReceiptAsync(txnHash, resolve, reject),
-          INTERVAL
-        );
-      } else {
-        const resolvedReceipt = await receipt;
-        if (!resolvedReceipt || !resolvedReceipt.blockNumber) {
-          setTimeout(
-            () => transactionReceiptAsync(txnHash, resolve, reject),
-            INTERVAL
-          );
-        } else {
-          try {
-            const [txBlock, currentBlock] = await Promise.all([
-              getWeb3Instance().eth.getBlock(resolvedReceipt.blockNumber),
-              getWeb3Instance().eth.getBlock('latest')
-            ]);
-            if (currentBlock.number - txBlock.number >= confirmations) {
-              const txn = await getWeb3Instance().eth.getTransaction(txnHash);
-              if (txn.blockNumber != null) resolve(resolvedReceipt);
-              else
-                reject(
-                  new Error(
-                    'Transaction with hash: ' +
-                      txnHash +
-                      ' ended up in an uncle block.'
-                  )
-                );
-            } else
-              setTimeout(
-                () => transactionReceiptAsync(txnHash, resolve, reject),
-                INTERVAL
-              );
-          } catch (e) {
-            setTimeout(
-              () => transactionReceiptAsync(txnHash, resolve, reject),
-              INTERVAL
-            );
-          }
-        }
-      }
-    } catch (e) {
-      reject(e);
+export const awaitTx = async (txHash, { confirmations = 3 }) => {
+  const delay = () => new Promise(resolve => setTimeout(resolve, 500));
+  const { eth } = getWeb3Instance();
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const receipt = await eth.getTransactionReceipt(txHash);
+    if (!receipt || !receipt.blockNumber) {
+      await delay();
+      continue;
     }
-  };
-  return new Promise((resolve, reject) =>
-    transactionReceiptAsync(txnHash, resolve, reject)
-  );
+
+    const [txBlock, currentBlock] = await Promise.all([
+      eth.getBlock(receipt.blockNumber),
+      eth.getBlock('latest')
+    ]);
+
+    if (
+      currentBlock &&
+      txBlock &&
+      currentBlock.number - txBlock.number >= confirmations
+    ) {
+      const txn = await eth.getTransaction(txHash);
+      if (!txn.blockNumber) {
+        throw new Error(`Transaction ${txHash} ended up in an uncle block.`);
+      }
+      return receipt;
+    }
+
+    await delay();
+  }
 };
+
+export async function ethCall(to, method, args) {
+  switch (to) {
+    case 'mkr':
+      to = await getMkrAddress();
+      break;
+    case 'chief':
+      to = await getChief();
+      break;
+    case 'factory':
+      to = await getProxyFactory();
+      break;
+    case 'pip':
+      to = await getPip();
+      break;
+    default:
+    // do nothing; assume `to` is an address string literal
+  }
+  const data = generateCallData({ method: getMethodSig(method), args });
+  return getWeb3Instance().eth.call({ to, data });
+}
+
+export async function getEthLogs(options) {
+  return getWeb3Instance().eth.getPastLogs(options);
+}
 
 // MetaMask -------------------------------------
 

@@ -6,8 +6,10 @@ import {
   unlockWithdrawMkr as _unlockWithdrawMkr
 } from '../chain/write';
 import { awaitTx } from '../chain/web3';
+import { getLinkGas } from '../chain/read';
 import { getActiveAccount } from './accounts';
 import { AccountTypes } from '../utils/constants';
+import { cutMiddle } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 
 // Constants ----------------------------------------------
@@ -51,6 +53,7 @@ const handleTx = async ({ prefix, dispatch, action, successPayload = '' }) => {
     dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
     console.log('mined:', receipt);
   } catch (err) {
+    console.error(err);
     dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
     dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
     // TODO display this error to the user; it could require user intervention,
@@ -65,7 +68,9 @@ function requireCorrectAccount(state, requiredAccount) {
   if (activeAccount.address === address) return true;
 
   window.alert(
-    `Switch to your ${proxyRole} wallet in Metamask before continuing.`
+    `Switch to your ${proxyRole || 'other'} wallet (with address ${cutMiddle(
+      address
+    )}) before continuing.`
   );
   return false;
 }
@@ -98,15 +103,19 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
 };
 
 export const sendMkrToProxy = value => (dispatch, getState) => {
-  const account = getActiveAccount(getState());
-  if (value === 0 || value === '0') {
-    dispatch(goToStep('summary'));
-    return;
+  const state = getState();
+  const account = getActiveAccount(state);
+  const { setupProgress } = state.proxy;
+  if (setupProgress === 'lockInput' && Number(value) === 0) {
+    return dispatch(goToStep('summary'));
   }
 
   if (account.proxyRole !== 'cold') {
-    window.alert('Switch to your cold wallet in Metamask before continuing.');
-    return;
+    return window.alert(
+      `Switch to your cold wallet (with address ${cutMiddle(
+        account
+      )}) before continuing.`
+    );
   }
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
@@ -147,7 +156,8 @@ const initialState = {
   setupProgress: 'intro',
   hotAddress: '',
   coldAddress: '',
-  sendMkrAmount: 0
+  sendMkrAmount: 0,
+  linkGas: getLinkGas() || 0
   // ...existingState
 };
 
@@ -180,11 +190,7 @@ const proxy = createReducer(initialState, {
     confirmingApprove: true,
     approveLinkTxHash: payload.txHash
   }),
-  [APPROVE_LINK_SUCCESS]: state => ({
-    ...state,
-    confirmingApprove: false,
-    setupProgress: 'lockInput'
-  }),
+  [APPROVE_LINK_SUCCESS]: state => ({ ...state, confirmingApprove: false }),
   [APPROVE_LINK_FAILURE]: state => ({ ...state, confirmingApprove: false }),
   // Send -------------------------------------------
   [SEND_MKR_TO_PROXY_REQUEST]: (state, { payload: value }) => {

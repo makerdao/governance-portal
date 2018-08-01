@@ -1,10 +1,10 @@
 import { createReducer } from '../utils/redux';
 import { getMetamaskNetworkName, setWeb3Network } from '../chain/web3';
-import { addAccount, setActiveAccount } from './accounts';
+import { addAccount, setActiveAccount, NO_METAMASK_ACCOUNTS } from './accounts';
+import { ethInit } from './eth';
 import { voteTallyInit } from './tally';
 import { topicsInit } from './topics';
 import { hatInit } from './hat';
-import { NO_METAMASK_ACCOUNTS } from './accounts';
 
 // Constants ----------------------------------------------
 
@@ -72,6 +72,7 @@ export const metamaskConnectInit = () => async dispatch => {
   dispatch(voteTallyInit());
   dispatch(topicsInit(network));
   dispatch(hatInit());
+  dispatch(ethInit());
 };
 
 // Reducer ------------------------------------------------
