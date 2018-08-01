@@ -75,7 +75,7 @@ export const getNetworkName = async () => {
 };
 
 const getContractAddress = name => async network => {
-  if (!['chief', 'proxy_factory', 'mkr'].includes(name)) {
+  if (!['chief', 'proxy_factory', 'mkr', 'pip'].includes(name)) {
     throw new Error(`Unrecognized contract name: "${name}"`);
   }
   if (!network) network = await getNetworkName();
@@ -107,6 +107,13 @@ export const getProxyFactory = getContractAddress('proxy_factory');
  * @return {String}
  */
 export const getMkrAddress = getContractAddress('mkr');
+
+/**
+ * @async @desc get eth price oracle address
+ * @param {String} [_network]
+ * @return {String}
+ */
+export const getPip = getContractAddress('pip');
 
 /**
  * @desc get method's ethereum hash signature
@@ -142,32 +149,36 @@ export const encodeParameter = (type, param, removePrefix) => {
  * @param  {Object} transaction { from, to, data, value, gasPrice, gasLimit }
  * @return {Object}
  */
-export const getTxDetails = async ({
-  from,
-  to,
-  data,
-  value,
-  gasPrice,
-  gasLimit
-}) => {
-  // getGasPrice gets median gas price of the last few blocks from some oracle
-  const _gasPrice = gasPrice || (await getWeb3Instance().eth.getGasPrice());
-  const estimateGasData = value === '0x00' ? { from, to, data } : { to, data };
-  // this fails if web3 thinks that the transaction will fail
-  const _gasLimit =
-    gasLimit || (await getWeb3Instance().eth.estimateGas(estimateGasData));
+export const getTxDetails = async ({ from, to, data, value }) => {
+  const { gasLimit, gasPrice } = await estimateGas(from, to, data, value);
   const nonce = await getTransactionCount(from);
-  const tx = {
+  return {
     from: from,
     to: to,
     nonce: getWeb3Instance().utils.toHex(nonce),
-    gasPrice: getWeb3Instance().utils.toHex(_gasPrice),
-    gasLimit: getWeb3Instance().utils.toHex(_gasLimit),
-    gas: getWeb3Instance().utils.toHex(_gasLimit),
+    gasPrice: getWeb3Instance().utils.toHex(gasPrice),
+    gasLimit: getWeb3Instance().utils.toHex(gasPrice),
+    gas: getWeb3Instance().utils.toHex(gasLimit),
     value: getWeb3Instance().utils.toHex(value),
     data: data
   };
-  return tx;
+};
+
+/**
+ * @async @desc get estimated gas limit and gas price
+ * @param  {String} from
+ * @param  {String} to
+ * @param  {String} data
+ * @param  {String} value
+ * @return {Object} { gasPrice, gasLimit }
+ */
+export const estimateGas = async (from, to, data, value) => {
+  // getGasPrice gets median gas price of the last few blocks from some oracle
+  const gasPrice = await getWeb3Instance().eth.getGasPrice();
+  const estimateGasData = value === '0x00' ? { from, to, data } : { to, data };
+  // this fails if web3 thinks that the transaction will fail
+  const gasLimit = await getWeb3Instance().eth.estimateGas(estimateGasData);
+  return { gasPrice, gasLimit };
 };
 
 /**
@@ -233,6 +244,9 @@ export async function ethCall(to, method, args) {
       break;
     case 'factory':
       to = await getProxyFactory();
+      break;
+    case 'pip':
+      to = await getPip();
       break;
     default:
     // do nothing; assume `to` is an address string literal

@@ -9,6 +9,7 @@ import accounts from './accounts';
 import vote from './vote';
 import hat from './hat';
 import toasts from './toasts';
+import eth from './eth';
 
 const rootReducer = combineReducers({
   metamask,
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   accounts,
   vote,
   hat,
+  eth,
   toasts
 });
 

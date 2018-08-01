@@ -255,3 +255,11 @@ export const getVotingPower = async proxyAddress => {
   const proxyDeposits = await getNumDeposits(proxyAddress);
   return add(proxyMkr, proxyDeposits);
 };
+
+/**
+ * @async @desc get eth price from maker oracle
+ * @return {String} ethPrice
+ */
+export const getEthPrice = async () => {
+  return ethCall('pip', 'read()', []).then(weiToEther);
+};

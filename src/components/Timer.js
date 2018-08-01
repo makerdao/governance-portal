@@ -75,9 +75,6 @@ class Timer extends Component {
     timeLeft -= hours * 3600;
     const minutes = Math.floor(timeLeft / 60);
     const Sminute = minutes !== 1 ? 's' : '';
-    timeLeft -= minutes * 60;
-    const seconds = timeLeft;
-    const Ssecond = seconds !== 1 ? 's' : '';
 
     return (
       <div>
@@ -93,7 +90,7 @@ class Timer extends Component {
               {hours} hour{Shour}{' '}
             </Fragment>
           )}
-          {minutes} minute{Sminute} {seconds} second{Ssecond}
+          {minutes} minute{Sminute}
         </Bold>
       </div>
     );

@@ -13,7 +13,7 @@ const TOPICS_SUCCESS = 'toics/TOPICS_SUCCESS';
 
 // Actions ------------------------------------------------
 
-export const topicsInit = network => async (dispatch, getState) => {
+export const topicsInit = network => async dispatch => {
   if (network === 'ganache') {
     // look up all slates
     const slates = await getEtchedSlates();

@@ -8,32 +8,9 @@ import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 import rootReducer from './reducers';
 import { isMobile } from './utils/misc';
 import Router from './Routes';
+import { localLinkProgress } from './middlewares';
 import './global.css.js';
 import { metamaskConnectInit } from './reducers/metamask';
-
-const localLinkProgress = store => next => action => {
-  if (action.type === 'proxy/INITIATE_LINK_SUCCESS') {
-    const {
-      initiateLinkTxHash,
-      setupProgress,
-      hotAddress,
-      coldAddress
-    } = store.getState().proxy;
-    localStorage.setItem(
-      'linkInitiatedState',
-      JSON.stringify({
-        initiateLinkTxHash,
-        setupProgress,
-        hotAddress,
-        coldAddress
-      })
-    );
-  }
-  if (action.type === 'proxy/APPROVE_LINK_SUCCESS') {
-    localStorage.removeItem('linkInitiated');
-  }
-  next(action);
-};
 
 const store = createStore(
   rootReducer,
