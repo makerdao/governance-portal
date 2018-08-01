@@ -1,21 +1,23 @@
 import { createReducer } from '../utils/redux';
 import { getEthPrice } from '../chain/read';
+import { getGasPriceEstimate } from '../chain/web3';
 
 // Constants ----------------------------------------------
 
-const ETH_PRICE_REQUEST = 'eth/ETH_PRICE_REQUEST';
-const ETH_PRICE_SUCCESS = 'eth/ETH_PRICE_SUCCESS';
-const ETH_PRICE_FAILURE = 'eth/ETH_PRICE_FAILURE';
+const ETH_INFO_REQUEST = 'eth/ETH_INFO_REQUEST';
+const ETH_INFO_SUCCESS = 'eth/ETH_INFO_SUCCESS';
+const ETH_INFO_FAILURE = 'eth/ETH_INFO_FAILURE';
 
 // Actions ------------------------------------------------
 
-export const ethPriceInit = () => async dispatch => {
+export const ethInit = () => async dispatch => {
   try {
-    dispatch({ type: ETH_PRICE_REQUEST });
-    const ethPrice = await getEthPrice();
-    dispatch({ type: ETH_PRICE_SUCCESS, payload: { ethPrice } });
+    dispatch({ type: ETH_INFO_REQUEST });
+    const price = await getEthPrice();
+    const gasCost = await getGasPriceEstimate();
+    dispatch({ type: ETH_INFO_SUCCESS, payload: { price, gasCost } });
   } catch (err) {
-    dispatch({ type: ETH_PRICE_FAILURE });
+    dispatch({ type: ETH_INFO_FAILURE });
   }
 };
 
@@ -23,19 +25,21 @@ export const ethPriceInit = () => async dispatch => {
 
 const initialState = {
   fetching: false,
-  ethPrice: ''
+  gasCost: '',
+  price: ''
 };
 
 const eth = createReducer(initialState, {
-  [ETH_PRICE_REQUEST]: state => ({
+  [ETH_INFO_REQUEST]: state => ({
     ...state,
     fetching: true
   }),
-  [ETH_PRICE_SUCCESS]: (state, { payload }) => ({
+  [ETH_INFO_SUCCESS]: (state, { payload }) => ({
     ...state,
-    ethPrice: payload.ethPrice
+    gasCost: payload.gasCost,
+    price: payload.price
   }),
-  [ETH_PRICE_FAILURE]: () => ({
+  [ETH_INFO_FAILURE]: () => ({
     ...initialState
   })
 });

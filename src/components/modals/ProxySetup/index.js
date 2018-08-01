@@ -14,6 +14,7 @@ import {
   clear as proxyClear,
   goToStep
 } from '../../../reducers/proxy';
+import { mul } from '../../../utils/misc';
 import { modalClose } from '../../../reducers/modal';
 import Summary from './Summary';
 import Lock from '../Lock';
@@ -62,15 +63,14 @@ class ProxySetup extends Component {
       sendMkrTxHash,
       sendMkrAmount,
       confirming,
-      proxyClear
+      proxyClear,
+      linkCost
     } = this.props;
 
     switch (setupProgress) {
       case 'intro':
       default:
-        return (
-          <Intro modalClose={modalClose} nextStep={() => goToStep('link')} />
-        );
+        return <Intro linkCost={linkCost} nextStep={() => goToStep('link')} />;
       case 'link':
         return (
           <Link
@@ -153,6 +153,7 @@ const stateProps = state => {
     modal,
     metamask,
     accounts,
+    eth: { price, gasCost },
     proxy: {
       initiateLinkTxHash,
       approveLinkTxHash,
@@ -163,7 +164,8 @@ const stateProps = state => {
       confirmingSendMkr,
       hotAddress,
       coldAddress,
-      setupProgress
+      setupProgress,
+      linkGas
     }
   } = state;
 
@@ -177,6 +179,7 @@ const stateProps = state => {
     sendMkrTxHash,
     sendMkrAmount,
     approveLinkTxHash,
+    linkCost: mul(mul(linkGas, gasCost), price),
     confirming: confirmingInitiate || confirmingApprove || confirmingSendMkr,
     hotAccount: getAccount(state, hotAddress),
     coldAccount: getAccount(state, coldAddress),

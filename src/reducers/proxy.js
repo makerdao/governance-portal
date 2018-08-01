@@ -6,6 +6,7 @@ import {
   unlockWithdrawMkr as _unlockWithdrawMkr
 } from '../chain/write';
 import { awaitTx } from '../chain/web3';
+import { getLinkGas } from '../chain/read';
 import { getActiveAccount } from './accounts';
 import { AccountTypes } from '../utils/constants';
 import { cutMiddle } from '../utils/misc';
@@ -155,7 +156,8 @@ const initialState = {
   setupProgress: 'intro',
   hotAddress: '',
   coldAddress: '',
-  sendMkrAmount: 0
+  sendMkrAmount: 0,
+  linkGas: getLinkGas() || 0
   // ...existingState
 };
 

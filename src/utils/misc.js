@@ -110,6 +110,11 @@ export const subtract = (a, b) =>
     .minus(BigNumber(b))
     .toString();
 
+export const mul = (a, b) =>
+  BigNumber(a)
+    .times(BigNumber(b))
+    .toString();
+
 /**
  * @desc make error messages more understandable
  * @param  {String} errorMsg

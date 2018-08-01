@@ -16,7 +16,12 @@ import {
   isZeroAddress
 } from '../utils/ethereum';
 import { add } from '../utils/misc.js';
-import chiefInfo from './chief-info.json';
+import contractInfo from './contract-info.json';
+
+const chiefInfo = contractInfo.chief;
+const proxyFactoryInfo = contractInfo.proxy_factory;
+
+export const getLinkGas = () => proxyFactoryInfo.total_link_gas;
 
 /**
  * @async @desc get proposal address approval count

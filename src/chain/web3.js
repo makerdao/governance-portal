@@ -3,7 +3,8 @@ import Web3 from 'web3';
 import {
   generateCallData,
   netIdToName,
-  removeHexPrefix
+  removeHexPrefix,
+  weiToEther
 } from '../utils/ethereum';
 import addresses from './addresses.json';
 
@@ -63,6 +64,15 @@ export const setWeb3Provider = provider => {
     web3Instance.setProvider(providerObj);
   }
 };
+
+/**
+ * @async @desc get avg gas price of last couple blocs
+ * @return {Promise}
+ */
+export const getGasPriceEstimate = () =>
+  getWeb3Instance()
+    .eth.getGasPrice()
+    .then(weiToEther);
 
 /**
  * @async @desc get current network name
@@ -150,7 +160,7 @@ export const encodeParameter = (type, param, removePrefix) => {
  * @return {Object}
  */
 export const getTxDetails = async ({ from, to, data, value }) => {
-  const { gasLimit, gasPrice } = await estimateGas(from, to, data, value);
+  const { gasLimit, gasPrice } = await estimateGas({ from, to, data, value });
   const nonce = await getTransactionCount(from);
   return {
     from: from,
@@ -166,15 +176,12 @@ export const getTxDetails = async ({ from, to, data, value }) => {
 
 /**
  * @async @desc get estimated gas limit and gas price
- * @param  {String} from
- * @param  {String} to
- * @param  {String} data
- * @param  {String} value
+ * @param  {String} { from, to, data, value }
  * @return {Object} { gasPrice, gasLimit }
  */
-export const estimateGas = async (from, to, data, value) => {
+export const estimateGas = async ({ from, to, data, value }) => {
   // getGasPrice gets median gas price of the last few blocks from some oracle
-  const gasPrice = await getWeb3Instance().eth.getGasPrice();
+  const gasPrice = await getGasPriceEstimate();
   const estimateGasData = value === '0x00' ? { from, to, data } : { to, data };
   // this fails if web3 thinks that the transaction will fail
   const gasLimit = await getWeb3Instance().eth.estimateGas(estimateGasData);

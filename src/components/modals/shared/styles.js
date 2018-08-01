@@ -188,6 +188,21 @@ export const VoteImpact = styled.div`
   border: solid 1px #dfe1e3;
 `;
 
+export const IntroTxBox = styled.div`
+  display: flex;
+  background-color: #ececec;
+  color: #868997;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 0px 20px;
+  width: calc(100% - 40px);
+`;
+
+export const Bold = styled.strong`
+  color: #212536;
+  font-weight: ${({ theme }) => theme.fonts.weight.bold};
+`;
+
 export const VoteImpactHeading = styled.p`
   color: #868997;
   font-size: 14px;
