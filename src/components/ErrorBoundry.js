@@ -39,6 +39,7 @@ class ErrorBoundary extends Component {
 
   componentDidCatch(error) {
     this.setState({ error });
+    console.error(error);
     // window.Raven.captureException(error, { extra: errorInfo });
   }
 

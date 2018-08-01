@@ -22,7 +22,7 @@ export function getWeb3Instance() {
 }
 
 // for all testnets except kovan, use mainnet instead
-export async function setWeb3Network(network) {
+export function setWeb3Network(network) {
   if (network === 'kovan') {
     setWeb3Provider(`https://${network}.infura.io/`);
   } else {
@@ -172,65 +172,42 @@ export const sendSignedTx = signedTx =>
   });
 
 /**
- * @async returns a promise that resolves after a transaction has a set number of confirmations
+ * @async resolves after a transaction has a set number of confirmations
  * @param  {String} transaction
  * @param  {Object} { confirmations }
  * @return {Promise}
  */
-export const awaitTx = (txnHash, { confirmations = 3 }) => {
-  const INTERVAL = 500;
-  const transactionReceiptAsync = async function(txnHash, resolve, reject) {
-    try {
-      const receipt = getWeb3Instance().eth.getTransactionReceipt(txnHash);
-      if (!receipt) {
-        setTimeout(
-          () => transactionReceiptAsync(txnHash, resolve, reject),
-          INTERVAL
-        );
-      } else {
-        const resolvedReceipt = await receipt;
-        if (!resolvedReceipt || !resolvedReceipt.blockNumber) {
-          setTimeout(
-            () => transactionReceiptAsync(txnHash, resolve, reject),
-            INTERVAL
-          );
-        } else {
-          try {
-            const [txBlock, currentBlock] = await Promise.all([
-              getWeb3Instance().eth.getBlock(resolvedReceipt.blockNumber),
-              getWeb3Instance().eth.getBlock('latest')
-            ]);
-            if (currentBlock.number - txBlock.number >= confirmations) {
-              const txn = await getWeb3Instance().eth.getTransaction(txnHash);
-              if (txn.blockNumber != null) resolve(resolvedReceipt);
-              else
-                reject(
-                  new Error(
-                    'Transaction with hash: ' +
-                      txnHash +
-                      ' ended up in an uncle block.'
-                  )
-                );
-            } else
-              setTimeout(
-                () => transactionReceiptAsync(txnHash, resolve, reject),
-                INTERVAL
-              );
-          } catch (e) {
-            setTimeout(
-              () => transactionReceiptAsync(txnHash, resolve, reject),
-              INTERVAL
-            );
-          }
-        }
-      }
-    } catch (e) {
-      reject(e);
+export const awaitTx = async (txHash, { confirmations = 3 }) => {
+  const delay = () => new Promise(resolve => setTimeout(resolve, 500));
+  const { eth } = getWeb3Instance();
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const receipt = await eth.getTransactionReceipt(txHash);
+    if (!receipt || !receipt.blockNumber) {
+      await delay();
+      continue;
     }
-  };
-  return new Promise((resolve, reject) =>
-    transactionReceiptAsync(txnHash, resolve, reject)
-  );
+
+    const [txBlock, currentBlock] = await Promise.all([
+      eth.getBlock(receipt.blockNumber),
+      eth.getBlock('latest')
+    ]);
+
+    if (
+      currentBlock &&
+      txBlock &&
+      currentBlock.number - txBlock.number >= confirmations
+    ) {
+      const txn = await eth.getTransaction(txHash);
+      if (!txn.blockNumber) {
+        throw new Error(`Transaction ${txHash} ended up in an uncle block.`);
+      }
+      return receipt;
+    }
+
+    await delay();
+  }
 };
 
 // MetaMask -------------------------------------

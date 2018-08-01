@@ -52,6 +52,7 @@ const handleTx = async ({ prefix, dispatch, action, successPayload = '' }) => {
     dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
     console.log('mined:', receipt);
   } catch (err) {
+    console.error(err);
     dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
     dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
     // TODO display this error to the user; it could require user intervention,
