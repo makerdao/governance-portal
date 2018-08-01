@@ -107,7 +107,8 @@ const globalStyles = `
   .markdown {
     font-size: 16px;
     line-height: 24px;
-    color: #16171a;
+    color: #546978;
+    font-family: ${fonts.family.System};
   }
   .markdown p {
     color: inherit;
@@ -218,52 +219,58 @@ const globalStyles = `
     margin: 32px 0;
   }
   .markdown h1 {
-    font-size: 24px;
+    font-size: 28px;
     line-height: 40px;
-    font-weight: 800;
+    font-weight: 500;
     margin-top: 1rem;
     margin-bottom: 8px;
+    color: #0E1029;
   }
   .markdown h2 {
     font-size: 20px;
     line-height: 32px;
-    font-weight: 700;
+    font-weight: 500;
     margin-top: 1rem;
     margin-bottom: 8px;
+    color: #0E1029;
   }
   .markdown h3 {
     font-size: 18px;
     line-height: 28px;
-    font-weight: 700;
+    font-weight: 500;
     margin-top: 1rem;
     margin-bottom: 8px;
+    color: #0E1029;
   }
   .markdown h4 {
     font-size: 16px;
     line-height: 20px;
-    font-weight: 700;
+    font-weight: 500;
     margin-top: 1rem;
     margin-bottom: 8px;
     text-transform: lowercase;
     font-variant: small-caps;
+    color: #0E1029;
   }
   .markdown h5 {
     font-size: 14px;
     line-height: 20px;
-    font-weight: 700;
+    font-weight: 500;
     margin-top: 1rem;
     margin-bottom: 8px;
     text-transform: lowercase;
     font-variant: small-caps;
+    color: #0E1029;
   }
   .markdown h6 {
     font-size: 12px;
     line-height: 16px;
-    font-weight: 700;
+    font-weight: 500;
     margin-top: 1rem;
     margin-bottom: 8px;
     text-transform: lowercase;
     font-variant: small-caps;
+    color: #0E1029;
   }
   `;
 
