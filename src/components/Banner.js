@@ -18,7 +18,7 @@ export const Banner = styled.div`
 
 export const BannerHeader = styled.div`
   font-size: 20px;
-  color: #1f2c3c;
+  color: ${theme.text.darker_default};
   font-weight: bold;
   line-height: 1.1em;
   margin-bottom: 0.2em;

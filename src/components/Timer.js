@@ -1,12 +1,13 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-
+import theme from '../theme';
 import clock from '../imgs/clock.svg';
 import smallClock from '../imgs/clock-small.svg';
 
 const Wrapper = styled.div`
   display: flex;
+  color: ${theme.text.darker_default};
   font-size: ${({ theme }) => theme.fonts.size.xlarge};
   font-weight: 300;
   margin: 37px 0px;
@@ -15,6 +16,7 @@ const Wrapper = styled.div`
 
 const WrapperSmall = styled.div`
   display: flex;
+  color: ${theme.text.darker_default};
   font-size: ${({ theme }) => theme.fonts.size.medium};
   font-weight: 300;
   align-items: center;

@@ -5,7 +5,13 @@ import { Link } from 'react-router-dom';
 
 import descend from '../imgs/descend.svg';
 import { toSlug } from '../utils/misc';
-import { colors, fonts, shadows, transitions, responsive } from '../theme';
+import theme, {
+  colors,
+  fonts,
+  shadows,
+  transitions,
+  responsive
+} from '../theme';
 
 const Card = styled.div`
   transition: ${transitions.base};
@@ -153,7 +159,7 @@ const TopicStatus = Tag.extend`
 `;
 
 const Heading = styled.p`
-  color: #1f2c3c;
+  color: ${theme.text.darker_default};
   font-size: ${fonts.size.xlarge};
   font-weight: ${fonts.weight.medium};
   opacity: ${({ disabled }) => (disabled ? 0.7 : 1)};

@@ -10,13 +10,13 @@ import Button from '../components/Button';
 import Card from '../components/Card';
 import Timer from '../components/Timer';
 import { toSlug, eq } from '../utils/misc';
-import { fonts } from '../theme';
+import theme, { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import Vote from '../components/modals/Vote';
 
 const SubHeading = styled.p`
-  color: #1f2c3c;
+  color: ${theme.text.darker_default};
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

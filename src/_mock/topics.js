@@ -4,7 +4,7 @@ export default {
       topic: 'Foundation Proposal Governance Vote',
       active: true,
       govVote: true,
-      topic_blurb: `Here you can you YES or NO to the proposed five core principles of the Maker Governance philosophy as <a target="_blank" href="https://medium.com/makerdao/foundation-proposal-caeb382465c1"> published on Medium</a> June 20, 2018
+      topic_blurb: `Here you can vote YES or NO to the proposed five core principles of the Maker Governance philosophy as <a target="_blank" href="https://medium.com/makerdao/foundation-proposal-caeb382465c1"> published on Medium</a> June 20, 2018
         This type of vote is a <strong style="font-weight:bold;">Governance Vote</strong>, and its objective is to represent resolution on a matter or collection of matters. This vote will not result in changes to the Dai Credit System (to change the state of the system, for example to change the debt ceiling, a second type of vote called an <strong style="font-weight:bold;">Executive Vote</strong> is used).`,
       end_timestamp: 1535673600000,
       date: '2018-03-12', //yyyy-mm-dd
@@ -98,7 +98,7 @@ export default {
       topic: 'Foundation Proposal Governance Vote',
       active: true,
       govVote: true,
-      topic_blurb: `Here you can you YES or NO to the proposed five core principles of the Maker Governance philosophy as <a target="_blank" href="https://medium.com/makerdao/foundation-proposal-caeb382465c1"> published on Medium</a> June 20, 2018
+      topic_blurb: `Here you can vote YES or NO to the proposed five core principles of the Maker Governance philosophy as <a target="_blank" href="https://medium.com/makerdao/foundation-proposal-caeb382465c1"> published on Medium</a> June 20, 2018
       This type of vote is a <strong style="font-weight:bold;">Governance Vote</strong>, and its objective is to represent resolution on a matter or collection of matters. This vote will not result in changes to the Dai Credit System (to change the state of the system, for example to change the debt ceiling, a second type of vote called an <strong style="font-weight:bold;">Executive Vote</strong> is used).`,
       end_timestamp: 1535673600000,
       date: '2018-03-12', //yyyy-mm-dd

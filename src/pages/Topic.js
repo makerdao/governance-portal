@@ -15,7 +15,7 @@ import Timer from '../components/Timer';
 import { modalOpen } from '../reducers/modal';
 import { activeCanVote } from '../reducers/accounts';
 import { toSlug } from '../utils/misc';
-import { colors, fonts } from '../theme';
+import theme, { colors, fonts } from '../theme';
 
 const ProposalDetails = styled.div`
   max-width: 59%;
@@ -42,7 +42,7 @@ const StyledCenter = styled.div`
 
 const StyledTitle = styled.p`
   font-size: 28px;
-  color: #1f2c3c;
+  color: ${theme.text.darker_default};
   line-height: 46px;
 `;
 
@@ -66,7 +66,7 @@ const WhiteBackground = styled.div`
 `;
 
 const SubHeading = styled.p`
-  color: #1f2c3c;
+  color: ${theme.text.darker_default};
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

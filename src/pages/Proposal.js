@@ -16,7 +16,7 @@ import Timer from '../components/Timer';
 import WithTally from '../components/hocs/WithTally';
 import { activeCanVote } from '../reducers/accounts';
 import NotFound from './NotFound';
-import { colors } from '../theme';
+import theme, { colors } from '../theme';
 import { formatDate, cutMiddle } from '../utils/misc';
 import { modalOpen } from '../reducers/modal';
 
@@ -45,7 +45,7 @@ const StyledTop = styled.div`
 
 const StyledTitle = styled.p`
   font-size: 28px;
-  color: #1f2c3c;
+  color: ${theme.text.darker_default};
   line-height: 33px;
   font-weight: 500;
 `;
@@ -125,7 +125,7 @@ const Supporter = styled.div`
 const CardTitle = styled.p`
   font-size: 20px;
   font-weight: 500;
-  color: #272727;
+  color: ${theme.text.darker_default};
   line-height: 28px;
   margin-bottom: 6px;
 `;
