@@ -8,8 +8,7 @@ import {
   getProxyFactory,
   getMkrAddress,
   encodeParameter,
-  sendSignedTx,
-  getWeb3Instance
+  sendSignedTx
 } from './web3';
 import { getProxyStatus } from './read';
 import {
@@ -54,12 +53,6 @@ async function sendTransactionWithAccount(account, tx) {
   }
 }
 
-export function encodeArgument(type, value) {
-  return removeHexPrefix(
-    getWeb3Instance().eth.abi.encodeParameter(type, value)
-  );
-}
-
 // TODO: refactor more methods to use this. but we should set up tests first
 async function simpleSendTx(account, to, method, args) {
   return sendTransactionWithAccount(account, {
@@ -67,7 +60,7 @@ async function simpleSendTx(account, to, method, args) {
     from: account.address,
     data: generateCallData({
       method: getMethodSig(method),
-      args: args.map(([type, value]) => encodeArgument(type, value))
+      args: args.map(([type, value]) => encodeParameter(type, value, true))
     })
   });
 }

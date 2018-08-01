@@ -3,7 +3,8 @@ import {
   setWeb3Network,
   setWeb3Provider,
   getChief,
-  getWeb3Instance
+  getWeb3Instance,
+  encodeParameter
 } from '../../src/chain/web3';
 import FakeProvider from 'web3-fake-provider';
 import { useGanache } from '../helpers';
@@ -47,4 +48,11 @@ test('setWeb3Network', () => {
   expect(getWeb3Instance().currentProvider.host).toEqual(
     'https://mainnet.infura.io/'
   );
+});
+
+test('parameter encoding', () => {
+  const value = encodeParameter('uint256', 7, true);
+  const expected =
+    '0000000000000000000000000000000000000000000000000000000000000007';
+  expect(value).toEqual(expected);
 });

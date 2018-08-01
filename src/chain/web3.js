@@ -1,6 +1,10 @@
 import Web3 from 'web3';
 
-import { netIdToName } from '../utils/ethereum';
+import {
+  generateCallData,
+  netIdToName,
+  removeHexPrefix
+} from '../utils/ethereum';
 import addresses from './addresses.json';
 
 try {
@@ -12,6 +16,8 @@ try {
 
 let web3Instance;
 
+// this is exported for use in tests; it should not be used outside this file
+// otherwise.
 export function getWeb3Instance() {
   if (!web3Instance) {
     throw new Error(
@@ -121,8 +127,10 @@ export const getTransactionCount = address =>
  * @param {String} param
  * @return {Promise}
  */
-export const encodeParameter = (type, param) =>
-  getWeb3Instance().eth.abi.encodeParameter(type, param);
+export const encodeParameter = (type, param, removePrefix) => {
+  const value = getWeb3Instance().eth.abi.encodeParameter(type, param);
+  return removePrefix ? removeHexPrefix(value) : value;
+};
 
 /**
  * @async @desc get transaction details
@@ -209,6 +217,28 @@ export const awaitTx = async (txHash, { confirmations = 3 }) => {
     await delay();
   }
 };
+
+export async function ethCall(to, method, args) {
+  switch (to) {
+    case 'mkr':
+      to = await getMkrAddress();
+      break;
+    case 'chief':
+      to = await getChief();
+      break;
+    case 'factory':
+      to = await getProxyFactory();
+      break;
+    default:
+    // do nothing; assume `to` is an address string literal
+  }
+  const data = generateCallData({ method: getMethodSig(method), args });
+  return getWeb3Instance().eth.call({ to, data });
+}
+
+export async function getEthLogs(options) {
+  return getWeb3Instance().eth.getPastLogs(options);
+}
 
 // MetaMask -------------------------------------
 
