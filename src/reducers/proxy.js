@@ -147,7 +147,7 @@ export const smartStepSkip = () => (dispatch, getState) => {
   return dispatch(modalClose());
 };
 
-export const postSetupUpdate = () => (dispatch, getState) => {
+export const postLinkUpdate = () => (dispatch, getState) => {
   const hotAccount = getAccount(getState(), getState().proxy.hotAddress);
   const coldAccount = getAccount(getState(), getState().proxy.coldAddress);
   if (hotAccount === undefined || coldAccount === undefined)

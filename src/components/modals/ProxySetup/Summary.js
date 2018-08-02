@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { StyledTitle, StyledBlurb, StyledTop } from '../shared/styles';
 import Button from '../../Button';
 
-export default ({ modalClose, sendMkrAmount }) => (
+export default ({ modalClose, sendMkrAmount, postLinkUpdate }) => (
   <Fragment>
     <StyledTop>
       <StyledTitle>Secure voting contract setup</StyledTitle>
@@ -24,8 +24,8 @@ export default ({ modalClose, sendMkrAmount }) => (
       <Button
         slim
         onClick={() => {
+          postLinkUpdate();
           modalClose();
-          window.location.reload();
         }}
       >
         Finish and close

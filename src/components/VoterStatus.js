@@ -85,7 +85,9 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
     <SmallText>
       <Strong>{isColdWallet ? 'Cold wallet:' : 'Hot wallet:'}</Strong> In voting
       contract <Black>{round(account.proxy.votingPower, 4)} MKR</Black>{' '}
-      <a onClick={() => modalOpen(Withdraw)}>Withdraw</a>
+      {Number(account.proxy.votingPower) > 0 && (
+        <a onClick={() => modalOpen(Withdraw)}>Withdraw</a>
+      )}
       <DotSpacer />
       In cold wallet <Black>{round(coldWallet.mkrBalance, 4)} MKR</Black>{' '}
       {account.proxyRole === 'cold' && (

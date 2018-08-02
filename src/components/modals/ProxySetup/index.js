@@ -12,6 +12,7 @@ import {
   sendMkrToProxy,
   approveLink,
   clear as proxyClear,
+  postLinkUpdate,
   goToStep
 } from '../../../reducers/proxy';
 import { mul } from '../../../utils/misc';
@@ -64,7 +65,8 @@ class ProxySetup extends Component {
       sendMkrAmount,
       confirming,
       proxyClear,
-      linkCost
+      linkCost,
+      postLinkUpdate
     } = this.props;
 
     switch (setupProgress) {
@@ -112,7 +114,11 @@ class ProxySetup extends Component {
           />
         );
       case 'summary':
-        return <Summary {...{ modalClose, proxyClear, sendMkrAmount }} />;
+        return (
+          <Summary
+            {...{ modalClose, proxyClear, postLinkUpdate, sendMkrAmount }}
+          />
+        );
     }
   }
 }
@@ -203,6 +209,7 @@ const dispatchProps = {
   initiateLink,
   approveLink,
   sendMkrToProxy,
+  postLinkUpdate,
   proxyClear,
   goToStep
 };

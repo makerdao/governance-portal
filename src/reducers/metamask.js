@@ -34,7 +34,7 @@ const pollForMetamaskChanges = () => async (dispatch, getState) => {
     dispatch({ type: UPDATE_ACCOUNT, payload: address });
     await dispatch(addAccount({ address, type: 'METAMASK' }));
     dispatch(setActiveAccount(address));
-  } else if (fetching) {
+  } else if (fetching && !activeAddress) {
     dispatch({ type: NO_METAMASK_ACCOUNTS }); // accounts reducer
   }
   setTimeout(() => dispatch(pollForMetamaskChanges()), 2000);

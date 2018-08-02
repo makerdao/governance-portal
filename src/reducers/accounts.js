@@ -255,7 +255,7 @@ const accounts = createReducer(initialState, {
 
     return {
       ...state,
-      allAccounts: uniqConcat(state.allAccounts, [account])
+      allAccounts: uniqConcat([account], state.allAccounts)
     };
   },
   [SET_ACTIVE_ACCOUNT]: (state, { payload: address }) => ({

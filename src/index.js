@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import ReduxThunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
+import Raven from 'raven-js';
 
 import rootReducer from './reducers';
 import { isMobile } from './utils/misc';
@@ -20,7 +21,10 @@ const store = createStore(
 store.dispatch(metamaskConnectInit());
 
 if (process.env.NODE_ENV === 'production') {
-  window.Raven.context(() =>
+  Raven.config(
+    'https://3113186e2c5b4ef8b8eef1095b08a42b@sentry.io/1241257'
+  ).install();
+  Raven.context(() =>
     ReactDOM.render(
       <Provider store={store}>
         {isMobile() ? <div>No mobile support yet</div> : <Router />}
