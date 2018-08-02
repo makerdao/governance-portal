@@ -215,7 +215,6 @@ const globalStyles = `
     height: 2px;
     background: #EAEAEA;
     display: block;
-    margin: 32px 0;
 
   }
   .markdown h1 {
