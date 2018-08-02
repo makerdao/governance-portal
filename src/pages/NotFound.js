@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import theme from '../theme.js';
+import { Link } from 'react-router-dom';
 
-//
 const Background = styled.div`
   background-color: ${theme.text.darker_default};
   width: 100vw;
@@ -13,22 +13,27 @@ const Background = styled.div`
   margin-left: -50vw;
   margin-right: -50vw;
   margin-bottom: -50vw;
+  overflow: auto;
 `;
 
 const StyledTitle = styled.div`
   font-size: 45px;
+  line-height: 45px;
   color: white;
   font-weight: 500;
+  margin-top: 191px;
 `;
 
-//color: #FFFFFF
 const StyledBody = styled.div`
   font-size: 19.5px;
+  line-height: 23px;
   color: white;
   letter-spacing: 0.3px;
+  margin: 23px auto;
+  width: 602px;
 `;
 
-export const HomeButton = styled.a`
+export const HomeButton = styled(Link)`
   border-radius: 5px;
   color: ${theme.text.darker_default};
   background-color: white;
@@ -44,10 +49,10 @@ const NotFound = () => (
   <Background>
     <StyledTitle>Page Not Found</StyledTitle>
     <StyledBody>
-      The page you're looking for is either missing or it doesn't exist. <br />{' '}
-      Double-check that the web address is correct.{' '}
+      The page you're looking for is either missing or it doesn't exist.
+      Double-check that the web address is correct.
     </StyledBody>
-    <HomeButton>Go to Homepage</HomeButton>
+    <HomeButton to="/">Go to Homepage</HomeButton>
   </Background>
 );
 

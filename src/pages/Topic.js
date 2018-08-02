@@ -13,8 +13,8 @@ import WithTally from '../components/hocs/WithTally';
 import Vote from '../components/modals/Vote';
 import Timer from '../components/Timer';
 import { modalOpen } from '../reducers/modal';
-import { activeCanVote } from '../reducers/accounts';
-import { toSlug } from '../utils/misc';
+import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
+import { toSlug, eq } from '../utils/misc';
 import theme, { colors, fonts } from '../theme';
 
 const ProposalDetails = styled.div`
