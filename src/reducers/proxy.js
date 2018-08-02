@@ -7,7 +7,7 @@ import {
 } from '../chain/write';
 import { awaitTx } from '../chain/web3';
 import { getLinkGas } from '../chain/read';
-import { getActiveAccount } from './accounts';
+import { getActiveAccount, getAccount, addAccounts } from './accounts';
 import { AccountTypes } from '../utils/constants';
 import { modalClose } from './modal';
 import { cutMiddle } from '../utils/misc';
@@ -145,6 +145,16 @@ export const smartStepSkip = () => (dispatch, getState) => {
   const { setupProgress } = getState().proxy;
   if (setupProgress === 'lockInput') return dispatch(goToStep('summary'));
   return dispatch(modalClose());
+};
+
+export const postSetupUpdate = () => (dispatch, getState) => {
+  const hotAccount = getAccount(getState(), getState().proxy.hotAddress);
+  const coldAccount = getAccount(getState(), getState().proxy.coldAddress);
+  if (hotAccount === undefined || coldAccount === undefined)
+    return window.location.reload();
+  const accounts = [hotAccount, coldAccount];
+  // this will replace duplicate accounts in the store
+  dispatch(addAccounts(accounts));
 };
 
 // Reducer ------------------------------------------------

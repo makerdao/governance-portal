@@ -114,7 +114,7 @@ export const addAccounts = accounts => async dispatch => {
 
     await dispatch({ type: ADD_ACCOUNT, payload });
   }
-  dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
+  return dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
 };
 
 export const addAccount = account => async dispatch => {
