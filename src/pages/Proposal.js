@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import { Link } from 'react-router-dom';
 
-import { toSlug } from '../utils/misc';
+import { toSlug, eq } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
 import VoteTally from '../components/VoteTally';
 import Vote from '../components/modals/Vote';
@@ -14,7 +14,7 @@ import Card from '../components/Card';
 import Loader from '../components/Loader';
 import Timer from '../components/Timer';
 import WithTally from '../components/hocs/WithTally';
-import { activeCanVote } from '../reducers/accounts';
+import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import NotFound from './NotFound';
 import { colors } from '../theme';
 import { formatDate, cutMiddle } from '../utils/misc';
@@ -185,7 +185,7 @@ class Proposal extends Component {
       accountDataFetching,
       network,
       canVote,
-      hatApprovals
+      votingFor
     } = this.props;
     const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
     const supporters = voteState[proposal.source.toLowerCase()] || null;
@@ -204,15 +204,9 @@ class Proposal extends Component {
             </StyledCenter>
             <div>
               <WithTally candidate={proposal.source}>
-                {({
-                  loadingApprovals,
-                  loadingPercentage,
-                  approvals,
-                  percentage
-                }) => (
+                {({ loadingApprovals, approvals, percentage }) => (
                   <VoteTally
                     statusBar
-                    loadingPercentage={loadingPercentage}
                     loadingApprovals={loadingApprovals}
                     approvals={approvals}
                     percentage={percentage}
@@ -232,7 +226,9 @@ class Proposal extends Component {
                   })
                 }
               >
-                Vote for this Proposal
+                {eq(votingFor, proposal.source)
+                  ? 'Withdraw vote'
+                  : 'Vote for this Proposal'}
               </Button>
             </div>
           </StyledTop>
@@ -269,20 +265,6 @@ class Proposal extends Component {
                   {cutMiddle(proposal.source, 8, 8)}
                 </Address>
               </Supporter>
-              <WithTally candidate={proposal.source}>
-                {({ approvals }) => (
-                  <Supporter>
-                    <Detail>Till Hat</Detail>
-                    {hatApprovals !== 0 ? (
-                      <Detail>
-                        {(hatApprovals - approvals).toLocaleString()} MKR
-                      </Detail>
-                    ) : (
-                      <Detail>---</Detail>
-                    )}
-                  </Supporter>
-                )}
-              </WithTally>
             </DetailsCard>
             <SupporterCard>
               <CardTitle>Top Supporters</CardTitle>
@@ -321,8 +303,8 @@ const reduxProps = ({ topics, tally, accounts, metamask, hat }) => ({
   voteState: tally.tally,
   accountDataFetching: accounts.fetching,
   canVote: activeCanVote({ accounts }),
-  network: metamask.network,
-  hatApprovals: hat.hatApprovals
+  votingFor: getActiveVotingFor({ accounts }),
+  network: metamask.network
 });
 
 export default connect(

@@ -122,8 +122,18 @@ const BorderLine = styled.div`
   background-color: #445162;
 `;
 
-const BaseLayout = ({ children, metamaskFetching, topicsAvailable }) => {
+const BaseLayout = ({
+  children,
+  metamaskFetching,
+  topicsAvailable,
+  wrongNetwork
+}) => {
   const childrenShouldMount = !metamaskFetching && topicsAvailable;
+  const noContentMsg = wrongNetwork ? (
+    'Please switch MetaMask to Kovan or Mainnet'
+  ) : (
+    <Loader size={20} color="header" background="background" />
+  );
   return (
     <StyledLayout>
       <StyledHeader>
@@ -172,9 +182,7 @@ const BaseLayout = ({ children, metamaskFetching, topicsAvailable }) => {
             {childrenShouldMount ? (
               children
             ) : (
-              <div style={{ marginTop: '150px' }}>
-                <Loader size={20} color="header" background="background" />
-              </div>
+              <div style={{ marginTop: '150px' }}>{noContentMsg}</div>
             )}
           </StyledContent>
           {/* <Footer /> */}
@@ -193,6 +201,7 @@ BaseLayout.propTypes = {
 
 const reduxProps = ({ metamask, topics }) => ({
   metamaskFetching: metamask.fetching,
+  wrongNetwork: metamask.wrongNetwork,
   topicsAvailable: topics.length > 0
 });
 

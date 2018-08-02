@@ -59,7 +59,6 @@ export const VotePercentage = ({ loadingPercentage, percentage, ...props }) => (
 const VoteTally = ({
   statusBar,
   loadingApprovals,
-  loadingPercentage,
   percentage,
   approvals,
   ...props
@@ -68,7 +67,7 @@ const VoteTally = ({
     {statusBar ? <StyledStatusBar percentage={percentage} {...props} /> : null}
     <StyledVoteTally>
       <VoteInfo content="VOTES">
-        {loadingPercentage ? (
+        {loadingApprovals ? (
           <Loader size={20} color="light_grey" background="white" />
         ) : (
           `${percentage}%`

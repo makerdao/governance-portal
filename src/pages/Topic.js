@@ -13,8 +13,8 @@ import WithTally from '../components/hocs/WithTally';
 import Vote from '../components/modals/Vote';
 import Timer from '../components/Timer';
 import { modalOpen } from '../reducers/modal';
-import { activeCanVote } from '../reducers/accounts';
-import { toSlug } from '../utils/misc';
+import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
+import { toSlug, eq } from '../utils/misc';
 import { colors, fonts } from '../theme';
 
 const ProposalDetails = styled.div`
@@ -91,7 +91,7 @@ const Body = styled.p`
 
 // TODO Styled body & body are confusingly similar
 
-const Topic = ({ match, topics, fetching, canVote, modalOpen }) => {
+const Topic = ({ match, topics, fetching, canVote, modalOpen, votingFor }) => {
   // fetching
   const topicSlug = match.params.topicSlug;
   const topic = find(({ topic }) => toSlug(topic) === topicSlug, topics);
@@ -131,9 +131,9 @@ const Topic = ({ match, topics, fetching, canVote, modalOpen }) => {
             </ProposalDetails>
             <div>
               <WithTally candidate={proposal.source}>
-                {({ loadingPercentage, percentage }) => (
+                {({ loadingApprovals, percentage }) => (
                   <VotePercentage
-                    loadingPercentage={loadingPercentage}
+                    loadingApprovals={loadingApprovals}
                     percentage={percentage}
                   />
                 )}
@@ -150,7 +150,9 @@ const Topic = ({ match, topics, fetching, canVote, modalOpen }) => {
                   })
                 }
               >
-                Vote for this Proposal
+                {eq(votingFor, proposal.source)
+                  ? 'Withdraw vote'
+                  : 'Vote for this Proposal'}
               </Button>
             </div>
           </Card.Element>
@@ -173,7 +175,8 @@ Topic.defaultProps = {
 const reduxProps = ({ topics, accounts }) => ({
   topics: topics,
   fetching: accounts.fetching,
-  canVote: activeCanVote({ accounts })
+  canVote: activeCanVote({ accounts }),
+  votingFor: getActiveVotingFor({ accounts })
 });
 
 export default connect(

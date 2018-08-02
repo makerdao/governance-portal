@@ -1,6 +1,9 @@
+import round from 'lodash.round';
+
 import { createReducer } from '../utils/redux';
 import { getApprovalCount } from '../chain/read';
 import flatten from 'ramda/src/flatten';
+import { add } from '../utils/misc';
 
 // Constants ----------------------------------------------
 
@@ -24,12 +27,15 @@ export const initApprovalsFetch = () => (dispatch, getState) => {
     )
   )
     .then(approvals => {
+      let total = 0;
       const approvalsObj = {};
       for (let approval of approvals) {
         const [address, amt] = Object.entries(approval)[0];
-        approvalsObj[address] = parseFloat(amt).toFixed(2);
+        total = add(total, amt);
+        approvalsObj[address.toLowerCase()] = round(amt, 2);
       }
-      dispatch({ type: APPROVALS_SUCCESS, payload: { approvalsObj } });
+      total = round(total, 2);
+      dispatch({ type: APPROVALS_SUCCESS, payload: { approvalsObj, total } });
     })
     .catch(error => {
       // TODO: notify user or throw to a fallback component
@@ -42,7 +48,8 @@ export const initApprovalsFetch = () => (dispatch, getState) => {
 
 const initialState = {
   fetching: true,
-  approvals: {}
+  approvals: {},
+  total: 0
 };
 
 const approvals = createReducer(initialState, {
@@ -52,7 +59,8 @@ const approvals = createReducer(initialState, {
   }),
   [APPROVALS_SUCCESS]: (_, { payload }) => ({
     fetching: false,
-    approvals: payload.approvalsObj
+    approvals: payload.approvalsObj,
+    total: payload.total
   }),
   [APPROVALS_FAILURE]: state => ({
     ...state,

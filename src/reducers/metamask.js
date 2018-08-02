@@ -14,6 +14,7 @@ const CONNECT_REQUEST = 'metamask/CONNECT_REQUEST';
 const CONNECT_SUCCESS = 'metamask/CONNECT_SUCCESS';
 const CONNECT_FAILURE = 'metamask/CONNECT_FAILURE';
 const NOT_AVAILABLE = 'metamask/NOT_AVAILABLE';
+const WRONG_NETWORK = 'metamask/WRONG_NETWORK';
 
 // Actions ------------------------------------------------
 
@@ -50,6 +51,8 @@ export const metamaskConnectInit = () => async dispatch => {
   if (typeof window.web3 !== 'undefined') {
     try {
       network = await getMetamaskNetworkName();
+      if (network !== 'mainnet' && network !== 'kovan')
+        return dispatch({ type: WRONG_NETWORK });
       dispatch({ type: CONNECT_SUCCESS, payload: { network } });
       setWeb3Network(network);
       networkIsSet = true;
@@ -81,7 +84,8 @@ const initialState = {
   fetching: false,
   activeAddress: '',
   available: false,
-  network: 'mainnet'
+  network: 'mainnet',
+  wrongNetwork: false
 };
 
 const metamask = createReducer(initialState, {
@@ -94,7 +98,8 @@ const metamask = createReducer(initialState, {
     ...state,
     fetching: false,
     available: true,
-    network: payload.network
+    network: payload.network,
+    wrongNetwork: false
   }),
   [CONNECT_FAILURE]: () => ({
     ...initialState,
@@ -111,7 +116,12 @@ const metamask = createReducer(initialState, {
   }),
   [UPDATE_NETWORK]: (state, { payload: network }) => ({
     ...state,
-    network
+    network,
+    wrongNetwork: false
+  }),
+  [WRONG_NETWORK]: state => ({
+    ...state,
+    wrongNetwork: true
   })
 });
 

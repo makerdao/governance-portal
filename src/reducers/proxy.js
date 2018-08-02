@@ -62,6 +62,10 @@ const handleTx = async ({ prefix, dispatch, action, successPayload = '' }) => {
 };
 
 function requireCorrectAccount(state, requiredAccount) {
+  if (!requiredAccount) {
+    window.alert(`Please activate your other wallet before continuing.`);
+    return false;
+  }
   const { address, type, proxyRole } = requiredAccount;
   if (type !== AccountTypes.METAMASK) return true;
   const activeAccount = getActiveAccount(state);
@@ -110,7 +114,7 @@ export const sendMkrToProxy = value => (dispatch, getState) => {
     return dispatch(goToStep('summary'));
   }
 
-  if (account.proxyRole !== 'cold') {
+  if (!account || account.proxyRole !== 'cold') {
     return window.alert(
       `Switch to your cold wallet (with address ${cutMiddle(
         account

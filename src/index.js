@@ -19,18 +19,20 @@ const store = createStore(
 
 store.dispatch(metamaskConnectInit());
 
-// window.Raven.context(() =>
-//   ReactDOM.render(
-//     <Provider store={store}>
-//       <Init>{isMobile() ? <div>No mobile support yet</div> : <Router />}</Init>
-//     </Provider>,
-//     document.getElementById("root")
-//   )
-// );
-
-ReactDOM.render(
-  <Provider store={store}>
-    {isMobile() ? <div>No mobile support yet</div> : <Router />}
-  </Provider>,
-  document.getElementById('root')
-);
+if (process.env.NODE_ENV === 'production') {
+  window.Raven.context(() =>
+    ReactDOM.render(
+      <Provider store={store}>
+        {isMobile() ? <div>No mobile support yet</div> : <Router />}
+      </Provider>,
+      document.getElementById('root')
+    )
+  );
+} else {
+  ReactDOM.render(
+    <Provider store={store}>
+      {isMobile() ? <div>No mobile support yet</div> : <Router />}
+    </Provider>,
+    document.getElementById('root')
+  );
+}

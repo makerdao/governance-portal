@@ -72,4 +72,10 @@ const Transaction = ({
   </Fragment>
 );
 
+Transaction.defaultProps = {
+  account: {
+    proxyRole: ''
+  }
+};
+
 export default Transaction;

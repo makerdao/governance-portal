@@ -95,7 +95,7 @@ export const firstLetterCapital = string =>
   string.charAt(0).toUpperCase() + string.slice(1).toLocaleLowerCase();
 
 /**
- * @desc safely add 2 numbers
+ * @desc safe arithmetic
  * @param  {Number|String} a
  * @param  {Number|String} b
  * @return {String}
@@ -114,6 +114,20 @@ export const mul = (a, b) =>
   BigNumber(a)
     .times(BigNumber(b))
     .toString();
+
+export const div = (a, b) =>
+  BigNumber(a)
+    .dividedBy(BigNumber(b))
+    .toString();
+
+/**
+ * @desc to fixed number of decimals
+ * @param  {Number|String} num
+ * @param  {Number}        decimals
+ * @return {String}
+ */
+export const toFixed = (value, decimals) =>
+  BigNumber(BigNumber(value).toFixed(decimals)).toString();
 
 /**
  * @desc make error messages more understandable
