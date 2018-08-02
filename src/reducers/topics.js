@@ -7,6 +7,8 @@ import { initApprovalsFetch } from './approvals';
 import mocked from '../_mock/topics';
 import { getEtchedSlates } from '../chain/read';
 
+const mockedBackend = mocked;
+
 // Constants ----------------------------------------------
 
 const TOPICS_SUCCESS = 'toics/TOPICS_SUCCESS';
@@ -35,10 +37,8 @@ export const topicsInit = network => async dispatch => {
 
 // Reducer ------------------------------------------------
 
-const mockedBackend = mocked;
-
 const topics = createReducer([], {
-  [TOPICS_SUCCESS]: (_, { payload }) => payload
+  [TOPICS_SUCCESS]: (_, { payload }) => payload || []
 });
 
 export default topics;

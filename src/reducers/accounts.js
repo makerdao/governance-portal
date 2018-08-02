@@ -16,11 +16,15 @@ import {
 } from '../chain/read';
 import { AccountTypes } from '../utils/constants';
 import { add, subtract } from '../utils/misc';
-import { SEND_MKR_TO_PROXY_SUCCESS, WITHDRAW_MKR_SUCCESS } from './proxy';
+import {
+  SEND_MKR_TO_PROXY_SUCCESS,
+  WITHDRAW_MKR_SUCCESS,
+  INITIATE_LINK_REQUEST,
+  APPROVE_LINK_SUCCESS
+} from './proxy';
 import { createSubProvider } from '../chain/hw-wallet';
 import { netNameToId } from '../utils/ethereum';
 import values from 'ramda/src/values';
-import { INITIATE_LINK_REQUEST, APPROVE_LINK_SUCCESS } from './proxy';
 
 // Constants ----------------------------------------------
 
@@ -110,7 +114,7 @@ export const addAccounts = accounts => async dispatch => {
 
     await dispatch({ type: ADD_ACCOUNT, payload });
   }
-  dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
+  return dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
 };
 
 export const addAccount = account => async dispatch => {
@@ -251,7 +255,7 @@ const accounts = createReducer(initialState, {
 
     return {
       ...state,
-      allAccounts: uniqConcat(state.allAccounts, [account])
+      allAccounts: uniqConcat([account], state.allAccounts)
     };
   },
   [SET_ACTIVE_ACCOUNT]: (state, { payload: address }) => ({

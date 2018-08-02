@@ -81,9 +81,9 @@ const Timeline = ({ modalOpen, topics, canVote, fetching, votingFor }) => (
               </ProposalDetails>
               <div>
                 <WithTally candidate={proposal.source}>
-                  {({ loadingPercentage, percentage }) => (
+                  {({ loadingApprovals, percentage }) => (
                     <VotePercentage
-                      loadingPercentage={loadingPercentage}
+                      loadingApprovals={loadingApprovals}
                       percentage={percentage}
                     />
                   )}

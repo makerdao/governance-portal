@@ -1,37 +1,27 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import round from 'lodash.round';
 
-// this thing takes a candidate and passes on its approvals and its percentage of total approvals
-// if we have that info in the redux store
+import { div, mul } from '../../utils/misc';
+
+// this thing takes a candidate and passes on its approvals and its percentage
+// of approvals from proposals in our backend
 const WithTally = ({
   children,
-  voteTallyFetching,
   approvalFetching,
   approvalObj,
   candidate,
-  voteTally
+  totalApprovals
 }) => {
-  const loadingPercentage = voteTallyFetching;
+  const loadingPercentage = approvalFetching;
   const loadingApprovals = approvalFetching;
   let percentage = 0;
   let approvals = 0;
-  if (approvalObj[candidate] !== undefined) approvals = approvalObj[candidate];
   candidate = candidate.toLowerCase();
-  if (voteTally[candidate] === undefined)
-    return children({
-      loadingPercentage,
-      loadingApprovals,
-      percentage,
-      approvals
-    });
-  let totalApprovals = 0;
-  let candidateApprovals = 0;
-  for (let [key, votes] of Object.entries(voteTally)) {
-    const approvals = votes.reduce((acc, curr) => acc + curr.deposits, 0);
-    totalApprovals += approvals;
-    if (key === candidate) candidateApprovals += approvals;
+  if (approvalObj[candidate] !== undefined) {
+    approvals = approvalObj[candidate];
+    percentage = round(div(mul(approvals, 100), totalApprovals), 2);
   }
-  percentage = ((candidateApprovals * 100) / totalApprovals).toFixed(2);
   return children({
     loadingPercentage,
     loadingApprovals,
@@ -49,11 +39,10 @@ WithTally.defaultProps = {
   candidate: ''
 };
 
-const reduxProps = ({ tally, approvals }) => ({
-  voteTallyFetching: tally.fetching,
-  voteTally: tally.tally,
+const reduxProps = ({ approvals }) => ({
   approvalFetching: approvals.fetching,
-  approvalObj: approvals.approvals
+  approvalObj: approvals.approvals,
+  totalApprovals: approvals.total
 });
 
 export default connect(

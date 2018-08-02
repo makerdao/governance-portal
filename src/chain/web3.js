@@ -181,7 +181,7 @@ export const getTxDetails = async ({ from, to, data, value }) => {
  */
 export const estimateGas = async ({ from, to, data, value }) => {
   // getGasPrice gets median gas price of the last few blocks from some oracle
-  const gasPrice = await getGasPriceEstimate();
+  const gasPrice = await getWeb3Instance().eth.getGasPrice();
   const estimateGasData = value === '0x00' ? { from, to, data } : { to, data };
   // this fails if web3 thinks that the transaction will fail
   const gasLimit = await getWeb3Instance().eth.estimateGas(estimateGasData);

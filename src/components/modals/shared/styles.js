@@ -86,12 +86,19 @@ export const GuideInfo = styled.p`
   color: ${theme.text.dim_grey_alt};
 `;
 
-export const SetupLater = styled.p`
-  font-size: 16px;
+export const Skip = styled.p`
+  font-size: ;
   text-align: center;
   color: ${theme.text.dim_grey_alt};
   cursor: pointer;
-  margin-top: 18px;
+  margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
+  margin-top: ${({ mt }) => (mt ? `${mt}px` : '')};
+`;
+
+export const FlexRowEnd = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 `;
 
 export const InfoBox = styled.div`
