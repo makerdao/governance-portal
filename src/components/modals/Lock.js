@@ -1,7 +1,11 @@
 import { connect } from 'react-redux';
 
 import { getActiveAccount } from '../../reducers/accounts';
-import { sendMkrToProxy, clear as clearProxyState } from '../../reducers/proxy';
+import {
+  sendMkrToProxy,
+  smartStepSkip,
+  clear as clearProxyState
+} from '../../reducers/proxy';
 import { modalClose } from '../../reducers/modal';
 import AmountInput from './shared/AmountInput';
 
@@ -26,6 +30,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   action: sendMkrToProxy,
   modalClose,
+  skip: smartStepSkip,
   clearProxyState
 };
 

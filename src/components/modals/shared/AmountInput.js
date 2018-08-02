@@ -6,7 +6,9 @@ import {
   InputLabels,
   ValueLabel,
   EndButton,
-  GreyLink
+  GreyLink,
+  Skip,
+  FlexRowEnd
 } from './styles';
 import Input from '../../Input';
 import Transaction from './Transaction';
@@ -54,7 +56,8 @@ export default class AmountInput extends Component {
       amountLabel,
       account,
       balance,
-      buttonLabel
+      buttonLabel,
+      skip
     } = this.props;
     if (txSent)
       return (
@@ -84,9 +87,14 @@ export default class AmountInput extends Component {
           onChange={this.setAmount}
           button={<GreyLink onClick={this.setMaxAmount}>Set max</GreyLink>}
         />
-        <EndButton onClick={() => this.submit(this.state.amount)}>
-          {buttonLabel}
-        </EndButton>
+        <FlexRowEnd>
+          <Skip mr={24} mt={24} onClick={() => skip()}>
+            Skip this step
+          </Skip>
+          <EndButton onClick={() => this.submit(this.state.amount)}>
+            {buttonLabel}
+          </EndButton>
+        </FlexRowEnd>
       </Fragment>
     );
   }

@@ -9,6 +9,7 @@ import { awaitTx } from '../chain/web3';
 import { getLinkGas } from '../chain/read';
 import { getActiveAccount } from './accounts';
 import { AccountTypes } from '../utils/constants';
+import { modalClose } from './modal';
 import { cutMiddle } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 
@@ -107,13 +108,9 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
 };
 
 export const sendMkrToProxy = value => (dispatch, getState) => {
-  const state = getState();
-  const account = getActiveAccount(state);
-  const { setupProgress } = state.proxy;
-  if (setupProgress === 'lockInput' && Number(value) === 0) {
-    return dispatch(goToStep('summary'));
-  }
+  if (Number(value) === 0) return dispatch(smartStepSkip());
 
+  const account = getActiveAccount(getState());
   if (!account || account.proxyRole !== 'cold') {
     return window.alert(
       `Switch to your cold wallet (with address ${cutMiddle(
@@ -132,7 +129,7 @@ export const sendMkrToProxy = value => (dispatch, getState) => {
 };
 
 export const withdrawMkr = value => (dispatch, getState) => {
-  if (value === 0 || value === '0') return;
+  if (Number(value) === 0) return dispatch(smartStepSkip());
 
   dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
   const account = getActiveAccount(getState());
@@ -142,6 +139,12 @@ export const withdrawMkr = value => (dispatch, getState) => {
     action: _unlockWithdrawMkr(account, value),
     successPayload: value
   });
+};
+
+export const smartStepSkip = () => (dispatch, getState) => {
+  const { setupProgress } = getState().proxy;
+  if (setupProgress === 'lockInput') return dispatch(goToStep('summary'));
+  return dispatch(modalClose());
 };
 
 // Reducer ------------------------------------------------

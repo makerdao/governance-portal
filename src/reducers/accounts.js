@@ -16,11 +16,15 @@ import {
 } from '../chain/read';
 import { AccountTypes } from '../utils/constants';
 import { add, subtract } from '../utils/misc';
-import { SEND_MKR_TO_PROXY_SUCCESS, WITHDRAW_MKR_SUCCESS } from './proxy';
+import {
+  SEND_MKR_TO_PROXY_SUCCESS,
+  WITHDRAW_MKR_SUCCESS,
+  INITIATE_LINK_REQUEST,
+  APPROVE_LINK_SUCCESS
+} from './proxy';
 import { createSubProvider } from '../chain/hw-wallet';
 import { netNameToId } from '../utils/ethereum';
 import values from 'ramda/src/values';
-import { INITIATE_LINK_REQUEST, APPROVE_LINK_SUCCESS } from './proxy';
 
 // Constants ----------------------------------------------
 
