@@ -10,7 +10,6 @@ import { getLinkGas } from '../chain/read';
 import { getActiveAccount, getAccount, addAccounts } from './accounts';
 import { AccountTypes } from '../utils/constants';
 import { modalClose } from './modal';
-import { cutMiddle } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 
 // Constants ----------------------------------------------
@@ -73,9 +72,7 @@ function requireCorrectAccount(state, requiredAccount) {
   if (activeAccount.address === address) return true;
 
   window.alert(
-    `Switch to your ${proxyRole || 'other'} wallet (with address ${cutMiddle(
-      address
-    )}) before continuing.`
+    `Switch to your ${proxyRole || 'other'} wallet before continuing.`
   );
   return false;
 }
@@ -112,11 +109,7 @@ export const sendMkrToProxy = value => (dispatch, getState) => {
 
   const account = getActiveAccount(getState());
   if (!account || account.proxyRole !== 'cold') {
-    return window.alert(
-      `Switch to your cold wallet (with address ${cutMiddle(
-        account
-      )}) before continuing.`
-    );
+    return window.alert(`Switch to your cold wallet before continuing.`);
   }
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
