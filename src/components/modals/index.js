@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { modalClose } from '../../reducers/modal';
 import Card from '../Card';
-import { colors, transitions, responsive } from '../../theme';
+import { colors, responsive } from '../../theme';
 
 const Column = styled.div`
   position: relative;
@@ -26,7 +26,7 @@ const LightBox = styled.div`
   width: 100vw;
   height: 100vh;
   overflow: scroll;
-  transition: ${transitions.base};
+  transition: ${({ theme }) => theme.transitions.base};
   opacity: ${({ modal }) => (modal ? 1 : 0)};
   visibility: ${({ modal }) => (modal ? 'visible' : 'hidden')};
   pointer-events: ${({ modal }) => (modal ? 'auto' : 'none')};

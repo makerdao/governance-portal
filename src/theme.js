@@ -45,14 +45,6 @@ export const shadows = {
     '0 7px 14px 0 rgba(50, 50, 93, 0.1), 0 3px 6px 0 rgba(0, 0, 0, 0.08), inset 0 0 1px 0 rgba(0, 0, 0, 0.06)'
 };
 
-export const transitions = {
-  short: 'all 0.1s ease-in-out',
-  base: 'all 0.2s ease-in-out',
-  long: 'all 0.3s ease-in-out',
-  button: '0.15s ease',
-  buttonPress: '0.15s ease'
-};
-
 export const responsive = {
   short: {
     min: 'min-height: 479px',
@@ -94,6 +86,9 @@ const theme = {
   },
   generic: {
     default: '#ededed',
+    white: '#ffffff',
+    black: '#000000',
+    dark: '#0c0c0d',
     alt: '#F6FBFC'
   },
   text: {
@@ -114,7 +109,7 @@ const theme = {
     size: {
       small: '12px',
       medium: '14px',
-      large: '20px',
+      large: '16px',
       xlarge: '28px',
       h1: '42px',
       h2: '32px'
@@ -126,6 +121,11 @@ const theme = {
       semibold: 600,
       bold: 700
     }
+  },
+  transitions: {
+    base: 'all 0.2s ease-in-out',
+    long: 'all 0.3s ease-in-out',
+    button: '0.15s ease'
   }
 };
 
