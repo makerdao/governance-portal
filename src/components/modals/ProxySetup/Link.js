@@ -13,6 +13,7 @@ import {
 import Dropdown from '../../Dropdown';
 import { AccountBlurb } from '../../AccountBox';
 import { AccountTypes } from '../../../utils/constants';
+import { eq } from '../../../utils/misc';
 
 class Link extends Component {
   constructor(props) {
@@ -26,7 +27,7 @@ class Link extends Component {
   componentDidUpdate(prevProps) {
     if (!this.state.cold) {
       const newAccounts = differenceWith(
-        (a, b) => a.address === b.address,
+        (a, b) => eq(a.address, b.address),
         this.props.accounts,
         prevProps.accounts
       );
@@ -41,15 +42,19 @@ class Link extends Component {
 
   render() {
     const accountsMinusHot = this.state.hot
-      ? differenceWith((a, b) => a.address === b.address, this.props.accounts, [
-          this.state.hot
-        ])
+      ? differenceWith(
+          (a, b) => eq(a.address, b.address),
+          this.props.accounts,
+          [this.state.hot]
+        )
       : this.props.accounts;
 
     const accountsMinusCold = this.state.cold
-      ? differenceWith((a, b) => a.address === b.address, this.props.accounts, [
-          this.state.cold
-        ])
+      ? differenceWith(
+          (a, b) => eq(a.address, b.address),
+          this.props.accounts,
+          [this.state.cold]
+        )
       : this.props.accounts;
 
     // TODO: const ok = cold and hot are valid addresses - disable button otherwise

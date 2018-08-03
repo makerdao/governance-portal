@@ -155,6 +155,14 @@ export const encodeParameter = (type, param, removePrefix) => {
 };
 
 /**
+ * @desc return checksummed address
+ * @param {String} address
+ * @return {String}
+ */
+export const toChecksum = address =>
+  getWeb3Instance().utils.toChecksumAddress(address);
+
+/**
  * @async @desc get transaction details
  * @param  {Object} transaction { from, to, data, value, gasPrice, gasLimit }
  * @return {Object}

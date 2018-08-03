@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Blockies from 'react-blockies';
 import { connect } from 'react-redux';
+
 import ClickOutside from './ClickOutside';
 import Loader from './Loader';
-import { cutMiddle } from '../utils/misc';
+import { cutMiddle, firstLetterCapital } from '../utils/misc';
 import arrow from '../imgs/arrow.svg';
-import { firstLetterCapital } from '../utils/misc';
 import { fonts, colors, shadows } from '../theme';
 import {
   getActiveAccount,
