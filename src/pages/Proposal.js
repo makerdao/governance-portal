@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 
 import { toSlug, eq } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
+import { toChecksum } from '../chain/web3';
 import VoteTally from '../components/VoteTally';
 import Vote from '../components/modals/Vote';
 import Button from '../components/Button';
@@ -132,7 +133,7 @@ const CardTitle = styled.p`
 
 const SupporterWrapper = styled.div`
   overflow-y: scroll;
-  height: 100%;
+  height: 85%;
 `;
 
 const NoSupporters = styled.p`
@@ -277,7 +278,7 @@ class Proposal extends Component {
                         target="_blank"
                         href={ethScanLink(supporter.address, networkShown)}
                       >
-                        {supporter.address}
+                        {toChecksum(supporter.address)}
                       </Address>
                     </Supporter>
                   ))

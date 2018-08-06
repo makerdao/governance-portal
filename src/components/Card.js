@@ -5,24 +5,18 @@ import { Link } from 'react-router-dom';
 
 import descend from '../imgs/descend.svg';
 import { toSlug } from '../utils/misc';
-import theme, {
-  colors,
-  fonts,
-  shadows,
-  transitions,
-  responsive
-} from '../theme';
+import theme, { colors, fonts, shadows } from '../theme';
 
 const Card = styled.div`
-  transition: ${transitions.base};
+  transition: ${({ theme }) => theme.transitions.base};
   position: relative;
   width: 100%;
   border: none;
   border-style: none;
   border-radius: 4px;
   display: block;
-  color: rgb(${colors.black});
-  background-color: ${({ background }) => `rgb(${colors[background]})`};
+  color: ${({ theme }) => theme.generic.black};
+  background-color: ${({ background, theme }) => theme.generic[background]};
   box-shadow: ${shadows.soft};
   font-size: ${fonts.size.medium};
   font-weight: ${fonts.weight.normal};
@@ -48,28 +42,24 @@ const CardElementWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 24px;
-  transition: ${transitions.base};
+  transition: ${({ theme }) => theme.transitions.base};
   position: relative;
   width: 100%;
   min-height: ${({ minHeight }) => (minHeight ? `${minHeight}px` : '0')};
   height: ${({ height }) => (height ? `${height}px` : 'auto')};
   max-height: auto;
   border-top: solid 2px #eaeaea;
-  color: rgb(${colors.dark});
-  background-color: ${({ background }) => `rgb(${colors[background]})`};
-  font-size: ${fonts.size.medium};
-  font-weight: ${fonts.weight.normal};
+  color: ${({ theme }) => theme.generic.dark};
+  background-color: ${({ background, theme }) => theme.generic[background]};
+  font-size: ${({ theme }) => theme.fonts.size.large};
+  font-weight: ${({ theme }) => theme.fonts.weight.normal};
   margin: 0 auto;
   text-align: left;
   overflow: hidden;
-  @media screen and (${responsive.sm.max}) {
-    align-items: flex-start;
-    flex-direction: column;
-  }
 `;
 
 const CollapsableWrapper = styled.div`
-  transition: ${transitions.base};
+  transition: ${({ theme }) => theme.transitions.base};
   max-height: auto;
 `;
 
@@ -99,11 +89,12 @@ CardElement.defaultProps = {
   collapsable: true,
   startCollapsed: false,
   topicTitle: '',
+  background: 'white',
   active: false
 };
 
 const CardTopWrapper = styled.div`
-  transition: ${transitions.base};
+  transition: ${({ theme }) => theme.transitions.base};
   position: relative;
   padding: 23px 24px;
   width: 100%;
@@ -112,10 +103,10 @@ const CardTopWrapper = styled.div`
   height: ${({ height }) => (height ? `${height}px` : 'auto')};
   border-style: none;
   border: none;
-  color: rgb(${colors.dark});
+  color: ${({ theme }) => theme.generic.dark};
   background-color: ${({ background }) => `rgb(${colors[background]})`};
-  font-size: ${fonts.size.medium};
-  font-weight: ${fonts.weight.normal};
+  font-size: ${({ theme }) => theme.fonts.size.large};
+  font-weight: ${({ theme }) => theme.fonts.weight.normal};
   margin: 0 auto;
   text-align: left;
   overflow: hidden;
@@ -177,7 +168,7 @@ const Caret = styled.div`
   width: 16px;
   cursor: pointer;
   background: url(${descend}) no-repeat;
-  transition: ${transitions.base};
+  transition: ${({ theme }) => theme.transitions.base};
   transform: ${({ flipped }) => (flipped ? 'rotate(180deg)' : '')};
 `;
 

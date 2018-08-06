@@ -3,18 +3,18 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import Loader from './Loader';
-import { colors, fonts, transitions } from '../theme';
+import { colors, fonts } from '../theme';
 
 const StyledButton = styled.button`
-  transition: ${transitions.button};
+  transition: ${({ theme }) => theme.transitions.button};
   position: relative;
   border: none;
   border-style: none;
   box-sizing: border-box;
   background-color: ${({ color }) => `rgb(${colors[color]})`};
-  color: rgb(${colors.white});
+  color: ${({ theme }) => theme.generic.white};
   border-radius: 2px;
-  font-size: ${fonts.size.medium};
+  font-size: ${({ theme }) => theme.fonts.size.large};
   font-weight: ${fonts.weight.semibold};
   padding: 0 15px;
   height: 40px;

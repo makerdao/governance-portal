@@ -6,7 +6,9 @@ import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
 
 import { colors, fonts } from '../theme';
+import { modalOpen } from '../reducers/modal';
 import Modals from '../components/modals';
+import SecureVoting from '../components/modals/SecureVoting';
 // import Footer from "../components/Footer";
 import Loader from '../components/Loader';
 import AccountBox from '../components/AccountBox';
@@ -100,6 +102,18 @@ const StyledContent = styled.div`
   width: 100%;
 `;
 
+const Flex = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const DimHeaderElement = styled.div`
+  cursor: pointer;
+  color: ${({ theme }) => theme.text.header_dim};
+  font-weight: 500;
+  margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
+`;
+
 const StyledLogo = styled.div`
   height: 36px;
   width: 36px;
@@ -124,6 +138,7 @@ const BorderLine = styled.div`
 
 const BaseLayout = ({
   children,
+  modalOpen,
   metamaskFetching,
   topicsAvailable,
   wrongNetwork
@@ -172,7 +187,12 @@ const BaseLayout = ({
             <StyledLink to="/">
               <HeaderBottomLeft>Governance</HeaderBottomLeft>
             </StyledLink>
-            <AccountBox fetching={metamaskFetching} />
+            <Flex>
+              <DimHeaderElement onClick={() => modalOpen(SecureVoting)} mr={50}>
+                Secure Voting
+              </DimHeaderElement>
+              <AccountBox fetching={metamaskFetching} />
+            </Flex>
           </HeaderBottomContent>
         </HeaderBottom>
       </StyledHeader>
@@ -205,4 +225,9 @@ const reduxProps = ({ metamask, topics }) => ({
   topicsAvailable: topics.length > 0
 });
 
-export default withRouter(connect(reduxProps)(BaseLayout));
+export default withRouter(
+  connect(
+    reduxProps,
+    { modalOpen }
+  )(BaseLayout)
+);
