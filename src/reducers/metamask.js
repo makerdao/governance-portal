@@ -23,21 +23,25 @@ const pollForMetamaskChanges = () => async (dispatch, getState) => {
     metamask: { network, activeAddress },
     accounts: { fetching }
   } = getState();
-  const newNetwork = await getMetamaskNetworkName();
-  // all the data in the store could be wrong now. later on we could clear out
-  // any network-specific data from the store carefully, but for now the
-  // simplest thing is to start over from scratch.
-  if (newNetwork !== network) return window.location.reload();
+  try {
+    const newNetwork = await getMetamaskNetworkName();
+    // all the data in the store could be wrong now. later on we could clear out
+    // any network-specific data from the store carefully, but for now the
+    // simplest thing is to start over from scratch.
+    if (newNetwork !== network) return window.location.reload();
 
-  const address = window.web3.eth.defaultAccount;
-  if (address !== undefined && address !== activeAddress) {
-    dispatch({ type: UPDATE_ACCOUNT, payload: address });
-    await dispatch(addAccount({ address, type: 'METAMASK' }));
-    dispatch(setActiveAccount(address));
-  } else if (fetching && !activeAddress) {
-    dispatch({ type: NO_METAMASK_ACCOUNTS }); // accounts reducer
+    const address = window.web3.eth.defaultAccount;
+    if (address !== undefined && address !== activeAddress) {
+      dispatch({ type: UPDATE_ACCOUNT, payload: address });
+      await dispatch(addAccount({ address, type: 'METAMASK' }));
+      dispatch(setActiveAccount(address));
+    } else if (fetching && !activeAddress) {
+      dispatch({ type: NO_METAMASK_ACCOUNTS }); // accounts reducer
+    }
+    setTimeout(() => dispatch(pollForMetamaskChanges()), 2000);
+  } catch (err) {
+    console.error(err);
   }
-  setTimeout(() => dispatch(pollForMetamaskChanges()), 2000);
 };
 
 export const metamaskConnectInit = () => async dispatch => {

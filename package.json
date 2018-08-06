@@ -31,7 +31,7 @@
   },
   "scripts": {
     "start": "HTTPS=true NODE_ENV=development react-scripts start",
-    "build": "react-scripts build && npm run remove-sourcemaps",
+    "build": "react-scripts build",
     "test": "jest",
     "testnet": "./gov-testchain/deploy-gov",
     "ci": "./gov-testchain/deploy-gov --ci jest --coverage",

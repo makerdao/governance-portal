@@ -15,7 +15,7 @@ import {
   getNumDeposits
 } from '../chain/read';
 import { AccountTypes } from '../utils/constants';
-import { add, subtract } from '../utils/misc';
+import { add, eq, subtract } from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
@@ -24,6 +24,7 @@ import {
 } from './proxy';
 import { createSubProvider } from '../chain/hw-wallet';
 import { netNameToId } from '../utils/ethereum';
+import { toChecksum } from '../chain/web3';
 import values from 'ramda/src/values';
 
 // Constants ----------------------------------------------
@@ -41,7 +42,7 @@ export const NO_METAMASK_ACCOUNTS = 'accounts/NO_METAMASK_ACCOUNTS';
 // Selectors ----------------------------------------------
 
 export function getAccount(state, address) {
-  return state.accounts.allAccounts.find(a => a.address === address);
+  return state.accounts.allAccounts.find(a => eq(a.address, address));
 }
 
 export function getActiveAccount(state) {
@@ -81,7 +82,7 @@ export const addAccounts = accounts => async dispatch => {
         .then(() => getNumDeposits(proxyAddress))
         .then(deposits => {
           // if there's nothing locked in chief, we take this address as not voting for anything
-          if (deposits === 0 || deposits === '0') return '';
+          if (Number(deposits) === 0) return '';
           return getVotedSlate(proxyAddress);
         })
         .then(slate => getSlateAddresses(slate))
@@ -92,12 +93,13 @@ export const addAccounts = accounts => async dispatch => {
     }
     const payload = {
       ...account,
+      address: toChecksum(account.address),
       mkrBalance: await getMkrBalance(account.address),
       hasProxy,
       proxyRole,
       votingFor: await currProposal,
       proxy: {
-        address: proxyAddress,
+        address: hasProxy ? toChecksum(proxyAddress) : '',
         votingPower: hasProxy ? await getVotingPower(proxyAddress) : 0
       }
     };

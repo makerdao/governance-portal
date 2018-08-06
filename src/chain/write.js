@@ -8,7 +8,8 @@ import {
   getProxyFactory,
   getMkrAddress,
   encodeParameter,
-  sendSignedTx
+  sendSignedTx,
+  sendTxUnlocked
 } from './web3';
 import { getProxyStatus } from './read';
 import {
@@ -29,7 +30,8 @@ async function sendTransactionWithAccount(account, tx) {
     data,
     value,
     gasPrice: tx.gasPrice,
-    gasLimit: tx.gasLimit
+    gasLimit: tx.gasLimit,
+    ganache: account.type === AccountTypes.GANACHE // FIXME
   });
   switch (account.type) {
     case AccountTypes.METAMASK:
@@ -48,6 +50,8 @@ async function sendTransactionWithAccount(account, tx) {
       const signedTx = await account.subprovider.signTransaction(txDetails);
       return sendSignedTx(signedTx);
     }
+    case AccountTypes.GANACHE:
+      return sendTxUnlocked(txDetails);
     default:
       throw new Error(`Unrecognized account type: "${account.type}"`);
   }
@@ -113,9 +117,18 @@ export const sendMkrToProxy = async ({ account, value }) => {
     throw new Error(
       `${account.address} cannot send MKR to its proxy because none exists`
     );
+  return sendMkr({ account, recipientAddress: proxyAddress, value });
+};
+
+/**
+ * @async @desc transfer Mkr to some address
+ * @param  {Object} transferDetails { acccount: { address, type }, value }
+ * @return {Promise} tx
+ */
+export const sendMkr = async ({ account, recipientAddress, value }) => {
   const mkrToken = await getMkrAddress();
   const methodSig = getMethodSig('transfer(address,uint256)');
-  const addressParam = encodeParameter('address', proxyAddress);
+  const addressParam = encodeParameter('address', recipientAddress);
   const valueParam = encodeParameter('uint256', etherToWei(value));
   const callData = generateCallData({
     method: methodSig,
@@ -163,10 +176,34 @@ export const unlockWithdrawMkr = async (account, value) => {
 };
 
 /**
+ * @async @desc unlock and withdraw all mkr from proxy
+ * @param {Object} account
+ * @return {Promise} tx
+ */
+export const unlockWithdrawAll = async account => {
+  return simpleSendTx(
+    account,
+    account.proxy.address,
+    'unlockWithdrawAll()',
+    []
+  );
+};
+
+/**
  * @async @desc free all mkr from chief w/o withdrawing
  * @param {Object} account
  * @return {Promise} tx
  */
 export const freeAll = async account => {
   return simpleSendTx(account, account.proxy.address, 'freeAll()', []);
+};
+
+/**
+ * @async @desc break proxy link as long as proxy doesn't have mkr
+ * @param {Object} account
+ * @return {Promise} tx
+ */
+export const breakLink = async account => {
+  const factory = await getProxyFactory();
+  return simpleSendTx(account, factory, 'breakLink()', []);
 };

@@ -37,8 +37,8 @@ export default class AmountInput extends Component {
 
   submit(amount) {
     const { action, balance } = this.props;
-    if (Number(amount) === 0 || Number(amount) > balance) {
-      window.alert('Enter a valid amount.');
+    if (!amount || Number(amount) > balance) {
+      window.alert('Please enter a valid amount');
     } else {
       action(amount);
     }

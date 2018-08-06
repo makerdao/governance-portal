@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { transitions } from '../theme';
 
 const ProgressBar = styled.div`
   height: 8px;
-  transition: ${transitions.button};
+  transition: ${({ theme }) => theme.transitions.button};
   position: relative;
   border: none;
   border-style: none;
@@ -19,7 +18,7 @@ const Progress = styled.div`
   width: ${({ percentage }) => `${percentage}%`};
   background-color: ${({ theme }) => theme.brand.default};
   height: 100%;
-  transition: ${transitions.long};
+  transition: ${({ theme }) => theme.transitions.long};
 `;
 
 const StatusBar = ({ percentage, ...props }) => (
