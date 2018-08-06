@@ -75,6 +75,14 @@ export const getGasPriceEstimate = () =>
     .then(weiToEther);
 
 /**
+ * @async @desc sign and send a tx from an unlocked account
+ * @param {Object} txObject
+ * @return {Promise}
+ */
+export const sendTxUnlocked = txObject =>
+  getWeb3Instance().eth.sendTransaction(txObject);
+
+/**
  * @async @desc get current network name
  * @return {String}
  */
@@ -144,6 +152,13 @@ export const getTransactionCount = address =>
   getWeb3Instance().eth.getTransactionCount(address, 'pending');
 
 /**
+ * @desc number string to hexadecimal
+ * @param  {String|Number} mixed
+ * @return {String}
+ */
+export const toHex = mixed => getWeb3Instance().utils.toHex(mixed);
+
+/**
  * @desc get Encodes a parameter based on its type to its ABI representation.
  * @param {String} type
  * @param {String} param
@@ -167,17 +182,19 @@ export const toChecksum = address =>
  * @param  {Object} transaction { from, to, data, value, gasPrice, gasLimit }
  * @return {Object}
  */
-export const getTxDetails = async ({ from, to, data, value }) => {
-  const { gasLimit, gasPrice } = await estimateGas({ from, to, data, value });
+export const getTxDetails = async ({ from, to, data, value, ganache }) => {
+  let { gasLimit, gasPrice } = await estimateGas({ from, to, data, value });
+  // we're underestimate gas limit when on ganache –> figure out why that is
+  if (ganache) gasLimit += 200000; // FIXME
   const nonce = await getTransactionCount(from);
   return {
     from: from,
     to: to,
-    nonce: getWeb3Instance().utils.toHex(nonce),
-    gasPrice: getWeb3Instance().utils.toHex(gasPrice),
-    gasLimit: getWeb3Instance().utils.toHex(gasPrice),
-    gas: getWeb3Instance().utils.toHex(gasLimit),
-    value: getWeb3Instance().utils.toHex(value),
+    nonce: toHex(nonce),
+    gasPrice: toHex(gasPrice),
+    gasLimit: toHex(gasPrice),
+    gas: toHex(gasLimit),
+    value: toHex(value),
     data: data
   };
 };

@@ -19,7 +19,7 @@ until curl -s -o/dev/null "$ETH_RPC_URL"; do sleep 3; done
 # Configure seth
 export SOLC_FLAGS=${SOLC_FLAGS:-"--optimize"}
 export ETH_GAS=${ETH_GAS:-"4500000"}
-export ETH_FROM=${ETH_FROM:-$(seth rpc eth_coinbase)}
+export ETH_FROM=${ETH_FROM:-$(seth rpc eth_coinbase)} # defaults to 0x16fb96a5fa0427af0c8f7cf1eb4870231c8154b6
 export SETH_STATUS=yes
 export ETH_RPC_ACCOUNTS=yes # Don't use ethsign
 
@@ -34,6 +34,8 @@ test -z $GOV && GOV=$(seth receipt $GOVtx contractAddress)
 test -z $IOU && IOU=$(seth receipt $IOUtx contractAddress)
 MAX_YAYS=5
 CHIEF=$(dapp create DSChief $GOV $IOU $MAX_YAYS)
+# Seed our coinbase account with some Gov
+seth send $GOV 'mint(uint256)' $(seth --to-uint256 $(seth --to-wei 100 eth))
 cd -
 
 cd  $CWD/src/vote-proxy
