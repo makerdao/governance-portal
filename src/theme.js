@@ -96,6 +96,7 @@ const theme = {
     dark_default: '#c4c4c4',
     darker_default: '#0e1029',
     green: '#30bd9f',
+    header_dim: '#9AA3AD',
     dim_green: '#ACDAD0',
     dim_grey: '#848484',
     dim_grey_alt: '#868997',

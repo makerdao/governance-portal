@@ -56,12 +56,13 @@ const DropdownList = styled.div`
 `;
 
 const SelectedItem = styled.div`
-  color: #9aa3ad;
+  color: ${({ theme }) => theme.text.header_dim};
   cursor: pointer;
   padding: 6px 10px;
   font-size: 15px;
   display: flex;
   align-items: center;
+  width: 232px;
   font-weight: ${fonts.weight.normal};
   font-family: ${fonts.family.System};
 `;
