@@ -23,12 +23,12 @@ import Lock from './modals/Lock';
 import Withdraw from './modals/Withdraw';
 import ProxySetup from './modals/ProxySetup';
 
-const SmallText = styled.p`
+const SmallMediumText = styled.p`
   margin-top: 20px;
   margin-bottom: 16px;
   text-align: left;
   line-height: 1.8;
-  font-size: ${fonts.size.small};
+  font-size: 14px;
   color: ${theme.text.dim_grey};
 `;
 
@@ -82,17 +82,19 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
   const isColdWallet = account.proxyRole === 'cold';
   const coldWallet = isColdWallet ? account : linkedAccount;
   return (
-    <SmallText>
+    <SmallMediumText>
       <Strong>{isColdWallet ? 'Cold wallet:' : 'Hot wallet:'}</Strong> In voting
       contract <Black>{round(account.proxy.votingPower, 4)} MKR</Black>{' '}
+      {account.proxyRole === 'cold' && (
+        <a onClick={() => modalOpen(Lock)}> Top-up </a>
+      )}
+      {account.proxyRole === 'cold' &&
+        Number(account.proxy.votingPower) > 0 && <span> | </span>}
       {Number(account.proxy.votingPower) > 0 && (
         <a onClick={() => modalOpen(Withdraw)}>Withdraw</a>
       )}
       <DotSpacer />
       In cold wallet <Black>{round(coldWallet.mkrBalance, 4)} MKR</Black>{' '}
-      {account.proxyRole === 'cold' && (
-        <a onClick={() => modalOpen(Lock)}>Top-up</a>
-      )}
       <DotSpacer />
       {firstLetterCapital(linkedAccount.proxyRole)} wallet:{' '}
       {cutMiddle(linkedAccount.address)}{' '}
@@ -117,7 +119,7 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
       ) : (
         'Currently not voting'
       )}
-    </SmallText>
+    </SmallMediumText>
   );
 };
 
