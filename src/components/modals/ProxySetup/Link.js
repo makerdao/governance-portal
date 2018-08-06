@@ -41,24 +41,21 @@ class Link extends Component {
   }
 
   render() {
+    const validAccounts = this.props.accounts.filter(
+      account => !account.hasProxy
+    );
     const accountsMinusHot = this.state.hot
-      ? differenceWith(
-          (a, b) => eq(a.address, b.address),
-          this.props.accounts,
-          [this.state.hot]
-        )
-      : this.props.accounts;
+      ? differenceWith((a, b) => eq(a.address, b.address), validAccounts, [
+          this.state.hot
+        ])
+      : validAccounts;
 
     const accountsMinusCold = this.state.cold
-      ? differenceWith(
-          (a, b) => eq(a.address, b.address),
-          this.props.accounts,
-          [this.state.cold]
-        )
-      : this.props.accounts;
+      ? differenceWith((a, b) => eq(a.address, b.address), validAccounts, [
+          this.state.cold
+        ])
+      : validAccounts;
 
-    // TODO: const ok = cold and hot are valid addresses - disable button otherwise
-    // TODO: show only valid addresses for each dropdown (i.e. unlinked)
     return (
       <Fragment>
         <StyledTop>
@@ -79,7 +76,7 @@ class Link extends Component {
           onSelect={account => this.setState({ cold: account })}
           items={accountsMinusHot}
           itemKey="address"
-          emptyMsg="no other account detected"
+          emptyMsg="no other not already linked accounts detected"
           renderItem={account => (
             <AccountBlurb
               noAddressCut
