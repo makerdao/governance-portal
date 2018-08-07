@@ -144,7 +144,7 @@ ProxySetup.defaultProps = {
 
 // flip this if you want to step through the setup steps without actually
 // making any changes
-let mock = true;
+let mock = false;
 
 const fakeColdAccount = {
   address: '0xbeefed1bedded2dabbed3defaced4decade5babe',
