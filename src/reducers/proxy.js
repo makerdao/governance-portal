@@ -63,7 +63,7 @@ const handleTx = async ({ prefix, dispatch, action, successPayload = '' }) => {
 
 function requireCorrectAccount(state, requiredAccount) {
   if (!requiredAccount) {
-    window.alert(`Please activate your other wallet before continuing.`);
+    window.alert('Please activate your other wallet before continuing.');
     return false;
   }
   const { address, type, proxyRole } = requiredAccount;
