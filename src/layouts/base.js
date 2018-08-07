@@ -141,9 +141,11 @@ const BaseLayout = ({
   modalOpen,
   metamaskFetching,
   topicsAvailable,
+  accountsFetching,
   wrongNetwork
 }) => {
-  const childrenShouldMount = !metamaskFetching && topicsAvailable;
+  const childrenShouldMount =
+    !metamaskFetching && topicsAvailable && !wrongNetwork;
   const noContentMsg = wrongNetwork ? (
     'Please switch MetaMask to Kovan or Mainnet'
   ) : (
@@ -188,10 +190,15 @@ const BaseLayout = ({
               <HeaderBottomLeft>Governance</HeaderBottomLeft>
             </StyledLink>
             <Flex>
-              <DimHeaderElement onClick={() => modalOpen(SecureVoting)} mr={50}>
+              <DimHeaderElement
+                onClick={() => {
+                  if (!accountsFetching) modalOpen(SecureVoting);
+                }}
+                mr={50}
+              >
                 Secure Voting
               </DimHeaderElement>
-              <AccountBox fetching={metamaskFetching} />
+              <AccountBox fetching={!wrongNetwork && metamaskFetching} />
             </Flex>
           </HeaderBottomContent>
         </HeaderBottom>
@@ -219,9 +226,10 @@ BaseLayout.propTypes = {
   children: PropTypes.node.isRequired
 };
 
-const reduxProps = ({ metamask, topics }) => ({
+const reduxProps = ({ metamask, topics, accounts }) => ({
   metamaskFetching: metamask.fetching,
   wrongNetwork: metamask.wrongNetwork,
+  accountsFetching: accounts.fetching,
   topicsAvailable: topics.length > 0
 });
 

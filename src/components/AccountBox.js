@@ -212,7 +212,7 @@ AccountBox.defaultProps = {
 const mapStateToProps = ({ accounts, metamask }, props) => ({
   allAccounts: accounts.allAccounts,
   activeAccount: getActiveAccount({ accounts }),
-  fetching: props.fetching || accounts.fetching
+  fetching: props.fetching ? true : accounts.fetching
 });
 
 export default connect(

@@ -160,3 +160,18 @@ export const parseError = error => {
  * @return {Boolean}
  */
 export const eq = (a, b) => a.toLowerCase() === b.toLowerCase();
+
+/**
+ * @desc takes an object with properties that might be promises and returns a promise of that object with resolved properties
+ * @param  {Object} obj
+ * @return {Promise}
+ */
+export const promisedProperties = obj => {
+  const objectKeys = Object.keys(obj);
+  return Promise.all(objectKeys.map(key => obj[key])).then(resolvedValues =>
+    resolvedValues.reduce((resolvedObject, property, index) => {
+      resolvedObject[objectKeys[index]] = property;
+      return resolvedObject;
+    }, obj)
+  );
+};

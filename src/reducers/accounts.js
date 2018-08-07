@@ -15,7 +15,7 @@ import {
   getNumDeposits
 } from '../chain/read';
 import { AccountTypes } from '../utils/constants';
-import { add, eq, subtract } from '../utils/misc';
+import { add, eq, subtract, promisedProperties } from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
@@ -78,42 +78,51 @@ export const addAccounts = accounts => async dispatch => {
     } = await getProxyStatus(account.address);
     let currProposal = Promise.resolve('');
     if (hasProxy) {
-      currProposal = currProposal
-        .then(() => getNumDeposits(proxyAddress))
-        .then(deposits => {
-          // if there's nothing locked in chief, we take this address as not voting for anything
-          if (Number(deposits) === 0) return '';
-          return getVotedSlate(proxyAddress);
-        })
-        .then(slate => getSlateAddresses(slate))
-        // NOTE for now we just take the first address in the slate since we're
-        // assuming that they're only voting for one in the frontend. This
-        // should be changed if that changes
-        .then(addresses => addresses[0] || '');
+      currProposal = currProposal.then(() =>
+        Promise.all([
+          getNumDeposits(proxyAddress),
+          (async () => {
+            const slate = await getVotedSlate(proxyAddress);
+            const addresses = await getSlateAddresses(slate);
+            return addresses[0] || '';
+          })()
+        ]).then(
+          // NOTE for now we just take the first address in the slate since we're
+          // assuming that they're only voting for one in the frontend. This
+          // should be changed if that changes
+          // also, if there's nothing locked in chief, we take this adddress as not voting for anything
+          ([deposits, addresses]) => (Number(deposits) === 0 ? '' : addresses)
+        )
+      );
     }
-    const payload = {
+    const _payload = {
       ...account,
       address: toChecksum(account.address),
-      mkrBalance: await getMkrBalance(account.address),
+      mkrBalance: getMkrBalance(account.address),
       hasProxy,
       proxyRole,
-      votingFor: await currProposal,
-      proxy: {
+      votingFor: currProposal,
+      proxy: (async () => ({
         address: hasProxy ? toChecksum(proxyAddress) : '',
         votingPower: hasProxy ? await getVotingPower(proxyAddress) : 0
-      }
+      }))()
     };
-
-    if (hasProxy) {
-      const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
-      const linkedAddress = await getLinkedAddress(proxyAddress, otherRole);
-      payload.proxy.linkedAccount = {
-        address: linkedAddress,
-        proxyRole: otherRole,
-        mkrBalance: await getMkrBalance(linkedAddress)
-      };
-    }
-
+    const fetchLinkedAccountData = async () => {
+      if (hasProxy) {
+        const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
+        const linkedAddress = await getLinkedAddress(proxyAddress, otherRole);
+        return {
+          address: linkedAddress,
+          proxyRole: otherRole,
+          mkrBalance: await getMkrBalance(linkedAddress)
+        };
+      } else return {};
+    };
+    const [payload, linkedAccount] = await Promise.all([
+      promisedProperties(_payload),
+      fetchLinkedAccountData()
+    ]);
+    payload.proxy.linkedAccount = { ...linkedAccount };
     await dispatch({ type: ADD_ACCOUNT, payload });
   }
   return dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
