@@ -47,7 +47,7 @@ const StyledTop = styled.div`
 const StyledTitle = styled.p`
   font-size: 28px;
   color: ${theme.text.darker_default};
-  line-height: 33px;
+  line-height: normal;
   font-weight: 500;
 `;
 

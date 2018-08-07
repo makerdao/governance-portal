@@ -43,7 +43,8 @@ const StyledCenter = styled.div`
 const StyledTitle = styled.p`
   font-size: 28px;
   color: ${theme.text.darker_default};
-  line-height: 46px;
+  line-height: normal;
+  font-weight: 500;
 `;
 
 const StyledBody = styled.p`
