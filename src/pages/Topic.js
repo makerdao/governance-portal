@@ -104,6 +104,9 @@ const Topic = ({ match, topics, fetching, canVote, modalOpen, votingFor }) => {
           <StyledCenter>
             <StyledTitle>{topicTitle}</StyledTitle>
             <StyledBody dangerouslySetInnerHTML={{ __html: topic_blurb }} />
+            {active ? (
+              <Timer endTimestamp={topic.end_timestamp} small mt="10" />
+            ) : null}
           </StyledCenter>
         </StyledTop>
       </WhiteBackground>

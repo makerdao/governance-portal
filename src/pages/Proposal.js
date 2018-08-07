@@ -166,7 +166,7 @@ class Proposal extends Component {
       topic.proposals
     );
     if (proposal === undefined) return; //not found
-    this.setState({ proposal, parent: topic.topic });
+    this.setState({ proposal, parent: topic.topic, active: topic.active });
     fetch(proposal.about)
       .then(response => response.text())
       .then(markdown => {
@@ -177,7 +177,7 @@ class Proposal extends Component {
   }
 
   render() {
-    const { proposal, markdown, parent } = this.state;
+    const { proposal, markdown, parent, active } = this.state;
     if (Object.keys(proposal).length === 0) return <NotFound />;
     const {
       voteState,
@@ -199,7 +199,7 @@ class Proposal extends Component {
               <StyledBody
                 dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
               />
-              {parent.active ? (
+              {active ? (
                 <Timer endTimestamp={proposal.end_timestamp} small mt="-22" />
               ) : null}
             </StyledCenter>
