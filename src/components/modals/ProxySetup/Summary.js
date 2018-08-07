@@ -3,23 +3,34 @@ import { StyledTitle, StyledBlurb, StyledTop } from '../shared/styles';
 import Button from '../../Button';
 import styled from 'styled-components';
 import theme from '../../../theme';
+import { cutMiddle } from '../../../utils/misc';
+
+const FlexContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
 
 const BoxHalfLeft = styled.span`
   background-color: #f2f5fa;
   height: 68px;
-  width: 269px;
+  width: 270px;
   border: 1px solid #dfe1e3;
   border-radius: 4px 0px 0px 4px;
   float: left;
+  padding: 12px;
 `;
 
 const BoxHalfRight = styled.span`
   background-color: #f2f5fa;
   height: 68px;
-  width: 269px;
-  border: 1px solid #dfe1e3;
+  width: 270px;
+  border-top: 1px solid #dfe1e3;
+  border-right: 1px solid #dfe1e3;
+  border-bottom: 1px solid #dfe1e3;
   border-radius: 0px 4px 4px 0px;
   float: right;
+  padding: 12px;
 `;
 
 const BoxTitle = styled.div`
@@ -33,17 +44,15 @@ const BoxText = styled.div`
   font-size: 16px;
   color: #212536;
   line-height: 24pm;
-  height: 50%;
 `;
 
 const MkrText = styled.span`
   font-size: 16px;
   color: ${theme.text.dim_grey};
   line-height: 24pm;
-  height 50%;
 `;
 
-export default ({ modalClose, sendMkrAmount, postLinkUpdate }) => (
+export default ({ modalClose, sendMkrAmount, hotAccount, postLinkUpdate }) => (
   <Fragment>
     <StyledTop>
       <StyledTitle>Secure voting contract setup</StyledTitle>
@@ -53,16 +62,18 @@ export default ({ modalClose, sendMkrAmount, postLinkUpdate }) => (
       using your hot wallet below. You can manage your secure voting contract by
       clicking Secure voting on the governance dashboard
     </StyledBlurb>
-    <BoxHalfLeft>
-      <BoxTitle>Your hot wallet</BoxTitle>
-      <BoxText> 0x...aweferf </BoxText>
-    </BoxHalfLeft>
-    <BoxHalfRight>
-      <BoxTitle>Locked in voting contract:</BoxTitle>
-      <BoxText>
-        {sendMkrAmount} <MkrText>MKR</MkrText>{' '}
-      </BoxText>
-    </BoxHalfRight>
+    <FlexContainer>
+      <BoxHalfLeft>
+        <BoxTitle>Your hot wallet</BoxTitle>
+        <BoxText> {cutMiddle(hotAccount.address, 12, 12)} </BoxText>
+      </BoxHalfLeft>
+      <BoxHalfRight>
+        <BoxTitle>Locked in voting contract:</BoxTitle>
+        <BoxText>
+          {sendMkrAmount.toFixed(4)} <MkrText>MKR</MkrText>{' '}
+        </BoxText>
+      </BoxHalfRight>
+    </FlexContainer>
     <div
       style={{
         alignSelf: 'center',

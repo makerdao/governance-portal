@@ -116,7 +116,13 @@ class ProxySetup extends Component {
       case 'summary':
         return (
           <Summary
-            {...{ modalClose, proxyClear, postLinkUpdate, sendMkrAmount }}
+            {...{
+              modalClose,
+              proxyClear,
+              postLinkUpdate,
+              sendMkrAmount,
+              hotAccount
+            }}
           />
         );
     }
@@ -138,7 +144,7 @@ ProxySetup.defaultProps = {
 
 // flip this if you want to step through the setup steps without actually
 // making any changes
-let mock = false;
+let mock = true;
 
 const fakeColdAccount = {
   address: '0xbeefed1bedded2dabbed3defaced4decade5babe',
