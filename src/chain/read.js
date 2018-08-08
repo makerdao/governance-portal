@@ -28,10 +28,13 @@ export const getLinkGas = () => proxyFactoryInfo.total_link_gas;
  * @param  {String} address
  * @return {String} number of approvals
  */
-export const getApprovalCount = async address => {
-  const approvalsHex = await ethCall('chief', 'approvals(address)', [
-    removeHexPrefix(address)
-  ]);
+export const getApprovalCount = async (address, network) => {
+  const approvalsHex = await ethCall(
+    'chief',
+    'approvals(address)',
+    [removeHexPrefix(address)],
+    network
+  );
   return weiToEther(approvalsHex);
 };
 
@@ -40,8 +43,13 @@ export const getApprovalCount = async address => {
  * @param  {String} address
  * @return {String} slateHex
  */
-export const getVotedSlate = async address => {
-  return ethCall('chief', 'votes(address)', [removeHexPrefix(address)]);
+export const getVotedSlate = async (address, network) => {
+  return ethCall(
+    'chief',
+    'votes(address)',
+    [removeHexPrefix(address)],
+    network
+  );
 };
 
 /**
@@ -49,10 +57,13 @@ export const getVotedSlate = async address => {
  * @param  {String} address
  * @return {String}
  */
-export const getNumDeposits = async address => {
-  const depositsHexWei = await ethCall('chief', 'deposits(address)', [
-    removeHexPrefix(address)
-  ]);
+export const getNumDeposits = async (address, network) => {
+  const depositsHexWei = await ethCall(
+    'chief',
+    'deposits(address)',
+    [removeHexPrefix(address)],
+    network
+  );
   return weiToEther(depositsHexWei);
 };
 
@@ -61,7 +72,7 @@ export const getNumDeposits = async address => {
  * @param  {String} slateHex
  * @return {String[]} addresses
  */
-export const getSlateAddresses = async slateHex => {
+export const getSlateAddresses = async (slateHex, network) => {
   /**
    * @async @param  {Number} [i] index
    * @param  {String[]} [arr] array
@@ -71,10 +82,12 @@ export const getSlateAddresses = async slateHex => {
     // solidity's auto-gen'd getter for the (bytes32=>address[]) mapping
     // requires the index of the address array as a second arg, so we have to
     // step through addresses until we've found them all (╯°□°）╯︵ ┻━┻)
-    const slateElement = await ethCall('chief', 'slates(bytes32,uint256)', [
-      removeHexPrefix(slateHex),
-      i.toString()
-    ]);
+    const slateElement = await ethCall(
+      'chief',
+      'slates(bytes32,uint256)',
+      [removeHexPrefix(slateHex), i.toString()],
+      network
+    );
     if (slateElement === '0x') return arr;
     const slateAddress = paddedBytes32ToAddress(slateElement);
     return traverseSlate(i + 1, [...arr, slateAddress]);
@@ -102,10 +115,13 @@ export const getEtchedSlates = async () => {
   return etches.map(logObj => last(logObj.topics));
 };
 
-const getProxyAddressFrom = hotOrCold => async address => {
-  const value = await ethCall('factory', `${hotOrCold}Map(address)`, [
-    removeHexPrefix(address)
-  ]);
+const getProxyAddressFrom = hotOrCold => async (address, network) => {
+  const value = await ethCall(
+    'factory',
+    `${hotOrCold}Map(address)`,
+    [removeHexPrefix(address)],
+    network
+  );
   return paddedBytes32ToAddress(value);
 };
 
@@ -128,19 +144,19 @@ export const getProxyAddressFromCold = getProxyAddressFrom('cold');
  * @param {String} address
  * @return {Object} { type, address }
  */
-export const getProxyStatus = async address => {
-  let proxyAddress;
-  proxyAddress = await getProxyAddressFromHot(address);
-  if (!isZeroAddress(proxyAddress)) {
-    return { type: 'hot', address: proxyAddress, hasProxy: true };
-  }
-
-  proxyAddress = await getProxyAddressFromCold(address);
-  if (!isZeroAddress(proxyAddress)) {
-    return { type: 'cold', address: proxyAddress, hasProxy: true };
-  }
-
-  return { type: null, address: '', hasProxy: false };
+export const getProxyStatus = async (address, network) => {
+  return Promise.all([
+    getProxyAddressFromHot(address, network),
+    getProxyAddressFromCold(address, network)
+  ]).then(([proxyAddressHot, proxyAddressCold]) => {
+    if (!isZeroAddress(proxyAddressHot)) {
+      return { type: 'hot', address: proxyAddressHot, hasProxy: true };
+    }
+    if (!isZeroAddress(proxyAddressCold)) {
+      return { type: 'cold', address: proxyAddressCold, hasProxy: true };
+    }
+    return { type: null, address: '', hasProxy: false };
+  });
 };
 
 /**
@@ -234,18 +250,22 @@ export const getVoteTally = async () => {
  * @async @desc use event logs to get all etched slates
  * @return {String} balance
  */
-export const getMkrBalance = async address => {
-  const hexBalance = await ethCall('mkr', 'balanceOf(address)', [
-    removeHexPrefix(address)
-  ]);
+export const getMkrBalance = async (address, network) => {
+  const hexBalance = await ethCall(
+    'mkr',
+    'balanceOf(address)',
+    [removeHexPrefix(address)],
+    network
+  );
   return weiToEther(hexBalance);
 };
 
-export const getLinkedAddress = async (proxyAddress, role) => {
+export const getLinkedAddress = async (proxyAddress, role, network) => {
   const value = await ethCall(
     proxyAddress,
     role === 'hot' ? 'hot()' : 'cold()',
-    []
+    [],
+    network
   );
   return paddedBytes32ToAddress(value);
 };
@@ -255,9 +275,11 @@ export const getLinkedAddress = async (proxyAddress, role) => {
  * @param {String} address user address
  * @return {String} votingPower
  */
-export const getVotingPower = async proxyAddress => {
-  const proxyMkr = await getMkrBalance(proxyAddress);
-  const proxyDeposits = await getNumDeposits(proxyAddress);
+export const getVotingPower = async (proxyAddress, network) => {
+  const [proxyMkr, proxyDeposits] = await Promise.all([
+    getMkrBalance(proxyAddress, network),
+    getNumDeposits(proxyAddress, network)
+  ]);
   return add(proxyMkr, proxyDeposits);
 };
 

@@ -266,19 +266,19 @@ export const awaitTx = async (txHash, { confirmations = 3 }) => {
   }
 };
 
-export async function ethCall(to, method, args) {
+export async function ethCall(to, method, args, network = null) {
   switch (to) {
     case 'mkr':
-      to = await getMkrAddress();
+      to = await getMkrAddress(network);
       break;
     case 'chief':
-      to = await getChief();
+      to = await getChief(network);
       break;
     case 'factory':
-      to = await getProxyFactory();
+      to = await getProxyFactory(network);
       break;
     case 'pip':
-      to = await getPip();
+      to = await getPip(network);
       break;
     default:
     // do nothing; assume `to` is an address string literal

@@ -63,25 +63,26 @@ export function activeCanVote(state) {
 
 // Actions ------------------------------------------------
 
-export const addAccounts = accounts => async dispatch => {
+export const addAccounts = accounts => async (dispatch, getState) => {
   dispatch({
     type: FETCHING_ACCOUNT_DATA,
     payload: true
   });
+  const network = getState().metamask.network;
   for (let account of accounts) {
     const {
       hasProxy,
       type: proxyRole,
       address: proxyAddress
-    } = await getProxyStatus(account.address);
+    } = await getProxyStatus(account.address, network);
     let currProposal = Promise.resolve('');
     if (hasProxy) {
       currProposal = currProposal.then(() =>
         Promise.all([
-          getNumDeposits(proxyAddress),
+          getNumDeposits(proxyAddress, network),
           (async () => {
-            const slate = await getVotedSlate(proxyAddress);
-            const addresses = await getSlateAddresses(slate);
+            const slate = await getVotedSlate(proxyAddress, network);
+            const addresses = await getSlateAddresses(slate, network);
             return addresses[0] || '';
           })()
         ]).then(
@@ -96,13 +97,13 @@ export const addAccounts = accounts => async dispatch => {
     const _payload = {
       ...account,
       address: toChecksum(account.address),
-      mkrBalance: getMkrBalance(account.address),
+      mkrBalance: getMkrBalance(account.address, network),
       hasProxy,
       proxyRole,
       votingFor: currProposal,
       proxy: Promise.all([
-        hasProxy ? getNumDeposits(proxyAddress) : Promise.resolve(0),
-        hasProxy ? getVotingPower(proxyAddress) : Promise.resolve(0)
+        hasProxy ? getNumDeposits(proxyAddress, network) : Promise.resolve(0),
+        hasProxy ? getVotingPower(proxyAddress, network) : Promise.resolve(0)
       ]).then(([deposits, votingPower]) => ({
         locked: deposits,
         address: hasProxy ? toChecksum(proxyAddress) : '',
@@ -112,11 +113,15 @@ export const addAccounts = accounts => async dispatch => {
     const fetchLinkedAccountData = async () => {
       if (hasProxy) {
         const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
-        const linkedAddress = await getLinkedAddress(proxyAddress, otherRole);
+        const linkedAddress = await getLinkedAddress(
+          proxyAddress,
+          otherRole,
+          network
+        );
         return {
           address: linkedAddress,
           proxyRole: otherRole,
-          mkrBalance: await getMkrBalance(linkedAddress)
+          mkrBalance: await getMkrBalance(linkedAddress, network)
         };
       } else return {};
     };
