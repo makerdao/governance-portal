@@ -6,7 +6,8 @@ import round from 'lodash.round';
 
 import { modalOpen } from '../reducers/modal';
 import { getActiveAccount } from '../reducers/accounts';
-import theme, { fonts } from '../theme';
+import { linkResumable } from '../reducers/proxy';
+import theme from '../theme';
 import DotSpacer from './DotSpacer';
 import WithVote from './hocs/WithVote';
 import {
@@ -46,7 +47,7 @@ const StyledLink = styled(Link)`
   color: ${({ disabled }) => (disabled ? 'black' : '')};
 `;
 
-const WelcomeBanner = ({ modalOpen }) => {
+const WelcomeBanner = ({ modalOpen, linkRequested }) => {
   return (
     <Banner>
       <BannerBody>
@@ -57,7 +58,7 @@ const WelcomeBanner = ({ modalOpen }) => {
         </BannerContent>
       </BannerBody>
       <BannerButton onClick={() => modalOpen(ProxySetup)}>
-        Set up now
+        {linkRequested ? 'Continue set up' : 'Set up now'}
       </BannerButton>
     </Banner>
   );
@@ -67,7 +68,13 @@ const Padding = styled.div`
   margin-top: 20px;
 `;
 
-const VoterStatus = ({ account, network, modalOpen, fetching }) => {
+const VoterStatus = ({
+  account,
+  network,
+  modalOpen,
+  linkRequested,
+  fetching
+}) => {
   if (fetching) {
     return (
       <Padding>
@@ -76,7 +83,10 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
     );
   }
   if (!account) return <Padding />;
-  if (!account.hasProxy) return <WelcomeBanner modalOpen={modalOpen} />;
+  if (!account.hasProxy)
+    return (
+      <WelcomeBanner linkRequested={linkRequested} modalOpen={modalOpen} />
+    );
   const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
   const { linkedAccount } = account.proxy;
   const isColdWallet = account.proxyRole === 'cold';
@@ -84,7 +94,8 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
   return (
     <SmallMediumText>
       <Strong>{isColdWallet ? 'Cold wallet:' : 'Hot wallet:'}</Strong> In voting
-      contract <Black>{round(account.proxy.votingPower, 4)} MKR</Black>{' '}
+      contract{' '}
+      <Black>{round(account.proxy.votingPower, 4).toLocaleString()} MKR</Black>{' '}
       {account.proxyRole === 'cold' && (
         <a onClick={() => modalOpen(Lock)}> Top-up </a>
       )}
@@ -94,7 +105,8 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
         <a onClick={() => modalOpen(Withdraw)}>Withdraw</a>
       )}
       <DotSpacer />
-      In cold wallet <Black>{round(coldWallet.mkrBalance, 4)} MKR</Black>{' '}
+      In cold wallet{' '}
+      <Black>{round(coldWallet.mkrBalance, 4).toLocaleString()} MKR</Black>{' '}
       <DotSpacer />
       {firstLetterCapital(linkedAccount.proxyRole)} wallet:{' '}
       {cutMiddle(linkedAccount.address)}{' '}
@@ -126,6 +138,7 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
 const mapStateToProps = state => ({
   account: getActiveAccount(state),
   network: state.metamask.network,
+  linkRequested: linkResumable(state),
   fetching: state.accounts.fetching
 });
 

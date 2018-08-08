@@ -37,6 +37,18 @@ const WITHDRAW_MKR_FAILURE = 'proxy/WITHDRAW_MKR_FAILURE';
 const CLEAR = 'proxy/CLEAR';
 const GO_TO_STEP = 'proxy/GO_TO_STEP';
 
+// Selectors ----------------------------------------------
+
+export function linkResumable(state) {
+  return (
+    state.proxy.setupProgress === 'resume' ||
+    ((state.proxy.setupProgress === 'initiate' ||
+      state.proxy.setupProgress === 'resume') &&
+      (state.proxy.initiateLinkTxHash.length > 0 &&
+        !state.proxy.confirmingInitiate))
+  );
+}
+
 // Actions ------------------------------------------------
 
 export const clear = () => ({ type: CLEAR });
@@ -61,9 +73,11 @@ const handleTx = async ({ prefix, dispatch, action, successPayload = '' }) => {
   }
 };
 
-function requireCorrectAccount(state, requiredAccount) {
+function requireCorrectAccount(state, requiredAccount, typeNeeded) {
   if (!requiredAccount) {
-    window.alert('Please activate your other wallet before continuing.');
+    window.alert(
+      `Please activate your ${typeNeeded || 'other'} wallet before continuing.`
+    );
     return false;
   }
   const { address, type, proxyRole } = requiredAccount;
@@ -78,7 +92,7 @@ function requireCorrectAccount(state, requiredAccount) {
 }
 
 export const initiateLink = ({ cold, hot }) => (dispatch, getState) => {
-  if (!requireCorrectAccount(getState(), cold)) return;
+  if (!requireCorrectAccount(getState(), cold, 'cold')) return;
 
   dispatch({
     type: INITIATE_LINK_REQUEST,
@@ -92,7 +106,7 @@ export const initiateLink = ({ cold, hot }) => (dispatch, getState) => {
 };
 
 export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
-  if (!requireCorrectAccount(getState(), hotAccount)) return;
+  if (!requireCorrectAccount(getState(), hotAccount, 'hot')) return;
 
   dispatch({ type: APPROVE_LINK_REQUEST });
   const { coldAddress } = getState().proxy;
@@ -152,9 +166,9 @@ export const postLinkUpdate = () => (dispatch, getState) => {
 
 // Reducer ------------------------------------------------
 
-// const existingState = localStorage.getItem('linkInitiatedState')
-//   ? JSON.parse(localStorage.getItem('linkInitiatedState'))
-//   : {};
+const existingState = localStorage.getItem('linkInitiatedState')
+  ? JSON.parse(localStorage.getItem('linkInitiatedState'))
+  : {};
 
 const initialState = {
   sendMkrTxHash: '',
@@ -168,10 +182,11 @@ const initialState = {
   coldAddress: '',
   sendMkrAmount: 0,
   linkGas: getLinkGas() || 0
-  // ...existingState
 };
 
-const proxy = createReducer(initialState, {
+const withExisting = { ...initialState, ...existingState };
+
+const proxy = createReducer(withExisting, {
   // Initiate ---------------------------------------
   [INITIATE_LINK_REQUEST]: (state, { payload }) => ({
     ...state,
@@ -236,12 +251,19 @@ const proxy = createReducer(initialState, {
     confirmingWithdrawMkr: true,
     withdrawMkrTxHash: payload.txHash
   }),
-  [WITHDRAW_MKR_SUCCESS]: state => ({ ...state, confirmingWithdrawMkr: false }),
-  [WITHDRAW_MKR_FAILURE]: state => ({ ...state, confirmingWithdrawMkr: false }),
-  // Reset ------------------------------------------
-  [CLEAR]: () => ({
-    ...initialState
+  [WITHDRAW_MKR_SUCCESS]: state => ({
+    ...state,
+    confirmingWithdrawMkr: false
   }),
+  [WITHDRAW_MKR_FAILURE]: state => ({
+    ...state,
+    confirmingWithdrawMkr: false
+  }),
+  // Reset ------------------------------------------
+  [CLEAR]: state =>
+    linkResumable({ proxy: state })
+      ? { ...withExisting, ...localStorage.getItem('linkInitiatedState') }
+      : { ...initialState },
   [GO_TO_STEP]: (state, { payload }) => ({
     ...state,
     setupProgress: payload

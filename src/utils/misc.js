@@ -175,3 +175,14 @@ export const promisedProperties = obj => {
     }, obj)
   );
 };
+
+/**
+ * @desc count the number of digits after the decimal
+ * @param  {Number|String} value
+ * @return {Promise}
+ */
+export const countDecimals = _value => {
+  const value = Number(_value);
+  if (value % 1 !== 0) return value.toString().split('.')[1].length;
+  return 0;
+};

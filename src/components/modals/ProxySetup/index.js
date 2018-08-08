@@ -18,6 +18,7 @@ import {
 import { mul } from '../../../utils/misc';
 import { modalClose } from '../../../reducers/modal';
 import Summary from './Summary';
+import Resume from './Resume';
 import Lock from '../Lock';
 
 class ProxySetup extends Component {
@@ -66,6 +67,8 @@ class ProxySetup extends Component {
       confirming,
       proxyClear,
       linkCost,
+      hotAddress,
+      coldAddress,
       postLinkUpdate
     } = this.props;
 
@@ -88,6 +91,16 @@ class ProxySetup extends Component {
             network={network}
             txHash={initiateLinkTxHash}
             account={coldAccount}
+            nextStep={() => approveLink({ hotAccount })}
+          />
+        );
+      case 'resume':
+        return (
+          <Resume
+            hotAddress={hotAddress}
+            coldAddress={coldAddress}
+            goToStep={goToStep}
+            proxyClear={proxyClear}
             nextStep={() => approveLink({ hotAccount })}
           />
         );
@@ -193,6 +206,8 @@ const stateProps = state => {
     approveLinkTxHash,
     linkCost: mul(mul(linkGas, gasCost), price),
     confirming: confirmingInitiate || confirmingApprove || confirmingSendMkr,
+    hotAddress,
+    coldAddress,
     hotAccount: getAccount(state, hotAddress),
     coldAccount: getAccount(state, coldAddress),
     setupProgress

@@ -57,7 +57,7 @@ class Vote extends Component {
                       }}
                     >
                       <VoteImpactHeading>Current vote</VoteImpactHeading>
-                      <MkrAmt>{round(approvals, 4)}</MkrAmt>
+                      <MkrAmt>{round(approvals, 4).toLocalString()}</MkrAmt>
                     </div>
                     <div
                       style={{
@@ -70,7 +70,10 @@ class Vote extends Component {
                         After vote withdrawal
                       </VoteImpactHeading>
                       <MkrAmt>
-                        {round(subtract(approvals, proxy.votingPower), 4)}
+                        {round(
+                          subtract(approvals, proxy.locked),
+                          4
+                        ).toLocalString()}
                       </MkrAmt>
                     </div>
                   </VoteImpact>
@@ -110,7 +113,7 @@ class Vote extends Component {
                       }}
                     >
                       <VoteImpactHeading>In secure contract</VoteImpactHeading>
-                      <MkrAmt>{round(proxy.votingPower, 4)}</MkrAmt>
+                      <MkrAmt>{round(proxy.locked, 4).toLocalString()}</MkrAmt>
                     </div>
                     <div
                       style={{
@@ -121,7 +124,7 @@ class Vote extends Component {
                       }}
                     >
                       <VoteImpactHeading>Current vote</VoteImpactHeading>
-                      <MkrAmt>{round(approvals, 4)}</MkrAmt>
+                      <MkrAmt>{round(approvals, 4).toLocalString()}</MkrAmt>
                     </div>
                     <div
                       style={{
@@ -133,7 +136,7 @@ class Vote extends Component {
                     >
                       <VoteImpactHeading>After vote cast</VoteImpactHeading>
                       <MkrAmt>
-                        {round(add(approvals, proxy.votingPower), 4)}
+                        {round(add(approvals, proxy.locked), 4).toLocalString()}
                       </MkrAmt>
                     </div>
                   </VoteImpact>

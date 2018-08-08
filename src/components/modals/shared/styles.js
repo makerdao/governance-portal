@@ -10,7 +10,7 @@ export const StyledTitle = styled.div`
   font-size: 28px;
 `;
 
-export const StyledBlurb = styled.p`
+export const StyledBlurb = styled.div`
   line-height: 22px;
   font-size: 17px;
   color: ${theme.text.dim_grey_alt};

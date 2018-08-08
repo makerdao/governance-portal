@@ -1,4 +1,6 @@
 import React, { Component, Fragment } from 'react';
+import round from 'lodash.round';
+
 import {
   StyledTop,
   StyledTitle,
@@ -12,6 +14,7 @@ import {
 } from './styles';
 import Input from '../../Input';
 import Transaction from './Transaction';
+import { countDecimals } from '../../../utils/misc';
 
 export default class AmountInput extends Component {
   constructor(props) {
@@ -77,7 +80,9 @@ export default class AmountInput extends Component {
         <InputLabels>
           <div>Enter MKR amount</div>
           <div>
-            <ValueLabel>{amountLabel}</ValueLabel> {balance} MKR
+            <ValueLabel>{amountLabel}</ValueLabel>{' '}
+            {round(balance, 6).toLocaleString()}
+            {countDecimals(balance) > 5 ? '...' : ''} MKR
           </div>
         </InputLabels>
         <Input
@@ -85,6 +90,7 @@ export default class AmountInput extends Component {
           onKeyPress={this.handleKeyPress}
           value={this.state.amount}
           onChange={this.setAmount}
+          placeholder="00.0000 MKR"
           button={<GreyLink onClick={this.setMaxAmount}>Set max</GreyLink>}
         />
         <FlexRowEnd>
