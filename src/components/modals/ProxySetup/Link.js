@@ -1,5 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import differenceWith from 'ramda/src/differenceWith';
+import styled from 'styled-components';
 
 import {
   StyledTitle,
@@ -14,6 +15,14 @@ import Dropdown from '../../Dropdown';
 import { AccountBlurb } from '../../AccountBox';
 import { AccountTypes } from '../../../utils/constants';
 import { eq } from '../../../utils/misc';
+
+const Swap = styled.button`
+  cursor: pointer;
+  pointer-events: ${({ dim }) => (dim ? 'none' : 'auto')};
+  opacity: ${({ dim }) => (dim ? '0.5' : '1')};
+  font-size: 16px;
+  margin-top: 8px;
+`;
 
 class Link extends Component {
   constructor(props) {
@@ -40,7 +49,14 @@ class Link extends Component {
     }
   }
 
+  swapAccountTypes = () =>
+    this.setState(({ hot, cold }) => ({ hot: cold, cold: hot }));
+
   render() {
+    const hotExists = this.state.hot && this.state.hot.address.length > 0;
+    const coldExists = this.state.cold && this.state.cold.address.length > 0;
+    const swappable = !!coldExists && !!hotExists;
+    console.log(swappable, this.state.hot, this.state.cold);
     const validAccounts = this.props.accounts.filter(
       account => !account.hasProxy
     );
@@ -85,8 +101,12 @@ class Link extends Component {
             />
           )}
         />
-        <Note>This wallet must be connected.</Note>
-
+        <Note>
+          This wallet must be connected. We support MetaMask, Ledger and Trezor.
+        </Note>
+        <Swap dim={!swappable} onClick={this.swapAccountTypes}>
+          ▲ swap ▼
+        </Swap>
         <InputLabels>Select hot wallet</InputLabels>
         <Dropdown
           value={this.state.hot}
@@ -101,17 +121,16 @@ class Link extends Component {
             />
           )}
         />
-        <Note>This wallet will be able to vote with your MKR.</Note>
         <Note>
-          (the first tx will be w/ your cold wallet,{' '}
+          Reminder: this is the address that will be able to vote with your MKR.
+        </Note>
+        <Note>
+          The first tx will be w/ your cold wallet,{' '}
           <strong style={{ fontWeight: 'bold', textDecoration: 'underline' }}>
             please have it active
-          </strong>)
+          </strong>
         </Note>
-        <Note>
-          (if it's not active, nothing will happen when you click that button
-          ¯\_(ツ)_/¯)
-        </Note>
+
         <EndButton
           slim
           onClick={() =>

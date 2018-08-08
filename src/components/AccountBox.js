@@ -30,6 +30,7 @@ const StyledArrow = styled.img`
 
 const Account = styled.div`
   margin-left: 9px;
+  white-space: nowrap;
   margin: ${({ noAccounts }) => (noAccounts ? 'auto' : '')};
 `;
 

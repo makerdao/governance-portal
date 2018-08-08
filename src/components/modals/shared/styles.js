@@ -147,7 +147,6 @@ export const StyledInput = styled(WrappedInput)`
 `;
 
 export const Note = styled.p`
-  font-style: oblique;
   font-size: 14px;
   opacity: 0.5;
   align-self: flex-start;
