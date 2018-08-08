@@ -1,9 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import round from 'lodash.round';
 
-import { add, eq, subtract } from '../../../utils/misc';
+import { add, eq, subtract, formatRound } from '../../../utils/misc';
 import Button from '../../Button';
 import WithTally from '../../hocs/WithTally';
 import { getActiveAccount } from '../../../reducers/accounts';
@@ -57,7 +56,7 @@ class Vote extends Component {
                       }}
                     >
                       <VoteImpactHeading>Current vote</VoteImpactHeading>
-                      <MkrAmt>{round(approvals, 4).toLocalString()}</MkrAmt>
+                      <MkrAmt>{formatRound(approvals, 3)}</MkrAmt>
                     </div>
                     <div
                       style={{
@@ -70,10 +69,7 @@ class Vote extends Component {
                         After vote withdrawal
                       </VoteImpactHeading>
                       <MkrAmt>
-                        {round(
-                          subtract(approvals, proxy.locked),
-                          4
-                        ).toLocalString()}
+                        {formatRound(subtract(approvals, proxy.locked), 3)}
                       </MkrAmt>
                     </div>
                   </VoteImpact>
@@ -113,7 +109,7 @@ class Vote extends Component {
                       }}
                     >
                       <VoteImpactHeading>In secure contract</VoteImpactHeading>
-                      <MkrAmt>{round(proxy.locked, 4).toLocalString()}</MkrAmt>
+                      <MkrAmt>{formatRound(proxy.locked, 3)}</MkrAmt>
                     </div>
                     <div
                       style={{
@@ -124,7 +120,7 @@ class Vote extends Component {
                       }}
                     >
                       <VoteImpactHeading>Current vote</VoteImpactHeading>
-                      <MkrAmt>{round(approvals, 4).toLocalString()}</MkrAmt>
+                      <MkrAmt>{formatRound(approvals, 3)}</MkrAmt>
                     </div>
                     <div
                       style={{
@@ -136,7 +132,7 @@ class Vote extends Component {
                     >
                       <VoteImpactHeading>After vote cast</VoteImpactHeading>
                       <MkrAmt>
-                        {round(add(approvals, proxy.locked), 4).toLocalString()}
+                        {formatRound(add(approvals, proxy.locked), 3)}
                       </MkrAmt>
                     </div>
                   </VoteImpact>

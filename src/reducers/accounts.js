@@ -2,7 +2,6 @@ import uniqWith from 'ramda/src/uniqWith';
 import concat from 'ramda/src/concat';
 import pipe from 'ramda/src/pipe';
 import differenceWith from 'ramda/src/differenceWith';
-import pick from 'ramda/src/pick';
 
 import { createReducer } from '../utils/redux';
 import {
@@ -19,8 +18,7 @@ import { add, eq, subtract, promisedProperties } from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
-  INITIATE_LINK_REQUEST,
-  APPROVE_LINK_SUCCESS
+  INITIATE_LINK_REQUEST
 } from './proxy';
 import { createSubProvider } from '../chain/hw-wallet';
 import { netNameToId } from '../utils/ethereum';
@@ -310,36 +308,37 @@ const accounts = createReducer(initialState, {
         coldAccount
       )
     };
-  },
-
-  [APPROVE_LINK_SUCCESS]: (state, { payload }) => {
-    let hotAccount = getAccount({ accounts: state }, payload.hotAddress);
-    let coldAccount = getAccount({ accounts: state }, payload.coldAddress);
-
-    hotAccount = {
-      ...hotAccount,
-      proxy: {
-        ...hotAccount.proxy,
-        linkedAccount: pick(['address', 'mkrBalance', 'type'], coldAccount)
-      }
-    };
-
-    coldAccount = {
-      ...coldAccount,
-      proxy: {
-        ...coldAccount.proxy,
-        linkedAccount: pick(['address', 'mkrBalance', 'type'], hotAccount)
-      }
-    };
-
-    return {
-      ...state,
-      allAccounts: withUpdatedAccount(
-        withUpdatedAccount(state.allAccounts, hotAccount),
-        coldAccount
-      )
-    };
   }
+  // TODO: right now we're updating account data by refetching via 'postLinkUpdate'
+  // but this would be quicker
+  // [APPROVE_LINK_SUCCESS]: (state, { payload }) => {
+  //   let hotAccount = getAccount({ accounts: state }, payload.hotAddress);
+  //   let coldAccount = getAccount({ accounts: state }, payload.coldAddress);
+
+  //   hotAccount = {
+  //     ...hotAccount,
+  //     proxy: {
+  //       ...hotAccount.proxy,
+  //       linkedAccount: pick(['address', 'mkrBalance', 'type'], coldAccount)
+  //     }
+  //   };
+
+  //   coldAccount = {
+  //     ...coldAccount,
+  //     proxy: {
+  //       ...coldAccount.proxy,
+  //       linkedAccount: pick(['address', 'mkrBalance', 'type'], hotAccount)
+  //     }
+  //   };
+
+  //   return {
+  //     ...state,
+  //     allAccounts: withUpdatedAccount(
+  //       withUpdatedAccount(state.allAccounts, hotAccount),
+  //       coldAccount
+  //     )
+  //   };
+  // }
 });
 
 export default accounts;

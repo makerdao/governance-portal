@@ -1,4 +1,4 @@
-import { goToStep } from './reducers/proxy';
+import { goToStep, postLinkUpdate } from './reducers/proxy';
 
 export const localLinkProgress = store => next => action => {
   if (action.type === 'proxy/INITIATE_LINK_SUCCESS') {
@@ -11,20 +11,27 @@ export const localLinkProgress = store => next => action => {
       'linkInitiatedState',
       JSON.stringify({
         initiateLinkTxHash,
-        setupProgress: 'resume',
+        setupProgress: 'midLink',
         hotAddress,
         coldAddress
       })
     );
   }
   if (action.type === 'proxy/APPROVE_LINK_SUCCESS') {
-    localStorage.removeItem('linkInitiated');
+    localStorage.removeItem('linkInitiatedState');
   }
   if (
     action.type === 'modal/MODAL_OPEN' &&
     store.getState().proxy.setupProgress === 'initiate'
   ) {
-    store.dispatch(goToStep('resume'));
+    store.dispatch(goToStep('midLink'));
+  }
+  return next(action);
+};
+
+export const updateAccountsAfterLink = store => next => action => {
+  if (action.type === 'proxy/APPROVE_LINK_SUCCESS') {
+    store.dispatch(postLinkUpdate());
   }
   return next(action);
 };

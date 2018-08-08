@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import round from 'lodash.round';
 
 import {
   StyledTop,
@@ -14,7 +13,7 @@ import {
 } from './styles';
 import Input from '../../Input';
 import Transaction from './Transaction';
-import { countDecimals } from '../../../utils/misc';
+import { countDecimals, formatRound } from '../../../utils/misc';
 
 export default class AmountInput extends Component {
   constructor(props) {
@@ -80,8 +79,7 @@ export default class AmountInput extends Component {
         <InputLabels>
           <div>Enter MKR amount</div>
           <div>
-            <ValueLabel>{amountLabel}</ValueLabel>{' '}
-            {round(balance, 6).toLocaleString()}
+            <ValueLabel>{amountLabel}</ValueLabel> {formatRound(balance, 6)}
             {countDecimals(balance) > 5 ? '...' : ''} MKR
           </div>
         </InputLabels>

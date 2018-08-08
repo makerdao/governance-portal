@@ -9,13 +9,15 @@ import Raven from 'raven-js';
 import rootReducer from './reducers';
 import { isMobile } from './utils/misc';
 import Router from './Routes';
-import { localLinkProgress } from './middlewares';
+import { localLinkProgress, updateAccountsAfterLink } from './middlewares';
 import './global.css.js';
 import { metamaskConnectInit } from './reducers/metamask';
 
 const store = createStore(
   rootReducer,
-  composeWithDevTools(applyMiddleware(ReduxThunk, localLinkProgress))
+  composeWithDevTools(
+    applyMiddleware(ReduxThunk, localLinkProgress, updateAccountsAfterLink)
+  )
 );
 
 store.dispatch(metamaskConnectInit());

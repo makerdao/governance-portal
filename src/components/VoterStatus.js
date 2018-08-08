@@ -2,7 +2,6 @@ import { connect } from 'react-redux';
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import round from 'lodash.round';
 
 import { modalOpen } from '../reducers/modal';
 import { getActiveAccount } from '../reducers/accounts';
@@ -18,7 +17,7 @@ import {
   BannerButton
 } from './Banner';
 import Loader from './Loader';
-import { cutMiddle, firstLetterCapital } from '../utils/misc';
+import { cutMiddle, firstLetterCapital, formatRound } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
 import Lock from './modals/Lock';
 import Withdraw from './modals/Withdraw';
@@ -94,8 +93,7 @@ const VoterStatus = ({
   return (
     <SmallMediumText>
       <Strong>{isColdWallet ? 'Cold wallet:' : 'Hot wallet:'}</Strong> In voting
-      contract{' '}
-      <Black>{round(account.proxy.votingPower, 4).toLocaleString()} MKR</Black>{' '}
+      contract <Black>{formatRound(account.proxy.votingPower, 4)} MKR</Black>{' '}
       {account.proxyRole === 'cold' && (
         <a onClick={() => modalOpen(Lock)}> Top-up </a>
       )}
@@ -105,8 +103,9 @@ const VoterStatus = ({
         <a onClick={() => modalOpen(Withdraw)}>Withdraw</a>
       )}
       <DotSpacer />
-      In cold wallet{' '}
-      <Black>{round(coldWallet.mkrBalance, 4).toLocaleString()} MKR</Black>{' '}
+      In cold wallet <Black>
+        {formatRound(coldWallet.mkrBalance, 4)} MKR
+      </Black>{' '}
       <DotSpacer />
       {firstLetterCapital(linkedAccount.proxyRole)} wallet:{' '}
       {cutMiddle(linkedAccount.address)}{' '}

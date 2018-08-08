@@ -1,9 +1,15 @@
 import React, { Fragment } from 'react';
 
-import { StyledTitle, StyledBlurb, StyledTop } from '../shared/styles';
+import {
+  StyledTitle,
+  StyledBlurb,
+  StyledTop,
+  Oblique,
+  Bold
+} from '../shared/styles';
 import Button from '../../Button';
 
-const Resume = ({
+const MidLink = ({
   hotAddress,
   coldAddress,
   proxyClear,
@@ -12,20 +18,15 @@ const Resume = ({
 }) => (
   <Fragment>
     <StyledTop>
-      <StyledTitle>Link request detected</StyledTitle>
+      <StyledTitle>You've initiated the following link</StyledTitle>
     </StyledTop>
-    <StyledBlurb style={{ textAlign: 'center' }}>
-      You've initiated the following link:<br />
+    <StyledBlurb style={{ textAlign: 'center', marginTop: '30px' }}>
+      <Bold>Cold wallet:</Bold> <Oblique> {coldAddress} </Oblique>
       <br />
-      <strong style={{ fontWeight: 500 }}>Cold wallet:</strong>{' '}
-      <strong style={{ fontStyle: 'oblique' }}> {coldAddress} </strong>
-      <br />
-      <strong style={{ fontWeight: 500 }}>Hot wallet:</strong>{' '}
-      <strong style={{ fontStyle: 'oblique' }}> {hotAddress} </strong>
+      <Bold>Hot wallet:</Bold> <Oblique> {hotAddress} </Oblique>
       <br />
       <div style={{ marginTop: '20px' }}>
-        By clicking "continue", you may approve that link if your hot wallet is
-        active.
+        By clicking "approve", you may confirm that link
       </div>
     </StyledBlurb>
     <div
@@ -51,10 +52,10 @@ const Resume = ({
           nextStep();
         }}
       >
-        Continue
+        Approve
       </Button>
     </div>
   </Fragment>
 );
 
-export default Resume;
+export default MidLink;

@@ -1,6 +1,7 @@
 import takeLast from 'ramda/src/takeLast';
 import take from 'ramda/src/take';
 import BigNumber from 'bignumber.js';
+import round from 'lodash.round';
 
 BigNumber.config({ DECIMAL_PLACES: 18, ROUNDING_MODE: 1 });
 
@@ -136,8 +137,11 @@ export const toFixed = (value, decimals) =>
  */
 export const cleanErrorMsg = errorMsg => {
   if (errorMsg.search('Error: ') === 0) {
+    if (errorMsg.search('Transaction gas is too low') > -1)
+      return 'Transaction gas is too low';
     return errorMsg.replace('Error: ', '');
-  } else return errorMsg;
+  }
+  return errorMsg;
 };
 
 /**
@@ -186,3 +190,6 @@ export const countDecimals = _value => {
   if (value % 1 !== 0) return value.toString().split('.')[1].length;
   return 0;
 };
+
+export const formatRound = (num, decimals) =>
+  round(num, decimals).toLocaleString({}, { minimumFractionDigits: decimals });

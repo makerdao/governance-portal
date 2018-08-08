@@ -41,9 +41,9 @@ const GO_TO_STEP = 'proxy/GO_TO_STEP';
 
 export function linkResumable(state) {
   return (
-    state.proxy.setupProgress === 'resume' ||
+    state.proxy.setupProgress === 'midLink' ||
     ((state.proxy.setupProgress === 'initiate' ||
-      state.proxy.setupProgress === 'resume') &&
+      state.proxy.setupProgress === 'midLink') &&
       (state.proxy.initiateLinkTxHash.length > 0 &&
         !state.proxy.confirmingInitiate))
   );
@@ -157,9 +157,8 @@ export const smartStepSkip = () => (dispatch, getState) => {
 export const postLinkUpdate = () => (dispatch, getState) => {
   const hotAccount = getAccount(getState(), getState().proxy.hotAddress);
   const coldAccount = getAccount(getState(), getState().proxy.coldAddress);
-  if (hotAccount === undefined || coldAccount === undefined)
-    return window.location.reload();
-  const accounts = [hotAccount, coldAccount];
+  if (hotAccount === undefined) return window.location.reload();
+  const accounts = !!coldAccount ? [hotAccount, coldAccount] : [hotAccount];
   // this will replace duplicate accounts in the store
   dispatch(addAccounts(accounts));
 };
@@ -200,10 +199,10 @@ const proxy = createReducer(withExisting, {
     initiateLinkTxHash: payload.txHash
   }),
   [INITIATE_LINK_SUCCESS]: state => ({ ...state, confirmingInitiate: false }),
-  [INITIATE_LINK_FAILURE]: (state, payload) => ({
+  [INITIATE_LINK_FAILURE]: state => ({
     ...state,
-    confirmingInitiate: false,
-    error: payload.message
+    setupProgress: 'link',
+    confirmingInitiate: false
   }),
   // Approve ----------------------------------------
   [APPROVE_LINK_REQUEST]: state => ({
@@ -216,7 +215,11 @@ const proxy = createReducer(withExisting, {
     approveLinkTxHash: payload.txHash
   }),
   [APPROVE_LINK_SUCCESS]: state => ({ ...state, confirmingApprove: false }),
-  [APPROVE_LINK_FAILURE]: state => ({ ...state, confirmingApprove: false }),
+  [APPROVE_LINK_FAILURE]: state => ({
+    ...state,
+    setupProgress: 'midLink',
+    confirmingApprove: false
+  }),
   // Send -------------------------------------------
   [SEND_MKR_TO_PROXY_REQUEST]: (state, { payload: value }) => {
     if (state.setupProgress === 'lockInput') {
@@ -262,7 +265,10 @@ const proxy = createReducer(withExisting, {
   // Reset ------------------------------------------
   [CLEAR]: state =>
     linkResumable({ proxy: state })
-      ? { ...withExisting, ...localStorage.getItem('linkInitiatedState') }
+      ? {
+          ...withExisting,
+          ...JSON.parse(localStorage.getItem('linkInitiatedState'))
+        }
       : { ...initialState },
   [GO_TO_STEP]: (state, { payload }) => ({
     ...state,

@@ -1,9 +1,10 @@
 import React, { Fragment } from 'react';
+
 import { StyledTitle, StyledBlurb, StyledTop } from '../shared/styles';
 import Button from '../../Button';
 import styled from 'styled-components';
 import theme from '../../../theme';
-import { cutMiddle } from '../../../utils/misc';
+import { cutMiddle, formatRound } from '../../../utils/misc';
 
 const FlexContainer = styled.div`
   display: flex;
@@ -52,7 +53,7 @@ const MkrText = styled.span`
   line-height: 24pm;
 `;
 
-export default ({ modalClose, sendMkrAmount, hotAccount, postLinkUpdate }) => (
+export default ({ modalClose, sendMkrAmount, hotAccount }) => (
   <Fragment>
     <StyledTop>
       <StyledTitle>Secure voting contract setup</StyledTitle>
@@ -70,7 +71,7 @@ export default ({ modalClose, sendMkrAmount, hotAccount, postLinkUpdate }) => (
       <BoxHalfRight>
         <BoxTitle>Locked in voting contract:</BoxTitle>
         <BoxText>
-          {sendMkrAmount.toFixed(4)} <MkrText>MKR</MkrText>{' '}
+          {formatRound(sendMkrAmount, 5)} <MkrText>MKR</MkrText>{' '}
         </BoxText>
       </BoxHalfRight>
     </FlexContainer>
@@ -83,7 +84,6 @@ export default ({ modalClose, sendMkrAmount, hotAccount, postLinkUpdate }) => (
       <Button
         slim
         onClick={() => {
-          postLinkUpdate();
           modalClose();
         }}
       >

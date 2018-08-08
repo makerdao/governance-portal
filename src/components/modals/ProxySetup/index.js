@@ -12,13 +12,12 @@ import {
   sendMkrToProxy,
   approveLink,
   clear as proxyClear,
-  postLinkUpdate,
   goToStep
 } from '../../../reducers/proxy';
 import { mul } from '../../../utils/misc';
 import { modalClose } from '../../../reducers/modal';
 import Summary from './Summary';
-import Resume from './Resume';
+import MidLink from './MidLink';
 import Lock from '../Lock';
 
 class ProxySetup extends Component {
@@ -68,8 +67,7 @@ class ProxySetup extends Component {
       proxyClear,
       linkCost,
       hotAddress,
-      coldAddress,
-      postLinkUpdate
+      coldAddress
     } = this.props;
 
     switch (setupProgress) {
@@ -91,12 +89,12 @@ class ProxySetup extends Component {
             network={network}
             txHash={initiateLinkTxHash}
             account={coldAccount}
-            nextStep={() => approveLink({ hotAccount })}
+            nextStep={() => goToStep('midLink')}
           />
         );
-      case 'resume':
+      case 'midLink':
         return (
-          <Resume
+          <MidLink
             hotAddress={hotAddress}
             coldAddress={coldAddress}
             goToStep={goToStep}
@@ -132,7 +130,6 @@ class ProxySetup extends Component {
             {...{
               modalClose,
               proxyClear,
-              postLinkUpdate,
               sendMkrAmount,
               hotAccount
             }}
@@ -230,7 +227,6 @@ const dispatchProps = {
   initiateLink,
   approveLink,
   sendMkrToProxy,
-  postLinkUpdate,
   proxyClear,
   goToStep
 };

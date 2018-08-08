@@ -209,6 +209,10 @@ export const Bold = styled.strong`
   font-weight: ${({ theme }) => theme.fonts.weight.bold};
 `;
 
+export const Oblique = styled.strong`
+  font-style: oblique;
+`;
+
 export const VoteImpactHeading = styled.p`
   color: #868997;
   font-size: 14px;

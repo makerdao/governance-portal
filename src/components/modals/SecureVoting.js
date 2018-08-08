@@ -1,11 +1,10 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import round from 'lodash.round';
 
 import { sendMkrToProxy } from '../../reducers/proxy';
 import { getActiveAccount } from '../../reducers/accounts';
 import { modalClose, modalOpen } from '../../reducers/modal';
-import { cutMiddle } from '../../utils/misc';
+import { cutMiddle, formatRound } from '../../utils/misc';
 import { ethScanLink } from '../../utils/ethereum';
 import ProxySetup from './ProxySetup';
 import {
@@ -17,7 +16,7 @@ import {
   MkrAmt
 } from './shared/styles';
 
-const SecureVoting = ({ modalOpen, activeAccount, network }) => {
+const SecureVoting = ({ activeAccount, network }) => {
   if (activeAccount !== undefined && activeAccount.hasProxy) {
     return (
       <Fragment>
@@ -38,9 +37,7 @@ const SecureVoting = ({ modalOpen, activeAccount, network }) => {
             }}
           >
             <VoteImpactHeading>Total MKR balance</VoteImpactHeading>
-            <MkrAmt>
-              {round(activeAccount.mkrBalance, 3).toLocaleString()}
-            </MkrAmt>
+            <MkrAmt>{formatRound(activeAccount.mkrBalance, 4)}</MkrAmt>
           </div>
           <div
             style={{
@@ -51,9 +48,7 @@ const SecureVoting = ({ modalOpen, activeAccount, network }) => {
             }}
           >
             <VoteImpactHeading>In voting contract</VoteImpactHeading>
-            <MkrAmt>
-              {round(activeAccount.proxy.votingPower, 3).toLocaleString()}
-            </MkrAmt>
+            <MkrAmt>{formatRound(activeAccount.proxy.votingPower, 4)}</MkrAmt>
           </div>
           <div
             style={{

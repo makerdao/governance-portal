@@ -56,7 +56,6 @@ class Link extends Component {
     const hotExists = this.state.hot && this.state.hot.address.length > 0;
     const coldExists = this.state.cold && this.state.cold.address.length > 0;
     const swappable = !!coldExists && !!hotExists;
-    console.log(swappable, this.state.hot, this.state.cold);
     const validAccounts = this.props.accounts.filter(
       account => !account.hasProxy
     );
