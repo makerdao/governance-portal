@@ -26,7 +26,7 @@ const ProposalDetails = styled.div`
 `;
 
 const StyledTop = styled.div`
-  height: 311px;
+  min-height: 311px;
   background-color: rgb(${colors.white});
   border-bottom: 2px solid #eaeaea;
   text-align: left;
@@ -49,11 +49,9 @@ const StyledTitle = styled.p`
 
 const StyledBody = styled.p`
   line-height: 30px;
+  margin-top: 5px;
   font-size: 17px;
   color: #546978;
-  height: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 const WhiteBackground = styled.div`

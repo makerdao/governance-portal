@@ -101,14 +101,11 @@ export const addAccounts = accounts => async (dispatch, getState) => {
       hasProxy,
       proxyRole,
       votingFor: currProposal,
-      proxy: Promise.all([
-        hasProxy ? getNumDeposits(proxyAddress, network) : Promise.resolve(0),
-        hasProxy ? getVotingPower(proxyAddress, network) : Promise.resolve(0)
-      ]).then(([deposits, votingPower]) => ({
-        locked: deposits,
+      proxy: promisedProperties({
+        locked: hasProxy ? getNumDeposits(proxyAddress, network) : 0,
         address: hasProxy ? toChecksum(proxyAddress) : '',
-        votingPower
-      }))
+        votingPower: hasProxy ? getVotingPower(proxyAddress, network) : 0
+      })
     };
     const fetchLinkedAccountData = async () => {
       if (hasProxy) {

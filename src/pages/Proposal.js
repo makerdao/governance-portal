@@ -29,7 +29,7 @@ const WhiteBackground = styled.div`
   margin-left: -50vw;
   margin-right: -50vw;
   margin-bottom: 34px;
-  height: 311px;
+  min-height: 311px;
   background-color: rgb(${colors.white});
   border-bottom: 2px solid #eaeaea;
   text-align: left;
@@ -53,12 +53,9 @@ const StyledTitle = styled.p`
 
 const StyledBody = styled.p`
   line-height: 30px;
+  margin-top: 5px;
   font-size: 17px;
   color: #546978;
-  height: 90px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-top: 10px;
 `;
 
 const StyledCenter = styled.div`
@@ -200,7 +197,7 @@ class Proposal extends Component {
                 dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
               />
               {active ? (
-                <Timer endTimestamp={proposal.end_timestamp} small mt="-22" />
+                <Timer endTimestamp={proposal.end_timestamp} small mt="6" />
               ) : null}
             </StyledCenter>
             <div>

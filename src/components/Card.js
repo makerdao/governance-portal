@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import descend from '../imgs/descend.svg';
 import { toSlug } from '../utils/misc';
-import theme, { colors, fonts, shadows } from '../theme';
+import theme, { fonts, shadows } from '../theme';
 
 const Card = styled.div`
   transition: ${({ theme }) => theme.transitions.base};
@@ -104,7 +104,7 @@ const CardTopWrapper = styled.div`
   border-style: none;
   border: none;
   color: ${({ theme }) => theme.generic.dark};
-  background-color: ${({ background }) => `rgb(${colors[background]})`};
+  background-color: ${({ background, theme }) => theme.generic[background]};
   font-size: ${({ theme }) => theme.fonts.size.large};
   font-weight: ${({ theme }) => theme.fonts.weight.normal};
   margin: 0 auto;
@@ -157,7 +157,6 @@ const Heading = styled.p`
   flex: none;
   position: relative;
   @media screen and (max-width: 736px) {
-    display: ${({ isAlwaysVisible }) => (isAlwaysVisible ? 'block' : 'none')};
   }
 `;
 

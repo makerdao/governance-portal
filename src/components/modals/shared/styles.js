@@ -49,7 +49,8 @@ export const CircledNum = styled.div`
   color: #fff;
   text-align: center;
   font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '17px')};
-  padding: ${({ p }) => (p ? `${p}px` : '3px')};
+  padding: ${({ p }) => (p ? `${p}px` : '4px 12px')};
+  padding-left: ${({ p }) => (p ? `` : '11px')};
 `;
 
 export const Section = styled.div`
@@ -66,7 +67,7 @@ export const GuideWrapper = styled.div`
   flex-direction: column;
   align-self: flex-start;
   margin: 0px 20px;
-  height: 210px;
+  height: 240px;
   justify-content: space-between;
 `;
 

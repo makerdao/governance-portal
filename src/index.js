@@ -42,3 +42,14 @@ if (process.env.NODE_ENV === 'production') {
     document.getElementById('root')
   );
 }
+
+// in case their local storage has been set by a previous iteration of
+// localLinkProgress middleware
+if (
+  localStorage.getItem('linkInitiatedState') &&
+  JSON.parse(localStorage.getItem('linkInitiatedState')).setupProgress ===
+    'initiate'
+) {
+  localStorage.clear();
+  window.location.reload();
+}
