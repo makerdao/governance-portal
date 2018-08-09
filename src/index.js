@@ -5,22 +5,37 @@ import { createStore, applyMiddleware } from 'redux';
 import ReduxThunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 import Raven from 'raven-js';
+import ReactGA from 'react-ga';
 
 import rootReducer from './reducers';
 import { isMobile } from './utils/misc';
 import Router from './Routes';
-import { localLinkProgress, updateAccountsAfterLink } from './middlewares';
+import {
+  localLinkProgress,
+  updateAccountsAfterLink,
+  failureLogging
+} from './middlewares';
 import './global.css.js';
 import { metamaskConnectInit } from './reducers/metamask';
 
 const store = createStore(
   rootReducer,
   composeWithDevTools(
-    applyMiddleware(ReduxThunk, localLinkProgress, updateAccountsAfterLink)
+    applyMiddleware(
+      ReduxThunk,
+      localLinkProgress,
+      updateAccountsAfterLink,
+      failureLogging
+    )
   )
 );
 
 store.dispatch(metamaskConnectInit());
+
+if (process.env.NODE_ENV === 'production') {
+  ReactGA.initialize('UA-123682690-1');
+  ReactGA.pageview(window.location.pathname + window.location.search);
+}
 
 if (process.env.NODE_ENV === 'production') {
   Raven.config(
@@ -43,7 +58,7 @@ if (process.env.NODE_ENV === 'production') {
   );
 }
 
-// in case their local storage has been set by a previous iteration of
+// in case user's local storage has been set by a previous iteration of
 // localLinkProgress middleware
 if (
   localStorage.getItem('linkInitiatedState') &&

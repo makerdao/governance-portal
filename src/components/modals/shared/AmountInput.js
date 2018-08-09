@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import ReactGA from 'react-ga';
 
 import {
   StyledTop,
@@ -13,7 +14,7 @@ import {
 } from './styles';
 import Input from '../../Input';
 import Transaction from './Transaction';
-import { countDecimals, formatRound } from '../../../utils/misc';
+import { countDecimals, formatRound, toSlug } from '../../../utils/misc';
 
 export default class AmountInput extends Component {
   constructor(props) {
@@ -23,6 +24,7 @@ export default class AmountInput extends Component {
 
   componentDidMount() {
     if (this.props.reset !== false) this.props.clearProxyState();
+    ReactGA.modalview(toSlug(this.props.title || 'amount-input'));
   }
 
   setAmount = event => {

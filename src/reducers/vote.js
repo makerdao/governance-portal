@@ -1,3 +1,5 @@
+import ReactGA from 'react-ga';
+
 import { createReducer } from '../utils/redux';
 import { voteAndLockViaProxy, freeAll } from '../chain/write';
 import { awaitTx } from '../chain/web3';
@@ -65,6 +67,12 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
     console.log('mined:', txReceipt);
     dispatch({ type: VOTE_SUCCESS });
 
+    ReactGA.event({
+      category: 'Vote TX Success',
+      action: 'Cast',
+      label: `wallet type ${activeAccount.type || 'unknown'}`
+    });
+
     // update vote tally and approval nums
     dispatch(voteTallyInit());
     dispatch(initApprovalsFetch());
@@ -87,6 +95,12 @@ export const withdrawVote = () => async (dispatch, getState) => {
     const txReceipt = await awaitTx(txHash, { confirmations: 1 });
     console.log('mined:', txReceipt);
     dispatch({ type: WITHDRAW_SUCCESS });
+
+    ReactGA.event({
+      category: 'Vote TX Success',
+      action: 'Withdraw',
+      label: `wallet type ${activeAccount.type || 'unknown'}`
+    });
 
     // update vote tally and approval nums
     dispatch(voteTallyInit());

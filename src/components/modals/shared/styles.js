@@ -1,6 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
-import theme from '../../../theme';
+import styled, { css } from 'styled-components';
+import theme, { shadows } from '../../../theme';
 import Button from '../../Button';
 
 export const StyledTitle = styled.div`
@@ -218,4 +218,59 @@ export const VoteImpactHeading = styled.p`
   color: #868997;
   font-size: 14px;
   white-space: nowrap;
+`;
+
+const TooltipStyles = props => css`
+  position: relative;
+  &:after,
+  &:before {
+    line-height: 1;
+    user-select: none;
+    pointer-events: none;
+    position: absolute;
+    opacity: 0;
+    display: block;
+    text-transform: none;
+  }
+  &:after {
+    content: ${props.tipText ? `'${CSS.escape(props.tipText)}'` : "''"};
+    z-index: 1000;
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 8px;
+    max-width: 21em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 8px 12px;
+    border-radius: 4px;
+    box-shadow: ${shadows.medium};
+    background: ${props.theme.generic.white};
+    color: ${props.theme.text.default};
+    border: 1px solid #e4e4e4;
+    top: calc(100% + 4px);
+    left: 0%;
+    transform: translateX(0%);
+  }
+  &:hover:after,
+  &:hover:before {
+    opacity: 1;
+    transition: opacity 0.1s ease-in 0.1s;
+  }
+  @media (max-width: 768px) {
+    &:after,
+    &:before {
+      display: none;
+    }
+  }
+`;
+
+export const Tooltip = styled.p`
+  cursor: pointer;
+  display: initial;
+  color: ${({ blue }) => (blue ? '#3080ed' : '#212536')};
+  margin-bottom: -3px;
+  border-bottom: 1px dashed
+    ${({ blue }) => (blue ? '#2F80ED' : theme.text.dim_grey_alt)};
+  ${TooltipStyles};
 `;

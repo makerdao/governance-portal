@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import ReactGA from 'react-ga';
 
 import Intro from './Intro';
 import Link from './Link';
@@ -23,6 +24,7 @@ import Lock from '../Lock';
 class ProxySetup extends Component {
   componentDidMount() {
     this.props.proxyClear();
+    ReactGA.modalview('proxy-setup');
   }
 
   render() {

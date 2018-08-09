@@ -1,3 +1,5 @@
+import ReactGA from 'react-ga';
+
 import { createReducer } from '../utils/redux';
 import {
   initiateLink as _initiateLink,
@@ -57,12 +59,23 @@ export const goToStep = step => ({ type: GO_TO_STEP, payload: step });
 
 // FIXME sometimes this causes an exception because of a null receipt; something
 // wrong with awaitTx logic?
-const handleTx = async ({ prefix, dispatch, action, successPayload = '' }) => {
+const handleTx = async ({
+  prefix,
+  dispatch,
+  action,
+  successPayload = '',
+  acctType
+}) => {
   try {
     const txHash = await action;
     dispatch({ type: `proxy/${prefix}_SENT`, payload: { txHash } });
     const receipt = await awaitTx(txHash, { confirmations: 1 });
     dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
+    ReactGA.event({
+      category: 'Link TX Success',
+      action: prefix,
+      label: `wallet type ${acctType || 'unknown'}`
+    });
     console.log('mined:', receipt);
   } catch (err) {
     console.error(err);
@@ -101,7 +114,8 @@ export const initiateLink = ({ cold, hot }) => (dispatch, getState) => {
   handleTx({
     prefix: 'INITIATE_LINK',
     dispatch,
-    action: _initiateLink({ coldAccount: cold, hotAddress: hot.address })
+    action: _initiateLink({ coldAccount: cold, hotAddress: hot.address }),
+    acctType: cold.type
   });
 };
 
@@ -114,7 +128,8 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
     prefix: 'APPROVE_LINK',
     dispatch,
     action: _approveLink({ hotAccount, coldAddress }),
-    successPayload: { coldAddress, hotAddress: hotAccount.address }
+    successPayload: { coldAddress, hotAddress: hotAccount.address },
+    acctType: hotAccount.type
   });
 };
 
@@ -131,7 +146,8 @@ export const sendMkrToProxy = value => (dispatch, getState) => {
     prefix: 'SEND_MKR_TO_PROXY',
     dispatch,
     action: _sendMkrToProxy({ account, value }),
-    successPayload: value
+    successPayload: value,
+    acctType: account.type
   });
 };
 
@@ -144,7 +160,8 @@ export const withdrawMkr = value => (dispatch, getState) => {
     prefix: 'WITHDRAW_MKR',
     dispatch,
     action: _unlockWithdrawMkr(account, value),
-    successPayload: value
+    successPayload: value,
+    acctType: account.type
   });
 };
 

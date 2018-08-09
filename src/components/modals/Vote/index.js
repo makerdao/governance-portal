@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import ReactGA from 'react-ga';
 
 import { add, eq, subtract, formatRound } from '../../../utils/misc';
 import Button from '../../Button';
@@ -25,6 +26,7 @@ import Transaction from '../shared/Transaction';
 class Vote extends Component {
   componentDidMount() {
     this.props.voteClear();
+    ReactGA.modalview('vote');
   }
 
   // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs

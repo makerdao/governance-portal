@@ -1,4 +1,5 @@
 import React from 'react';
+import round from 'lodash.round';
 
 import {
   StyledTitle,
@@ -12,9 +13,9 @@ import {
   GuideTitle,
   GuideInfo,
   IntroTxBox,
+  Tooltip,
   Bold
 } from '../shared/styles';
-import round from 'lodash.round';
 import Button from '../../Button';
 
 const Intro = ({ nextStep, linkCost }) => (
@@ -22,9 +23,14 @@ const Intro = ({ nextStep, linkCost }) => (
     <StyledTitle>Welcome to the secure voting setup</StyledTitle>
     <StyledBlurb>
       Setting up your secure voting contract will enable you to keep your MKR
-      stored safely in a <StyledAnchor>cold wallet</StyledAnchor> but be able to
-      vote with your MKR via a <StyledAnchor>hot wallet</StyledAnchor>. The
-      steps are as follows:
+      stored safely in a{' '}
+      <Tooltip tipText="This is where you store your MKR">
+        storage wallet
+      </Tooltip>{' '}
+      but be able to vote with your MKR via a{' '}
+      <Tooltip tipText="This is the wallet you vote with">
+        voting wallet
+      </Tooltip>. The steps are as follows:
     </StyledBlurb>
     <GuideWrapper>
       <Section>
