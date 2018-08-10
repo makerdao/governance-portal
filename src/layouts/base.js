@@ -144,6 +144,10 @@ const NetworkNotification = styled.div`
   font-weight: 500;
   left: 0;
   right: 0;
+  @media (max-width: 1000px) {
+    right: 145px;
+    left: unset;
+  }
 `;
 
 const BaseLayout = ({
@@ -204,7 +208,7 @@ const BaseLayout = ({
             <NetworkNotification>
               {childrenShouldMount && `~ ${network} ~`}
             </NetworkNotification>
-            <Flex>
+            <Flex style={{ zIndex: '100' }}>
               <DimHeaderElement
                 onClick={() => {
                   if (!accountsFetching) modalOpen(SecureVoting);
