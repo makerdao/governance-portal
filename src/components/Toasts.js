@@ -57,6 +57,7 @@ const Toast = styled.div`
 
 export const ErrorToast = styled(Toast)`
   background-color: ${({ theme }) => theme.warn.default};
+  word-wrap: break-word;
   background-image: ${({ theme }) =>
     `radial-gradient(ellipse farthest-corner at top left, ${
       theme.warn.alt

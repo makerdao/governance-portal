@@ -74,8 +74,12 @@ async function simpleSendTx(account, to, method, args) {
  * @param  {Object} wallets { coldAccount: { address, type }, hotAddress }
  * @return {Promise} tx
  */
-export const initiateLink = async ({ coldAccount, hotAddress }) => {
-  const factory = await getProxyFactory();
+export const initiateLink = async ({
+  coldAccount,
+  hotAddress,
+  network = null
+}) => {
+  const factory = await getProxyFactory(network);
   const methodSig = getMethodSig('initiateLink(address)');
   const callData = generateCallData({
     method: methodSig,
@@ -90,8 +94,12 @@ export const initiateLink = async ({ coldAccount, hotAddress }) => {
  * @param  {Object} wallets { hotAccount: { address, type }, coldAddress }
  * @return {Promise} tx
  */
-export const approveLink = async ({ hotAccount, coldAddress }) => {
-  const factory = await getProxyFactory();
+export const approveLink = async ({
+  hotAccount,
+  coldAddress,
+  network = null
+}) => {
+  const factory = await getProxyFactory(network);
   const methodSig = getMethodSig('approveLink(address)');
   const callData = generateCallData({
     method: methodSig,
@@ -106,18 +114,23 @@ export const approveLink = async ({ hotAccount, coldAddress }) => {
  * @param  {Object} transferDetails { acccount: { address, type }, value }
  * @return {Promise} tx
  */
-export const sendMkrToProxy = async ({ account, value }) => {
+export const sendMkrToProxy = async ({ account, value, network = null }) => {
   // FIXME probably don't need to slow down the process with this extra check;
   // just make sure the action can never be performed until we know we have a
   // proxy to send to.
   const { address: proxyAddress, hasProxy } = await getProxyStatus(
-    account.address
+    account.address,
+    network
   );
-  if (!hasProxy)
+  if (
+    !hasProxy ||
+    !account.hasProxy ||
+    account.proxy.address.toLowerCase() !== proxyAddress.toLowerCase()
+  )
     throw new Error(
       `${account.address} cannot send MKR to its proxy because none exists`
     );
-  return sendMkr({ account, recipientAddress: proxyAddress, value });
+  return sendMkr({ account, recipientAddress: proxyAddress, value, network });
 };
 
 /**
@@ -125,8 +138,13 @@ export const sendMkrToProxy = async ({ account, value }) => {
  * @param  {Object} transferDetails { acccount: { address, type }, value }
  * @return {Promise} tx
  */
-export const sendMkr = async ({ account, recipientAddress, value }) => {
-  const mkrToken = await getMkrAddress();
+export const sendMkr = async ({
+  account,
+  recipientAddress,
+  value,
+  network = null
+}) => {
+  const mkrToken = await getMkrAddress(network);
   const methodSig = getMethodSig('transfer(address,uint256)');
   const addressParam = encodeParameter('address', recipientAddress);
   const valueParam = encodeParameter('uint256', etherToWei(value));
@@ -203,7 +221,7 @@ export const freeAll = async account => {
  * @param {Object} account
  * @return {Promise} tx
  */
-export const breakLink = async account => {
-  const factory = await getProxyFactory();
+export const breakLink = async (account, network = null) => {
+  const factory = await getProxyFactory(network);
   return simpleSendTx(account, factory, 'breakLink()', []);
 };

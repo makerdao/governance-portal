@@ -136,8 +136,19 @@ const BorderLine = styled.div`
   background-color: #445162;
 `;
 
+const NetworkNotification = styled.div`
+  position: absolute;
+  width: 100%;
+  font-style: oblique;
+  color: ${({ theme }) => theme.text.header_dim};
+  font-weight: 500;
+  left: 0;
+  right: 0;
+`;
+
 const BaseLayout = ({
   children,
+  network,
   modalOpen,
   metamaskFetching,
   topicsAvailable,
@@ -147,7 +158,7 @@ const BaseLayout = ({
   const childrenShouldMount =
     !metamaskFetching && topicsAvailable && !wrongNetwork;
   const noContentMsg = wrongNetwork ? (
-    'Please switch MetaMask to Kovan or Mainnet'
+    'Please switch network to Kovan or Mainnet'
   ) : (
     <Loader size={20} color="header" background="background" />
   );
@@ -189,6 +200,10 @@ const BaseLayout = ({
             <StyledLink to="/">
               <HeaderBottomLeft>Governance</HeaderBottomLeft>
             </StyledLink>
+            {/* cheap network notification, probably to be replaced */}
+            <NetworkNotification>
+              {childrenShouldMount && `~ ${network} ~`}
+            </NetworkNotification>
             <Flex>
               <DimHeaderElement
                 onClick={() => {
@@ -229,6 +244,7 @@ BaseLayout.propTypes = {
 const reduxProps = ({ metamask, topics, accounts }) => ({
   metamaskFetching: metamask.fetching,
   wrongNetwork: metamask.wrongNetwork,
+  network: metamask.network,
   accountsFetching: accounts.fetching,
   topicsAvailable: topics.length > 0
 });

@@ -7,6 +7,7 @@ import {
   sendMkrToProxy as _sendMkrToProxy,
   unlockWithdrawMkr as _unlockWithdrawMkr
 } from '../chain/write';
+import { parseError } from '../utils/misc';
 import { awaitTx } from '../chain/web3';
 import { getLinkGas } from '../chain/read';
 import { getActiveAccount, getAccount, addAccounts } from './accounts';
@@ -81,6 +82,11 @@ const handleTx = async ({
     console.error(err);
     dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
     dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+    ReactGA.event({
+      category: 'User notification error',
+      action: 'proxy',
+      label: parseError(err)
+    });
     // TODO display this error to the user; it could require user intervention,
     // e.g. it could be due to insufficient funds
   }
@@ -99,14 +105,14 @@ function requireCorrectAccount(state, requiredAccount, typeNeeded) {
   if (activeAccount.address === address) return true;
 
   window.alert(
-    `Switch to your ${proxyRole || 'other'} wallet before continuing.`
+    `Please switch to your ${proxyRole || 'other'} wallet before continuing.`
   );
   return false;
 }
 
 export const initiateLink = ({ cold, hot }) => (dispatch, getState) => {
   if (!requireCorrectAccount(getState(), cold, 'cold')) return;
-
+  const network = getState().metamask.network;
   dispatch({
     type: INITIATE_LINK_REQUEST,
     payload: { hotAddress: hot.address, coldAddress: cold.address }
@@ -114,20 +120,24 @@ export const initiateLink = ({ cold, hot }) => (dispatch, getState) => {
   handleTx({
     prefix: 'INITIATE_LINK',
     dispatch,
-    action: _initiateLink({ coldAccount: cold, hotAddress: hot.address }),
+    action: _initiateLink({
+      coldAccount: cold,
+      hotAddress: hot.address,
+      network
+    }),
     acctType: cold.type
   });
 };
 
 export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
   if (!requireCorrectAccount(getState(), hotAccount, 'hot')) return;
-
+  const network = getState().metamask.network;
   dispatch({ type: APPROVE_LINK_REQUEST });
   const { coldAddress } = getState().proxy;
   handleTx({
     prefix: 'APPROVE_LINK',
     dispatch,
-    action: _approveLink({ hotAccount, coldAddress }),
+    action: _approveLink({ hotAccount, coldAddress, network }),
     successPayload: { coldAddress, hotAddress: hotAccount.address },
     acctType: hotAccount.type
   });
@@ -140,12 +150,13 @@ export const sendMkrToProxy = value => (dispatch, getState) => {
   if (!account || account.proxyRole !== 'cold') {
     return window.alert(`Switch to your cold wallet before continuing.`);
   }
+  const network = getState().metamask.network;
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
   handleTx({
     prefix: 'SEND_MKR_TO_PROXY',
     dispatch,
-    action: _sendMkrToProxy({ account, value }),
+    action: _sendMkrToProxy({ account, value, network }),
     successPayload: value,
     acctType: account.type
   });
@@ -305,15 +316,19 @@ const proxy = createReducer(withExisting, {
         return {
           ...state,
           confirmingInitiate: true,
-          initiateLinkTxHash: '0xbeefed1bedded2dabbed3defaced4decade5cafe'
+          initiateLinkTxHash: '0xbeefed1bedded2dabbed3defaced4decade5cafe',
+          coldAddress: '0xbeefed1bedded2dabbed3defaced4decade5cafe',
+          hotAddress: '0xbeefed1bedded2dabbed3defaced4decade5cafe'
         };
       }
 
       if (state.confirmingInitiate)
         return { ...state, confirmingInitiate: false };
 
-      return step('approve');
+      return step('midLink');
     }
+
+    if (setupProgress === 'midLink') return step('approve');
 
     if (setupProgress === 'approve') {
       if (!state.approveLinkTxHash && !state.confirmingApprove) {

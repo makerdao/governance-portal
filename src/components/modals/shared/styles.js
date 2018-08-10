@@ -271,6 +271,6 @@ export const Tooltip = styled.p`
   color: ${({ blue }) => (blue ? '#3080ed' : '#212536')};
   margin-bottom: -3px;
   border-bottom: 1px dashed
-    ${({ blue }) => (blue ? '#2F80ED' : theme.text.dim_grey_alt)};
+    ${({ blue, theme }) => (blue ? theme.generic.blue : theme.brand.default)};
   ${TooltipStyles};
 `;

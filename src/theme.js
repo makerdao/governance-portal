@@ -88,6 +88,7 @@ const theme = {
     default: '#ededed',
     white: '#ffffff',
     black: '#000000',
+    blue: '#2F80ED',
     dark: '#0c0c0d',
     alt: '#F6FBFC'
   },

@@ -6,8 +6,9 @@ import {
   StyledTitle,
   StyledBlurb,
   StyledTop,
-  StyledAnchor,
+  Tooltip,
   InputLabels,
+  StyledAnchor,
   EndButton,
   Note
 } from '../shared/styles';
@@ -77,9 +78,14 @@ class Link extends Component {
           <StyledTitle>Link cold and hot wallets</StyledTitle>
         </StyledTop>
         <StyledBlurb>
-          Please connect your <StyledAnchor>cold wallet</StyledAnchor>; we
-          support MetaMask, Ledger and Trezor. Then select the{' '}
-          <StyledAnchor>hot wallet</StyledAnchor> you would like to link it to.
+          Please connect your{' '}
+          <Tooltip tipText="This is where you store your MKR">
+            storage wallet
+          </Tooltip>; we support MetaMask, Ledger and Trezor. Then select the{' '}
+          <Tooltip tipText="This is the wallet you vote with">
+            voting wallet
+          </Tooltip>{' '}
+          you would like to link it to.
         </StyledBlurb>
         <Note>
           (feel free to change your metamask account while on this modal)
@@ -129,18 +135,28 @@ class Link extends Component {
             please have it active
           </strong>
         </Note>
-
-        <EndButton
-          slim
-          onClick={() =>
-            this.props.initiateLink({
-              cold: this.state.cold,
-              hot: this.state.hot
-            })
-          }
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginTop: '20px'
+          }}
         >
-          Link Wallets
-        </EndButton>
+          <StyledAnchor blue>Read more about linking</StyledAnchor>
+          <EndButton
+            style={{ marginTop: '0' }}
+            slim
+            onClick={() =>
+              this.props.initiateLink({
+                cold: this.state.cold,
+                hot: this.state.hot
+              })
+            }
+          >
+            Link Wallets
+          </EndButton>
+        </div>
       </Fragment>
     );
   }

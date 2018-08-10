@@ -15,7 +15,7 @@ const FlexContainer = styled.div`
 const BoxHalfLeft = styled.span`
   background-color: #f2f5fa;
   height: 68px;
-  width: 270px;
+  width: 100%;
   border: 1px solid #dfe1e3;
   border-radius: 4px 0px 0px 4px;
   float: left;
@@ -25,7 +25,7 @@ const BoxHalfLeft = styled.span`
 const BoxHalfRight = styled.span`
   background-color: #f2f5fa;
   height: 68px;
-  width: 270px;
+  width: 100%;
   border-top: 1px solid #dfe1e3;
   border-right: 1px solid #dfe1e3;
   border-bottom: 1px solid #dfe1e3;
@@ -53,6 +53,14 @@ const MkrText = styled.span`
   line-height: 24pm;
 `;
 
+const ButtonContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-self: center;
+  margin-top: 18px;
+`;
+
 export default ({ modalClose, sendMkrAmount, hotAccount }) => (
   <Fragment>
     <StyledTop>
@@ -75,12 +83,7 @@ export default ({ modalClose, sendMkrAmount, hotAccount }) => (
         </BoxText>
       </BoxHalfRight>
     </FlexContainer>
-    <div
-      style={{
-        alignSelf: 'center',
-        marginTop: '18px'
-      }}
-    >
+    <ButtonContainer>
       <Button
         slim
         onClick={() => {
@@ -89,6 +92,6 @@ export default ({ modalClose, sendMkrAmount, hotAccount }) => (
       >
         Finish and close
       </Button>
-    </div>
+    </ButtonContainer>
   </Fragment>
 );

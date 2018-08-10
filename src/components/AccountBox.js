@@ -210,7 +210,7 @@ AccountBox.defaultProps = {
   fetching: false
 };
 
-const mapStateToProps = ({ accounts, metamask }, props) => ({
+const mapStateToProps = ({ accounts }, props) => ({
   allAccounts: accounts.allAccounts,
   activeAccount: getActiveAccount({ accounts }),
   fetching: props.fetching ? true : accounts.fetching

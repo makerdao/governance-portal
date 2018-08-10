@@ -55,8 +55,10 @@ export const metamaskConnectInit = () => async dispatch => {
   if (typeof window.web3 !== 'undefined') {
     try {
       network = await getMetamaskNetworkName();
-      if (network !== 'mainnet' && network !== 'kovan')
+      if (network !== 'mainnet' && network !== 'kovan') {
+        dispatch({ type: NO_METAMASK_ACCOUNTS });
         return dispatch({ type: WRONG_NETWORK });
+      }
       dispatch({ type: CONNECT_SUCCESS, payload: { network } });
       setWeb3Network(network);
       networkIsSet = true;
