@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@abylaw/ui-components": "^0.0.6",
     "@ledgerhq/hw-app-eth": "^4.19.0",
     "@ledgerhq/hw-transport-u2f": "^4.19.0",
     "bignumber.js": "^7.2.1",

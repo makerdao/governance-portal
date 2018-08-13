@@ -5,22 +5,22 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
 
+import Header from '../shared/dist/components/header';
+import Footer from '../shared/dist/components/footer';
+
 import { colors, fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
 import Modals from '../components/modals';
 import SecureVoting from '../components/modals/SecureVoting';
-// import Footer from "../components/Footer";
 import Loader from '../components/Loader';
 import AccountBox from '../components/AccountBox';
 import Toasts from '../components/Toasts';
-import logo from '../imgs/logo.svg';
 
 const StyledLayout = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
   min-height: 100vh;
-  text-align: center;
 `;
 const AppWrapper = styled.div`
   padding: 0px 16px;
@@ -35,34 +35,16 @@ const StyledColumn = styled.div`
 const StyledHeader = styled.div`
   margin-top: -1px;
   width: 100%;
-  height: 148px;
   display: block;
   align-items: center;
   background-color: rgb(${colors.header});
   color: rgb(${colors.white});
 `;
 
-const HeaderTop = styled.div`
-  width: 100%;
-  height: 83px;
-
-  padding: 0px 16px;
-`;
-
-const HeaderTopContent = styled.div`
-  max-width: 1140px;
-  width: 100%;
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  margin: 0px auto;
-  height: 100%;
-`;
-
 const HeaderBottom = styled.div`
-  height: 64px;
   width: 100%;
-  padding: 0px 16px;
+  padding: 16px 16px;
+  min-height: 66px;
 `;
 
 const HeaderBottomContent = styled.div`
@@ -75,27 +57,10 @@ const HeaderBottomContent = styled.div`
   margin: 0px auto;
 `;
 
-const StyledTitle = styled.div`
-  color: rgb(${colors.white});
-  font-size: ${fonts.size.large};
-  margin-left: 12px;
-`;
-
 const HeaderBottomLeft = styled.div`
   color: rgb(${colors.white});
   font-size: ${fonts.size.medium};
   font-weight: ${fonts.weight.medium};
-`;
-
-const MakerLinks = styled.div``;
-
-const StyledAnchor = styled.a`
-  color: rgb(${colors.white});
-  font-size: ${fonts.size.medium};
-  font-weight: ${fonts.weight.medium};
-  margin: 0px 49px;
-  margin-right: ${({ edge }) => (!!edge && edge === 'right' ? '0px' : '')};
-  margin-left: ${({ edge }) => (!!edge && edge === 'left' ? '0px' : '')};
 `;
 
 const StyledContent = styled.div`
@@ -111,15 +76,8 @@ const DimHeaderElement = styled.div`
   cursor: pointer;
   color: ${({ theme }) => theme.text.header_dim};
   font-weight: 500;
+  font-size: ${fonts.size.medium};
   margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
-`;
-
-const StyledLogo = styled.div`
-  height: 36px;
-  width: 36px;
-  cursor: pointer;
-  background: url(${logo}) no-repeat;
-  margin-top: 10px;
 `;
 
 const StyledLink = styled(Link)`
@@ -169,35 +127,7 @@ const BaseLayout = ({
   return (
     <StyledLayout>
       <StyledHeader>
-        <HeaderTop>
-          <HeaderTopContent>
-            <StyledLink to="/">
-              <StyledLogo />
-              <StyledTitle>MAKER</StyledTitle>
-            </StyledLink>
-            <MakerLinks>
-              <StyledAnchor href="/" target="_blank" edge={'left'}>
-                Products
-              </StyledAnchor>
-              <StyledAnchor
-                href="https://makerdao.com/whitepaper/"
-                target="_blank"
-              >
-                Learn
-              </StyledAnchor>
-              <StyledAnchor href="https://makerdao.com" target="_blank">
-                Company
-              </StyledAnchor>
-              <StyledAnchor
-                href="https://chat.makerdao.com/channel/collateral-discuss"
-                target="_blank"
-                edge={'right'}
-              >
-                Community
-              </StyledAnchor>
-            </MakerLinks>
-          </HeaderTopContent>
-        </HeaderTop>
+        <Header />
         <BorderLine />
         <HeaderBottom>
           <HeaderBottomContent>
@@ -231,12 +161,12 @@ const BaseLayout = ({
               <div style={{ marginTop: '150px' }}>{noContentMsg}</div>
             )}
           </StyledContent>
-          {/* <Footer /> */}
           <Padding />
         </StyledColumn>
       </AppWrapper>
       <Modals />
       <Toasts />
+      <Footer />
     </StyledLayout>
   );
 };
