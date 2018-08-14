@@ -20,8 +20,8 @@ import './global.css.js';
 import { metamaskConnectInit } from './reducers/metamask';
 import theme from './theme';
 
-import darkTheme from './shared/src/themes/dark';
-import './shared/src/styles/global.css';
+import darkTheme from './shared/themes/dark';
+import './shared/styles/global.css';
 
 const currTheme = {
   ...theme,
