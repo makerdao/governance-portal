@@ -4,10 +4,8 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
-
 import Header from '@makerdao/ui-components/dist/components/header';
 import Footer from '@makerdao/ui-components/dist/components/footer';
-
 import { colors, fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
 import Modals from '../components/modals';
@@ -95,17 +93,8 @@ const BorderLine = styled.div`
 `;
 
 const NetworkNotification = styled.div`
-  position: absolute;
-  width: 100%;
-  font-style: oblique;
   color: ${({ theme }) => theme.text.header_dim};
   font-weight: 500;
-  left: 0;
-  right: 0;
-  @media (max-width: 1000px) {
-    right: 145px;
-    left: unset;
-  }
 `;
 
 const BaseLayout = ({
