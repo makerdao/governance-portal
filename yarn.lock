@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@abylaw/ui-components@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@abylaw/ui-components/-/ui-components-0.0.9.tgz#423c85a64efe5f94aa30d8a5b086210f0e49789e"
+
 "@ledgerhq/hw-app-eth@^4.19.0":
   version "4.19.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-4.19.0.tgz#2a76556172b4e9522a9b92357a48b39e10e003a6"
