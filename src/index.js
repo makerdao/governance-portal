@@ -18,19 +18,21 @@ import {
 } from './middlewares';
 import './global.css.js';
 import { metamaskConnectInit } from './reducers/metamask';
+import theme from './theme';
 
 import darkTheme from './shared/src/themes/dark';
 import './shared/src/styles/global.css';
 
-const theme = {
+const currTheme = {
+  ...theme,
   ...darkTheme,
   header: {
     ...darkTheme.header,
-    backgroundColor: 'rgb(14,16,41)'
+    backgroundColor: theme.text.darker_default
   },
   footer: {
     ...darkTheme.footer,
-    backgroundColor: 'rgb(14,16,41)'
+    backgroundColor: theme.text.darker_default
   }
 };
 
@@ -69,7 +71,7 @@ if (process.env.NODE_ENV === 'production') {
   );
 } else {
   ReactDOM.render(
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={currTheme}>
       <Provider store={store}>
         {isMobile() ? <div>No mobile support yet</div> : <Router />}
       </Provider>
