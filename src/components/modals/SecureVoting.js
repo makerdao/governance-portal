@@ -6,10 +6,9 @@ import { modalOpen } from '../../reducers/modal';
 import { cutMiddle, formatRound } from '../../utils/misc';
 import { ethScanLink } from '../../utils/ethereum';
 import ProxySetup from './ProxySetup';
-import theme from '../../theme';
-import Button from '../Button';
 import Lock from './Lock';
 import Withdraw from './Withdraw';
+import AccountBox from '../AccountBox';
 import {
   StyledTitle,
   StyledTop,
@@ -18,12 +17,17 @@ import {
   VoteImpactHeading,
   EndButton,
   Skip,
-  FlexRowEnd
+  FlexRowEnd,
+  BoxLeft,
+  BoxRight
 } from './shared/styles';
-import { BoxLeft, BoxRight } from './ProxySetup/Summary';
 
 const PaddedFlexContainer = FlexContainer.extend`
   padding-top: 24px;
+`;
+
+const JustifiedFlexContainer = FlexContainer.extend`
+  justify-content: space-between;
 `;
 
 export const BoxMiddle = styled.span`
@@ -44,9 +48,10 @@ const SecureVoting = ({ modalOpen, activeAccount, network }) => {
   if (activeAccount !== undefined && activeAccount.hasProxy) {
     return (
       <Fragment>
-        <StyledTop>
+        <JustifiedFlexContainer>
           <StyledTitle>Secure voting</StyledTitle>
-        </StyledTop>
+          <AccountBox darkText={true} />
+        </JustifiedFlexContainer>
         <PaddedFlexContainer>
           <BoxLeft>
             <VoteImpactHeading>Total MKR Balance</VoteImpactHeading>

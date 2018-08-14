@@ -6,32 +6,13 @@ import {
   StyledTop,
   MkrAmt,
   FlexContainer,
-  VoteImpactHeading
+  VoteImpactHeading,
+  BoxLeft,
+  BoxRight
 } from '../shared/styles';
 import Button from '../../Button';
 import styled from 'styled-components';
 import { cutMiddle, formatRound } from '../../../utils/misc';
-
-export const BoxLeft = styled.span`
-  background-color: #f2f5fa;
-  height: 68px;
-  width: 100%;
-  border: 1px solid #dfe1e3;
-  border-radius: 4px 0px 0px 4px;
-  padding: 12px;
-`;
-
-export const BoxRight = styled.span`
-  background-color: #f2f5fa;
-  height: 68px;
-  width: 100%;
-  border-top: 1px solid #dfe1e3;
-  border-right: 1px solid #dfe1e3;
-  border-bottom: 1px solid #dfe1e3;
-  border-radius: 0px 4px 4px 0px;
-  float: right;
-  padding: 12px;
-`;
 
 const ButtonContainer = styled.div`
   width: 100%;

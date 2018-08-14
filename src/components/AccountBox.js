@@ -57,7 +57,8 @@ const DropdownList = styled.div`
 `;
 
 const SelectedItem = styled.div`
-  color: ${({ theme }) => theme.text.header_dim};
+  color: ${({ theme, darkText }) =>
+    darkText ? '#2A2A2A' : theme.text.header_dim};
   cursor: pointer;
   padding: 6px 10px;
   font-size: 15px;
@@ -144,7 +145,8 @@ class AccountBox extends Component {
       allAccounts,
       activeAccount,
       fetching,
-      getHardwareAccount
+      getHardwareAccount,
+      darkText
     } = this.props;
 
     if (fetching)
@@ -159,7 +161,7 @@ class AccountBox extends Component {
     return (
       <ClickOutside onOutsideClick={this.clickOutside}>
         <Wrapper>
-          <SelectedItem onClick={this.toggleDropdown}>
+          <SelectedItem onClick={this.toggleDropdown} darkText={darkText}>
             {activeAccount ? (
               <AccountBlurb
                 type={activeAccount.type}
@@ -201,13 +203,15 @@ class AccountBox extends Component {
 AccountBox.propTypes = {
   allAccounts: PropTypes.array,
   fetching: PropTypes.bool,
-  setActiveAccount: PropTypes.func
+  setActiveAccount: PropTypes.func,
+  darkText: PropTypes.bool
 };
 
 AccountBox.defaultProps = {
   allAccounts: [],
   onChange: () => {},
-  fetching: false
+  fetching: false,
+  darkText: false
 };
 
 const mapStateToProps = ({ accounts }, props) => ({

@@ -28,6 +28,27 @@ export const StyledTop = styled.div`
   justify-content: center;
 `;
 
+export const BoxLeft = styled.span`
+  background-color: #f2f5fa;
+  height: 68px;
+  width: 100%;
+  border: 1px solid #dfe1e3;
+  border-radius: 4px 0px 0px 4px;
+  padding: 12px;
+`;
+
+export const BoxRight = styled.span`
+  background-color: #f2f5fa;
+  height: 68px;
+  width: 100%;
+  border-top: 1px solid #dfe1e3;
+  border-right: 1px solid #dfe1e3;
+  border-bottom: 1px solid #dfe1e3;
+  border-radius: 0px 4px 4px 0px;
+  float: right;
+  padding: 12px;
+`;
+
 export const Column = styled.div`
   position: relative;
   width: 100%;
