@@ -5,9 +5,7 @@ import {
   Route,
   withRouter
 } from 'react-router-dom';
-import { ThemeProvider } from 'styled-components';
 import BaseLayout from './layouts/base';
-import theme from './theme';
 import Timeline from './pages/Timeline';
 import Topic from './pages/Topic';
 import Proposal from './pages/Proposal';
@@ -27,27 +25,22 @@ const ScrollToTop = withRouter(ScrollToTopUtil);
 
 class App extends Component {
   render = () => (
-    <ThemeProvider theme={theme}>
-      <Router>
-        <ScrollToTop>
-          <div className="App">
-            <ErrorBoundary>
-              <BaseLayout>
-                <Switch>
-                  <Route exact path="/" component={Timeline} />
-                  <Route path="/not-found" component={NotFound} />
-                  <Route
-                    path="/:topicSlug/:proposalSlug"
-                    component={Proposal}
-                  />
-                  <Route path="/:topicSlug" component={Topic} />
-                </Switch>
-              </BaseLayout>
-            </ErrorBoundary>
-          </div>
-        </ScrollToTop>
-      </Router>
-    </ThemeProvider>
+    <Router>
+      <ScrollToTop>
+        <div className="App">
+          <ErrorBoundary>
+            <BaseLayout>
+              <Switch>
+                <Route exact path="/" component={Timeline} />
+                <Route path="/not-found" component={NotFound} />
+                <Route path="/:topicSlug/:proposalSlug" component={Proposal} />
+                <Route path="/:topicSlug" component={Topic} />
+              </Switch>
+            </BaseLayout>
+          </ErrorBoundary>
+        </div>
+      </ScrollToTop>
+    </Router>
   );
 }
 

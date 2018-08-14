@@ -21,6 +21,10 @@
   dependencies:
     events "^2.0.0"
 
+"@makerdao/ui-components@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@makerdao/ui-components/-/ui-components-0.0.9.tgz#dc3a5a1e70aa84b244c4cd7319f8b7c9af49b5a8"
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.0.tgz#ecdf48d532c58ea477acfcab80348424f8d0662f"

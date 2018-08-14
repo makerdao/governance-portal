@@ -3,17 +3,22 @@ import styled from 'styled-components';
 import theme from '../theme.js';
 import { Link } from 'react-router-dom';
 
+const Container = styled.div`
+  text-align: center;
+`;
+
 const Background = styled.div`
   background-color: ${theme.text.darker_default};
   width: 100vw;
   height: 100vw;
-  position: relative;
+  position: absolute;
   left: 50%;
   right: 50%;
   margin-left: -50vw;
   margin-right: -50vw;
   margin-bottom: -50vw;
   overflow: auto;
+  z-index: -2;
 `;
 
 const StyledTitle = styled.div`
@@ -21,7 +26,7 @@ const StyledTitle = styled.div`
   line-height: 45px;
   color: white;
   font-weight: 500;
-  margin-top: 191px;
+  padding-top: 191px;
 `;
 
 const StyledBody = styled.div`
@@ -46,14 +51,15 @@ export const HomeButton = styled(Link)`
 `;
 
 const NotFound = () => (
-  <Background>
+  <Container>
+    <Background />
     <StyledTitle>Page Not Found</StyledTitle>
     <StyledBody>
       The page you're looking for is either missing or it doesn't exist.
       Double-check that the web address is correct.
     </StyledBody>
     <HomeButton to="/">Go to Homepage</HomeButton>
-  </Background>
+  </Container>
 );
 
 export default NotFound;

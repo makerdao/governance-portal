@@ -6,6 +6,7 @@ import ReduxThunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 import Raven from 'raven-js';
 import ReactGA from 'react-ga';
+import { ThemeProvider } from 'styled-components';
 
 import rootReducer from './reducers';
 import { isMobile } from './utils/misc';
@@ -17,6 +18,23 @@ import {
 } from './middlewares';
 import './global.css.js';
 import { metamaskConnectInit } from './reducers/metamask';
+import theme from './theme';
+
+import darkTheme from '@makerdao/ui-components/dist/themes/dark';
+import '@makerdao/ui-components/dist/styles/global.css';
+
+const currTheme = {
+  ...theme,
+  ...darkTheme,
+  header: {
+    ...darkTheme.header,
+    backgroundColor: theme.text.darker_default
+  },
+  footer: {
+    ...darkTheme.footer,
+    backgroundColor: theme.text.darker_default
+  }
+};
 
 const store = createStore(
   rootReducer,
@@ -43,17 +61,21 @@ if (process.env.NODE_ENV === 'production') {
   ).install();
   Raven.context(() =>
     ReactDOM.render(
-      <Provider store={store}>
-        {isMobile() ? <div>No mobile support yet</div> : <Router />}
-      </Provider>,
+      <ThemeProvider theme={theme}>
+        <Provider store={store}>
+          {isMobile() ? <div>No mobile support yet</div> : <Router />}
+        </Provider>
+      </ThemeProvider>,
       document.getElementById('root')
     )
   );
 } else {
   ReactDOM.render(
-    <Provider store={store}>
-      {isMobile() ? <div>No mobile support yet</div> : <Router />}
-    </Provider>,
+    <ThemeProvider theme={currTheme}>
+      <Provider store={store}>
+        {isMobile() ? <div>No mobile support yet</div> : <Router />}
+      </Provider>
+    </ThemeProvider>,
     document.getElementById('root')
   );
 }
