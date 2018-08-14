@@ -11,7 +11,6 @@ import Withdraw from './Withdraw';
 import AccountBox from '../AccountBox';
 import {
   StyledTitle,
-  StyledTop,
   MkrAmt,
   FlexContainer,
   VoteImpactHeading,
@@ -42,10 +41,10 @@ export const BoxMiddle = styled.span`
 
 const SecureVoting = ({ modalOpen, activeAccount, network }) => {
   const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
-  const { linkedAccount } = activeAccount.proxy;
-  const isColdWallet = activeAccount.proxyRole === 'cold';
-  const coldWallet = isColdWallet ? activeAccount : linkedAccount;
   if (activeAccount !== undefined && activeAccount.hasProxy) {
+    const { linkedAccount } = activeAccount.proxy;
+    const isColdWallet = activeAccount.proxyRole === 'cold';
+    const coldWallet = isColdWallet ? activeAccount : linkedAccount;
     return (
       <Fragment>
         <JustifiedFlexContainer>
