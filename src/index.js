@@ -20,8 +20,8 @@ import './global.css.js';
 import { metamaskConnectInit } from './reducers/metamask';
 import theme from './theme';
 
-import darkTheme from './shared/themes/dark';
-import './shared/styles/global.css';
+import darkTheme from '@makerdao/ui-components/dist/themes/dark';
+import '@makerdao/ui-components/dist/styles/global.css';
 
 const currTheme = {
   ...theme,

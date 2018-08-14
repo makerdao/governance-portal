@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
 
-import Header from '../shared/components/header';
-import Footer from '../shared/components/footer';
+import Header from '@makerdao/ui-components/dist/components/header';
+import Footer from '@makerdao/ui-components/dist/components/footer';
 
 import { colors, fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
