@@ -1,87 +1,93 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-
-import { sendMkrToProxy } from '../../reducers/proxy';
+import styled from 'styled-components';
 import { getActiveAccount } from '../../reducers/accounts';
-import { modalClose, modalOpen } from '../../reducers/modal';
+import { modalOpen } from '../../reducers/modal';
 import { cutMiddle, formatRound } from '../../utils/misc';
 import { ethScanLink } from '../../utils/ethereum';
 import ProxySetup from './ProxySetup';
+import theme from '../../theme';
+import Button from '../Button';
+import Lock from './Lock';
+import Withdraw from './Withdraw';
 import {
   StyledTitle,
-  StyledBlurb,
   StyledTop,
-  VoteImpact,
+  MkrAmt,
+  FlexContainer,
   VoteImpactHeading,
-  MkrAmt
+  EndButton,
+  Skip,
+  FlexRowEnd
 } from './shared/styles';
+import { BoxLeft, BoxRight } from './ProxySetup/Summary';
 
-const SecureVoting = ({ activeAccount, network }) => {
+const PaddedFlexContainer = FlexContainer.extend`
+  padding-top: 24px;
+`;
+
+export const BoxMiddle = styled.span`
+  background-color: #f2f5fa;
+  height: 68px;
+  width: 270px;
+  border-top: 1px solid #dfe1e3;
+  border-right: 1px solid #dfe1e3;
+  border-bottom: 1px solid #dfe1e3;
+  padding: 12px;
+`;
+
+const SecureVoting = ({ modalOpen, activeAccount, network }) => {
+  const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
+  const { linkedAccount } = activeAccount.proxy;
+  const isColdWallet = activeAccount.proxyRole === 'cold';
+  const coldWallet = isColdWallet ? activeAccount : linkedAccount;
   if (activeAccount !== undefined && activeAccount.hasProxy) {
     return (
       <Fragment>
-        <StyledTop style={{ justifyContent: 'flex-start' }}>
+        <StyledTop>
           <StyledTitle>Secure voting</StyledTitle>
         </StyledTop>
-        <StyledBlurb>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus
-          consequat euismod. Nam sagittis lorem nisl, sed aliquam purus finibus
-          eget
-        </StyledBlurb>
-        <VoteImpact>
-          <div
-            style={{
-              width: '100%',
-              maxWidth: '180px',
-              padding: '8px 18px'
-            }}
-          >
-            <VoteImpactHeading>Total MKR balance</VoteImpactHeading>
-            <MkrAmt>{formatRound(activeAccount.mkrBalance, 4)}</MkrAmt>
-          </div>
-          <div
-            style={{
-              width: '100%',
-              padding: '8px 30px',
-              maxWidth: '180px',
-              borderLeft: '1px solid #DFE1E3'
-            }}
-          >
+        <PaddedFlexContainer>
+          <BoxLeft>
+            <VoteImpactHeading>Total MKR Balance</VoteImpactHeading>
+            <MkrAmt>
+              {formatRound(
+                Number(coldWallet.mkrBalance) +
+                  Number(activeAccount.proxy.votingPower),
+                4
+              )}
+            </MkrAmt>
+          </BoxLeft>
+          <BoxMiddle>
             <VoteImpactHeading>In voting contract</VoteImpactHeading>
             <MkrAmt>{formatRound(activeAccount.proxy.votingPower, 4)}</MkrAmt>
-          </div>
-          <div
-            style={{
-              width: '100%',
-              padding: '8px 30px',
-              maxWidth: '180px',
-              borderLeft: '1px solid #DFE1E3'
-            }}
-          >
-            <VoteImpactHeading>Linked address</VoteImpactHeading>
-            <MkrAmt noSuffix>
-              {cutMiddle(activeAccount.proxy.linkedAccount.address, 2, 4)}{' '}
+          </BoxMiddle>
+          <BoxRight>
+            <VoteImpactHeading> LinkedAddress </VoteImpactHeading>
+            <FlexContainer>
+              <MkrAmt noSuffix> {cutMiddle(linkedAccount.address)} </MkrAmt>
               <a
                 target="_blank"
-                href={ethScanLink(
-                  activeAccount.proxy.linkedAccount.address,
-                  network
-                )}
+                href={ethScanLink(linkedAccount.address, networkShown)}
               >
                 Etherscan
               </a>
-            </MkrAmt>
-          </div>
-        </VoteImpact>
-        <div
-          style={{
-            alignSelf: 'center',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            width: '100%',
-            marginTop: '18px'
-          }}
-        />
+            </FlexContainer>
+          </BoxRight>
+        </PaddedFlexContainer>
+        <FlexRowEnd>
+          <Skip mr={24} mt={24} onClick={() => modalOpen(Withdraw)}>
+            - Withdraw from voting contract
+          </Skip>
+          <EndButton
+            slim
+            onClick={() => {
+              modalOpen(Lock);
+            }}
+          >
+            + Top-up voting contract
+          </EndButton>
+        </FlexRowEnd>
       </Fragment>
     );
   } else return <ProxySetup />;
@@ -92,5 +98,5 @@ export default connect(
     activeAccount: getActiveAccount(state),
     network: state.metamask.network
   }),
-  { sendMkrToProxy, modalClose, modalOpen }
+  { modalOpen }
 )(SecureVoting);

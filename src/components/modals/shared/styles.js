@@ -10,6 +10,12 @@ export const StyledTitle = styled.div`
   font-size: 28px;
 `;
 
+export const FlexContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
 export const StyledBlurb = styled.div`
   line-height: 22px;
   font-size: 17px;
@@ -198,7 +204,7 @@ export const VoteImpact = styled.div`
 export const IntroTxBox = styled.div`
   display: flex;
   background-color: #ececec;
-  color: #868997;
+  color: ${theme.text.dim_grey_alt};
   border-radius: 4px;
   padding: 10px;
   margin: 0px 20px;
@@ -215,7 +221,7 @@ export const Oblique = styled.strong`
 `;
 
 export const VoteImpactHeading = styled.p`
-  color: #868997;
+  color: ${theme.text.dim_grey_alt};
   font-size: 14px;
   white-space: nowrap;
 `;

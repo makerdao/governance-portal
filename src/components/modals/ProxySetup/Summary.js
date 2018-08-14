@@ -1,28 +1,27 @@
 import React, { Fragment } from 'react';
 
-import { StyledTitle, StyledBlurb, StyledTop } from '../shared/styles';
+import {
+  StyledTitle,
+  StyledBlurb,
+  StyledTop,
+  MkrAmt,
+  FlexContainer,
+  VoteImpactHeading
+} from '../shared/styles';
 import Button from '../../Button';
 import styled from 'styled-components';
-import theme from '../../../theme';
 import { cutMiddle, formatRound } from '../../../utils/misc';
 
-const FlexContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const BoxHalfLeft = styled.span`
+export const BoxLeft = styled.span`
   background-color: #f2f5fa;
   height: 68px;
   width: 100%;
   border: 1px solid #dfe1e3;
   border-radius: 4px 0px 0px 4px;
-  float: left;
   padding: 12px;
 `;
 
-const BoxHalfRight = styled.span`
+export const BoxRight = styled.span`
   background-color: #f2f5fa;
   height: 68px;
   width: 100%;
@@ -32,25 +31,6 @@ const BoxHalfRight = styled.span`
   border-radius: 0px 4px 4px 0px;
   float: right;
   padding: 12px;
-`;
-
-const BoxTitle = styled.div`
-  font-size: 14px;
-  color: ${theme.text.dim_grey_alt};
-  line-height: 22pm;
-  height: 50%;
-`;
-
-const BoxText = styled.div`
-  font-size: 16px;
-  color: #212536;
-  line-height: 24pm;
-`;
-
-const MkrText = styled.span`
-  font-size: 16px;
-  color: ${theme.text.dim_grey};
-  line-height: 24pm;
 `;
 
 const ButtonContainer = styled.div`
@@ -72,16 +52,14 @@ export default ({ modalClose, sendMkrAmount, hotAccount }) => (
       clicking Secure voting on the governance dashboard
     </StyledBlurb>
     <FlexContainer>
-      <BoxHalfLeft>
-        <BoxTitle>Your hot wallet</BoxTitle>
-        <BoxText> {cutMiddle(hotAccount.address, 12, 12)} </BoxText>
-      </BoxHalfLeft>
-      <BoxHalfRight>
-        <BoxTitle>Locked in voting contract:</BoxTitle>
-        <BoxText>
-          {formatRound(sendMkrAmount, 5)} <MkrText>MKR</MkrText>{' '}
-        </BoxText>
-      </BoxHalfRight>
+      <BoxLeft>
+        <VoteImpactHeading>Your hot wallet</VoteImpactHeading>
+        <MkrAmt noSuffix> {cutMiddle(hotAccount.address, 12, 12)} </MkrAmt>
+      </BoxLeft>
+      <BoxRight>
+        <VoteImpactHeading>Locked in voting contract:</VoteImpactHeading>
+        <MkrAmt>{formatRound(sendMkrAmount, 5)}</MkrAmt>
+      </BoxRight>
     </FlexContainer>
     <ButtonContainer>
       <Button
