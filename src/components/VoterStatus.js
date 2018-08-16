@@ -81,8 +81,7 @@ const VoterStatus = ({
       </Padding>
     );
   }
-  if (!account) return <Padding />;
-  if (!account.hasProxy)
+  if (!account || !account.hasProxy)
     return (
       <WelcomeBanner linkRequested={linkRequested} modalOpen={modalOpen} />
     );
