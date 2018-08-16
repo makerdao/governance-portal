@@ -57,9 +57,12 @@ class Link extends Component {
     const hotExists = this.state.hot && this.state.hot.address.length > 0;
     const coldExists = this.state.cold && this.state.cold.address.length > 0;
     const swappable = !!coldExists && !!hotExists;
-    const validAccounts = this.props.accounts.filter(
-      account => !account.hasProxy
-    );
+    const validAccounts = this.props.accounts.filter(account => {
+      return !account.hasProxy;
+    });
+    const someAccountAlreadyLinked =
+      validAccounts.length < this.props.accounts.length;
+    console.log(someAccountAlreadyLinked);
     const accountsMinusHot = this.state.hot
       ? differenceWith((a, b) => eq(a.address, b.address), validAccounts, [
           this.state.hot
@@ -97,7 +100,11 @@ class Link extends Component {
           onSelect={account => this.setState({ cold: account })}
           items={accountsMinusHot}
           itemKey="address"
-          emptyMsg="no other not already linked accounts detected"
+          emptyMsg={
+            someAccountAlreadyLinked
+              ? 'no other not already linked accounts detected'
+              : ''
+          }
           renderItem={account => (
             <AccountBlurb
               noAddressCut
@@ -118,6 +125,11 @@ class Link extends Component {
           onSelect={account => this.setState({ hot: account })}
           items={accountsMinusCold}
           itemKey="address"
+          emptyMsg={
+            someAccountAlreadyLinked
+              ? 'no other not already linked accounts detected'
+              : ''
+          }
           renderItem={account => (
             <AccountBlurb
               noAddressCut
