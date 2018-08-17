@@ -129,7 +129,6 @@ export default function createLedgerSubprovider(
         addresses[path] = address;
         addressToPathMap[address.toLowerCase()] = path;
       }
-      console.log('addresses', addresses);
       return addresses;
     } finally {
       transport.close();
