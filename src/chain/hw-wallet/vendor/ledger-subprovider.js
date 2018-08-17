@@ -18,13 +18,10 @@ function makeError(msg, id) {
 
 function obtainPathComponentsFromDerivationPath(derivationPath) {
   // check if derivation path follows 44'/60'/x'/n pattern
-  const regExp = /^(44'\/(?:1|60|61)'\/\d+'?\/)(\d+)$/;
+  const regExp = /^(44'\/(?:1|60|61)'\/\d+'?\/(?:\d+'?\/)?)(\d+)$/;
   const matchResult = regExp.exec(derivationPath);
   if (matchResult === null) {
-    throw makeError(
-      "To get multiple accounts your derivation path must follow pattern 44'/60|61'/x'/n ",
-      'InvalidDerivationPath'
-    );
+    throw makeError('invalid derivation path', 'InvalidDerivationPath');
   }
   return { basePath: matchResult[1], index: parseInt(matchResult[2], 10) };
 }
@@ -46,7 +43,8 @@ type SubproviderOptions = {
 
 const defaultOptions = {
   networkId: 1, // mainnet
-  path: "44'/60'/0'/0", // ledger default derivation path
+  path: "44'/60'/0'/0/0", // ledger default derivation path
+  legacyPath: "44'/60'/0'/0",
   askConfirm: false,
   accountsLength: 1,
   accountsOffset: 0
@@ -75,7 +73,14 @@ export default function createLedgerSubprovider(
   getTransport: () => Transport<*>,
   options?: SubproviderOptions
 ): HookedWalletSubprovider {
-  const { networkId, path, askConfirm, accountsLength, accountsOffset } = {
+  const {
+    networkId,
+    path,
+    legacyPath,
+    askConfirm,
+    accountsLength,
+    accountsOffset
+  } = {
     ...defaultOptions,
     ...options
   };
@@ -88,19 +93,19 @@ export default function createLedgerSubprovider(
     );
   }
 
-  const pathComponents = obtainPathComponentsFromDerivationPath(path);
-
   const addressToPathMap = {};
 
   async function getAccounts() {
     const transport = await getTransport();
     try {
       const eth = new AppEth(transport);
+      const addresses = {};
+
+      //get address(es) using the new ledger path
+      const pathComponents = obtainPathComponentsFromDerivationPath(path);
       const addressGenerator = await new AddressGenerator(
         await eth.getAddress(pathComponents.basePath, askConfirm, true)
       );
-
-      const addresses = {};
       for (let i = accountsOffset; i < accountsOffset + accountsLength; i++) {
         const path =
           pathComponents.basePath + (pathComponents.index + i).toString();
@@ -108,6 +113,23 @@ export default function createLedgerSubprovider(
         addresses[path] = address;
         addressToPathMap[address.toLowerCase()] = path;
       }
+
+      //get address(es) using the old ledger path
+      const legacyPathComponents = obtainPathComponentsFromDerivationPath(
+        legacyPath
+      );
+      const legacyAddressGenerator = await new AddressGenerator(
+        await eth.getAddress(legacyPathComponents.basePath, askConfirm, true)
+      );
+      for (let i = accountsOffset; i < accountsOffset + accountsLength; i++) {
+        const path =
+          legacyPathComponents.basePath +
+          (legacyPathComponents.index + i).toString();
+        const address = legacyAddressGenerator.getAddressString(i);
+        addresses[path] = address;
+        addressToPathMap[address.toLowerCase()] = path;
+      }
+      console.log('addresses', addresses);
       return addresses;
     } finally {
       transport.close();
