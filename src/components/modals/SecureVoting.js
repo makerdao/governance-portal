@@ -7,7 +7,9 @@ import { cutMiddle, formatRound } from '../../utils/misc';
 import { ethScanLink } from '../../utils/ethereum';
 import ProxySetup from './ProxySetup';
 import Lock from './Lock';
+import theme from '../../theme';
 import Withdraw from './Withdraw';
+import BreakLink from './BreakLink';
 import AccountBox from '../AccountBox';
 import {
   StyledTitle,
@@ -27,6 +29,13 @@ const PaddedFlexContainer = FlexContainer.extend`
 
 const JustifiedFlexContainer = FlexContainer.extend`
   justify-content: space-between;
+`;
+
+const LineSpacer = FlexContainer.extend`
+  margin-top: 13px;
+  color: ${theme.text.dim_grey};
+  font-size: 18px;
+  color: #939393;
 `;
 
 export const BoxMiddle = styled.span`
@@ -79,18 +88,22 @@ const SecureVoting = ({ modalOpen, activeAccount, network }) => {
             </FlexContainer>
           </BoxRight>
         </PaddedFlexContainer>
+        <EndButton
+          slim
+          onClick={() => {
+            modalOpen(Lock);
+          }}
+        >
+          Top-up voting contract
+        </EndButton>
         <FlexRowEnd>
-          <Skip mr={24} mt={24} onClick={() => modalOpen(Withdraw)}>
-            - Withdraw from voting contract
+          <Skip mr={10} mt={13} onClick={() => modalOpen(BreakLink)}>
+            Break wallet link
           </Skip>
-          <EndButton
-            slim
-            onClick={() => {
-              modalOpen(Lock);
-            }}
-          >
-            + Top-up voting contract
-          </EndButton>
+          <LineSpacer> | </LineSpacer>
+          <Skip ml={10} mr={0} mt={13} onClick={() => modalOpen(Withdraw)}>
+            Withdraw from voting contract
+          </Skip>
         </FlexRowEnd>
       </Fragment>
     );

@@ -2,7 +2,6 @@ import { connect } from 'react-redux';
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-
 import { modalOpen } from '../reducers/modal';
 import { getActiveAccount } from '../reducers/accounts';
 import { linkResumable } from '../reducers/proxy';

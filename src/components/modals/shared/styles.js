@@ -120,6 +120,7 @@ export const Skip = styled.p`
   color: ${theme.text.dim_grey_alt};
   cursor: pointer;
   margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
+  margin-left: ${({ ml }) => (ml ? `${ml}px` : '')};
   margin-top: ${({ mt }) => (mt ? `${mt}px` : '')};
 `;
 

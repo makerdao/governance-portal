@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ReactGA from 'react-ga';
-
 import Intro from './Intro';
 import Link from './Link';
 import Transaction from '../shared/Transaction';

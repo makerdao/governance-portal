@@ -5,7 +5,8 @@ import {
   initiateLink as _initiateLink,
   approveLink as _approveLink,
   sendMkrToProxy as _sendMkrToProxy,
-  unlockWithdrawMkr as _unlockWithdrawMkr
+  unlockWithdrawMkr as _unlockWithdrawMkr,
+  breakLink as _breakLink
 } from '../chain/write';
 import { parseError } from '../utils/misc';
 import { awaitTx } from '../chain/web3';
@@ -36,6 +37,11 @@ const WITHDRAW_MKR_REQUEST = 'proxy/WITHDRAW_MKR_REQUEST';
 const WITHDRAW_MKR_SENT = 'proxy/WITHDRAW_MKR_SENT';
 export const WITHDRAW_MKR_SUCCESS = 'proxy/WITHDRAW_MKR_SUCCESS';
 const WITHDRAW_MKR_FAILURE = 'proxy/WITHDRAW_MKR_FAILURE';
+
+const BREAK_LINK_REQUEST = 'proxy/BREAK_LINK_REQUEST';
+const BREAK_LINK_SENT = 'proxy/BREAK_LINK_SENT';
+export const BREAK_LINK_SUCCESS = 'proxy/BREAK_LINK_SUCCESS';
+const BREAK_LINK_FAILURE = 'proxy/BREAK_LINK_FAILURE';
 
 const CLEAR = 'proxy/CLEAR';
 const GO_TO_STEP = 'proxy/GO_TO_STEP';
@@ -176,6 +182,17 @@ export const withdrawMkr = value => (dispatch, getState) => {
   });
 };
 
+export const breakLink = () => async (dispatch, getState) => {
+  //dispatch breakLink request
+  const account = getActiveAccount(getState());
+  handleTx({
+    prefix: 'BREAK_LINK',
+    dispatch,
+    action: _breakLink(account),
+    acctType: account.type
+  });
+};
+
 export const smartStepSkip = () => (dispatch, getState) => {
   const { setupProgress } = getState().proxy;
   if (setupProgress === 'lockInput') return dispatch(goToStep('summary'));
@@ -301,6 +318,24 @@ const proxy = createReducer(withExisting, {
   [GO_TO_STEP]: (state, { payload }) => ({
     ...state,
     setupProgress: payload
+  }),
+  // Break Link -------------------------------------
+  [BREAK_LINK_REQUEST]: state => ({
+    ...state,
+    breakLinkInitiated: true
+  }),
+  [BREAK_LINK_SENT]: (state, { payload }) => ({
+    ...state,
+    confirmingBreakLink: true,
+    breakLinkTxHash: payload.txHash
+  }),
+  [BREAK_LINK_SUCCESS]: state => ({
+    ...state,
+    confirmingBreakLink: false
+  }),
+  [BREAK_LINK_FAILURE]: state => ({
+    ...state,
+    confirmingBreakLink: false
   }),
   // Dev --------------------------------------------
   MOCK_NEXT_STEP: state => {
