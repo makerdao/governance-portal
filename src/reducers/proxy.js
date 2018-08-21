@@ -305,7 +305,8 @@ const proxy = createReducer(withExisting, {
   }),
   [WITHDRAW_MKR_FAILURE]: state => ({
     ...state,
-    confirmingWithdrawMkr: false
+    confirmingWithdrawMkr: false,
+    withdrawMkrAmount: false
   }),
   // Reset ------------------------------------------
   [CLEAR]: state =>
@@ -335,7 +336,8 @@ const proxy = createReducer(withExisting, {
   }),
   [BREAK_LINK_FAILURE]: state => ({
     ...state,
-    confirmingBreakLink: false
+    confirmingBreakLink: false,
+    breakLinkInitiated: false
   }),
   // Dev --------------------------------------------
   MOCK_NEXT_STEP: state => {

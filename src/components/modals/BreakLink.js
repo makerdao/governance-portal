@@ -10,16 +10,65 @@ import {
 import Button from '../Button';
 import { connect } from 'react-redux';
 import { breakLink } from '../../reducers/proxy';
+import Transaction from './shared/Transaction';
+import { modalClose } from '../../reducers/modal';
+import Withdraw from './Withdraw';
+import { modalOpen } from '../../reducers/modal';
 
-const BreakLink = ({ breakLink, activeAccount }) => {
-  const { linkedAccount } = activeAccount.proxy;
-  const isColdWallet = activeAccount.proxyRole === 'cold';
-  const coldAddress = isColdWallet
-    ? activeAccount.address
-    : linkedAccount.address;
-  const hotAddress = isColdWallet
-    ? linkedAccount.address
-    : activeAccount.address;
+const BreakLink = ({
+  breakLink,
+  modalClose,
+  modalOpen,
+  account,
+  txHash,
+  confirming,
+  network,
+  txSent
+}) => {
+  if (txSent) {
+    return (
+      <Transaction
+        lastCard
+        {...{ txHash, confirming, network, account }}
+        nextStep={() => modalClose()}
+      />
+    );
+  }
+  const { linkedAccount } = account.proxy;
+  const isColdWallet = account.proxyRole === 'cold';
+  const coldAddress = isColdWallet ? account.address : linkedAccount.address;
+  const hotAddress = isColdWallet ? linkedAccount.address : account.address;
+  if (account.proxy.votingPower > 0) {
+    return (
+      <Fragment>
+        <StyledTop>
+          <StyledTitle>Break Wallet Link</StyledTitle>
+        </StyledTop>
+        <StyledBlurb style={{ textAlign: 'center', marginTop: '30px' }}>
+          <div style={{ marginTop: '20px' }}>
+            Before you can break your wallet link, you must withdraw all MKR
+            from the secure voting contract
+          </div>
+        </StyledBlurb>
+        <div
+          style={{
+            display: 'flex',
+            marginTop: '20px',
+            justifyContent: 'flex-end'
+          }}
+        >
+          <Button
+            slim
+            onClick={() => {
+              modalOpen(Withdraw);
+            }}
+          >
+            Withdraw MKR
+          </Button>
+        </div>
+      </Fragment>
+    );
+  }
   return (
     <Fragment>
       <StyledTop>
@@ -55,10 +104,14 @@ const BreakLink = ({ breakLink, activeAccount }) => {
 };
 
 const mapStateToProps = state => ({
-  activeAccount: getActiveAccount(state)
+  account: getActiveAccount(state),
+  txHash: state.proxy.breakLinkTxHash,
+  confirming: state.proxy.confirmingBreakLink,
+  network: state.metamask.network,
+  txSent: !!state.proxy.breakLinkInitiated
 });
 
 export default connect(
   mapStateToProps,
-  { breakLink }
+  { breakLink, modalClose, modalOpen }
 )(BreakLink);
