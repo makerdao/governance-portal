@@ -9,8 +9,9 @@ import {
 } from './shared/styles';
 import Button from '../Button';
 import { connect } from 'react-redux';
+import { breakLink } from '../../reducers/proxy';
 
-const BreakLink = ({ activeAccount }) => {
+const BreakLink = ({ breakLink, activeAccount }) => {
   const { linkedAccount } = activeAccount.proxy;
   const isColdWallet = activeAccount.proxyRole === 'cold';
   const coldAddress = isColdWallet
@@ -40,7 +41,12 @@ const BreakLink = ({ activeAccount }) => {
           justifyContent: 'flex-end'
         }}
       >
-        <Button slim onClick={() => {}}>
+        <Button
+          slim
+          onClick={() => {
+            breakLink();
+          }}
+        >
           Break Link
         </Button>
       </div>
@@ -52,4 +58,7 @@ const mapStateToProps = state => ({
   activeAccount: getActiveAccount(state)
 });
 
-export default connect(mapStateToProps)(BreakLink);
+export default connect(
+  mapStateToProps,
+  { breakLink }
+)(BreakLink);

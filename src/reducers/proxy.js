@@ -182,8 +182,8 @@ export const withdrawMkr = value => (dispatch, getState) => {
   });
 };
 
-export const breakLink = () => async (dispatch, getState) => {
-  //dispatch breakLink request
+export const breakLink = () => (dispatch, getState) => {
+  dispatch({ type: BREAK_LINK_REQUEST });
   const account = getActiveAccount(getState());
   handleTx({
     prefix: 'BREAK_LINK',
