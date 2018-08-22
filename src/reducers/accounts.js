@@ -262,6 +262,10 @@ const updateProxyBalance = adding => (state, { payload: amount }) => {
 
 const breakProxyLink = () => state => {
   let account = getActiveAccount({ accounts: state });
+  let linkedAccountVar = getAccount(
+    { accounts: state },
+    account.proxy.linkedAccount.address
+  );
   const linkedAccount = account.proxy.linkedAccount;
   account = {
     ...account,
@@ -278,14 +282,7 @@ const breakProxyLink = () => state => {
       }
     }
   };
-
   let allAccounts = withUpdatedAccount(state.allAccounts, account);
-
-  let linkedAccountVar = getAccount(
-    { accounts: state },
-    account.proxy.linkedAccount.address
-  );
-
   if (linkedAccountVar) {
     linkedAccountVar = {
       ...linkedAccountVar,
