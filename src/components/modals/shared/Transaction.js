@@ -30,51 +30,47 @@ const Transaction = ({
   confirming,
   lastCard,
   account
-}) => {
-  return (
-    <Fragment>
-      <StyledTop>
-        <StyledTitle>
-          {txHash ? (
-            confirming ? (
-              <Fragment>
-                Waiting for confirmation...
-                <InlineLoader size={20} color="header" background="white" />
-              </Fragment>
-            ) : (
-              'Transaction confirmed'
-            )
-          ) : (
+}) => (
+  <Fragment>
+    <StyledTop>
+      <StyledTitle>
+        {txHash ? (
+          confirming ? (
             <Fragment>
-              Approve transaction on {account.proxyRole} wallet
+              Waiting for confirmation...
+              <InlineLoader size={20} color="header" background="white" />
             </Fragment>
-          )}
-        </StyledTitle>
-      </StyledTop>
-      <Logo name={account.type.toLowerCase()} />
-      <div
-        style={{
-          alignSelf: 'center',
-          textAlign: 'center'
-        }}
-      >
-        {txHash && (
-          <Fragment>
-            <TxHash href={ethScanLink(txHash, network)} target="_blank">
-              View on Etherscan
-            </TxHash>
-            <br />
-            {!confirming && (
-              <Button slim onClick={nextStep}>
-                {lastCard ? 'Finish and close' : 'Continue'}
-              </Button>
-            )}
-          </Fragment>
+          ) : (
+            'Transaction confirmed'
+          )
+        ) : (
+          <Fragment>Approve transaction on {account.proxyRole} wallet</Fragment>
         )}
-      </div>
-    </Fragment>
-  );
-};
+      </StyledTitle>
+    </StyledTop>
+    <Logo name={account.type.toLowerCase()} />
+    <div
+      style={{
+        alignSelf: 'center',
+        textAlign: 'center'
+      }}
+    >
+      {txHash && (
+        <Fragment>
+          <TxHash href={ethScanLink(txHash, network)} target="_blank">
+            View on Etherscan
+          </TxHash>
+          <br />
+          {!confirming && (
+            <Button slim onClick={nextStep}>
+              {lastCard ? 'Finish and close' : 'Continue'}
+            </Button>
+          )}
+        </Fragment>
+      )}
+    </div>
+  </Fragment>
+);
 
 Transaction.defaultProps = {
   account: {

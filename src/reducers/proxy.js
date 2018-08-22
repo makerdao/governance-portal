@@ -332,7 +332,9 @@ const proxy = createReducer(withExisting, {
   }),
   [BREAK_LINK_SUCCESS]: state => ({
     ...state,
-    confirmingBreakLink: false
+    confirmingBreakLink: false,
+    hotAddress: '',
+    coldAddress: ''
   }),
   [BREAK_LINK_FAILURE]: state => ({
     ...state,

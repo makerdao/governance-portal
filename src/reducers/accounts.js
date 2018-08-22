@@ -18,7 +18,8 @@ import { add, eq, subtract, promisedProperties } from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
-  INITIATE_LINK_REQUEST
+  INITIATE_LINK_REQUEST,
+  BREAK_LINK_SUCCESS
 } from './proxy';
 import { createSubProvider } from '../chain/hw-wallet';
 import { netNameToId } from '../utils/ethereum';
@@ -259,6 +260,53 @@ const updateProxyBalance = adding => (state, { payload: amount }) => {
   return { ...state, allAccounts };
 };
 
+const breakProxyLink = () => state => {
+  let account = getActiveAccount({ accounts: state });
+  const linkedAccount = account.proxy.linkedAccount;
+  account = {
+    ...account,
+    hasProxy: false,
+    proxyRole: '',
+    proxy: {
+      ...account.proxy,
+      address: '',
+      linkedAccount: {
+        ...account.proxy.linkedAccount,
+        address: '',
+        proxyRole: '',
+        mkrBalance: ''
+      }
+    }
+  };
+
+  let allAccounts = withUpdatedAccount(state.allAccounts, account);
+
+  let linkedAccountVar = getAccount(
+    { accounts: state },
+    account.proxy.linkedAccount.address
+  );
+
+  if (linkedAccountVar) {
+    linkedAccountVar = {
+      ...linkedAccountVar,
+      hasProxy: false,
+      proxyRole: '',
+      proxy: {
+        ...linkedAccount.proxy,
+        address: '',
+        linkedAccount: {
+          ...linkedAccountVar.proxy.linkedAccount,
+          address: '',
+          proxyRole: '',
+          mkrBalance: ''
+        }
+      }
+    };
+    allAccounts = withUpdatedAccount(allAccounts, linkedAccountVar);
+  }
+  return { ...state, allAccounts };
+};
+
 const accounts = createReducer(initialState, {
   [REMOVE_ACCOUNTS]: (state, { payload: accounts }) => ({
     ...state,
@@ -296,6 +344,7 @@ const accounts = createReducer(initialState, {
     fetching: false
   }),
   [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),
+  [BREAK_LINK_SUCCESS]: breakProxyLink(),
   [WITHDRAW_MKR_SUCCESS]: updateProxyBalance(false),
   [INITIATE_LINK_REQUEST]: (state, { payload }) => {
     const hotAccount = {
