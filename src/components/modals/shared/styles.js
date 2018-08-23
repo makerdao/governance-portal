@@ -248,57 +248,80 @@ export const VoteImpactHeading = styled.p`
   white-space: nowrap;
 `;
 
-const TooltipStyles = props => css`
-  position: relative;
-  &:after,
-  &:before {
-    line-height: 1;
-    user-select: none;
-    pointer-events: none;
-    position: absolute;
-    opacity: 0;
-    display: block;
-    text-transform: none;
-  }
-  &:after {
-    content: ${props.tipText ? `'${CSS.escape(props.tipText)}'` : "''"};
-    z-index: 1000;
-    font-size: 14px;
-    font-weight: 500;
-    min-width: 8px;
-    max-width: 21em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 8px 12px;
-    border-radius: 4px;
-    box-shadow: ${shadows.medium};
-    background: ${props.theme.generic.white};
-    color: ${props.theme.text.default};
-    border: 1px solid #e4e4e4;
-    top: calc(100% + 4px);
-    left: 0%;
-    transform: translateX(0%);
-  }
-  &:hover:after,
-  &:hover:before {
+const TooltipWrapper = styled.div`
+  border-radius: 4px;
+  text-transform: none;
+  border: 1px solid #e4e4e4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 8px;
+  min-width: 300px;
+  background-color: ${({ theme }) => theme.generic.white};
+  padding: 10px;
+  box-shadow: ${shadows.medium};
+  background: ${({ theme }) => theme.generic.white};
+  color: ${({ theme }) => theme.text.default};
+`;
+
+const TooltipTitle = styled.div`
+  margin-bottom: 10px;
+  font-size: 18px;
+`;
+const TooltipBody = styled.p`
+  font-size: 16px;
+  margin-bottom: 10px;
+`;
+const TooltipLink = styled.a`
+  color: ${({ theme }) => theme.brand.default};
+  font-size: 14px;
+`;
+
+const HoverTarget = styled.div`
+  user-select: none;
+  pointer-events: none;
+  transition: all 0.25s ease-out;
+  opacity: 0;
+  min-width: 300px;
+  top: 8px;
+  left: 0;
+  position: absolute;
+  z-index: 1;
+  &:hover {
     opacity: 1;
-    transition: opacity 0.1s ease-in 0.1s;
-  }
-  @media (max-width: 768px) {
-    &:after,
-    &:before {
-      display: none;
-    }
+    user-select: auto;
+    pointer-events: auto;
+    transition: none;
+    transform: translateY(10px);
   }
 `;
 
-export const Tooltip = styled.p`
+const StyledInline = styled.div`
   cursor: pointer;
-  display: initial;
-  color: ${({ blue }) => (blue ? '#3080ed' : '#212536')};
+  color: ${({ theme }) => theme.text.dark_link};
   margin-bottom: -3px;
-  border-bottom: 1px dashed
-    ${({ blue, theme }) => (blue ? theme.generic.blue : theme.brand.default)};
-  ${TooltipStyles};
+  border-bottom: 1px dashed ${({ theme }) => theme.brand.default};
+  display: inline;
+  // @media (max-width: 768px) {
+  //   &:hover {}
+  &:hover ~ div {
+    opacity: 1;
+    user-select: auto;
+    pointer-events: auto;
+    transform: translateY(10px);
+  }
 `;
+
+export const TooltipCard = ({ link, body, title, children }) => (
+  <div style={{ display: 'inline-block', position: 'relative' }}>
+    <StyledInline>{children}</StyledInline>
+    <HoverTarget>
+      <TooltipWrapper>
+        <TooltipTitle>{title}</TooltipTitle>
+        <TooltipBody>{body}</TooltipBody>
+        <TooltipLink href={link} target="_blank">
+          Read More
+        </TooltipLink>
+      </TooltipWrapper>
+    </HoverTarget>
+  </div>
+);

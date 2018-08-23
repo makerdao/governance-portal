@@ -13,7 +13,7 @@ import {
   GuideTitle,
   GuideInfo,
   IntroTxBox,
-  Tooltip,
+  TooltipCard,
   Bold
 } from '../shared/styles';
 import Button from '../../Button';
@@ -24,13 +24,21 @@ const Intro = ({ nextStep, linkCost }) => (
     <StyledBlurb>
       Setting up your secure voting contract will enable you to keep your MKR
       stored safely in a{' '}
-      <Tooltip tipText="This is where you store your MKR">
-        storage wallet
-      </Tooltip>{' '}
+      <TooltipCard
+        link="https://google.com"
+        body="This is where you store your MKR"
+        title="Cold Wallet"
+      >
+        cold wallet
+      </TooltipCard>{' '}
       but be able to vote with your MKR via a{' '}
-      <Tooltip tipText="This is the wallet you vote with">
-        voting wallet
-      </Tooltip>. The steps are as follows:
+      <TooltipCard
+        link="https://google.com"
+        body="This the wallet you vote with"
+        title="Hot Wallet"
+      >
+        hot wallet
+      </TooltipCard>. The steps are as follows:
     </StyledBlurb>
     <GuideWrapper>
       <Section>
@@ -70,7 +78,12 @@ const Intro = ({ nextStep, linkCost }) => (
         <Bold>${round(linkCost, 2)}</Bold>
       </div>
     </IntroTxBox>
-    <StyledAnchor style={{ margin: '15px 0px' }} blue>
+    <StyledAnchor
+      href="https://makerdao.netlify.com/faq"
+      target="_blank"
+      style={{ margin: '15px 0px' }}
+      blue
+    >
       Read more on our FAQ’s page
     </StyledAnchor>
     <Button slim onClick={nextStep}>
