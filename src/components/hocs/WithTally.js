@@ -20,7 +20,8 @@ const WithTally = ({
   candidate = candidate.toLowerCase();
   if (approvalObj[candidate] !== undefined) {
     approvals = approvalObj[candidate];
-    percentage = round(div(mul(approvals, 100), totalApprovals), 2);
+    percentage =
+      approvals > 0 ? round(div(mul(approvals, 100), totalApprovals), 2) : 0;
   }
   return children({
     loadingPercentage,

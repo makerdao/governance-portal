@@ -61,7 +61,7 @@ if (process.env.NODE_ENV === 'production') {
   ).install();
   Raven.context(() =>
     ReactDOM.render(
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={currTheme}>
         <Provider store={store}>
           {isMobile() ? <div>No mobile support yet</div> : <Router />}
         </Provider>
