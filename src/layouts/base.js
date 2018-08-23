@@ -84,7 +84,7 @@ const StyledLink = styled(Link)`
 `;
 
 const Padding = styled.div`
-  height: 100px;
+  height: 25px;
 `;
 
 const BorderLine = styled.div`
@@ -125,7 +125,7 @@ const BaseLayout = ({
             </StyledLink>
             {/* cheap network notification, probably to be replaced */}
             <NetworkNotification>
-              {childrenShouldMount && `~ ${network} ~`}
+              {childrenShouldMount && `${network}`}
             </NetworkNotification>
             <Flex style={{ zIndex: '100' }}>
               <DimHeaderElement

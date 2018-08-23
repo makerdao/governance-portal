@@ -1,9 +1,12 @@
+import React from 'react';
 import styled from 'styled-components';
+
+import flag from '../imgs/flag.svg';
 import theme from '../theme';
 
 export const Banner = styled.div`
   height: 82px;
-  background: #fdede8;
+  background: #ffffff;
   border: 1px solid #f77249;
   box-sizing: border-box;
   border-radius: 4px;
@@ -15,6 +18,29 @@ export const Banner = styled.div`
   justify-content: space-between;
   overflow: hidden;
 `;
+
+const FlagIcon = styled.p`
+  margin-left: 17px;
+  margin-top: 16px;
+  width: 22px;
+  height: 22px;
+  background-color: #fff;
+  mask: url(${flag}) center no-repeat;
+`;
+
+const Circle = styled.div`
+  margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
+  margin-top: ${({ mt }) => (mt ? `${mt}px` : '')};
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background-color: #f85d2d;
+`;
+export const Flag = props => (
+  <Circle {...props}>
+    <FlagIcon />
+  </Circle>
+);
 
 export const BannerHeader = styled.div`
   font-size: 20px;
@@ -37,12 +63,16 @@ export const BannerContent = styled.div`
 `;
 
 export const BannerButton = styled.a`
-  border: 1px solid ${theme.text.darker_default};
   border-radius: 4px;
   display: flex;
   align-items: center;
   align-self: center;
   padding: 0 20px;
+  transition: ${theme.transitions.button};
+  background-color: ${theme.generic.light_grey};
   color: ${theme.text.darker_default};
-  height: 46px;
+  height: 44px;
+  &:hover {
+    background-color: ${theme.generic.dark_grey};
+  }
 `;
