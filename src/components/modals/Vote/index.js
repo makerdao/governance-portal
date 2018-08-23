@@ -111,7 +111,7 @@ class Vote extends Component {
                       }}
                     >
                       <VoteImpactHeading>In secure contract</VoteImpactHeading>
-                      <MkrAmt>{formatRound(proxy.locked, 3)}</MkrAmt>
+                      <MkrAmt>{formatRound(proxy.votingPower, 3)}</MkrAmt>
                     </div>
                     <div
                       style={{
@@ -134,7 +134,7 @@ class Vote extends Component {
                     >
                       <VoteImpactHeading>After vote cast</VoteImpactHeading>
                       <MkrAmt>
-                        {formatRound(add(approvals, proxy.locked), 3)}
+                        {formatRound(add(approvals, proxy.votingPower), 3)}
                       </MkrAmt>
                     </div>
                   </VoteImpact>
