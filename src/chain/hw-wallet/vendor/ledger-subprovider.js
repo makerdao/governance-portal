@@ -43,8 +43,7 @@ type SubproviderOptions = {
 
 const defaultOptions = {
   networkId: 1, // mainnet
-  path: "44'/60'/0'/0/0", // ledger default derivation path
-  legacyPath: "44'/60'/0'/0",
+  path: "44'/60'/0'/0",
   askConfirm: false,
   accountsLength: 1,
   accountsOffset: 0
@@ -73,14 +72,7 @@ export default function createLedgerSubprovider(
   getTransport: () => Transport<*>,
   options?: SubproviderOptions
 ): HookedWalletSubprovider {
-  const {
-    networkId,
-    path,
-    legacyPath,
-    askConfirm,
-    accountsLength,
-    accountsOffset
-  } = {
+  const { networkId, path, askConfirm, accountsLength, accountsOffset } = {
     ...defaultOptions,
     ...options
   };
@@ -114,21 +106,6 @@ export default function createLedgerSubprovider(
         addressToPathMap[address.toLowerCase()] = path;
       }
 
-      //get address(es) using the old ledger path
-      const legacyPathComponents = obtainPathComponentsFromDerivationPath(
-        legacyPath
-      );
-      const legacyAddressGenerator = await new AddressGenerator(
-        await eth.getAddress(legacyPathComponents.basePath, askConfirm, true)
-      );
-      for (let i = accountsOffset; i < accountsOffset + accountsLength; i++) {
-        const path =
-          legacyPathComponents.basePath +
-          (legacyPathComponents.index + i).toString();
-        const address = legacyAddressGenerator.getAddressString(i);
-        addresses[path] = address;
-        addressToPathMap[address.toLowerCase()] = path;
-      }
       return addresses;
     } finally {
       transport.close();

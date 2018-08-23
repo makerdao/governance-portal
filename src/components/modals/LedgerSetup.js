@@ -20,7 +20,9 @@ import {
 } from '../../reducers/accounts';
 import { LEDGER } from '../../chain/hw-wallet';
 
-const LedgerSetup = ({ getHardwareAccount }) => {
+const LedgerSetup = ({ getHardwareAccount, modalClose }) => {
+  const path = "44'/60'/0'/0/0";
+  const accountsOffset = 0;
   return (
     <Fragment>
       <StyledTop>
@@ -37,7 +39,11 @@ const LedgerSetup = ({ getHardwareAccount }) => {
         <Button
           slim
           onClick={() => {
-            getHardwareAccount(LEDGER);
+            getHardwareAccount(LEDGER, {
+              path: path,
+              accountsOffset: accountsOffset
+            });
+            modalClose();
           }}
         >
           Select
@@ -51,5 +57,5 @@ const mapStateToProps = state => ({});
 
 export default connect(
   mapStateToProps,
-  { getHardwareAccount }
+  { getHardwareAccount, modalClose }
 )(LedgerSetup);

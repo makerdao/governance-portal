@@ -169,11 +169,6 @@ export const getHardwareAccount = (type, options = {}) => async (
     const addressesMap = await subprovider.getAccounts();
     let address = values(addressesMap)[0];
     dispatch(addAccount({ address, type, subprovider }));
-    //ledger returns two accounts to account for the legacy and new derivation path
-    address = values(addressesMap)[1];
-    if (typeof address !== undefined) {
-      dispatch(addAccount({ address, type, subprovider }));
-    }
   } catch (err) {
     console.error(err);
     dispatch({ type: FIND_HARDWARE_ACCOUNT_FAILURE, payload: err });
