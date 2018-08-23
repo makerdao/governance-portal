@@ -26,7 +26,7 @@ const Intro = ({ nextStep, linkCost }) => (
       stored safely in a{' '}
       <TooltipCard
         link="https://google.com"
-        body="This is where you store your MKR"
+        body="This is where you store your MKR. You will be able to send your tokens back to this account at any time."
         title="Cold Wallet"
       >
         cold wallet
@@ -34,7 +34,7 @@ const Intro = ({ nextStep, linkCost }) => (
       but be able to vote with your MKR via a{' '}
       <TooltipCard
         link="https://google.com"
-        body="This the wallet you vote with"
+        body="This the wallet you vote with. This account will never be able to withdraw your tokens to itself."
         title="Hot Wallet"
       >
         hot wallet

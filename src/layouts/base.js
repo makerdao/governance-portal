@@ -147,7 +147,15 @@ const BaseLayout = ({
             {childrenShouldMount ? (
               children
             ) : (
-              <div style={{ marginTop: '150px' }}>{noContentMsg}</div>
+              <div
+                style={{
+                  marginTop: '150px',
+                  display: 'flex',
+                  justifyContent: 'center'
+                }}
+              >
+                {noContentMsg}
+              </div>
             )}
           </StyledContent>
           <Padding />

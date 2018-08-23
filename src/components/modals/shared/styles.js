@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import theme, { shadows } from '../../../theme';
+
+import external from '../../../imgs/external.svg';
+import theme from '../../../theme';
 import Button from '../../Button';
 
 export const StyledTitle = styled.div`
@@ -251,29 +253,40 @@ export const VoteImpactHeading = styled.p`
 const TooltipWrapper = styled.div`
   border-radius: 4px;
   text-transform: none;
-  border: 1px solid #e4e4e4;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0px 1px 3px rgba(190, 190, 190, 0.25);
   overflow: hidden;
   text-overflow: ellipsis;
   margin-top: 8px;
-  min-width: 300px;
+  min-width: 360px;
   background-color: ${({ theme }) => theme.generic.white};
-  padding: 10px;
-  box-shadow: ${shadows.medium};
+  padding: 16px;
   background: ${({ theme }) => theme.generic.white};
   color: ${({ theme }) => theme.text.default};
 `;
 
 const TooltipTitle = styled.div`
   margin-bottom: 10px;
-  font-size: 18px;
+  line-height: normal;
+  font-size: 16px;
+  color: #252525;
 `;
 const TooltipBody = styled.p`
-  font-size: 16px;
-  margin-bottom: 10px;
+  font-size: 14px;
+  color: ${({ theme }) => theme.generic.black};
+  margin-bottom: 4px;
 `;
 const TooltipLink = styled.a`
   color: ${({ theme }) => theme.brand.default};
   font-size: 14px;
+  &:after {
+    content: '';
+    width: 30px;
+    height: 9px;
+    margin-left: 5px;
+    display: inline-block;
+    background: url(${external}) center no-repeat;
+  }
 `;
 
 const HoverTarget = styled.div`
@@ -290,7 +303,6 @@ const HoverTarget = styled.div`
     opacity: 1;
     user-select: auto;
     pointer-events: auto;
-    transition: none;
     transform: translateY(10px);
   }
 `;
@@ -319,7 +331,7 @@ export const TooltipCard = ({ link, body, title, children }) => (
         <TooltipTitle>{title}</TooltipTitle>
         <TooltipBody>{body}</TooltipBody>
         <TooltipLink href={link} target="_blank">
-          Read More
+          Read more
         </TooltipLink>
       </TooltipWrapper>
     </HoverTarget>
