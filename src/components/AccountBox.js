@@ -15,6 +15,8 @@ import {
   getHardwareAccount
 } from '../reducers/accounts';
 import { TREZOR, LEDGER } from '../chain/hw-wallet';
+import { modalOpen } from '../reducers/modal';
+import LedgerSetup from './modals/LedgerSetup';
 
 const StyledArrow = styled.img`
   margin-left: 0.7em;
@@ -146,7 +148,8 @@ class AccountBox extends Component {
       activeAccount,
       fetching,
       getHardwareAccount,
-      darkText
+      darkText,
+      modalOpen
     } = this.props;
 
     if (fetching)
@@ -189,7 +192,7 @@ class AccountBox extends Component {
               </ConnectLink>
             </DropdownRowForLink>
             <DropdownRowForLink>
-              <ConnectLink onClick={() => getHardwareAccount(LEDGER)}>
+              <ConnectLink onClick={() => modalOpen(LedgerSetup)}>
                 Connect to Ledger
               </ConnectLink>
             </DropdownRowForLink>
@@ -222,5 +225,5 @@ const mapStateToProps = ({ accounts }, props) => ({
 
 export default connect(
   mapStateToProps,
-  { setActiveAccount, getHardwareAccount }
+  { setActiveAccount, getHardwareAccount, modalOpen }
 )(AccountBox);

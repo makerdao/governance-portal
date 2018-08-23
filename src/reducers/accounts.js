@@ -154,12 +154,17 @@ export const setActiveAccount = address => ({
   payload: address
 });
 
-export const getHardwareAccount = type => async (dispatch, getState) => {
+export const getHardwareAccount = (type, options = {}) => async (
+  dispatch,
+  getState
+) => {
   dispatch({ type: FIND_HARDWARE_ACCOUNT });
-  const subprovider = createSubProvider(type, {
+  const combinedOptions = {
+    ...options,
     networkId: netNameToId(getState().metamask.network),
     promisify: true
-  });
+  };
+  const subprovider = createSubProvider(type, combinedOptions);
   try {
     const addressesMap = await subprovider.getAccounts();
     let address = values(addressesMap)[0];
