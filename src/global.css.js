@@ -24,7 +24,8 @@ const globalStyles = `
     box-sizing: border-box;
     font-size: 16px;
     line-height: 1.5;
-    color: #16171a;
+    font-size: 10px;
+    color: #53546A;
     padding: 0;
     margin: 0;
     -webkit-font-smoothing: antialiased;
