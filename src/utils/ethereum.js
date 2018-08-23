@@ -57,6 +57,13 @@ export const removeHexPrefix = hex => hex.toLowerCase().replace('0x', '');
 export const hexToNumString = hex => BigNumber(`${hex}`).toString();
 
 /**
+ * @desc convert hex to number
+ * @param  {String} address
+ * @return {Number} seed
+ */
+export const numberForAddress = address => parseInt(address.slice(2, 10), 16);
+
+/**
  * @desc convert number string from wei to ether
  * @param  {String} value
  * @return {String}

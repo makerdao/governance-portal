@@ -251,6 +251,7 @@ export const VoteImpactHeading = styled.p`
 `;
 
 const TooltipWrapper = styled.div`
+  cursor: default;
   border-radius: 4px;
   text-transform: none;
   border: 1px solid #e0e0e0;
@@ -293,6 +294,7 @@ const HoverTarget = styled.div`
   user-select: none;
   pointer-events: none;
   transition: all 0.25s ease-out;
+  cursor: pointer;
   opacity: 0;
   min-width: 300px;
   top: 8px;
