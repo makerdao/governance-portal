@@ -21,6 +21,7 @@ import { metamaskConnectInit } from './reducers/metamask';
 import theme from './theme';
 
 import darkTheme from '@makerdao/ui-components/dist/themes/dark';
+import lightTheme from '@makerdao/ui-components/dist/themes/light';
 import '@makerdao/ui-components/dist/styles/global.css';
 
 const currTheme = {
@@ -31,8 +32,8 @@ const currTheme = {
     backgroundColor: theme.text.darker_default
   },
   footer: {
-    ...darkTheme.footer,
-    backgroundColor: theme.text.darker_default
+    ...lightTheme.footer,
+    backgroundColor: theme.bg.default
   }
 };
 
@@ -61,7 +62,7 @@ if (process.env.NODE_ENV === 'production') {
   ).install();
   Raven.context(() =>
     ReactDOM.render(
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={currTheme}>
         <Provider store={store}>
           {isMobile() ? <div>No mobile support yet</div> : <Router />}
         </Provider>

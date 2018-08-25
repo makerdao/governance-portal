@@ -12,7 +12,7 @@ import AmountInput from './shared/AmountInput';
 const mapStateToProps = state => {
   const account = getActiveAccount(state);
   const balance =
-    account.proxyRole == 'hot'
+    account.proxyRole === 'hot'
       ? account.proxy.linkedAccount.mkrBalance
       : account.mkrBalance;
   return {

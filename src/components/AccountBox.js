@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import Blockies from 'react-blockies';
 import { connect } from 'react-redux';
 
 import ClickOutside from './ClickOutside';
 import Loader from './Loader';
 import { cutMiddle, firstLetterCapital } from '../utils/misc';
+import { numberForAddress } from '../utils/ethereum';
 import arrow from '../imgs/arrow.svg';
 import { fonts, colors, shadows } from '../theme';
 import {
@@ -17,6 +17,7 @@ import {
 import { TREZOR, LEDGER } from '../chain/hw-wallet';
 import { modalOpen } from '../reducers/modal';
 import AddressSelection from './modals/AddressSelection';
+import jazzicon from 'jazzicon';
 
 const StyledArrow = styled.img`
   margin-left: 0.7em;
@@ -80,22 +81,28 @@ const AccountBlurbWrapper = styled.div`
   align-items: center;
 `;
 
-export const AccountBlurb = ({ type, address, noAddressCut }) => {
-  return (
-    <AccountBlurbWrapper>
-      <Blockies
-        seed={address}
-        size={5}
-        spotColor="#fc5e04"
-        color="#fc5e04"
-        bgColor="#fff"
-      />
-      <Account>
-        {firstLetterCapital(type)} {noAddressCut ? address : cutMiddle(address)}
-      </Account>
-    </AccountBlurbWrapper>
-  );
-};
+export class AccountBlurb extends Component {
+  constructor(props) {
+    super(props);
+    this.jazzicon = React.createRef();
+  }
+  componentDidMount() {
+    const _jazzicon = jazzicon(22, numberForAddress(this.props.address));
+    this.jazzicon.current.appendChild(_jazzicon);
+  }
+  render() {
+    const { type, address, noAddressCut } = this.props;
+    return (
+      <AccountBlurbWrapper>
+        <div style={{ display: 'flex' }} ref={this.jazzicon} />
+        <Account>
+          {firstLetterCapital(type)}{' '}
+          {noAddressCut ? address : cutMiddle(address)}
+        </Account>
+      </AccountBlurbWrapper>
+    );
+  }
+}
 
 const DropdownRow = styled.div`
   display: flex;

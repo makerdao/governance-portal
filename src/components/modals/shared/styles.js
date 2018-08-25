@@ -1,6 +1,8 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
-import theme, { shadows } from '../../../theme';
+import styled from 'styled-components';
+
+import external from '../../../imgs/external.svg';
+import theme from '../../../theme';
 import Button from '../../Button';
 
 export const StyledTitle = styled.div`
@@ -248,57 +250,92 @@ export const VoteImpactHeading = styled.p`
   white-space: nowrap;
 `;
 
-const TooltipStyles = props => css`
-  position: relative;
-  &:after,
-  &:before {
-    line-height: 1;
-    user-select: none;
-    pointer-events: none;
-    position: absolute;
-    opacity: 0;
-    display: block;
-    text-transform: none;
-  }
+const TooltipWrapper = styled.div`
+  cursor: default;
+  border-radius: 4px;
+  text-transform: none;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0px 1px 3px rgba(190, 190, 190, 0.25);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 8px;
+  min-width: 360px;
+  background-color: ${({ theme }) => theme.generic.white};
+  padding: 16px;
+  background: ${({ theme }) => theme.generic.white};
+  color: ${({ theme }) => theme.text.default};
+`;
+
+const TooltipTitle = styled.div`
+  margin-bottom: 10px;
+  line-height: normal;
+  font-size: 16px;
+  color: #252525;
+`;
+const TooltipBody = styled.p`
+  font-size: 14px;
+  color: ${({ theme }) => theme.generic.black};
+  margin-bottom: 4px;
+`;
+const TooltipLink = styled.a`
+  color: ${({ theme }) => theme.brand.default};
+  font-size: 14px;
   &:after {
-    content: ${props.tipText ? `'${CSS.escape(props.tipText)}'` : "''"};
-    z-index: 1000;
-    font-size: 14px;
-    font-weight: 500;
-    min-width: 8px;
-    max-width: 21em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 8px 12px;
-    border-radius: 4px;
-    box-shadow: ${shadows.medium};
-    background: ${props.theme.generic.white};
-    color: ${props.theme.text.default};
-    border: 1px solid #e4e4e4;
-    top: calc(100% + 4px);
-    left: 0%;
-    transform: translateX(0%);
-  }
-  &:hover:after,
-  &:hover:before {
-    opacity: 1;
-    transition: opacity 0.1s ease-in 0.1s;
-  }
-  @media (max-width: 768px) {
-    &:after,
-    &:before {
-      display: none;
-    }
+    content: '';
+    width: 30px;
+    height: 9px;
+    margin-left: 5px;
+    display: inline-block;
+    background: url(${external}) center no-repeat;
   }
 `;
 
-export const Tooltip = styled.p`
+const HoverTarget = styled.div`
+  user-select: none;
+  pointer-events: none;
+  transition: all 0.25s ease-out;
   cursor: pointer;
-  display: initial;
-  color: ${({ blue }) => (blue ? '#3080ed' : '#212536')};
-  margin-bottom: -3px;
-  border-bottom: 1px dashed
-    ${({ blue, theme }) => (blue ? theme.generic.blue : theme.brand.default)};
-  ${TooltipStyles};
+  opacity: 0;
+  min-width: 300px;
+  top: 8px;
+  left: 0;
+  position: absolute;
+  z-index: 1;
+  &:hover {
+    opacity: 1;
+    user-select: auto;
+    pointer-events: auto;
+    transform: translateY(10px);
+  }
 `;
+
+const StyledInline = styled.div`
+  cursor: pointer;
+  color: ${({ theme }) => theme.text.dark_link};
+  margin-bottom: -3px;
+  border-bottom: 1px dashed ${({ theme }) => theme.brand.default};
+  display: inline;
+  // @media (max-width: 768px) {
+  //   &:hover {}
+  &:hover ~ div {
+    opacity: 1;
+    user-select: auto;
+    pointer-events: auto;
+    transform: translateY(10px);
+  }
+`;
+
+export const TooltipCard = ({ link, body, title, children }) => (
+  <div style={{ display: 'inline-block', position: 'relative' }}>
+    <StyledInline>{children}</StyledInline>
+    <HoverTarget>
+      <TooltipWrapper>
+        <TooltipTitle>{title}</TooltipTitle>
+        <TooltipBody>{body}</TooltipBody>
+        <TooltipLink href={link} target="_blank">
+          Read more
+        </TooltipLink>
+      </TooltipWrapper>
+    </HoverTarget>
+  </div>
+);

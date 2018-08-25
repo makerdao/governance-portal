@@ -24,7 +24,8 @@ const globalStyles = `
     box-sizing: border-box;
     font-size: 16px;
     line-height: 1.5;
-    color: #16171a;
+    font-size: 10px;
+    color: #53546A;
     padding: 0;
     margin: 0;
     -webkit-font-smoothing: antialiased;
@@ -119,9 +120,9 @@ const globalStyles = `
   .markdown p + p {
     margin-top: 16px;
   }
-  .markdown > *:first-of-type {
-    margin-top: 16px;
-  }
+  // .markdown > *:first-of-type {
+  //   margin-top: 16px;
+  // }
   .markdown img {
     margin-top: 16px;
     max-width: 100%;
@@ -147,6 +148,7 @@ const globalStyles = `
     margin-left: 16px;
   }
   .markdown li {
+    list-style-type: circle;
     color: inherit;
     font-size: 16px;
     margin-bottom: 4px;
@@ -229,7 +231,7 @@ const globalStyles = `
     font-size: 20px;
     line-height: normal;
     font-weight: 500;
-    margin-top: 1rem;
+    margin-top: 3rem;
     margin-bottom: 8px;
     color: #0E1029;
   }

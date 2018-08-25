@@ -3,10 +3,11 @@
 #### Voting for this proposal means that you agree with the five core principles of the Maker Governance philosophy:
 
 - Scientific Governance
-- The 20% Principle
+- Serving The Underserved
 - Sustainable Finance
 - Gradual Decentralization
-- Strong Market Focus
+- Driving Dai Adoption
+
 ---
 
 ## Scientific Governance
@@ -15,21 +16,21 @@ The Maker Governance Framework will be built on rigorously vetted, reproducible,
 
 The Framework itself can be broken down into two major components:
 
-Governance Proposals: Symbolic votes used to poll community sentiment towards specific models or data sources.
+- Governance Proposals: Symbolic votes used to poll community sentiment towards specific models or data sources.
 
-Executive Proposals: Used to ratify the Risk Parameters determined by the models and data accepted by Governance Proposals. Executive votes result in state changes inside the Dai Credit System and occur every quarter.
+- Executive Proposals: Used to ratify the Risk Parameters determined by the models and data accepted by Governance Proposals. Executive votes result in state changes inside the Dai Credit System and occur every quarter.
 
 This distinction encourages the governance debate to become a consensus-seeking exercise to reach a compromise, where communication channels force participants to focus on the underlying reasoning, theories, and data of risk assessments, rather than a polarising popularity contest about specific risk parameters for particular tokens.
 
 In this model, neither the MKR holders nor the Maker Foundation will have any special powers to arbitrarily dictate the risk parameters of the system, they can only affect changes through fact-based, provable, scientific arguments.
 
-## The 20% Principle
+## Serving The Underserved
 
-MakerDAO needs to provide more than just a technical upgrade to the financial system; it should also revolutionize the role of finance in the economy. Dai already levels the playing field for the unbanked and small businesses against the incumbents, but to truly make an impact we need to go further by ensuring Dai becomes a global engine for equality.
+Serving the underserved refers to our focus on Dai adoption in emerging markets by recognizing the tremendous opportunities for growth that results from reducing inefficiencies in the global economy.
 
-The Maker Foundation will allocate an amount of MKR from the dev fund that corresponds to 20% of the total MKR supply to continuously finance charitable initiatives or direct giving schemes that use Dai as the financial infrastructure. MKR voters will directly govern the charitable transactions, adding another crucial dimension of altruism to the governance philosophy. The 20% principle will be funded in a sustainable manner that ensures the charitable transactions always remain at exactly 20% of the system’s fees minus expenses.
+We will achieve this through an application of the “triple bottom line”, a financial concept that defines a businesses success by not only focusing on net income, but also the way it achieves profitability through the betterment of humanity in general. The three ‘bottom lines’ are generally defined as “profit, people, planet.” By aligning with these ideals we can prioritize the growth and adoption of Dai in emerging economies, while also seeing our network have a profound positive social impact on the world in a sustainable manner.
 
-Distribution of charitable funds will be managed through a process similar to the Governance Framework. The Maker Foundation will initially lead the community by presenting the best choices available, but over time the process will become decentralized, and completely controlled by the community through a framework that is based on data-driven impact analysis.
+We believe the unbanked will immediately benefit from this economic inclusion and see a resulting increase in quality of life by giving them access to the global financial ecosystem through the use of Dai as a predictable and stable unit of account. This new and untapped market comes with a very low cost-to-acquisition that will accelerate Dai’s entrenchment in the global marketplace.
 
 ## Sustainable Finance
 
@@ -41,13 +42,13 @@ The Maker Foundation is committed to true decentralization, but the road to dece
 
 The Foundation will drive Maker towards increased decentralization, with every step opening up more aspects of governance to community control, and eliminating single points of failure. At the same time, the Foundation will also take responsibility for teaching and providing guidance on how community members can most constructively contribute to governance.
 
-## Strong Market Focus
+## Driving Dai Adoption
 
-In the short term, the Maker Foundation needs high levels of flexibility and more control over the growth and adoption of Dai. The Foundation will facilitate exponential user growth, business adoption, and dapp integrations to maintain the dominance of Dai across all markets for decentralized stablecoins.
+To drive growth and promote the adoption of Dai, the Maker Foundation needs high levels of flexibility and more control in the short term. The Foundation will facilitate exponential user growth, business adoption, and dapp integrations to maintain the dominance of Dai across all markets for decentralized stablecoins.
 
 This includes doing various low-level tasks in the ecosystem, such as managing the initial set of Oracle nodes and the first Emergency Shutdown (formerly called Global Settlement) infrastructure.
 
-Before the new voting governance dashboard is released, the Maker Foundation will coordinate voting among highly technical MKR holders via command line tools, to avoid any disruption of Single Collateral Dai.
+Before the new voting governance dashboard is released, the Maker Foundation will coordinate voting among highly technical MKR holders via command line tools, to avoid any disruption to Single-Collateral Dai.
 
 ## Mechanics of the vote
 

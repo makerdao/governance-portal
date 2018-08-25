@@ -55,6 +55,8 @@ const ModalCard = Card.extend`
 `;
 
 const CloseButton = styled(props => <div {...props}>&times;</div>)`
+  font-family: tahoma;
+  line-height: 21px;
   height: 28px;
   width: 28px;
   border-radius: 28px;
@@ -64,8 +66,7 @@ const CloseButton = styled(props => <div {...props}>&times;</div>)`
   right: 12px;
   top: 12px;
   cursor: pointer;
-  font-size: 26px;
-  line-height: 19px;
+  font-size: 22px;
   text-align: center;
 `;
 

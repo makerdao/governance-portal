@@ -9,6 +9,7 @@ import theme from '../theme';
 import DotSpacer from './DotSpacer';
 import WithVote from './hocs/WithVote';
 import {
+  Flag,
   Banner,
   BannerHeader,
   BannerBody,
@@ -45,16 +46,25 @@ const StyledLink = styled(Link)`
   color: ${({ disabled }) => (disabled ? 'black' : '')};
 `;
 
+const Content = styled.div`
+  display: flex;
+`;
+
 const WelcomeBanner = ({ modalOpen, linkRequested }) => {
   return (
     <Banner>
-      <BannerBody>
-        <BannerHeader>Welcome to the governance voting dashboard</BannerHeader>
-        <BannerContent>
-          Before you can get started voting you will need to set up a secure
-          voting contract
-        </BannerContent>
-      </BannerBody>
+      <Content>
+        <Flag mr={20} mt="-2" />
+        <BannerBody>
+          <BannerHeader>
+            Welcome to the governance voting dashboard
+          </BannerHeader>
+          <BannerContent>
+            Before you can get started voting you will need to set up a secure
+            voting contract
+          </BannerContent>
+        </BannerBody>
+      </Content>
       <BannerButton onClick={() => modalOpen(ProxySetup)}>
         {linkRequested ? 'Continue set up' : 'Set up now'}
       </BannerButton>

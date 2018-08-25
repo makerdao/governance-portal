@@ -24,8 +24,6 @@ import AddressGenerator from '../../chain/hw-wallet/vendor/address-generator';
 import { obtainPathComponentsFromDerivationPath } from '../../chain/hw-wallet/vendor/ledger-subprovider';
 import Transport from '@ledgerhq/hw-transport-u2f';
 
-let globalAddresses = null;
-
 async function getAddresses(path) {
   const askConfirm = false;
   const numAccounts = 10;
@@ -52,9 +50,7 @@ const AddressSelection = ({ getHardwareAccount, modalClose, addresses }) => {
       <StyledTop>
         <StyledTitle>Select Ledger Address</StyledTitle>
       </StyledTop>
-      <StyledBlurb style={{ textAlign: 'center', marginTop: '30px' }}>
-        addresses: {addresses.toString()}
-      </StyledBlurb>
+      <StyledBlurb style={{ textAlign: 'center', marginTop: '30px' }} />
       <div
         style={{
           display: 'flex',
@@ -79,9 +75,7 @@ const AddressSelection = ({ getHardwareAccount, modalClose, addresses }) => {
   );
 };
 
-const mapStateToProps = state => ({
-  addresses: globalAddresses
-});
+const mapStateToProps = state => ({});
 
 export default connect(
   mapStateToProps,

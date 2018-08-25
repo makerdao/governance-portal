@@ -6,7 +6,7 @@ import {
   StyledTitle,
   StyledBlurb,
   StyledTop,
-  Tooltip,
+  TooltipCard,
   InputLabels,
   StyledAnchor,
   EndButton,
@@ -82,12 +82,21 @@ class Link extends Component {
         </StyledTop>
         <StyledBlurb>
           Please connect your{' '}
-          <Tooltip tipText="This is where you store your MKR">
-            storage wallet
-          </Tooltip>; we support MetaMask, Ledger and Trezor. Then select the{' '}
-          <Tooltip tipText="This is the wallet you vote with">
-            voting wallet
-          </Tooltip>{' '}
+          <TooltipCard
+            link="https://google.com"
+            body="This is where you store your MKR. You will be able to send your tokens back to this account at any time."
+            title="Cold Wallet"
+          >
+            cold wallet
+          </TooltipCard>; we support MetaMask, Ledger and Trezor. Then select
+          the{' '}
+          <TooltipCard
+            link="https://google.com"
+            body="This the wallet you vote with. This account will never be able to withdraw your tokens to itself."
+            title="Hot Wallet"
+          >
+            hot wallet
+          </TooltipCard>{' '}
           you would like to link it to.
         </StyledBlurb>
         <Note>
