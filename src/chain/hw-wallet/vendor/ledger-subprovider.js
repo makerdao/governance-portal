@@ -16,7 +16,7 @@ function makeError(msg, id) {
   return err;
 }
 
-function obtainPathComponentsFromDerivationPath(derivationPath) {
+export function obtainPathComponentsFromDerivationPath(derivationPath) {
   // check if derivation path follows 44'/60'/x'/n pattern
   const regExp = /^(44'\/(?:1|60|61)'\/\d+'?\/(?:\d+'?\/)?)(\d+)$/;
   const matchResult = regExp.exec(derivationPath);
