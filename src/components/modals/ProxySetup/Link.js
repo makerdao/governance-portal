@@ -62,7 +62,6 @@ class Link extends Component {
     });
     const someAccountAlreadyLinked =
       validAccounts.length < this.props.accounts.length;
-    console.log(someAccountAlreadyLinked);
     const accountsMinusHot = this.state.hot
       ? differenceWith((a, b) => eq(a.address, b.address), validAccounts, [
           this.state.hot

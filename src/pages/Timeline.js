@@ -9,6 +9,7 @@ import WithTally from '../components/hocs/WithTally';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Timer from '../components/Timer';
+import ClosedStatus from '../components/ClosedStatus';
 import { toSlug, eq } from '../utils/misc';
 import theme, { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
@@ -122,7 +123,12 @@ const Timeline = ({ modalOpen, topics, canVote, fetching, votingFor }) => (
                         : 'Vote for this Proposal'}
                     </Button>
                   </Fragment>
-                ) : null}
+                ) : (
+                  <ClosedStatus
+                    topicId={topic.id}
+                    proposalAddress={proposal.source}
+                  />
+                )}
               </div>
             </Card.Element>
           ))}
