@@ -14,7 +14,7 @@ import {
   setActiveAccount,
   getHardwareAccount
 } from '../reducers/accounts';
-import { TREZOR, LEDGER } from '../chain/hw-wallet';
+import { TREZOR } from '../chain/hw-wallet';
 import { modalOpen } from '../reducers/modal';
 import AddressSelection from './modals/AddressSelection';
 import jazzicon from 'jazzicon';
