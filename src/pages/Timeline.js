@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -14,6 +14,21 @@ import theme, { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import Vote from '../components/modals/Vote';
+
+const riseUp = keyframes`
+0% {
+  opacity: 0;
+  transform: translateY(15px);
+}
+100% {
+  opacity: 1;
+  transform: translateY(0);
+}
+`;
+
+const RiseUp = styled.div`
+  animation: ${riseUp} 0.75s forwards;
+`;
 
 const SubHeading = styled.p`
   color: ${theme.text.darker_default};
@@ -56,7 +71,7 @@ const Timeline = ({ modalOpen, topics, canVote, fetching, votingFor }) => (
   <Fragment>
     <VoterStatus />
     {topics.map(topic => (
-      <Fragment key={topic.topic}>
+      <RiseUp key={topic.topic}>
         {topic.active ? <Timer endTimestamp={topic.end_timestamp} /> : null}
         <StyledCard key={topic.topic}>
           <Card.Top
@@ -80,35 +95,39 @@ const Timeline = ({ modalOpen, topics, canVote, fetching, votingFor }) => (
                 ) : null}
               </ProposalDetails>
               <div>
-                <WithTally candidate={proposal.source}>
-                  {({ loadingApprovals, percentage }) => (
-                    <VotePercentage
-                      loadingApprovals={loadingApprovals}
-                      percentage={percentage}
-                    />
-                  )}
-                </WithTally>
-                <Button
-                  disabled={!canVote}
-                  loading={fetching}
-                  onClick={() =>
-                    modalOpen(Vote, {
-                      proposal: {
-                        address: proposal.source,
-                        title: proposal.title
+                {topic.active ? (
+                  <Fragment>
+                    <WithTally candidate={proposal.source}>
+                      {({ loadingApprovals, percentage }) => (
+                        <VotePercentage
+                          loadingApprovals={loadingApprovals}
+                          percentage={percentage}
+                        />
+                      )}
+                    </WithTally>
+                    <Button
+                      disabled={!canVote || !topic.active}
+                      loading={fetching}
+                      onClick={() =>
+                        modalOpen(Vote, {
+                          proposal: {
+                            address: proposal.source,
+                            title: proposal.title
+                          }
+                        })
                       }
-                    })
-                  }
-                >
-                  {eq(votingFor, proposal.source)
-                    ? 'Withdraw vote'
-                    : 'Vote for this Proposal'}
-                </Button>
+                    >
+                      {eq(votingFor, proposal.source)
+                        ? 'Withdraw vote'
+                        : 'Vote for this Proposal'}
+                    </Button>
+                  </Fragment>
+                ) : null}
               </div>
             </Card.Element>
           ))}
         </StyledCard>
-      </Fragment>
+      </RiseUp>
     ))}
   </Fragment>
 );

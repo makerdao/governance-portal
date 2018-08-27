@@ -47,7 +47,7 @@ const DropdownList = styled.div`
   position: absolute;
   background: rgb(${colors.dark});
   color: rgb(${colors.dark_grey});
-  width: 220px;
+  width: 230px;
   top: 110%;
   right: 0;
   z-index: 1;

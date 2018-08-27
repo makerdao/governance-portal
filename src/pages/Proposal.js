@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import find from 'ramda/src/find';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import { Link } from 'react-router-dom';
 
@@ -20,6 +20,21 @@ import NotFound from './NotFound';
 import theme, { colors } from '../theme';
 import { formatDate, cutMiddle } from '../utils/misc';
 import { modalOpen } from '../reducers/modal';
+
+const riseUp = keyframes`
+0% {
+  opacity: 0;
+  transform: translateY(15px);
+}
+100% {
+  opacity: 1;
+  transform: translateY(0);
+}
+`;
+
+const RiseUp = styled.div`
+  animation: ${riseUp} 0.75s forwards;
+`;
 
 const WhiteBackground = styled.div`
   width: 100vw;
@@ -188,7 +203,7 @@ class Proposal extends Component {
     const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
     const supporters = voteState[proposal.source.toLowerCase()] || null;
     return (
-      <React.Fragment>
+      <RiseUp>
         <WhiteBackground>
           <StyledTop>
             <StyledCenter>
@@ -212,7 +227,7 @@ class Proposal extends Component {
                 )}
               </WithTally>
               <Button
-                disabled={!canVote}
+                disabled={!canVote || !active}
                 loading={accountDataFetching}
                 wide={true}
                 onClick={() =>
@@ -290,7 +305,7 @@ class Proposal extends Component {
             </SupporterCard>
           </RightPanels>
         </ConentWrapper>
-      </React.Fragment>
+      </RiseUp>
     );
   }
 }

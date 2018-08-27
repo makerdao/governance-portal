@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import React, { Fragment } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { modalOpen } from '../reducers/modal';
 import { getActiveAccount } from '../reducers/accounts';
@@ -22,6 +22,19 @@ import { ethScanLink } from '../utils/ethereum';
 import Lock from './modals/Lock';
 import Withdraw from './modals/Withdraw';
 import ProxySetup from './modals/ProxySetup';
+
+const fadeIn = keyframes`
+0% {
+  opacity: 0;
+}
+100% {
+  opacity: 1;
+}
+`;
+
+const FadeIn = styled.div`
+  animation: ${fadeIn} 0.75s forwards;
+`;
 
 const SmallMediumText = styled.p`
   margin-top: 20px;
@@ -92,53 +105,56 @@ const VoterStatus = ({
   }
   if (!account || !account.hasProxy)
     return (
-      <WelcomeBanner linkRequested={linkRequested} modalOpen={modalOpen} />
+      <FadeIn>
+        <WelcomeBanner linkRequested={linkRequested} modalOpen={modalOpen} />
+      </FadeIn>
     );
   const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
   const { linkedAccount } = account.proxy;
   const isColdWallet = account.proxyRole === 'cold';
   const coldWallet = isColdWallet ? account : linkedAccount;
   return (
-    <SmallMediumText>
-      <Strong>{isColdWallet ? 'Cold wallet:' : 'Hot wallet:'}</Strong> In voting
-      contract <Black>{formatRound(account.proxy.votingPower, 4)} MKR</Black>{' '}
-      {account.proxyRole === 'cold' && (
-        <a onClick={() => modalOpen(Lock)}> Top-up </a>
-      )}
-      {account.proxyRole === 'cold' &&
-        Number(account.proxy.votingPower) > 0 && <span> | </span>}
-      {Number(account.proxy.votingPower) > 0 && (
-        <a onClick={() => modalOpen(Withdraw)}>Withdraw</a>
-      )}
-      <DotSpacer />
-      In cold wallet <Black>
-        {formatRound(coldWallet.mkrBalance, 4)} MKR
-      </Black>{' '}
-      <DotSpacer />
-      {firstLetterCapital(linkedAccount.proxyRole)} wallet:{' '}
-      {cutMiddle(linkedAccount.address)}{' '}
-      <a
-        target="_blank"
-        href={ethScanLink(linkedAccount.address, networkShown)}
-      >
-        Etherscan
-      </a>
-      <DotSpacer />
-      {account.votingFor ? (
-        <Fragment>
-          Currently voting for{' '}
-          <WithVote proposalAddress={account.votingFor}>
-            {({ proposalTitle, proposalSlug, noVote }) => (
-              <StyledLink disabled={noVote} to={proposalSlug}>
-                {cutMiddle(proposalTitle, 20, 10)}
-              </StyledLink>
-            )}
-          </WithVote>
-        </Fragment>
-      ) : (
-        'Currently not voting'
-      )}
-    </SmallMediumText>
+    <FadeIn>
+      <SmallMediumText>
+        <Strong>{isColdWallet ? 'Cold wallet:' : 'Hot wallet:'}</Strong> In
+        voting contract{' '}
+        <Black>{formatRound(account.proxy.votingPower, 4)} MKR</Black>{' '}
+        {account.proxyRole === 'cold' && (
+          <a onClick={() => modalOpen(Lock)}> Top-up </a>
+        )}
+        {account.proxyRole === 'cold' &&
+          Number(account.proxy.votingPower) > 0 && <span> | </span>}
+        {Number(account.proxy.votingPower) > 0 && (
+          <a onClick={() => modalOpen(Withdraw)}>Withdraw</a>
+        )}
+        <DotSpacer />
+        In cold wallet{' '}
+        <Black>{formatRound(coldWallet.mkrBalance, 4)} MKR</Black> <DotSpacer />
+        {firstLetterCapital(linkedAccount.proxyRole)} wallet:{' '}
+        {cutMiddle(linkedAccount.address)}{' '}
+        <a
+          target="_blank"
+          href={ethScanLink(linkedAccount.address, networkShown)}
+        >
+          Etherscan
+        </a>
+        <DotSpacer />
+        {account.votingFor ? (
+          <Fragment>
+            Currently voting for{' '}
+            <WithVote proposalAddress={account.votingFor}>
+              {({ proposalTitle, proposalSlug, noVote }) => (
+                <StyledLink disabled={noVote} to={proposalSlug}>
+                  {cutMiddle(proposalTitle, 20, 10)}
+                </StyledLink>
+              )}
+            </WithVote>
+          </Fragment>
+        ) : (
+          'Currently not voting'
+        )}
+      </SmallMediumText>
+    </FadeIn>
   );
 };
 

@@ -111,7 +111,13 @@ const BaseLayout = ({
   const noContentMsg = wrongNetwork ? (
     'Please switch network to Kovan or Mainnet'
   ) : (
-    <Loader size={20} color="header" background="background" />
+    <Loader
+      size={20}
+      mt={125}
+      mb={200}
+      color="header"
+      background="background"
+    />
   );
   return (
     <StyledLayout>

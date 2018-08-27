@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import find from 'ramda/src/find';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 
 import NotFound from './NotFound';
@@ -16,6 +16,21 @@ import { modalOpen } from '../reducers/modal';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import { toSlug, eq } from '../utils/misc';
 import theme, { colors, fonts } from '../theme';
+
+const riseUp = keyframes`
+0% {
+  opacity: 0;
+  transform: translateY(15px);
+}
+100% {
+  opacity: 1;
+  transform: translateY(0);
+}
+`;
+
+const RiseUp = styled.div`
+  animation: ${riseUp} 0.75s forwards;
+`;
 
 const ProposalDetails = styled.div`
   max-width: 59%;
@@ -97,7 +112,7 @@ const Topic = ({ match, topics, fetching, canVote, modalOpen, votingFor }) => {
   if (topic === undefined) return <NotFound />;
   const { topic: topicTitle, topic_blurb, active, govVote, proposals } = topic;
   return (
-    <React.Fragment>
+    <RiseUp>
       <WhiteBackground>
         <StyledTop>
           <StyledCenter>
@@ -109,7 +124,6 @@ const Topic = ({ match, topics, fetching, canVote, modalOpen, votingFor }) => {
           </StyledCenter>
         </StyledTop>
       </WhiteBackground>
-
       <Card>
         <Card.Top
           active={active}
@@ -141,7 +155,7 @@ const Topic = ({ match, topics, fetching, canVote, modalOpen, votingFor }) => {
                 )}
               </WithTally>
               <Button
-                disabled={!canVote}
+                disabled={!canVote || !active}
                 loading={fetching}
                 onClick={() =>
                   modalOpen(Vote, {
@@ -160,7 +174,7 @@ const Topic = ({ match, topics, fetching, canVote, modalOpen, votingFor }) => {
           </Card.Element>
         ))}
       </Card>
-    </React.Fragment>
+    </RiseUp>
   );
 };
 
