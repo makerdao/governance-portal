@@ -1,5 +1,5 @@
 import React from 'react';
-import round from 'lodash.round';
+import { formatRound } from '../../../utils/misc';
 
 import {
   StyledTitle,
@@ -38,7 +38,8 @@ const Intro = ({ nextStep, linkCost }) => (
         title="Hot Wallet"
       >
         hot wallet
-      </TooltipCard>. The steps are as follows:
+      </TooltipCard>
+      . The steps are as follows:
     </StyledBlurb>
     <GuideWrapper>
       <Section>
@@ -75,7 +76,7 @@ const Intro = ({ nextStep, linkCost }) => (
         }}
       >
         <Bold>3</Bold>
-        <Bold>${round(linkCost, 2)}</Bold>
+        <Bold>${formatRound(linkCost, 2)}</Bold>
       </div>
     </IntroTxBox>
     <StyledAnchor

@@ -130,6 +130,7 @@ const theme = {
   transitions: {
     base: 'all 0.2s ease-in-out',
     long: 'all 0.3s ease-in-out',
+    x_long: 'all 0.4s ease-in-out',
     button: '0.15s ease'
   }
 };

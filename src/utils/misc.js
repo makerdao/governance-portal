@@ -192,4 +192,9 @@ export const countDecimals = _value => {
 };
 
 export const formatRound = (num, decimals = 2) =>
-  round(num, decimals).toLocaleString({}, { minimumFractionDigits: decimals });
+  isNaN(num)
+    ? '----'
+    : round(num, decimals).toLocaleString(
+        {},
+        { minimumFractionDigits: decimals }
+      );

@@ -1,11 +1,38 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
+
 import { modalClose } from '../../reducers/modal';
 import Card from '../Card';
 import { colors, responsive } from '../../theme';
 
+const fallDownIn = keyframes`
+0% {
+  opacity: 0;
+  transform: translateY(-15px);
+}
+100% {
+  opacity: 1;
+  transform: translateY(0);
+}
+`;
+
+const fallDownOut = keyframes`
+0% {
+  opacity: 1;
+  transform: translateY(0px);
+}
+100% {
+  opacity: 0;
+  transform: translateY(15px);
+}
+`;
+
 const Column = styled.div`
+  ${({ modal }) =>
+    modal
+      ? `animation: ${fallDownIn} 0.4s forwards;`
+      : `animation: ${fallDownOut} 0.4s forwards;`};
   position: relative;
   width: 100%;
   height: ${({ spanHeight }) => (spanHeight ? '100%' : 'auto')};
@@ -27,7 +54,7 @@ const LightBox = styled.div`
   width: 100vw;
   height: 100vh;
   overflow: scroll;
-  transition: ${({ theme }) => theme.transitions.base};
+  transition: ${({ theme }) => theme.transitions.x_long};
   opacity: ${({ modal }) => (modal ? 1 : 0)};
   visibility: ${({ modal }) => (modal ? 'visible' : 'hidden')};
   pointer-events: ${({ modal }) => (modal ? 'auto' : 'none')};
@@ -78,7 +105,7 @@ const Modal = props => {
   return (
     <LightBox modal={open}>
       <Hitbox onClick={modalClose} />
-      <Column maxWidth={600}>
+      <Column maxWidth={600} modal={open}>
         <ModalCard background="white">
           <CloseButton onClick={modalClose} />
           <ModalClass {...otherProps} />
