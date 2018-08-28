@@ -12,6 +12,7 @@ import { VotePercentage } from '../components/VoteTally';
 import WithTally from '../components/hocs/WithTally';
 import Vote from '../components/modals/Vote';
 import Timer from '../components/Timer';
+import ClosedStatus from '../components/ClosedStatus';
 import { modalOpen } from '../reducers/modal';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import { toSlug, eq } from '../utils/misc';
@@ -145,32 +146,39 @@ const Topic = ({ match, topics, fetching, canVote, modalOpen, votingFor }) => {
                 <Timer endTimestamp={proposal.end_timestamp} small mb="-6" />
               ) : null}
             </ProposalDetails>
-            <div>
-              <WithTally candidate={proposal.source}>
-                {({ loadingApprovals, percentage }) => (
-                  <VotePercentage
-                    loadingApprovals={loadingApprovals}
-                    percentage={percentage}
-                  />
-                )}
-              </WithTally>
-              <Button
-                disabled={!canVote || !active}
-                loading={fetching}
-                onClick={() =>
-                  modalOpen(Vote, {
-                    proposal: {
-                      address: proposal.source,
-                      title: proposal.title
-                    }
-                  })
-                }
-              >
-                {eq(votingFor, proposal.source)
-                  ? 'Withdraw vote'
-                  : 'Vote for this Proposal'}
-              </Button>
-            </div>
+            {active ? (
+              <div>
+                <WithTally candidate={proposal.source}>
+                  {({ loadingApprovals, percentage }) => (
+                    <VotePercentage
+                      loadingApprovals={loadingApprovals}
+                      percentage={percentage}
+                    />
+                  )}
+                </WithTally>
+                <Button
+                  disabled={!canVote || !active}
+                  loading={fetching}
+                  onClick={() =>
+                    modalOpen(Vote, {
+                      proposal: {
+                        address: proposal.source,
+                        title: proposal.title
+                      }
+                    })
+                  }
+                >
+                  {eq(votingFor, proposal.source)
+                    ? 'Withdraw vote'
+                    : 'Vote for this Proposal'}
+                </Button>
+              </div>
+            ) : (
+              <ClosedStatus
+                topicId={topic.id}
+                proposalAddress={proposal.source}
+              />
+            )}
           </Card.Element>
         ))}
       </Card>

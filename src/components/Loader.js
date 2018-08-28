@@ -17,6 +17,7 @@ const StyledLoader = styled.div`
   font-size: ${fonts.size.tiny};
   margin: 0 auto;
   margin-top: ${({ mt }) => (mt ? `${mt}px` : '')};
+  margin-right:${({ mr }) => (mr ? `${mr}px` : '')};
   margin-bottom: ${({ mb }) => (mb ? `${mb}px` : '')};
   text-indent: -9999em;
   width: ${({ size }) => `${size}px`};

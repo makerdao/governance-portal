@@ -86,9 +86,7 @@ const Intro = ({ nextStep, linkCost }) => (
     >
       Read more on our FAQ’s page
     </StyledAnchor>
-    <Button slim onClick={nextStep}>
-      Great get started
-    </Button>
+    <Button onClick={nextStep}>Great get started</Button>
   </Column>
 );
 

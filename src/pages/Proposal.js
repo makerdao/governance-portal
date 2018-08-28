@@ -14,6 +14,7 @@ import Button from '../components/Button';
 import Card from '../components/Card';
 import Loader from '../components/Loader';
 import Timer from '../components/Timer';
+import ClosedStatus from '../components/ClosedStatus';
 import WithTally from '../components/hocs/WithTally';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import NotFound from './NotFound';
@@ -178,7 +179,12 @@ class Proposal extends Component {
       topic.proposals
     );
     if (proposal === undefined) return; //not found
-    this.setState({ proposal, parent: topic.topic, active: topic.active });
+    this.setState({
+      proposal,
+      parent: topic.topic,
+      parentId: topic.id,
+      active: topic.active
+    });
     fetch(proposal.about)
       .then(response => response.text())
       .then(markdown => {
@@ -189,7 +195,7 @@ class Proposal extends Component {
   }
 
   render() {
-    const { proposal, markdown, parent, active } = this.state;
+    const { proposal, markdown, parent, active, parentId } = this.state;
     if (Object.keys(proposal).length === 0) return <NotFound />;
     const {
       voteState,
@@ -215,35 +221,42 @@ class Proposal extends Component {
                 <Timer endTimestamp={proposal.end_timestamp} small mt="6" />
               ) : null}
             </StyledCenter>
-            <div>
-              <WithTally candidate={proposal.source}>
-                {({ loadingApprovals, approvals, percentage }) => (
-                  <VoteTally
-                    statusBar
-                    loadingApprovals={loadingApprovals}
-                    approvals={approvals}
-                    percentage={percentage}
-                  />
-                )}
-              </WithTally>
-              <Button
-                disabled={!canVote || !active}
-                loading={accountDataFetching}
-                wide={true}
-                onClick={() =>
-                  modalOpen(Vote, {
-                    proposal: {
-                      address: proposal.source,
-                      title: proposal.title
-                    }
-                  })
-                }
-              >
-                {eq(votingFor, proposal.source)
-                  ? 'Withdraw vote'
-                  : 'Vote for this Proposal'}
-              </Button>
-            </div>
+            {active ? (
+              <div>
+                <WithTally candidate={proposal.source}>
+                  {({ loadingApprovals, approvals, percentage }) => (
+                    <VoteTally
+                      statusBar
+                      loadingApprovals={loadingApprovals}
+                      approvals={approvals}
+                      percentage={percentage}
+                    />
+                  )}
+                </WithTally>
+                <Button
+                  disabled={!canVote || !active}
+                  loading={accountDataFetching}
+                  wide={true}
+                  onClick={() =>
+                    modalOpen(Vote, {
+                      proposal: {
+                        address: proposal.source,
+                        title: proposal.title
+                      }
+                    })
+                  }
+                >
+                  {eq(votingFor, proposal.source)
+                    ? 'Withdraw vote'
+                    : 'Vote for this Proposal'}
+                </Button>
+              </div>
+            ) : (
+              <ClosedStatus
+                topicId={parentId}
+                proposalAddress={proposal.source}
+              />
+            )}
           </StyledTop>
         </WhiteBackground>
         <ConentWrapper>

@@ -191,5 +191,5 @@ export const countDecimals = _value => {
   return 0;
 };
 
-export const formatRound = (num, decimals) =>
+export const formatRound = (num, decimals = 2) =>
   round(num, decimals).toLocaleString({}, { minimumFractionDigits: decimals });
