@@ -10,7 +10,6 @@ import AddressGenerator from '../../chain/hw-wallet/vendor/address-generator';
 import { obtainPathComponentsFromDerivationPath } from '../../chain/hw-wallet/vendor/ledger-subprovider';
 import Transport from '@ledgerhq/hw-transport-u2f';
 import Address from './shared/Address';
-import { LEDGER_LIVE_PATH, LEDGER_LEGACY_PATH } from './PathSelection';
 
 class AddressSelection extends Component {
   constructor(props) {
@@ -26,7 +25,6 @@ class AddressSelection extends Component {
 
   render() {
     const { getHardwareAccount, modalClose, path } = this.props;
-    const accountsOffset = 0;
     if (this.state.addresses.length > 0) {
       return (
         <Fragment>

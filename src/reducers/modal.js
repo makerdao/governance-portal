@@ -33,7 +33,6 @@ const initialState = {
 
 const modal = createReducer(initialState, {
   [MODAL_OPEN]: (state, { payload }) => {
-    console.log('in reducer', payload);
     return {
       ...state,
       open: true,
