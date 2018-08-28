@@ -17,6 +17,7 @@ import {
 import { TREZOR } from '../chain/hw-wallet';
 import { modalOpen } from '../reducers/modal';
 import AddressSelection from './modals/AddressSelection';
+import PathSelection from './modals/PathSelection';
 import jazzicon from 'jazzicon';
 
 const StyledArrow = styled.img`
@@ -199,7 +200,7 @@ class AccountBox extends Component {
               </ConnectLink>
             </DropdownRowForLink>
             <DropdownRowForLink>
-              <ConnectLink onClick={() => modalOpen(AddressSelection)}>
+              <ConnectLink onClick={() => modalOpen(PathSelection)}>
                 Connect to Ledger
               </ConnectLink>
             </DropdownRowForLink>

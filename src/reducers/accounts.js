@@ -37,6 +37,7 @@ const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
 const FIND_HARDWARE_ACCOUNT = 'accounts/FIND_HARDWARE_ACCOUNT';
 const FIND_HARDWARE_ACCOUNT_FAILURE = 'accounts/FIND_HARDWARE_ACCOUNT_FAILURE';
 export const NO_METAMASK_ACCOUNTS = 'accounts/NO_METAMASK_ACCOUNTS';
+const SET_PATH = 'accounts/SET_PATH';
 
 // Selectors ----------------------------------------------
 
@@ -175,6 +176,11 @@ export const getHardwareAccount = (type, options = {}) => async (
   }
 };
 
+export const setPath = accountType => ({
+  type: SET_PATH,
+  payload: accountType
+});
+
 // Reducer ------------------------------------------------
 
 // Reducer helpers
@@ -221,7 +227,8 @@ const initialState = {
   // activeAccount: '0xbeefed1bedded2dabbed3defaced4decade5dead', // just for dev
   allAccounts: [
     // fakeAccount
-  ]
+  ],
+  path: ''
 };
 
 const updateProxyBalance = adding => (state, { payload: amount }) => {
@@ -360,6 +367,12 @@ const accounts = createReducer(initialState, {
         withUpdatedAccount(state.allAccounts, hotAccount),
         coldAccount
       )
+    };
+  },
+  [SET_PATH]: (state, { payload }) => {
+    return {
+      ...state,
+      path: payload
     };
   }
   // TODO: right now we're updating account data by refetching via 'postLinkUpdate'

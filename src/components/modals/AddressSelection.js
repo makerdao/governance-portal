@@ -10,8 +10,9 @@ import AddressGenerator from '../../chain/hw-wallet/vendor/address-generator';
 import { obtainPathComponentsFromDerivationPath } from '../../chain/hw-wallet/vendor/ledger-subprovider';
 import Transport from '@ledgerhq/hw-transport-u2f';
 import Address from './shared/Address';
+import { LEDGER_LIVE_PATH, LEDGER_LEGACY_PATH } from './PathSelection';
 
-export class AddressSelection extends Component {
+class AddressSelection extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,9 +25,7 @@ export class AddressSelection extends Component {
   }
 
   render() {
-    const { getHardwareAccount, modalClose } = this.props;
-    const legacyPath = "44'/60'/0'/0/0";
-    const ledgerLivePath = "44'/60'/0'/0";
+    const { getHardwareAccount, modalClose, path } = this.props;
     const accountsOffset = 0;
     if (this.state.addresses.length > 0) {
       return (
@@ -57,10 +56,12 @@ export class AddressSelection extends Component {
           >
             <Button
               slim
-              disabled={!this.state.selectedIndex}
+              disabled={
+                !(this.state.selectedIndex || this.state.selectedIndex === 0)
+              }
               onClick={() => {
                 getHardwareAccount(LEDGER, {
-                  path: ledgerLivePath,
+                  path: path,
                   accountsOffset: this.state.selectedIndex,
                   accountsLength: 1
                 });
@@ -125,7 +126,9 @@ export class AddressSelection extends Component {
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  path: state.path
+});
 
 export default connect(
   mapStateToProps,

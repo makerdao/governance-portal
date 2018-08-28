@@ -32,12 +32,15 @@ const initialState = {
 };
 
 const modal = createReducer(initialState, {
-  [MODAL_OPEN]: (state, { payload }) => ({
-    ...state,
-    open: true,
-    modal: payload.modal,
-    modalProps: payload.props
-  }),
+  [MODAL_OPEN]: (state, { payload }) => {
+    console.log('in reducer', payload);
+    return {
+      ...state,
+      open: true,
+      modal: payload.modal,
+      modalProps: payload.props
+    };
+  },
   [MODAL_CLOSE]: state => ({ ...state, open: false }),
   [CLEAR]: () => ({ ...initialState })
 });

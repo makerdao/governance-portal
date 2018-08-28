@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from 'react';
+import React from 'react';
 import { cutMiddle } from '../../../utils/misc';
 import { getMkrBalance } from '../../../chain/read';
 import { connect } from 'react-redux';
