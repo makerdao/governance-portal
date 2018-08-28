@@ -1,6 +1,5 @@
 import { getProxyStatus, getMkrBalance } from '../../src/chain/read';
 import {
-  unlockWithdrawAll,
   sendMkrToProxy,
   initiateLink,
   approveLink,
@@ -49,15 +48,15 @@ test('can create a link, send mkr to generated proxy, and cannot break a link w 
   const { hasProxy, address: proxyAddress } = await getProxyStatus(
     cold.address
   );
-  cold.proxy = { address: proxyAddress };
+  const _cold = { ...cold, proxy: { address: proxyAddress }, hasProxy: true };
   expect(hasProxy).toBeTruthy();
 
-  await sendMkrToProxy({ account: cold, value: '5' });
+  await sendMkrToProxy({ account: _cold, value: '5' });
   const proxyBalance = await getMkrBalance(proxyAddress);
   expect(proxyBalance).toEqual('5');
   let message;
   try {
-    await breakLink(cold);
+    await breakLink(_cold);
   } catch (error) {
     message = error.message || error;
   }

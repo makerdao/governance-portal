@@ -58,7 +58,7 @@ if (process.env.NODE_ENV === 'production') {
 
 if (process.env.NODE_ENV === 'production') {
   Raven.config(
-    'https://3113186e2c5b4ef8b8eef1095b08a42b@sentry.io/1241257'
+    'https://424db452238242e4bd8d7e5ab064e413@sentry.io/1270414'
   ).install();
   Raven.context(() =>
     ReactDOM.render(
