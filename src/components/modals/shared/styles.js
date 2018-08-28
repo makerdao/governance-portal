@@ -112,6 +112,7 @@ export const GuideTitle = styled.p`
 `;
 
 export const GuideInfo = styled.p`
+  white-space: nowrap;
   font-size: 15px;
   color: ${theme.text.dim_grey_alt};
 `;
@@ -238,6 +239,10 @@ export const IntroTxBox = styled.div`
 export const Bold = styled.strong`
   color: #212536;
   font-weight: ${({ theme }) => theme.fonts.weight.bold};
+`;
+
+export const Dim = styled.strong`
+  opacity: 0.5;
 `;
 
 export const Oblique = styled.strong`

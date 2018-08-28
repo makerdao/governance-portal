@@ -73,8 +73,8 @@ const WelcomeBanner = ({ modalOpen, linkRequested }) => {
             Welcome to the governance voting dashboard
           </BannerHeader>
           <BannerContent>
-            Before you can get started voting you will need to set up a secure
-            voting contract
+            Before you can get started voting you will need to set up a voting
+            contract
           </BannerContent>
         </BannerBody>
       </Content>

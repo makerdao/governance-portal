@@ -20,10 +20,10 @@ import Button from '../../Button';
 
 const Intro = ({ nextStep, linkCost }) => (
   <Column center maxWidth={540}>
-    <StyledTitle>Welcome to the secure voting setup</StyledTitle>
+    <StyledTitle>Getting set up to vote</StyledTitle>
     <StyledBlurb>
-      Setting up your secure voting contract will enable you to keep your MKR
-      stored safely in a{' '}
+      To vote you will need to set up a voting contract. This contract enables
+      you to keep you MKR stored safely in a{' '}
       <TooltipCard
         link="https://google.com"
         body="This is where you store your MKR. You will be able to send your tokens back to this account at any time."
@@ -39,21 +39,46 @@ const Intro = ({ nextStep, linkCost }) => (
       >
         hot wallet
       </TooltipCard>
-      . The steps are as follows:
     </StyledBlurb>
     <GuideWrapper>
       <Section>
         <CircledNum size={32}>1</CircledNum>
         <Guide>
           <GuideTitle>Link Wallets</GuideTitle>
-          <GuideInfo>Link your cold and hot wallets</GuideInfo>
+          <GuideInfo>
+            Link your{' '}
+            <TooltipCard
+              link="https://google.com"
+              body="This is where you store your MKR. You will be able to send your tokens back to this account at any time."
+              title="Cold Wallet"
+            >
+              cold
+            </TooltipCard>{' '}
+            and{' '}
+            <TooltipCard
+              link="https://google.com"
+              body="This the wallet you vote with. This account will never be able to withdraw your tokens to itself."
+              title="Hot Wallet"
+            >
+              hot wallet
+            </TooltipCard>{' '}
+            to safely vote
+          </GuideInfo>{' '}
         </Guide>
       </Section>
       <Section>
         <CircledNum size={32}>2</CircledNum>
         <Guide>
           <GuideTitle>Lock MKR</GuideTitle>
-          <GuideInfo>Lock MKR in your secure voting contract</GuideInfo>
+          <GuideInfo>
+            <TooltipCard
+              link="https://google.com"
+              body="Redeem your MKR tokens for voting rights"
+              title="Locking MKR"
+            >
+              Lock MKR
+            </TooltipCard>
+          </GuideInfo>
         </Guide>
       </Section>
       <Section>
