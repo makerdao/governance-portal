@@ -194,7 +194,6 @@ const stateProps = state => {
 
   let props = {
     modal: modal.modal,
-    modalProps: modal.modalProps,
     accounts: accounts.allAccounts,
     activeAccount: getActiveAccount({ accounts }),
     network: metamask.network === 'kovan' ? 'kovan' : 'mainnet',

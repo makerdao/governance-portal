@@ -31,7 +31,7 @@ class Vote extends Component {
 
   // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs
   render() {
-    const { proposal } = this.props.modalProps;
+    const { proposal } = this.props;
     const { proxy, votingFor } = this.props.activeAccount;
     const alreadyVotingFor = eq(votingFor, proposal.address);
     switch (this.props.voteProgress) {
@@ -174,12 +174,12 @@ class Vote extends Component {
 Vote.propTypes = {
   voteTxHash: PropTypes.string,
   sendVote: PropTypes.func,
-  modalProps: PropTypes.object
+  proposal: PropTypes.object
 };
 
 Vote.defaultProps = {
   voteTxHash: '',
-  modalProps: {}
+  proposal: {}
 };
 
 export default connect(
