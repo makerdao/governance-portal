@@ -134,6 +134,7 @@ const VoterStatus = ({
         {cutMiddle(linkedAccount.address)}{' '}
         <a
           target="_blank"
+          rel="noopener noreferrer"
           href={ethScanLink(linkedAccount.address, networkShown)}
         >
           Etherscan

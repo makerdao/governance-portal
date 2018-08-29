@@ -256,6 +256,7 @@ export const VoteImpactHeading = styled.p`
 `;
 
 const TooltipWrapper = styled.div`
+  white-space: pre-wrap;
   cursor: default;
   border-radius: 4px;
   text-transform: none;
@@ -337,7 +338,7 @@ export const TooltipCard = ({ link, body, title, children }) => (
       <TooltipWrapper>
         <TooltipTitle>{title}</TooltipTitle>
         <TooltipBody>{body}</TooltipBody>
-        <TooltipLink href={link} target="_blank">
+        <TooltipLink href={link} rel="noopener noreferrer" target="_blank">
           Read more
         </TooltipLink>
       </TooltipWrapper>

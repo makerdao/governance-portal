@@ -81,6 +81,7 @@ const SecureVoting = ({ modalOpen, activeAccount, network }) => {
               <MkrAmt noSuffix> {cutMiddle(linkedAccount.address)} </MkrAmt>
               <a
                 target="_blank"
+                rel="noopener noreferrer"
                 href={ethScanLink(linkedAccount.address, networkShown)}
               >
                 Etherscan

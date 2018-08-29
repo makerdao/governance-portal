@@ -286,6 +286,7 @@ class Proposal extends Component {
                 <Detail>Source</Detail>
                 <Address
                   target="_blank"
+                  rel="noopener noreferrer"
                   href={ethScanLink(proposal.source, networkShown)}
                 >
                   {cutMiddle(proposal.source, 8, 8)}
@@ -301,6 +302,7 @@ class Proposal extends Component {
                       <Detail pct>{supporter.percent}</Detail>
                       <Address
                         target="_blank"
+                        rel="noopener noreferrer"
                         href={ethScanLink(supporter.address, networkShown)}
                       >
                         {toChecksum(supporter.address)}

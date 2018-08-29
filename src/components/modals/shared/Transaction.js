@@ -57,7 +57,11 @@ const Transaction = ({
     >
       {txHash && (
         <Fragment>
-          <TxHash href={ethScanLink(txHash, network)} target="_blank">
+          <TxHash
+            href={ethScanLink(txHash, network)}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             View on Etherscan
           </TxHash>
           <br />

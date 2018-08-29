@@ -120,14 +120,26 @@ class Link extends Component {
         />
         <Note style={{ opacity: '1' }}>
           <Dim>This wallet must be connected. How to connect</Dim>{' '}
-          <a target="_blank" href="https://google.com">
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://google.com"
+          >
             MetaMask,
           </a>{' '}
-          <a target="_blank" href="https://google.com">
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://google.com"
+          >
             Ledger
           </a>{' '}
           <Dim>and</Dim>{' '}
-          <a target="_blank" href="https://google.com">
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://google.com"
+          >
             Trezor
           </a>
         </Note>

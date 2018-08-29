@@ -107,6 +107,7 @@ const Intro = ({ nextStep, linkCost }) => (
     <StyledAnchor
       href="https://makerdao.netlify.com/faq"
       target="_blank"
+      rel="noopener noreferrer"
       style={{ margin: '15px 0px' }}
       blue
     >
