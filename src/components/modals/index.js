@@ -99,17 +99,19 @@ const CloseButton = styled(props => <div {...props}>&times;</div>)`
 `;
 
 const Modal = props => {
+  const { modal: ModalClass, visible, modalClose, ...otherProps } = props;
+  if (!ModalClass) return null;
+
   const body = document.body || document.getElementsByTagName('body')[0];
-  const { modal: ModalClass, open, modalClose, ...otherProps } = props;
-  body.style.overflow = open ? 'hidden' : 'auto';
+  body.style.overflow = visible ? 'hidden' : 'auto';
 
   return (
-    <LightBox modal={open}>
+    <LightBox modal={visible}>
       <Hitbox onClick={modalClose} />
-      <Column maxWidth={600} modal={open}>
+      <Column maxWidth={600} modal={visible}>
         <ModalCard background="white">
           <CloseButton onClick={modalClose} />
-          <ModalClass {...otherProps} />
+          {ModalClass && <ModalClass {...otherProps} />}
         </ModalCard>
       </Column>
     </LightBox>
@@ -117,6 +119,6 @@ const Modal = props => {
 };
 
 export default connect(
-  state => ({ ...state.modal }),
+  state => state.modal.stack[0] || {},
   { modalClose }
 )(Modal);

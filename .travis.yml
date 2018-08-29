@@ -1,15 +1,17 @@
 language: node_js
+sudo: required
 node_js:
   - 'stable'
+before_cache:
+  - nix-collect-garbage -d
 cache:
   directories:
     - node_modules
+    - nix
+  timeout: 9000
 before_install:
-  - npm i -g npm@latest
+  - . gov-testchain/install-dapptools.sh
 install:
-  - npm install
-before_script:
-  - npm install -g codecov
+  - yarn install
 script:
-  - npm run testchain
-  - npm run test
+  - yarn testnet --ci yarn test

@@ -79,7 +79,7 @@ export const CircledNum = styled.div`
   text-align: center;
   font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '17px')};
   padding: ${({ p }) => (p ? `${p}px` : '4px 12px')};
-  padding-left: ${({ p }) => (p ? `` : '11px')};
+  padding-left: ${({ p }) => (p ? '' : '11px')};
 `;
 
 export const Section = styled.div`
@@ -111,7 +111,7 @@ export const GuideTitle = styled.p`
   color: #212536;
 `;
 
-export const GuideInfo = styled.p`
+export const GuideInfo = styled.div`
   white-space: nowrap;
   font-size: 15px;
   color: ${theme.text.dim_grey_alt};
