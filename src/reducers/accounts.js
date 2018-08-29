@@ -168,6 +168,10 @@ export const getHardwareAccount = (type, options = {}) => async (
   const subprovider = createSubProvider(type, combinedOptions);
   try {
     const addressesMap = await subprovider.getAccounts();
+    console.log(
+      `${type} returned derivation paths:`,
+      Object.keys(addressesMap)
+    );
     let address = values(addressesMap)[0];
     dispatch(addAccount({ address, type, subprovider }));
   } catch (err) {
