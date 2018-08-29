@@ -10,28 +10,62 @@ import AddressGenerator from '../../chain/hw-wallet/vendor/address-generator';
 import { obtainPathComponentsFromDerivationPath } from '../../chain/hw-wallet/vendor/ledger-subprovider';
 import Transport from '@ledgerhq/hw-transport-u2f';
 import Address from './shared/Address';
+import PathSelection, {
+  LEDGER_LIVE_PATH,
+  LEDGER_LEGACY_PATH
+} from './PathSelection';
+import { modalOpen } from '../../reducers/modal';
+
+const TREZOR_PATH = "44'/60'/0'/0";
 
 class AddressSelection extends Component {
   constructor(props) {
     super(props);
     this.state = {
       addresses: [],
-      selectedIndex: false
+      selectedIndex: false,
+      hwType: ''
     };
   }
   componentDidMount() {
-    this.getAddresses("44'/60'/0'/0");
+    const { modalProps } = this.props;
+    if (modalProps.trezor) {
+      this.setState({ hwType: 'Trezor' });
+      this.getAddressesTrezor(TREZOR_PATH);
+    } else {
+      this.setState({ hwType: 'Ledger' });
+      this.getAddressesLedger(modalProps.path);
+    }
   }
 
   render() {
-    const { getHardwareAccount, modalClose, path } = this.props;
+    const {
+      getHardwareAccount,
+      modalClose,
+      modalOpen,
+      modalProps
+    } = this.props;
     if (this.state.addresses.length > 0) {
       return (
         <Fragment>
           <StyledTop>
-            <StyledTitle>Select Address on your Ledger</StyledTitle>
+            <button
+              onClick={() => {
+                modalOpen(PathSelection);
+              }}
+            >
+              {this.state.hwType === 'Trezor' ? '' : 'Back'}
+            </button>
+            <StyledTitle>
+              Select Address on your {this.state.hwType}
+            </StyledTitle>
           </StyledTop>
           <StyledBlurb style={{ textAlign: 'center', marginTop: '30px' }}>
+            {modalProps.path === LEDGER_LIVE_PATH
+              ? 'Ledger Live'
+              : this.state.hwType === 'Trezor'
+                ? 'Trezor'
+                : 'Ledger Legacy'}
             <ul>
               {this.state.addresses.map((address, index) => (
                 <li
@@ -59,7 +93,7 @@ class AddressSelection extends Component {
               }
               onClick={() => {
                 getHardwareAccount(LEDGER, {
-                  path: path,
+                  path: modalProps.path,
                   accountsOffset: this.state.selectedIndex,
                   accountsLength: 1
                 });
@@ -75,6 +109,13 @@ class AddressSelection extends Component {
       return (
         <Fragment>
           <StyledTop>
+            <button
+              onClick={() => {
+                modalOpen(PathSelection);
+              }}
+            >
+              Back
+            </button>
             <StyledTitle>Connect to your Ledger Wallet</StyledTitle>
           </StyledTop>
           <StyledBlurb style={{ textAlign: 'center', marginTop: '30px' }}>
@@ -83,7 +124,7 @@ class AddressSelection extends Component {
           <Button
             slim
             onClick={() => {
-              this.getAddresses("44'/60'/0'/0");
+              this.getAddressesLedger(modalProps.path);
             }}
           >
             Retry
@@ -100,12 +141,14 @@ class AddressSelection extends Component {
     }
   }
 
-  async getAddresses(path = '') {
+  async getAddressesTrezor(path = "44'/60'/0'/0") {}
+
+  async getAddressesLedger(path = '') {
     if (path === '') {
       throw new Error('missing path');
     }
     const askConfirm = false;
-    const numAccounts = 5;
+    const numAccounts = 1;
     const transport = await Transport.create();
     const eth = new AppEth(transport);
     const addresses = [];
@@ -124,11 +167,9 @@ class AddressSelection extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  path: state.path
-});
+const mapStateToProps = state => ({});
 
 export default connect(
   mapStateToProps,
-  { getHardwareAccount, modalClose }
+  { getHardwareAccount, modalClose, modalOpen }
 )(AddressSelection);
