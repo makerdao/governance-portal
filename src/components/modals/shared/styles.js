@@ -111,7 +111,7 @@ export const GuideTitle = styled.p`
   color: #212536;
 `;
 
-export const GuideInfo = styled.p`
+export const GuideInfo = styled.div`
   white-space: nowrap;
   font-size: 15px;
   color: ${theme.text.dim_grey_alt};
