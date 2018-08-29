@@ -161,6 +161,13 @@ const LoadingWrapper = styled.div`
   padding: 25px 0;
 `;
 
+const StyledLink = styled(Link)`
+  width: 80%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`;
+
 class Proposal extends Component {
   state = {
     proposal: {},
@@ -276,7 +283,7 @@ class Proposal extends Component {
               <CardTitle>Details</CardTitle>
               <Supporter>
                 <Detail>Topic</Detail>
-                <Link to={`/${toSlug(parent)}`}>{parent}</Link>
+                <StyledLink to={`/${toSlug(parent)}`}>{parent}</StyledLink>
               </Supporter>
               <Supporter>
                 <Detail>Started</Detail>

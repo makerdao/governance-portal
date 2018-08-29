@@ -7,9 +7,9 @@ import { add } from '../utils/misc';
 
 // Constants ----------------------------------------------
 
-const APPROVALS_REQUEST = 'voteTally/APPROVALS_REQUEST';
-const APPROVALS_SUCCESS = 'voteTally/APPROVALS_SUCCESS';
-const APPROVALS_FAILURE = 'voteTally/APPROVALS_FAILURE';
+const APPROVALS_REQUEST = 'approvals/APPROVALS_REQUEST';
+const APPROVALS_SUCCESS = 'approvals/APPROVALS_SUCCESS';
+const APPROVALS_FAILURE = 'approvals/APPROVALS_FAILURE';
 
 // Actions ------------------------------------------------
 
