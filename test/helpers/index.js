@@ -1,7 +1,8 @@
 import { setWeb3Provider } from '../../src/chain/web3';
 
 export function useGanache() {
-  setWeb3Provider('http://127.0.0.1:2000');
+  const port = process.env.GOV_TESTNET_PORT || 2000;
+  setWeb3Provider('http://localhost:' + port);
 }
 
 export const fakeAddresses = ['0xbeefed1bedded2dabbed3defaced4decade5dead'];

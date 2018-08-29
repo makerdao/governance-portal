@@ -5,15 +5,16 @@ set -e
 
 START_TIME=`date +%s`
 CWD=`dirname $0`
+PORT=${GOV_TESTNET_PORT:-2000}
 
-./node_modules/.bin/ganache-cli -i 999 -p 2000 -a 1000 \
+./node_modules/.bin/ganache-cli -i 999 -p $PORT -a 1000 \
   -m "hill law jazz limb penalty escape public dish stand bracket blue jar" \
   >./ganache.out & netpid=$!
 trap "kill $netpid" EXIT
 
 # Wait until it's up, then use it for the deployment.
-echo "Waiting for ganache-cli to start up..."
-export ETH_RPC_URL=http://127.1:2000
+echo "Waiting for ganache-cli to start up on port ${PORT}..."
+export ETH_RPC_URL=http://127.1:$PORT
 until curl -s -o/dev/null "$ETH_RPC_URL"; do sleep 3; done
 
 # Configure seth
