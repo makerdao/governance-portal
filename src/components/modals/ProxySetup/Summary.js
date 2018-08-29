@@ -8,6 +8,7 @@ import {
   FlexContainer,
   VoteImpactHeading,
   BoxLeft,
+  TooltipCard,
   BoxRight
 } from '../shared/styles';
 import Button from '../../Button';
@@ -25,12 +26,20 @@ const ButtonContainer = styled.div`
 export default ({ modalClose, sendMkrAmount, hotAccount }) => (
   <Fragment>
     <StyledTop>
-      <StyledTitle>Secure voting contract setup</StyledTitle>
+      <StyledTitle>Voting contract setup</StyledTitle>
     </StyledTop>
     <StyledBlurb>
-      Your secure voting contract has been successfully set up. You can now vote
-      using your hot wallet below. You can manage your secure voting contract by
-      clicking Secure voting on the governance dashboard
+      Your voting contract has been successfully set up. You can now vote using
+      your{' '}
+      <TooltipCard
+        link="https://google.com"
+        body="his the wallet you vote with. This account will never be able to withdraw your tokens to itself."
+        title="Hot Wallet"
+      >
+        hot wallet
+      </TooltipCard>{' '}
+      below. You can manage your voting contract by clicking Voting Contract on
+      the governance dashboard
     </StyledBlurb>
     <FlexContainer>
       <BoxLeft>

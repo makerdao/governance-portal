@@ -23,7 +23,7 @@ const mapStateToProps = state => {
     network: state.metamask.network,
     title: 'Lock MKR',
     blurb:
-      'Please select the amount of MKR in your cold wallet to lock in the secure voting contract. You can withdraw it at any time.',
+      'Locking your MKR allows you to vote. The more you lock the more voting power you have. You can withdraw it at anytime',
     amountLabel: 'MKR balance',
     buttonLabel: 'Lock MKR',
     txSent: !!state.proxy.sendMkrAmount

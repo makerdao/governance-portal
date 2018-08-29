@@ -47,7 +47,7 @@ const BreakLink = ({
         <StyledBlurb style={{ textAlign: 'center', marginTop: '30px' }}>
           <div style={{ marginTop: '20px' }}>
             Before you can break your wallet link, you must withdraw all MKR
-            from the secure voting contract
+            from the voting contract
           </div>
         </StyledBlurb>
         <div

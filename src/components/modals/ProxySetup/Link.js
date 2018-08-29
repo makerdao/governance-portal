@@ -10,6 +10,7 @@ import {
   InputLabels,
   StyledAnchor,
   EndButton,
+  Dim,
   Note
 } from '../shared/styles';
 import Dropdown from '../../Dropdown';
@@ -87,8 +88,8 @@ class Link extends Component {
             title="Cold Wallet"
           >
             cold wallet
-          </TooltipCard>; we support MetaMask, Ledger and Trezor. Then select
-          the{' '}
+          </TooltipCard>
+          , we support MetaMask, Ledger and Trezor. Then select the{' '}
           <TooltipCard
             link="https://google.com"
             body="This the wallet you vote with. This account will never be able to withdraw your tokens to itself."
@@ -98,10 +99,6 @@ class Link extends Component {
           </TooltipCard>{' '}
           you would like to link it to.
         </StyledBlurb>
-        <Note>
-          (feel free to change your metamask account while on this modal)
-        </Note>
-
         <InputLabels>Select cold wallet</InputLabels>
         <Dropdown
           value={this.state.cold}
@@ -121,8 +118,30 @@ class Link extends Component {
             />
           )}
         />
-        <Note>
-          This wallet must be connected. We support MetaMask, Ledger and Trezor.
+        <Note style={{ opacity: '1' }}>
+          <Dim>This wallet must be connected. How to connect</Dim>{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://google.com"
+          >
+            MetaMask,
+          </a>{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://google.com"
+          >
+            Ledger
+          </a>{' '}
+          <Dim>and</Dim>{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://google.com"
+          >
+            Trezor
+          </a>
         </Note>
         <Swap dim={!swappable} onClick={this.swapAccountTypes}>
           ▲ swap ▼
@@ -148,12 +167,6 @@ class Link extends Component {
         />
         <Note>
           Reminder: this is the address that will be able to vote with your MKR.
-        </Note>
-        <Note>
-          The first tx will be w/ your cold wallet,{' '}
-          <strong style={{ fontWeight: 'bold', textDecoration: 'underline' }}>
-            please have it active
-          </strong>
         </Note>
         <div
           style={{

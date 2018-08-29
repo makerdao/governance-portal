@@ -112,6 +112,7 @@ export const GuideTitle = styled.p`
 `;
 
 export const GuideInfo = styled.p`
+  white-space: nowrap;
   font-size: 15px;
   color: ${theme.text.dim_grey_alt};
 `;
@@ -240,6 +241,10 @@ export const Bold = styled.strong`
   font-weight: ${({ theme }) => theme.fonts.weight.bold};
 `;
 
+export const Dim = styled.strong`
+  opacity: 0.5;
+`;
+
 export const Oblique = styled.strong`
   font-style: oblique;
 `;
@@ -251,6 +256,7 @@ export const VoteImpactHeading = styled.p`
 `;
 
 const TooltipWrapper = styled.div`
+  white-space: pre-wrap;
   cursor: default;
   border-radius: 4px;
   text-transform: none;
@@ -332,7 +338,7 @@ export const TooltipCard = ({ link, body, title, children }) => (
       <TooltipWrapper>
         <TooltipTitle>{title}</TooltipTitle>
         <TooltipBody>{body}</TooltipBody>
-        <TooltipLink href={link} target="_blank">
+        <TooltipLink href={link} rel="noopener noreferrer" target="_blank">
           Read more
         </TooltipLink>
       </TooltipWrapper>

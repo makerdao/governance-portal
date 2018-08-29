@@ -73,8 +73,8 @@ const WelcomeBanner = ({ modalOpen, linkRequested }) => {
             Welcome to the governance voting dashboard
           </BannerHeader>
           <BannerContent>
-            Before you can get started voting you will need to set up a secure
-            voting contract
+            Before you can get started voting you will need to set up a voting
+            contract
           </BannerContent>
         </BannerBody>
       </Content>
@@ -134,6 +134,7 @@ const VoterStatus = ({
         {cutMiddle(linkedAccount.address)}{' '}
         <a
           target="_blank"
+          rel="noopener noreferrer"
           href={ethScanLink(linkedAccount.address, networkShown)}
         >
           Etherscan

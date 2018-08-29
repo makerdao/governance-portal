@@ -140,7 +140,7 @@ const BaseLayout = ({
                 }}
                 mr={50}
               >
-                Secure Voting
+                Voting Contract
               </DimHeaderElement>
               <AccountBox fetching={!wrongNetwork && metamaskFetching} />
             </Flex>

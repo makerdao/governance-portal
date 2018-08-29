@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - 'stable'
+cache:
+  directories:
+    - node_modules
+before_install:
+  - npm i -g npm@latest
+install:
+  - npm install
+before_script:
+  - npm install -g codecov
+script:
+  - npm run testchain
+  - npm run test

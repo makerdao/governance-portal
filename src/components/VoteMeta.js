@@ -41,7 +41,7 @@ const VoteMeta = ({ verified, submitted_by, date, ...props }) => (
       </Fragment>
     ) : null}
     <Submitter>
-      <a href={submitted_by.link} target="_blank">
+      <a href={submitted_by.link} rel="noopener noreferrer" target="_blank">
         {submitted_by.name}
       </a>
     </Submitter>
