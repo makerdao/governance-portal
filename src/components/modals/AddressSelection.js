@@ -20,6 +20,10 @@ import { createSubProvider } from '../../chain/hw-wallet';
 
 const TREZOR_PATH = "44'/60'/0'/0";
 
+const CenterBlurb = StyledBlurb.extend`
+  text-align: center;
+`;
+
 class AddressSelection extends Component {
   constructor(props) {
     super(props);
@@ -52,13 +56,6 @@ class AddressSelection extends Component {
       return (
         <Fragment>
           <StyledTop>
-            <button
-              onClick={() => {
-                modalOpen(PathSelection);
-              }}
-            >
-              {this.state.hwType === 'Trezor' ? '' : 'Back'}
-            </button>
             <StyledTitle>
               Select Address on your {this.state.hwType}
             </StyledTitle>
@@ -112,13 +109,6 @@ class AddressSelection extends Component {
       return (
         <Fragment>
           <StyledTop>
-            <button
-              onClick={() => {
-                modalOpen(PathSelection);
-              }}
-            >
-              Back
-            </button>
             <StyledTitle>
               Connect to your {this.state.hwType} Wallet
             </StyledTitle>
