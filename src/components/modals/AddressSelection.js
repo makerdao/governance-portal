@@ -28,13 +28,13 @@ class AddressSelection extends Component {
     };
   }
   componentDidMount() {
-    const { modalProps } = this.props;
-    if (modalProps.trezor) {
+    const { trezor, path } = this.props;
+    if (trezor) {
       this.setState({ hwType: 'Trezor' });
       this.getAddressesTrezor(TREZOR_PATH);
     } else {
       this.setState({ hwType: 'Ledger' });
-      this.getAddressesLedger(modalProps.path);
+      this.getAddressesLedger(path);
     }
   }
 
@@ -43,7 +43,8 @@ class AddressSelection extends Component {
       getHardwareAccount,
       modalClose,
       modalOpen,
-      modalProps
+      trezor,
+      path
     } = this.props;
     if (this.state.addresses.length > 0) {
       return (
@@ -61,7 +62,7 @@ class AddressSelection extends Component {
             </StyledTitle>
           </StyledTop>
           <StyledBlurb style={{ textAlign: 'center', marginTop: '30px' }}>
-            {modalProps.path === LEDGER_LIVE_PATH
+            {path === LEDGER_LIVE_PATH
               ? 'Ledger Live'
               : this.state.hwType === 'Trezor'
                 ? 'Trezor'
@@ -93,7 +94,7 @@ class AddressSelection extends Component {
               }
               onClick={() => {
                 getHardwareAccount(LEDGER, {
-                  path: modalProps.path,
+                  path: path,
                   accountsOffset: this.state.selectedIndex,
                   accountsLength: 1
                 });
@@ -124,7 +125,7 @@ class AddressSelection extends Component {
           <Button
             slim
             onClick={() => {
-              this.getAddressesLedger(modalProps.path);
+              this.getAddressesLedger(path);
             }}
           >
             Retry
