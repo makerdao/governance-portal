@@ -17,8 +17,8 @@ script:
   - yarn testnet --ci yarn test
 before_deploy:
   - yarn build
-  - npm install now --no-save 
   - cd build
+  - npm install now --no-save
 deploy:
   - provider: script
     script: now --token $NOW_TOKEN && now alias --token $NOW_TOKEN
