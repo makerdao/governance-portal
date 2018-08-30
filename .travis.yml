@@ -17,9 +17,11 @@ script:
   - yarn testnet --ci yarn test
 before_deploy:
   - yarn build
+  - npm install now --no-save 
+  - cd build
 deploy:
   - provider: script
-    script: cd build && now --token $NOW_TOKEN && now alias --token $NOW_TOKEN
+    script: now --token $NOW_TOKEN && now alias --token $NOW_TOKEN
     skip_cleanup: true
     on:
       master: true
