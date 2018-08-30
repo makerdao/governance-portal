@@ -196,7 +196,10 @@ class AccountBox extends Component {
             ))}
             <DropdownRowForLink>
               <ConnectLink
-                onClick={() => modalOpen(AddressSelection, { trezor: true })}
+                onClick={() => {
+                  //getHardwareAccount(TREZOR);
+                  modalOpen(AddressSelection, { trezor: true });
+                }}
               >
                 Connect to Trezor
               </ConnectLink>

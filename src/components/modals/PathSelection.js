@@ -2,7 +2,6 @@ import React from 'react';
 import { cutMiddle } from '../../utils/misc';
 import { getMkrBalance } from '../../chain/read';
 import { connect } from 'react-redux';
-import { setPath } from '../../reducers/accounts';
 import { modalOpen } from '../../reducers/modal';
 import AddressSelection from './AddressSelection';
 import Withdraw from './Withdraw';
@@ -16,13 +15,12 @@ class PathSelection extends React.Component {
     super(props);
   }
 
-  makeSelection(path, setPath, modalOpen) {
-    setPath(path);
+  makeSelection(path, modalOpen) {
     modalOpen(AddressSelection, { ledger: true, path: path });
   }
 
   render() {
-    const { setPath, modalOpen } = this.props;
+    const { modalOpen } = this.props;
     return (
       <React.Fragment>
         <StyledTop>
@@ -30,14 +28,14 @@ class PathSelection extends React.Component {
         </StyledTop>
         <button
           onClick={() => {
-            this.makeSelection(LEDGER_LEGACY_PATH, setPath, modalOpen);
+            this.makeSelection(LEDGER_LEGACY_PATH, modalOpen);
           }}
         >
           Ledger Legacy
         </button>
         <button
           onClick={() => {
-            this.makeSelection(LEDGER_LIVE_PATH, setPath, modalOpen);
+            this.makeSelection(LEDGER_LIVE_PATH, modalOpen);
           }}
         >
           Ledger Live
@@ -51,5 +49,5 @@ const mapStateToProps = state => ({});
 
 export default connect(
   mapStateToProps,
-  { setPath, modalOpen }
+  { modalOpen }
 )(PathSelection);

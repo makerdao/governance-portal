@@ -13,10 +13,7 @@ export default class AddressGenerator {
   }
 
   getAddressString = index => {
-    console.log('m/${index}', `m/${index}`);
     let derivedKey = this.hdk.derive(`m/${index}`);
-    console.log('derivedKey', derivedKey);
-    console.log('derivedKey.publicKey', derivedKey.publicKey);
     let address = ethUtil.publicToAddress(derivedKey.publicKey, true);
     let addressString = '0x' + address.toString('hex');
     return addressString;

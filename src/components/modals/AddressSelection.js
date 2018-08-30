@@ -4,7 +4,7 @@ import Button from '../Button';
 import { connect } from 'react-redux';
 import { modalClose } from '../../reducers/modal';
 import { getHardwareAccount } from '../../reducers/accounts';
-import { LEDGER } from '../../chain/hw-wallet';
+import { LEDGER, TREZOR } from '../../chain/hw-wallet';
 import AppEth from '@ledgerhq/hw-app-eth';
 import AddressGenerator from '../../chain/hw-wallet/vendor/address-generator';
 import { obtainPathComponentsFromDerivationPath } from '../../chain/hw-wallet/vendor/ledger-subprovider';
@@ -15,6 +15,8 @@ import PathSelection, {
   LEDGER_LEGACY_PATH
 } from './PathSelection';
 import { modalOpen } from '../../reducers/modal';
+import { netNameToId } from '../../utils/ethereum';
+import { createSubProvider } from '../../chain/hw-wallet';
 
 const TREZOR_PATH = "44'/60'/0'/0";
 
@@ -28,10 +30,10 @@ class AddressSelection extends Component {
     };
   }
   componentDidMount() {
-    const { trezor, path } = this.props;
+    const { network, trezor, path } = this.props;
     if (trezor) {
       this.setState({ hwType: 'Trezor' });
-      this.getAddressesTrezor(TREZOR_PATH);
+      this.getAddressesTrezor(network, TREZOR_PATH);
     } else {
       this.setState({ hwType: 'Ledger' });
       this.getAddressesLedger(path);
@@ -117,7 +119,9 @@ class AddressSelection extends Component {
             >
               Back
             </button>
-            <StyledTitle>Connect to your Ledger Wallet</StyledTitle>
+            <StyledTitle>
+              Connect to your {this.state.hwType} Wallet
+            </StyledTitle>
           </StyledTop>
           <StyledBlurb style={{ textAlign: 'center', marginTop: '30px' }}>
             Couldn't connect
@@ -142,7 +146,21 @@ class AddressSelection extends Component {
     }
   }
 
-  async getAddressesTrezor(path = "44'/60'/0'/0") {}
+  async getAddressesTrezor(network, path = "44'/60'/0'/0", options = {}) {
+    const combinedOptions = {
+      ...options,
+      networkId: netNameToId(network),
+      promisify: true,
+      accountsLength: 5
+    };
+    const subprovider = createSubProvider(TREZOR, combinedOptions);
+    try {
+      const addresses = await subprovider.getAccounts();
+      this.setState({ addresses: Object.values(addresses) });
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   async getAddressesLedger(path = '') {
     if (path === '') {
@@ -168,7 +186,9 @@ class AddressSelection extends Component {
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  network: state.metamask.network
+});
 
 export default connect(
   mapStateToProps,
