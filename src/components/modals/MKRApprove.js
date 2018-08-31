@@ -24,7 +24,7 @@ class MKRApprove extends Component {
       this.setState({ txSent: true });
   }
   render() {
-    if (this.state.lock) return <Lock />;
+    if (this.state.lock) return <Lock {...this.props} />;
     const {
       confirmingMkrApproveProxy: confirming,
       network,
@@ -38,10 +38,7 @@ class MKRApprove extends Component {
           network={network}
           txHash={txHash}
           account={activeAccount}
-          nextStep={() => {
-            this.props.goToStep('lockInput');
-            this.setState({ lock: true });
-          }}
+          nextStep={() => this.setState({ lock: true })}
         />
       );
     } else {

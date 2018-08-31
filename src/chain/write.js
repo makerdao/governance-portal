@@ -156,24 +156,6 @@ export const sendMkr = async ({
   return sendTransactionWithAccount(account, tx);
 };
 
-/**
- * @async @desc lock all MKR in a vote-proxy vote for a single proposal
- * @param {Object} voteDetails { acccount: { address, type }, proposalAddress }
- * @return {Promise} tx
- */
-export const voteAndLockViaProxy = async ({ account, proposalAddress }) => {
-  if (!account.hasProxy)
-    throw new Error(
-      `${
-        account.address
-      } cannot vote and lock because account doesn't have a proxy`
-    );
-  const { address: proxyAddress } = account.proxy;
-  return simpleSendTx(account, proxyAddress, 'lockAllVote(address[])', [
-    ['address[]', [proposalAddress]]
-  ]);
-};
-
 export const voteExec = async ({ account, proposalAddress }) => {
   if (!account.hasProxy)
     throw new Error(
@@ -194,50 +176,6 @@ export const voteExecNone = async ({ account }) => {
   return simpleSendTx(account, proxyAddress, 'voteExec(address[])', [
     ['address[]', []]
   ]);
-};
-
-export const withdrawMkr = async (account, value) => {
-  return simpleSendTx(account, account.proxy.address, 'withdraw(uint256)', [
-    ['uint256', etherToWei(value)]
-  ]);
-};
-
-/**
- * @async @desc withdraw mkr from proxy; unlock from chief if necessary
- * @param {Object} account
- * @param {String} value
- * @return {Promise} tx
- */
-export const unlockWithdrawMkr = async (account, value) => {
-  return simpleSendTx(
-    account,
-    account.proxy.address,
-    'unlockWithdraw(uint256)',
-    [['uint256', etherToWei(value)]]
-  );
-};
-
-/**
- * @async @desc unlock and withdraw all mkr from proxy
- * @param {Object} account
- * @return {Promise} tx
- */
-export const unlockWithdrawAll = async account => {
-  return simpleSendTx(
-    account,
-    account.proxy.address,
-    'unlockWithdrawAll()',
-    []
-  );
-};
-
-/**
- * @async @desc free all mkr from chief w/o withdrawing
- * @param {Object} account
- * @return {Promise} tx
- */
-export const freeAll = async account => {
-  return simpleSendTx(account, account.proxy.address, 'freeAll()', []);
 };
 
 /**
@@ -263,6 +201,11 @@ export const mkrApprove = async (account, target, network = null) => {
   ]);
 };
 
+/**
+ * @async @desc push MKR to the proxy locking it into the voting contracts
+ * @param {Object} { account, value }
+ * @return {Promise} tx
+ */
 export const proxyLock = async ({ account, value }) => {
   if (!account.hasProxy)
     throw new Error(
@@ -274,6 +217,11 @@ export const proxyLock = async ({ account, value }) => {
   ]);
 };
 
+/**
+ * @async @desc pull MKR from the proxy freeing it from the voting contracts
+ * @param {Object} { account, value }
+ * @return {Promise} tx
+ */
 export const proxyFree = async ({ account, value }) => {
   if (!account.hasProxy)
     throw new Error(

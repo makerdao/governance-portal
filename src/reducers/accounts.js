@@ -81,20 +81,14 @@ export const addAccounts = accounts => async (dispatch, getState) => {
     let currProposal = Promise.resolve('');
     if (hasProxy) {
       currProposal = currProposal.then(() =>
-        Promise.all([
-          getNumDeposits(proxyAddress, network),
-          (async () => {
-            const slate = await getVotedSlate(proxyAddress, network);
-            const addresses = await getSlateAddresses(slate, network);
-            return addresses[0] || '';
-          })()
-        ]).then(
-          // NOTE for now we just take the first address in the slate since we're
-          // assuming that they're only voting for one in the frontend. This
-          // should be changed if that changes
-          // also, if there's nothing locked in chief, we take this adddress as not voting for anything
-          ([deposits, addresses]) => (Number(deposits) === 0 ? '' : addresses)
-        )
+        // NOTE for now we just take the first address in the slate since we're
+        // assuming that they're only voting for one in the frontend. This
+        // should be changed if that changes
+        (async () => {
+          const slate = await getVotedSlate(proxyAddress, network);
+          const addresses = await getSlateAddresses(slate, network);
+          return addresses[0] || '';
+        })()
       );
     }
     const _payload = {
@@ -105,7 +99,6 @@ export const addAccounts = accounts => async (dispatch, getState) => {
       proxyRole,
       votingFor: currProposal,
       proxy: promisedProperties({
-        locked: hasProxy ? getNumDeposits(proxyAddress, network) : 0,
         address: hasProxy ? toChecksum(proxyAddress) : '',
         votingPower: hasProxy ? getNumDeposits(proxyAddress, network) : 0,
         hasInfMkrApproval: hasProxy

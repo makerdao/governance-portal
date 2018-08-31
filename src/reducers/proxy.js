@@ -4,8 +4,6 @@ import { createReducer } from '../utils/redux';
 import {
   initiateLink as _initiateLink,
   approveLink as _approveLink,
-  sendMkrToProxy as _sendMkrToProxy,
-  unlockWithdrawMkr as _unlockWithdrawMkr,
   proxyLock as _proxyLock,
   proxyFree as _proxyFree,
   breakLink as _breakLink,
@@ -157,25 +155,6 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
   });
 };
 
-export const sendMkrToProxy = value => (dispatch, getState) => {
-  if (Number(value) === 0) return dispatch(smartStepSkip());
-
-  const account = getActiveAccount(getState());
-  if (!account || account.proxyRole !== 'cold') {
-    return window.alert(`Switch to your cold wallet before continuing.`);
-  }
-  const network = getState().metamask.network;
-
-  dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
-  handleTx({
-    prefix: 'SEND_MKR_TO_PROXY',
-    dispatch,
-    action: _sendMkrToProxy({ account, value, network }),
-    successPayload: value,
-    acctType: account.type
-  });
-};
-
 export const lock = value => (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
 
@@ -189,20 +168,6 @@ export const lock = value => (dispatch, getState) => {
     prefix: 'SEND_MKR_TO_PROXY',
     dispatch,
     action: _proxyLock({ account, value }),
-    successPayload: value,
-    acctType: account.type
-  });
-};
-
-export const withdrawMkr = value => (dispatch, getState) => {
-  if (Number(value) === 0) return dispatch(smartStepSkip());
-
-  dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
-  const account = getActiveAccount(getState());
-  handleTx({
-    prefix: 'WITHDRAW_MKR',
-    dispatch,
-    action: _unlockWithdrawMkr(account, value),
     successPayload: value,
     acctType: account.type
   });
