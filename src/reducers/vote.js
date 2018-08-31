@@ -1,7 +1,7 @@
 import ReactGA from 'react-ga';
 
 import { createReducer } from '../utils/redux';
-import { voteAndLockViaProxy, freeAll } from '../chain/write';
+import { voteExec, voteExecNone } from '../chain/write';
 import { awaitTx } from '../chain/web3';
 import { getActiveAccount, getAccount, UPDATE_ACCOUNT } from './accounts';
 import { addToastWithTimeout, ToastTypes } from './toasts';
@@ -58,7 +58,7 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
   try {
     if (!activeAccount || !activeAccount.hasProxy)
       throw new Error('must have account active');
-    const txHash = await voteAndLockViaProxy({
+    const txHash = await voteExec({
       account: activeAccount,
       proposalAddress
     });
@@ -90,7 +90,7 @@ export const withdrawVote = () => async (dispatch, getState) => {
   try {
     if (!activeAccount || !activeAccount.hasProxy)
       throw new Error('must have account active');
-    const txHash = await freeAll(activeAccount);
+    const txHash = await voteExecNone({ account: activeAccount });
     dispatch({ type: WITHDRAW_SENT, payload: { txHash } });
     const txReceipt = await awaitTx(txHash, { confirmations: 1 });
     console.log('mined:', txReceipt);

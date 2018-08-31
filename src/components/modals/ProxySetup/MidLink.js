@@ -26,7 +26,7 @@ const MidLink = ({
       <Bold>Hot wallet:</Bold> <Oblique> {hotAddress} </Oblique>
       <br />
       <div style={{ marginTop: '20px' }}>
-        By clicking "approve", you may confirm that link
+        By clicking "approve", you may confirm this with you hot wallet
       </div>
     </StyledBlurb>
     <div

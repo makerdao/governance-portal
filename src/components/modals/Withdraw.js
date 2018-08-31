@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import { getActiveAccount } from '../../reducers/accounts';
 import {
-  withdrawMkr,
+  free as proxyFree,
   smartStepSkip,
   clear as clearProxyState
 } from '../../reducers/proxy';
@@ -28,7 +28,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  action: withdrawMkr,
+  action: proxyFree,
   modalClose,
   skip: smartStepSkip,
   clearProxyState

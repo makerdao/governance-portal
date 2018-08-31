@@ -13,7 +13,8 @@ import {
   removeHexPrefix,
   weiToEther,
   paddedBytes32ToAddress,
-  isZeroAddress
+  isZeroAddress,
+  MAX_UINT
 } from '../utils/ethereum';
 import { add } from '../utils/misc.js';
 import contractInfo from './contract-info.json';
@@ -289,4 +290,18 @@ export const getVotingPower = async (proxyAddress, network) => {
  */
 export const getEthPrice = async () => {
   return ethCall('pip', 'read()', []).then(weiToEther);
+};
+
+/**
+ * @async @desc return whether target has infinite MKR approvals for accountAddress
+ * @return {Bool}
+ */
+export const hasInfMkrApproval = async (accountAddress, target, network) => {
+  const allowance = await ethCall(
+    'mkr',
+    'allowance(address,address)',
+    [removeHexPrefix(accountAddress), removeHexPrefix(target)],
+    network
+  );
+  return allowance === MAX_UINT;
 };

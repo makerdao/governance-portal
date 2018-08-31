@@ -71,7 +71,7 @@ class Vote extends Component {
                         After vote withdrawal
                       </VoteImpactHeading>
                       <MkrAmt>
-                        {formatRound(subtract(approvals, proxy.locked), 3)}
+                        {formatRound(subtract(approvals, proxy.votingPower), 3)}
                       </MkrAmt>
                     </div>
                   </VoteImpact>

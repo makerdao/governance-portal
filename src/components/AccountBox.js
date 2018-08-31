@@ -86,6 +86,13 @@ export class AccountBlurb extends Component {
     const _jazzicon = jazzicon(22, numberForAddress(this.props.address));
     this.jazzicon.current.appendChild(_jazzicon);
   }
+  componentDidUpdate(prevProps) {
+    if (prevProps.address !== this.props.address) {
+      const _jazzicon = jazzicon(22, numberForAddress(this.props.address));
+      this.jazzicon.current.removeChild(this.jazzicon.current.firstChild);
+      this.jazzicon.current.appendChild(_jazzicon);
+    }
+  }
   render() {
     const { type, address, noAddressCut } = this.props;
     return (

@@ -4,9 +4,10 @@ import { createReducer } from '../utils/redux';
 import {
   initiateLink as _initiateLink,
   approveLink as _approveLink,
-  sendMkrToProxy as _sendMkrToProxy,
-  unlockWithdrawMkr as _unlockWithdrawMkr,
-  breakLink as _breakLink
+  proxyLock as _proxyLock,
+  proxyFree as _proxyFree,
+  breakLink as _breakLink,
+  mkrApprove as _mkrApprove
 } from '../chain/write';
 import { parseError } from '../utils/misc';
 import { awaitTx } from '../chain/web3';
@@ -42,6 +43,11 @@ const BREAK_LINK_REQUEST = 'proxy/BREAK_LINK_REQUEST';
 const BREAK_LINK_SENT = 'proxy/BREAK_LINK_SENT';
 export const BREAK_LINK_SUCCESS = 'proxy/BREAK_LINK_SUCCESS';
 const BREAK_LINK_FAILURE = 'proxy/BREAK_LINK_FAILURE';
+
+const MKR_APPROVE_REQUEST = 'proxy/MKR_APPROVE_REQUEST';
+const MKR_APPROVE_SENT = 'proxy/MKR_APPROVE_SENT';
+export const MKR_APPROVE_SUCCESS = 'proxy/MKR_APPROVE_SUCCESS';
+const MKR_APPROVE_FAILURE = 'proxy/MKR_APPROVE_FAILURE';
 
 const CLEAR = 'proxy/CLEAR';
 const GO_TO_STEP = 'proxy/GO_TO_STEP';
@@ -149,34 +155,33 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
   });
 };
 
-export const sendMkrToProxy = value => (dispatch, getState) => {
+export const lock = value => (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
 
   const account = getActiveAccount(getState());
   if (!account || account.proxyRole !== 'cold') {
     return window.alert(`Switch to your cold wallet before continuing.`);
   }
-  const network = getState().metamask.network;
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
   handleTx({
     prefix: 'SEND_MKR_TO_PROXY',
     dispatch,
-    action: _sendMkrToProxy({ account, value, network }),
+    action: _proxyLock({ account, value }),
     successPayload: value,
     acctType: account.type
   });
 };
 
-export const withdrawMkr = value => (dispatch, getState) => {
+export const free = value => (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
 
-  dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
   const account = getActiveAccount(getState());
+  dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
   handleTx({
     prefix: 'WITHDRAW_MKR',
     dispatch,
-    action: _unlockWithdrawMkr(account, value),
+    action: _proxyFree({ account, value }),
     successPayload: value,
     acctType: account.type
   });
@@ -208,6 +213,23 @@ export const postLinkUpdate = () => (dispatch, getState) => {
   dispatch(addAccounts(accounts));
 };
 
+export const mkrApproveProxy = () => (dispatch, getState) => {
+  dispatch({ type: MKR_APPROVE_REQUEST });
+  const account = getActiveAccount(getState());
+  if (!account || account.proxyRole !== 'cold')
+    return window.alert(`Please switch to your cold wallet before continuing.`);
+  if (!account.hasProxy)
+    return window.alert(`Account must have a proxy voting contract.`);
+
+  const proxyAddress = account.proxy.address;
+  handleTx({
+    prefix: 'MKR_APPROVE',
+    dispatch,
+    action: _mkrApprove(account, proxyAddress),
+    acctType: account.type
+  });
+};
+
 // Reducer ------------------------------------------------
 
 const existingState = localStorage.getItem('linkInitiatedState')
@@ -218,13 +240,16 @@ const initialState = {
   sendMkrTxHash: '',
   initiateLinkTxHash: '',
   approveLinkTxHash: '',
+  mkrApproveProxyTxHash: '',
   confirmingInitiate: false,
   confirmingApprove: false,
   confirmingSendMkr: false,
+  confirmingMkrApproveProxy: false,
   setupProgress: 'intro',
   hotAddress: '',
   coldAddress: '',
   sendMkrAmount: 0,
+  withdrawMkrAmount: 0,
   linkGas: getLinkGas() || 0
 };
 
@@ -287,7 +312,22 @@ const proxy = createReducer(withExisting, {
   },
   [SEND_MKR_TO_PROXY_FAILURE]: state => ({
     ...state,
+    sendMkrAmount: 0,
     confirmingSendMkr: false
+  }),
+  // MKR Approve Proxy ------------------------------
+  [MKR_APPROVE_SENT]: (state, { payload }) => ({
+    ...state,
+    confirmingMkrApproveProxy: true,
+    mkrApproveProxyTxHash: payload.txHash
+  }),
+  [MKR_APPROVE_SUCCESS]: state => ({
+    ...state,
+    confirmingMkrApproveProxy: false
+  }),
+  [MKR_APPROVE_FAILURE]: state => ({
+    ...state,
+    confirmingMkrApproveProxy: false
   }),
   // Withdraw ---------------------------------------
   [WITHDRAW_MKR_REQUEST]: (state, { payload: value }) => ({
@@ -306,7 +346,7 @@ const proxy = createReducer(withExisting, {
   [WITHDRAW_MKR_FAILURE]: state => ({
     ...state,
     confirmingWithdrawMkr: false,
-    withdrawMkrAmount: false
+    withdrawMkrAmount: 0
   }),
   // Reset ------------------------------------------
   [CLEAR]: state =>
