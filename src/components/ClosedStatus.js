@@ -72,7 +72,6 @@ const ClosedProposal = ({
   approvalFetching,
   proposalAddress
 }) => {
-  console.log(winningProposal);
   if (approvalFetching)
     return <Loader mr={70} size={20} color="header" background="white" />;
   if (!eq(proposalAddress, winningProposal.source) || winningProposal === null)

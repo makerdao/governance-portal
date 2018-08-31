@@ -6,6 +6,7 @@ BigNumber.config({ DECIMAL_PLACES: 18, ROUNDING_MODE: 1 });
 export const WEI = 1;
 export const GWEI = 1000000000;
 export const ETHER = 1000000000000000000;
+export const MAX_UINT = `0x${Array(64 + 1).join('f')}`;
 
 /**
  * @desc pad string to specific width and padding

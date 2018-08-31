@@ -29,6 +29,10 @@ export default class AmountInput extends Component {
     ReactGA.modalview(toSlug(this.props.title || 'amount-input'));
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.txSent !== this.props.txSent) this.setState({ amount: '' });
+  }
+
   setAmount = event => {
     this.setState({ amount: event.target.value });
   };
@@ -43,7 +47,7 @@ export default class AmountInput extends Component {
 
   submit(amount) {
     const { action, balance } = this.props;
-    if (!amount || Number(amount) > balance) {
+    if (!amount || isNaN(Number(amount)) || Number(amount) > balance) {
       window.alert('Please enter a valid amount');
     } else {
       action(amount);

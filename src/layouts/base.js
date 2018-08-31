@@ -97,6 +97,14 @@ const NetworkNotification = styled.div`
   font-weight: 500;
 `;
 
+const NoContent = styled.div`
+  margin-top: 150px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 350px;
+  font-style: oblique;
+`;
+
 const BaseLayout = ({
   children,
   network,
@@ -153,15 +161,7 @@ const BaseLayout = ({
             {childrenShouldMount ? (
               children
             ) : (
-              <div
-                style={{
-                  marginTop: '150px',
-                  display: 'flex',
-                  justifyContent: 'center'
-                }}
-              >
-                {noContentMsg}
-              </div>
+              <NoContent>{noContentMsg}</NoContent>
             )}
           </StyledContent>
           <Padding />

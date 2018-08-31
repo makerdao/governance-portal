@@ -8,10 +8,10 @@ import {
   getMkrBalance,
   getProxyStatus,
   getLinkedAddress,
-  getVotingPower,
   getVotedSlate,
   getSlateAddresses,
-  getNumDeposits
+  getNumDeposits,
+  hasInfMkrApproval as _hasInfMkrApproval
 } from '../chain/read';
 import { AccountTypes } from '../utils/constants';
 import { add, eq, subtract, promisedProperties } from '../utils/misc';
@@ -19,6 +19,7 @@ import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
   INITIATE_LINK_REQUEST,
+  MKR_APPROVE_SUCCESS,
   BREAK_LINK_SUCCESS
 } from './proxy';
 import { createSubProvider } from '../chain/hw-wallet';
@@ -106,7 +107,10 @@ export const addAccounts = accounts => async (dispatch, getState) => {
       proxy: promisedProperties({
         locked: hasProxy ? getNumDeposits(proxyAddress, network) : 0,
         address: hasProxy ? toChecksum(proxyAddress) : '',
-        votingPower: hasProxy ? getVotingPower(proxyAddress, network) : 0
+        votingPower: hasProxy ? getNumDeposits(proxyAddress, network) : 0,
+        hasInfMkrApproval: hasProxy
+          ? _hasInfMkrApproval(account.address, proxyAddress, network)
+          : false
       })
     };
     const fetchLinkedAccountData = async () => {
@@ -217,6 +221,7 @@ export const fakeAccount = {
   proxy: {
     address: '0xproxyfake',
     votingPower: 111,
+    hasInfMkrApproval: false,
     linkedAccount: {
       address: '0xbeefed1bedded2dabbed3defaced4decade5feed',
       proxyRole: 'cold',
@@ -351,6 +356,19 @@ const accounts = createReducer(initialState, {
     ...state,
     fetching: false
   }),
+  [MKR_APPROVE_SUCCESS]: state => {
+    const _updatedAccount = {
+      ...getActiveAccount({ accounts: state }),
+      proxy: {
+        ...getActiveAccount({ accounts: state }).proxy,
+        hasInfMkrApproval: true
+      }
+    };
+    return {
+      ...state,
+      allAccounts: withUpdatedAccount(state.allAccounts, _updatedAccount)
+    };
+  },
   [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),
   [BREAK_LINK_SUCCESS]: breakProxyLink(),
   [WITHDRAW_MKR_SUCCESS]: updateProxyBalance(false),

@@ -6,7 +6,7 @@ import ReduxThunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 import Raven from 'raven-js';
 import ReactGA from 'react-ga';
-import { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 
 import rootReducer from './reducers';
 import { isMobile } from './utils/misc';
@@ -56,6 +56,12 @@ if (process.env.NODE_ENV === 'production') {
   ReactGA.pageview(window.location.pathname + window.location.search);
 }
 
+const Center = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 6em;
+`;
+
 if (process.env.NODE_ENV === 'production') {
   Raven.config(
     'https://424db452238242e4bd8d7e5ab064e413@sentry.io/1270414'
@@ -64,7 +70,7 @@ if (process.env.NODE_ENV === 'production') {
     ReactDOM.render(
       <ThemeProvider theme={currTheme}>
         <Provider store={store}>
-          {isMobile() ? <div>No mobile support yet</div> : <Router />}
+          {isMobile() ? <Center>No mobile support yet</Center> : <Router />}
         </Provider>
       </ThemeProvider>,
       document.getElementById('root')
@@ -74,7 +80,7 @@ if (process.env.NODE_ENV === 'production') {
   ReactDOM.render(
     <ThemeProvider theme={currTheme}>
       <Provider store={store}>
-        {isMobile() ? <div>No mobile support yet</div> : <Router />}
+        {isMobile() ? <Center>No mobile support yet</Center> : <Router />}
       </Provider>
     </ThemeProvider>,
     document.getElementById('root')

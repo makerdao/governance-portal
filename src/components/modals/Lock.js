@@ -1,13 +1,15 @@
+import React from 'react';
 import { connect } from 'react-redux';
 
 import { getActiveAccount } from '../../reducers/accounts';
 import {
-  sendMkrToProxy,
+  lock as proxyLock,
   smartStepSkip,
   clear as clearProxyState
 } from '../../reducers/proxy';
 import { modalClose } from '../../reducers/modal';
 import AmountInput from './shared/AmountInput';
+import MKRApprove from './MKRApprove';
 
 const mapStateToProps = state => {
   const account = getActiveAccount(state);
@@ -18,6 +20,7 @@ const mapStateToProps = state => {
   return {
     balance,
     account,
+    hasInfMkrApproval: account.proxy.hasInfMkrApproval,
     txHash: state.proxy.sendMkrTxHash,
     confirming: state.proxy.confirmingSendMkr,
     network: state.metamask.network,
@@ -31,7 +34,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  action: sendMkrToProxy,
+  action: proxyLock,
   modalClose,
   skip: smartStepSkip,
   clearProxyState
@@ -40,4 +43,7 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(AmountInput);
+)(({ hasInfMkrApproval, ...props }) => {
+  if (hasInfMkrApproval) return <AmountInput {...props} />;
+  else return <MKRApprove {...props} />;
+});

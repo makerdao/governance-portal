@@ -164,11 +164,35 @@ export const sendMkr = async ({
 export const voteAndLockViaProxy = async ({ account, proposalAddress }) => {
   if (!account.hasProxy)
     throw new Error(
-      `${account.address} cannot vote and lock because it doesn't have a proxy`
+      `${
+        account.address
+      } cannot vote and lock because account doesn't have a proxy`
     );
   const { address: proxyAddress } = account.proxy;
   return simpleSendTx(account, proxyAddress, 'lockAllVote(address[])', [
     ['address[]', [proposalAddress]]
+  ]);
+};
+
+export const voteExec = async ({ account, proposalAddress }) => {
+  if (!account.hasProxy)
+    throw new Error(
+      `${account.address} cannot vote because account doesn't have a proxy`
+    );
+  const { address: proxyAddress } = account.proxy;
+  return simpleSendTx(account, proxyAddress, 'voteExec(address[])', [
+    ['address[]', [proposalAddress]]
+  ]);
+};
+
+export const voteExecNone = async ({ account }) => {
+  if (!account.hasProxy)
+    throw new Error(
+      `${account.address} cannot vote because account doesn't have a proxy`
+    );
+  const { address: proxyAddress } = account.proxy;
+  return simpleSendTx(account, proxyAddress, 'voteExec(address[])', [
+    ['address[]', []]
   ]);
 };
 
@@ -224,4 +248,39 @@ export const freeAll = async account => {
 export const breakLink = async (account, network = null) => {
   const factory = await getProxyFactory(network);
   return simpleSendTx(account, factory, 'breakLink()', []);
+};
+
+/**
+ * @async @desc give infinite mkr approvals to a target address
+ * @param {Object} account
+ * @param {String} target
+ * @return {Promise} tx
+ */
+export const mkrApprove = async (account, target, network = null) => {
+  const mkrToken = await getMkrAddress(network);
+  return simpleSendTx(account, mkrToken, 'approve(address)', [
+    ['address', target]
+  ]);
+};
+
+export const proxyLock = async ({ account, value }) => {
+  if (!account.hasProxy)
+    throw new Error(
+      `${account.address} cannot lock because account doesn't have a proxy`
+    );
+  const { address: proxyAddress } = account.proxy;
+  return simpleSendTx(account, proxyAddress, 'lock(uint256)', [
+    ['uint256', etherToWei(value)]
+  ]);
+};
+
+export const proxyFree = async ({ account, value }) => {
+  if (!account.hasProxy)
+    throw new Error(
+      `${account.address} cannot free because account doesn't have a proxy`
+    );
+  const { address: proxyAddress } = account.proxy;
+  return simpleSendTx(account, proxyAddress, 'free(uint256)', [
+    ['uint256', etherToWei(value)]
+  ]);
 };

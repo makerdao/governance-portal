@@ -9,7 +9,6 @@ import Stepper, { progressMap } from './Stepper';
 import { getActiveAccount, getAccount } from '../../../reducers/accounts';
 import {
   initiateLink,
-  sendMkrToProxy,
   approveLink,
   clear as proxyClear,
   goToStep
@@ -141,7 +140,6 @@ class ProxySetup extends Component {
 }
 
 ProxySetup.propTypes = {
-  sendMkrToProxy: PropTypes.func.isRequired,
   initiateLinkTxHash: PropTypes.string,
   approveLinkTxHash: PropTypes.string,
   sendMkrTxHash: PropTypes.string
@@ -196,7 +194,7 @@ const stateProps = state => {
     modal: modal.modal,
     accounts: accounts.allAccounts,
     activeAccount: getActiveAccount({ accounts }),
-    network: metamask.network === 'kovan' ? 'kovan' : 'mainnet',
+    network: metamask.network,
     initiateLinkTxHash,
     sendMkrTxHash,
     sendMkrAmount,
@@ -226,7 +224,6 @@ const dispatchProps = {
   modalClose,
   initiateLink,
   approveLink,
-  sendMkrToProxy,
   proxyClear,
   goToStep
 };
