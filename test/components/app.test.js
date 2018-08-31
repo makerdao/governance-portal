@@ -3,6 +3,7 @@ import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { ThemeProvider } from 'styled-components';
+import pretty from 'pretty';
 
 import Routes from '../../src/Routes';
 import rootReducer from '../../src/reducers';
@@ -35,5 +36,5 @@ test('render everything', () => {
     </ThemeProvider>
   );
 
-  expect(node.html()).toMatchSnapshot();
+  expect(pretty(node.html())).toMatchSnapshot();
 });
