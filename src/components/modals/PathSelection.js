@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
 import { modalOpen } from '../../reducers/modal';
 import AddressSelection from './AddressSelection';
 import { StyledTitle, StyledTop, StyledBlurb } from './shared/styles';
@@ -15,6 +16,12 @@ const CenterBlurb = StyledBlurb.extend`
   margin-top: 14px;
 `;
 
+const Line = styled.hr`
+  background-color: #e2e2e2;
+  height: 1px;
+  margin: 16px 0;
+`;
+
 class PathSelection extends React.Component {
   makeSelection(path, modalOpen) {
     modalOpen(AddressSelection, { ledger: true, path: path });
@@ -27,10 +34,10 @@ class PathSelection extends React.Component {
           <StyledTitle>Select ledger account type</StyledTitle>
         </StyledTop>
         <CenterBlurb>
-          Please select how you created your Ledger wallet
+          Please select how you created your Ledger wallet.
         </CenterBlurb>
         <LedgerType type="live" />
-        <hr />
+        <Line />
         <LedgerType type="legacy" />
       </React.Fragment>
     );

@@ -10,75 +10,77 @@ import AddressSelection from './AddressSelection';
 export const LEDGER_LIVE_PATH = "44'/60'/0'/0/0";
 export const LEDGER_LEGACY_PATH = "44'/60'/0'/0";
 
-const StyledType = styled.div`
+const Type = styled.div`
   font-size: 20px;
+  font-weight: bold;
   color: #212536;
 `;
 
-const StyledDescription = styled.div`
+const Description = styled.div`
   font-size: 16px;
   line-height: 24px;
   color: #48495f;
 `;
 
-const LedgerIcon = styled.p`
-  margin-left: 17px;
-  margin-top: 16px;
-  width: 22px;
-  height: 22px;
-  background-color: #fff;
-  mask: url(${ledgerImg}) center no-repeat;
+const LedgerIcon = styled.div`
+  margin-right: 16px;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  border-radius: 60px;
+  background: url(${ledgerImg}) center no-repeat;
+  background-color: #e8e8e8;
+  background-size: 157px;
+  background-position: 13px 13px;
 `;
 
-const Circle = styled.div`
-  margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
-  margin-top: ${({ mt }) => (mt ? `${mt}px` : '')};
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background-color: #f85d2d;
+const Wrapper = styled(FlexContainer)`
+  align-items: flex-start;
+`;
+
+const Blurb = styled.div`
+  margin-top: 5px;
+  margin-right: 16px;
+`;
+
+const ConnectButton = styled(Button)`
+  margin-top: 10px;
+  width: 120px;
 `;
 
 class LedgerType extends React.Component {
   render() {
     const { type, modalOpen } = this.props;
+    const typeCaps = type.charAt(0).toUpperCase() + type.slice(1);
     return (
-      <React.Fragment>
-        <FlexContainer>
-          <Circle>
-            <LedgerIcon />
-          </Circle>
-          <div>
-            <StyledType> Ledger {type} </StyledType>
-            <StyledDescription>
-              {' '}
-              {type === 'live'
-                ? 'You created your wallet using Ledger Live.'
-                : 'You created your wallet prior to Ledger Live.'}
-              <a> Read more</a>
-            </StyledDescription>
-          </div>
-          <Button
-            slim
-            onClick={() =>
-              modalOpen(AddressSelection, {
-                ledger: true,
-                path: type === 'live' ? LEDGER_LIVE_PATH : LEDGER_LEGACY_PATH
-              })
-            }
-          >
-            {' '}
-            Connect{' '}
-          </Button>
-        </FlexContainer>
-      </React.Fragment>
+      <Wrapper>
+        <LedgerIcon />
+        <Blurb>
+          <Type>Ledger {typeCaps}</Type>
+          <Description>
+            {type === 'live'
+              ? 'You created your wallet using Ledger Live.'
+              : 'You created your wallet prior to Ledger Live.'}{' '}
+            <a>Read more</a>
+          </Description>
+        </Blurb>
+        <ConnectButton
+          slim
+          onClick={() =>
+            modalOpen(AddressSelection, {
+              ledger: true,
+              path: type === 'live' ? LEDGER_LIVE_PATH : LEDGER_LEGACY_PATH
+            })
+          }
+        >
+          Connect
+        </ConnectButton>
+      </Wrapper>
     );
   }
 }
 
-const mapStateToProps = state => ({});
-
 export default connect(
-  mapStateToProps,
+  null,
   { modalOpen }
 )(LedgerType);
