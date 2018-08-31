@@ -1,8 +1,59 @@
 import { setWeb3Provider } from '../../src/chain/web3';
+import fetch from 'node-fetch';
+
+function ganacheAddress() {
+  const port = process.env.GOV_TESTNET_PORT || 2000;
+  return `http://localhost:${port}`;
+}
 
 export function useGanache() {
-  const port = process.env.GOV_TESTNET_PORT || 2000;
-  setWeb3Provider('http://localhost:' + port);
+  setWeb3Provider(ganacheAddress());
+}
+
+let requestCount = 0;
+
+export async function takeSnapshot() {
+  const id = requestCount;
+  requestCount += 1;
+
+  const res = await fetch(ganacheAddress(), {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      method: 'evm_snapshot',
+      params: [],
+      id: id
+    })
+  });
+
+  const json = await res.json();
+  return parseInt(json['result'], 16);
+}
+
+export async function restoreSnapshot(snapId) {
+  const id = requestCount;
+  requestCount += 1;
+
+  const res = await fetch(ganacheAddress(), {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      method: 'evm_revert',
+      params: [snapId],
+      id: id
+    })
+  });
+
+  const json = await res.json();
+  return json['result'];
 }
 
 export const fakeAddresses = ['0xbeefed1bedded2dabbed3defaced4decade5dead'];

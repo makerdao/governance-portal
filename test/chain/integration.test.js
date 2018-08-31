@@ -6,10 +6,26 @@ import {
   breakLink,
   sendMkr
 } from '../../src/chain/write';
-import { useGanache, ganacheAccounts, ganacheCoinbase } from '../helpers';
+import {
+  useGanache,
+  takeSnapshot,
+  restoreSnapshot,
+  ganacheAccounts,
+  ganacheCoinbase
+} from '../helpers';
+
+let snapshotId = null;
 
 beforeAll(() => {
   useGanache();
+});
+
+beforeEach(async () => {
+  snapshotId = await takeSnapshot();
+});
+
+afterEach(async () => {
+  await restoreSnapshot(snapshotId);
 });
 
 const linkAccounts = async (cold, hot) => {
