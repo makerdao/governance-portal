@@ -3,6 +3,12 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { FlexContainer } from './shared/styles';
 import ledgerImg from '../../imgs/ledger.svg';
+import Button from '../Button';
+import { modalOpen } from '../../reducers/modal';
+import AddressSelection from './AddressSelection';
+
+export const LEDGER_LIVE_PATH = "44'/60'/0'/0/0";
+export const LEDGER_LEGACY_PATH = "44'/60'/0'/0";
 
 const StyledType = styled.div`
   font-size: 20px;
@@ -35,7 +41,7 @@ const Circle = styled.div`
 
 class LedgerType extends React.Component {
   render() {
-    const { type } = this.props;
+    const { type, modalOpen } = this.props;
     return (
       <React.Fragment>
         <FlexContainer>
@@ -52,7 +58,18 @@ class LedgerType extends React.Component {
               <a> Read more</a>
             </StyledDescription>
           </div>
-          <div> Connect button </div>
+          <Button
+            slim
+            onClick={() =>
+              modalOpen(AddressSelection, {
+                ledger: true,
+                path: type === 'live' ? LEDGER_LIVE_PATH : LEDGER_LEGACY_PATH
+              })
+            }
+          >
+            {' '}
+            Connect{' '}
+          </Button>
         </FlexContainer>
       </React.Fragment>
     );
@@ -63,5 +80,5 @@ const mapStateToProps = state => ({});
 
 export default connect(
   mapStateToProps,
-  {}
+  { modalOpen }
 )(LedgerType);

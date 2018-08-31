@@ -1,10 +1,7 @@
 import React from 'react';
-import { cutMiddle } from '../../utils/misc';
-import { getMkrBalance } from '../../chain/read';
 import { connect } from 'react-redux';
 import { modalOpen } from '../../reducers/modal';
 import AddressSelection from './AddressSelection';
-import Withdraw from './Withdraw';
 import { StyledTitle, StyledTop, StyledBlurb } from './shared/styles';
 import LedgerType from './LedgerType';
 
@@ -19,16 +16,11 @@ const CenterBlurb = StyledBlurb.extend`
 `;
 
 class PathSelection extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   makeSelection(path, modalOpen) {
     modalOpen(AddressSelection, { ledger: true, path: path });
   }
 
   render() {
-    const { modalOpen } = this.props;
     return (
       <React.Fragment>
         <StyledTop>
@@ -38,22 +30,8 @@ class PathSelection extends React.Component {
           Please select how you created your Ledger wallet
         </CenterBlurb>
         <LedgerType type="live" />
-        <br />
+        <hr />
         <LedgerType type="legacy" />
-        <button
-          onClick={() => {
-            this.makeSelection(LEDGER_LEGACY_PATH, modalOpen);
-          }}
-        >
-          Ledger Legacy
-        </button>
-        <button
-          onClick={() => {
-            this.makeSelection(LEDGER_LIVE_PATH, modalOpen);
-          }}
-        >
-          Ledger Live
-        </button>
       </React.Fragment>
     );
   }

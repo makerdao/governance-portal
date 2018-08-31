@@ -5,23 +5,19 @@ import { connect } from 'react-redux';
 import { modalClose } from '../../reducers/modal';
 import { getHardwareAccount } from '../../reducers/accounts';
 import { LEDGER, TREZOR } from '../../chain/hw-wallet';
-import AppEth from '@ledgerhq/hw-app-eth';
-import AddressGenerator from '../../chain/hw-wallet/vendor/address-generator';
-import { obtainPathComponentsFromDerivationPath } from '../../chain/hw-wallet/vendor/ledger-subprovider';
-import Transport from '@ledgerhq/hw-transport-u2f';
 import Address from './shared/Address';
-import PathSelection, {
-  LEDGER_LIVE_PATH,
-  LEDGER_LEGACY_PATH
-} from './PathSelection';
-import { modalOpen } from '../../reducers/modal';
 import { netNameToId } from '../../utils/ethereum';
 import { createSubProvider } from '../../chain/hw-wallet';
+import styled from 'styled-components';
 
 const TREZOR_PATH = "44'/60'/0'/0";
 
-const CenterBlurb = StyledBlurb.extend`
-  text-align: center;
+const AddressContainer = styled.div`
+  border: 1px solid #d7d7d7;
+  border-radius: 4px;
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
 `;
 
 class AddressSelection extends Component {
@@ -32,53 +28,57 @@ class AddressSelection extends Component {
       selectedIndex: false,
       hwType: ''
     };
+    this.onSelect = this.onSelect.bind(this);
   }
   componentDidMount() {
     const { network, trezor, path } = this.props;
     if (trezor) {
-      this.setState({ hwType: 'Trezor' });
-      this.getAddressesTrezor(network, TREZOR_PATH);
+      this.setState({ hwType: 'trezor' });
+      this.getAddresses(network, TREZOR, TREZOR_PATH);
     } else {
-      this.setState({ hwType: 'Ledger' });
-      this.getAddressesLedger(path);
+      this.setState({ hwType: 'ledger' });
+      this.getAddresses(network, LEDGER, path);
     }
   }
 
+  onSelect() {
+    this.setState({ selectedIndex: this.state.index });
+  }
+
   render() {
-    const {
-      getHardwareAccount,
-      modalClose,
-      modalOpen,
-      trezor,
-      path
-    } = this.props;
+    const { getHardwareAccount, modalClose, path } = this.props;
     if (this.state.addresses.length > 0) {
       return (
         <Fragment>
           <StyledTop>
-            <StyledTitle>
-              Select Address on your {this.state.hwType}
-            </StyledTitle>
+            <StyledTitle>Select address</StyledTitle>
           </StyledTop>
-          <StyledBlurb style={{ textAlign: 'center', marginTop: '30px' }}>
-            {path === LEDGER_LIVE_PATH
-              ? 'Ledger Live'
-              : this.state.hwType === 'Trezor'
-                ? 'Trezor'
-                : 'Ledger Legacy'}
-            <ul>
-              {this.state.addresses.map((address, index) => (
-                <li
-                  key={address}
-                  onClick={() => {
-                    this.setState({ selectedIndex: index });
-                  }}
-                >
-                  <Address address={address} />
-                </li>
-              ))}
-            </ul>
+          <StyledBlurb style={{ textAlign: 'center', marginTop: '14px' }}>
+            Please select which address you would like to open
           </StyledBlurb>
+          <AddressContainer>
+            <table>
+              <thead>
+                <tr>
+                  <th>Address</th>
+                  <th>MKR</th>
+                  <th>ETH</th>
+                  <th>Select</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.addresses.map((address, index) => (
+                  <tr key={address}>
+                    <Address
+                      address={address}
+                      index={index}
+                      handler={this.onSelect}
+                    />
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </AddressContainer>
           <div
             style={{
               display: 'flex',
@@ -109,21 +109,11 @@ class AddressSelection extends Component {
       return (
         <Fragment>
           <StyledTop>
-            <StyledTitle>
-              Connect to your {this.state.hwType} Wallet
-            </StyledTitle>
+            <StyledTitle>Connect your {this.state.hwType} wallet</StyledTitle>
           </StyledTop>
           <StyledBlurb style={{ textAlign: 'center', marginTop: '30px' }}>
             Couldn't connect
           </StyledBlurb>
-          <Button
-            slim
-            onClick={() => {
-              this.getAddressesLedger(path);
-            }}
-          >
-            Retry
-          </Button>
           <div
             style={{
               display: 'flex',
@@ -136,43 +126,21 @@ class AddressSelection extends Component {
     }
   }
 
-  async getAddressesTrezor(network, path = "44'/60'/0'/0", options = {}) {
+  async getAddresses(network, type, path = "44'/60'/0'/0", options = {}) {
+    this.setState({ addresses: ['0x123'] });
     const combinedOptions = {
       ...options,
       networkId: netNameToId(network),
       promisify: true,
       accountsLength: 5
     };
-    const subprovider = createSubProvider(TREZOR, combinedOptions);
+    const subprovider = createSubProvider(type, combinedOptions);
     try {
       const addresses = await subprovider.getAccounts();
       this.setState({ addresses: Object.values(addresses) });
     } catch (err) {
       console.error(err);
     }
-  }
-
-  async getAddressesLedger(path = '') {
-    if (path === '') {
-      throw new Error('missing path');
-    }
-    const askConfirm = false;
-    const numAccounts = 1;
-    const transport = await Transport.create();
-    const eth = new AppEth(transport);
-    const addresses = [];
-    const pathComponents = obtainPathComponentsFromDerivationPath(path);
-    const addr = await eth.getAddress(
-      pathComponents.basePath,
-      askConfirm,
-      true
-    );
-    const addressGenerator = await new AddressGenerator(addr);
-    for (let i = 0; i < numAccounts; i++) {
-      const address = addressGenerator.getAddressString(i);
-      addresses.push(address);
-    }
-    this.setState({ addresses: addresses });
   }
 }
 
@@ -182,5 +150,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getHardwareAccount, modalClose, modalOpen }
+  { getHardwareAccount, modalClose }
 )(AddressSelection);

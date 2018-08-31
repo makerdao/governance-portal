@@ -9,7 +9,9 @@ class Address extends React.Component {
     this.state = {
       address: props.address,
       balance: 0,
-      network: props.network
+      network: props.network,
+      index: props.index,
+      handler: props.handler
     };
   }
 
@@ -21,11 +23,20 @@ class Address extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <span>{cutMiddle(this.state.address, 33, 33)}</span>
-        <span>
-          {' '}
+        <td>{cutMiddle(this.state.address, 9, 10)}</td>
+        <td>
           {this.state.balance} {'MKR'}
-        </span>
+        </td>
+        <td>TBD</td>
+        <td>
+          <button
+            onClick={() => {
+              this.state.handler();
+            }}
+          >
+            checkBox
+          </button>
+        </td>
       </React.Fragment>
     );
   }

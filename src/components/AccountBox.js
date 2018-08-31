@@ -9,12 +9,7 @@ import { cutMiddle, firstLetterCapital } from '../utils/misc';
 import { numberForAddress } from '../utils/ethereum';
 import arrow from '../imgs/arrow.svg';
 import { fonts, colors, shadows } from '../theme';
-import {
-  getActiveAccount,
-  setActiveAccount,
-  getHardwareAccount
-} from '../reducers/accounts';
-import { TREZOR, LEDGER } from '../chain/hw-wallet';
+import { getActiveAccount, setActiveAccount } from '../reducers/accounts';
 import jazzicon from 'jazzicon';
 import { modalOpen } from '../reducers/modal';
 import AddressSelection from './modals/AddressSelection';
@@ -155,7 +150,6 @@ class AccountBox extends Component {
       allAccounts,
       activeAccount,
       fetching,
-      getHardwareAccount,
       darkText,
       modalOpen
     } = this.props;
@@ -197,7 +191,6 @@ class AccountBox extends Component {
             <DropdownRowForLink>
               <ConnectLink
                 onClick={() => {
-                  //getHardwareAccount(TREZOR);
                   modalOpen(AddressSelection, { trezor: true });
                 }}
               >
@@ -238,5 +231,5 @@ const mapStateToProps = ({ accounts }, props) => ({
 
 export default connect(
   mapStateToProps,
-  { setActiveAccount, getHardwareAccount, modalOpen }
+  { setActiveAccount, modalOpen }
 )(AccountBox);
