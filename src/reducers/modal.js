@@ -14,11 +14,11 @@ const MODAL_CLOSE = 'modal/MODAL_CLOSE';
 
 let timeout;
 
-export const modalOpen = (modal, props = {}) => {
+export const modalOpen = (modal, props = {}, replace = false) => {
   clearTimeout(timeout);
   return {
     type: MODAL_OPEN,
-    payload: { modal, ...props }
+    payload: { modal, props, replace }
   };
 };
 
@@ -32,10 +32,12 @@ export const modalClose = () => dispatch => {
 const initialState = { stack: [] };
 
 const modal = createReducer(initialState, {
-  [MODAL_OPEN]: (state, { payload }) => ({
-    ...state,
-    stack: [{ ...payload, visible: true }].concat(state.stack)
-  }),
+  [MODAL_OPEN]: (state, { payload: { modal, props, replace } }) => {
+    const newModal = { modal, ...props, visible: true };
+    return replace
+      ? { ...state, stack: [newModal].concat(state.stack.slice(1)) }
+      : { ...state, stack: [newModal].concat(state.stack) };
+  },
   [MODAL_FADE]: state => ({
     ...state,
     stack: [{ ...state.stack[0], visible: false }, ...state.stack.slice(1)]
