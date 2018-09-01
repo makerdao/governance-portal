@@ -6,8 +6,12 @@ import AddressSelection from './AddressSelection';
 import { StyledTitle, StyledTop, StyledBlurb } from './shared/styles';
 import LedgerType from './LedgerType';
 
-export const LEDGER_LIVE_PATH = "44'/60'/0'/0/0";
-export const LEDGER_LEGACY_PATH = "44'/60'/0'/0";
+// the Ledger subprovider interprets these paths to mean that the last digit is
+// the one that should be incremented.
+// i.e. the second path for Live is "44'/60'/1'/0/0"
+// and the second path for Legacy is "44'/60'/0'/0/1"
+const LEDGER_LIVE_PATH = "44'/60'/0'";
+const LEDGER_LEGACY_PATH = "44'/60'/0'/0/0";
 
 const CenterBlurb = StyledBlurb.extend`
   text-align: center;
@@ -22,31 +26,48 @@ const Line = styled.hr`
   margin: 16px 0;
 `;
 
-class PathSelection extends React.Component {
-  makeSelection(path, modalOpen) {
-    modalOpen(AddressSelection, { ledger: true, path: path });
-  }
-
-  render() {
-    return (
-      <React.Fragment>
-        <StyledTop>
-          <StyledTitle>Select ledger account type</StyledTitle>
-        </StyledTop>
-        <CenterBlurb>
-          Please select how you created your Ledger wallet.
-        </CenterBlurb>
-        <LedgerType type="live" />
-        <Line />
-        <LedgerType type="legacy" />
-      </React.Fragment>
-    );
-  }
-}
-
-const mapStateToProps = state => ({});
+const PathSelection = ({ modalOpen }) => {
+  return (
+    <React.Fragment>
+      <StyledTop>
+        <StyledTitle>Select ledger account type</StyledTitle>
+      </StyledTop>
+      <CenterBlurb>
+        Please select how you created your Ledger wallet.{' '}
+        {/* TODO: <a>Read more</a> */}
+      </CenterBlurb>
+      <LedgerType
+        type="live"
+        connect={() =>
+          modalOpen(
+            AddressSelection,
+            {
+              ledger: true,
+              path: LEDGER_LIVE_PATH
+            },
+            true
+          )
+        }
+      />
+      <Line />
+      <LedgerType
+        type="legacy"
+        connect={() =>
+          modalOpen(
+            AddressSelection,
+            {
+              ledger: true,
+              path: LEDGER_LEGACY_PATH
+            },
+            true
+          )
+        }
+      />
+    </React.Fragment>
+  );
+};
 
 export default connect(
-  mapStateToProps,
+  null,
   { modalOpen }
 )(PathSelection);

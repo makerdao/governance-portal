@@ -1,14 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { connect } from 'react-redux';
 import { FlexContainer } from './shared/styles';
 import ledgerImg from '../../imgs/ledger.svg';
 import Button from '../Button';
-import { modalOpen } from '../../reducers/modal';
-import AddressSelection from './AddressSelection';
-
-export const LEDGER_LIVE_PATH = "44'/60'/0'/0/0";
-export const LEDGER_LEGACY_PATH = "44'/60'/0'/0";
 
 const Type = styled.div`
   font-size: 20px;
@@ -41,6 +35,7 @@ const Wrapper = styled(FlexContainer)`
 const Blurb = styled.div`
   margin-top: 5px;
   margin-right: 16px;
+  flex-grow: 1;
 `;
 
 const ConnectButton = styled(Button)`
@@ -48,39 +43,24 @@ const ConnectButton = styled(Button)`
   width: 120px;
 `;
 
-class LedgerType extends React.Component {
-  render() {
-    const { type, modalOpen } = this.props;
-    const typeCaps = type.charAt(0).toUpperCase() + type.slice(1);
-    return (
-      <Wrapper>
-        <LedgerIcon />
-        <Blurb>
-          <Type>Ledger {typeCaps}</Type>
-          <Description>
-            {type === 'live'
-              ? 'You created your wallet using Ledger Live.'
-              : 'You created your wallet prior to Ledger Live.'}{' '}
-            <a>Read more</a>
-          </Description>
-        </Blurb>
-        <ConnectButton
-          slim
-          onClick={() =>
-            modalOpen(AddressSelection, {
-              ledger: true,
-              path: type === 'live' ? LEDGER_LIVE_PATH : LEDGER_LEGACY_PATH
-            })
-          }
-        >
-          Connect
-        </ConnectButton>
-      </Wrapper>
-    );
-  }
-}
+const LedgerType = ({ type, connect }) => {
+  const typeCaps = type.charAt(0).toUpperCase() + type.slice(1);
+  return (
+    <Wrapper>
+      <LedgerIcon />
+      <Blurb>
+        <Type>Ledger {typeCaps}</Type>
+        <Description>
+          {type === 'live'
+            ? 'You created your wallet using Ledger Live.'
+            : 'You created your wallet prior to Ledger Live.'}
+        </Description>
+      </Blurb>
+      <ConnectButton slim onClick={connect}>
+        Connect
+      </ConnectButton>
+    </Wrapper>
+  );
+};
 
-export default connect(
-  null,
-  { modalOpen }
-)(LedgerType);
+export default LedgerType;
