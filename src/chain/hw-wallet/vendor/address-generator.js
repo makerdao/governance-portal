@@ -4,12 +4,9 @@ import HDKey from 'hdkey';
 
 export default class AddressGenerator {
   constructor(data) {
-    console.log('data', data);
     this.hdk = new HDKey();
     this.hdk.publicKey = new Buffer(data.publicKey, 'hex');
     this.hdk.chainCode = new Buffer(data.chainCode, 'hex');
-    console.log('data.publicKey', data.publicKey);
-    console.log('data.chainCode', data.chainCode);
   }
 
   getAddressString = index => {
