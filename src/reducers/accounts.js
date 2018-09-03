@@ -93,7 +93,7 @@ export const addAccounts = accounts => async (dispatch, getState) => {
     const _payload = {
       ...account,
       address: toChecksum(account.address),
-      mkrBalance: getMkrBalance(account.address, network),
+      mkrBalance: getMkrBalance(account.address),
       hasProxy,
       proxyRole,
       votingFor: currProposal,
@@ -116,7 +116,7 @@ export const addAccounts = accounts => async (dispatch, getState) => {
         return {
           address: linkedAddress,
           proxyRole: otherRole,
-          mkrBalance: await getMkrBalance(linkedAddress, network)
+          mkrBalance: await getMkrBalance(linkedAddress)
         };
       } else return {};
     };

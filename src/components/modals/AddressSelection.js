@@ -1,6 +1,7 @@
 import React, { Fragment, Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+import round from 'lodash.round';
 
 import { StyledTitle, StyledBlurb, StyledTop } from './shared/styles';
 import Button from '../Button';
@@ -9,6 +10,7 @@ import { addAccount, setActiveAccount } from '../../reducers/accounts';
 import { LEDGER, TREZOR } from '../../chain/hw-wallet';
 import { createSubProvider } from '../../chain/hw-wallet';
 import { getMkrBalance } from '../../chain/read';
+import { getBalance } from '../../chain/web3';
 import { netNameToId } from '../../utils/ethereum';
 import { cutMiddle, copyToClipboard } from '../../utils/misc';
 import copy from '../../imgs/copy.svg';
@@ -98,20 +100,22 @@ class AddressSelection extends Component {
             <thead>
               <tr>
                 <th>Address</th>
+                <th>ETH</th>
                 <th>MKR</th>
                 <th className="radio">Select</th>
               </tr>
             </thead>
             <tbody>
-              {accounts.map(({ address, balance, path }) => (
+              {accounts.map(({ address, eth, mkr, path }) => (
                 <tr key={address}>
-                  <InlineTd>
-                    {cutMiddle(address, 9, 10)}
+                  <InlineTd title={address}>
+                    {cutMiddle(address, 8, 6)}
                     <CopyBtn onClick={() => copyToClipboard(address)}>
                       <CopyBtnIcon />
                     </CopyBtn>
                   </InlineTd>
-                  <td>{balance || '…'} MKR</td>
+                  <td>{eth} ETH</td>
+                  <td>{mkr} MKR</td>
                   <td className="radio">
                     <input
                       type="radio"
@@ -174,7 +178,8 @@ class AddressSelection extends Component {
         Object.keys(accountsObj).map(async path => ({
           path,
           address: accountsObj[path],
-          balance: await getMkrBalance(accountsObj[path], network)
+          eth: round(await getBalance(accountsObj[path]), 3),
+          mkr: round(await getMkrBalance(accountsObj[path]), 3)
         }))
       );
       console.log(accounts);
@@ -204,8 +209,8 @@ const Loading = ({ type }) => (
       your first time using this ledger with a dapp, you'll also need to approve
       contract data in the settings.
     </StyledBlurb> */}
-    {/* maybe this ^ should fade in after a timeout? 
-    otherwise it passes by too quick for people who already have their ledger configured 
+    {/* maybe this ^ should fade in after a timeout?
+    otherwise it passes by too quick for people who already have their ledger configured
     which makes you feel like you missed something */}
   </Fragment>
 );

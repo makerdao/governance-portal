@@ -92,6 +92,11 @@ export const getNetworkName = async () => {
   return network;
 };
 
+export const getBalance = async address => {
+  const value = await getWeb3Instance().eth.getBalance(address);
+  return weiToEther(value);
+};
+
 const getContractAddress = name => async network => {
   if (!['chief', 'proxy_factory', 'mkr', 'pip'].includes(name)) {
     throw new Error(`Unrecognized contract name: "${name}"`);
@@ -266,7 +271,9 @@ export const awaitTx = async (txHash, { confirmations = 3 }) => {
   }
 };
 
-export async function ethCall(to, method, args, network = null) {
+// FIXME network shouldn't be an explicit argument here, since we're using a
+// web3 instance that is already connected to a network
+export async function ethCall(to, method, args, network) {
   switch (to) {
     case 'mkr':
       to = await getMkrAddress(network);
