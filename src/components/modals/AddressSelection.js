@@ -46,7 +46,7 @@ const InlineTd = styled.td`
   display: inline-flex;
 `;
 
-const CopyBtnPadding = styled.div`
+const CopyBtn = styled.div`
   margin-left: 8px;
   margin-right: -8px;
   width: 24px;
@@ -58,7 +58,7 @@ const CopyBtnPadding = styled.div`
   }
 `;
 
-const CopyBtn = styled.p`
+const CopyBtnIcon = styled.p`
   height: 14px;
   width: 14px;
   margin: auto;
@@ -107,9 +107,9 @@ class AddressSelection extends Component {
                 <tr key={address}>
                   <InlineTd>
                     {cutMiddle(address, 9, 10)}
-                    <CopyBtnPadding onClick={() => copyToClipboard(address)}>
-                      <CopyBtn />
-                    </CopyBtnPadding>
+                    <CopyBtn onClick={() => copyToClipboard(address)}>
+                      <CopyBtnIcon />
+                    </CopyBtn>
                   </InlineTd>
                   <td>{balance || '…'} MKR</td>
                   <td className="radio">

@@ -127,14 +127,14 @@ function requireCorrectAccount(state, requiredAccount, typeNeeded) {
   return false;
 }
 
-export const initiateLink = ({ cold, hot }) => (dispatch, getState) => {
+export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
   if (!requireCorrectAccount(getState(), cold, 'cold')) return;
   const network = getState().metamask.network;
   dispatch({
     type: INITIATE_LINK_REQUEST,
     payload: { hotAddress: hot.address, coldAddress: cold.address }
   });
-  handleTx({
+  await handleTx({
     prefix: 'INITIATE_LINK',
     dispatch,
     action: _initiateLink({
@@ -144,6 +144,9 @@ export const initiateLink = ({ cold, hot }) => (dispatch, getState) => {
     }),
     acctType: cold.type
   });
+  if (!!getAccount(getState(), getState().proxy.hotAddress)) {
+    dispatch(setActiveAccount(getState().proxy.hotAddress));
+  }
 };
 
 export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
@@ -215,16 +218,13 @@ export const postLinkUpdate = () => (dispatch, getState) => {
   if (hotAccount === undefined) return window.location.reload();
   const accounts = !!coldAccount ? [hotAccount, coldAccount] : [hotAccount];
   // cold account is needed for the lock, so set it active
-  dispatch(setActiveAccount(coldAccount.address));
+  if (!!coldAccount) dispatch(setActiveAccount(coldAccount.address));
   // this will replace duplicate accounts in the store
   dispatch(addAccounts(accounts));
 };
 
 export const mkrApproveProxy = () => (dispatch, getState) => {
-  const account =
-    getState().proxy.coldAddress.length > 0
-      ? getAccount(getState(), getState().proxy.coldAddress)
-      : getActiveAccount(getState());
+  const account = getActiveAccount(getState());
   if (!requireCorrectAccount(getState(), account, 'cold')) return;
   dispatch({ type: MKR_APPROVE_REQUEST });
   const proxyAddress = account.proxy.address;
