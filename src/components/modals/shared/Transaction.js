@@ -66,7 +66,7 @@ const Transaction = ({
           </TxHash>
           <br />
           {!confirming && (
-            <Button slim onClick={nextStep}>
+            <Button style={{ marginTop: '10px' }} slim onClick={nextStep}>
               {lastCard ? 'Finish and close' : 'Continue'}
             </Button>
           )}

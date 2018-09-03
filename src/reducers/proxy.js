@@ -12,7 +12,12 @@ import {
 import { parseError } from '../utils/misc';
 import { awaitTx } from '../chain/web3';
 import { getLinkGas } from '../chain/read';
-import { getActiveAccount, getAccount, addAccounts } from './accounts';
+import {
+  getActiveAccount,
+  getAccount,
+  addAccounts,
+  setActiveAccount
+} from './accounts';
 import { AccountTypes } from '../utils/constants';
 import { modalClose } from './modal';
 import { addToastWithTimeout, ToastTypes } from './toasts';
@@ -209,18 +214,19 @@ export const postLinkUpdate = () => (dispatch, getState) => {
   const coldAccount = getAccount(getState(), getState().proxy.coldAddress);
   if (hotAccount === undefined) return window.location.reload();
   const accounts = !!coldAccount ? [hotAccount, coldAccount] : [hotAccount];
+  // cold account is needed for the lock, so set it active
+  dispatch(setActiveAccount(coldAccount.address));
   // this will replace duplicate accounts in the store
   dispatch(addAccounts(accounts));
 };
 
 export const mkrApproveProxy = () => (dispatch, getState) => {
+  const account =
+    getState().proxy.coldAddress.length > 0
+      ? getAccount(getState(), getState().proxy.coldAddress)
+      : getActiveAccount(getState());
+  if (!requireCorrectAccount(getState(), account, 'cold')) return;
   dispatch({ type: MKR_APPROVE_REQUEST });
-  const account = getActiveAccount(getState());
-  if (!account || account.proxyRole !== 'cold')
-    return window.alert(`Please switch to your cold wallet before continuing.`);
-  if (!account.hasProxy)
-    return window.alert(`Account must have a proxy voting contract.`);
-
   const proxyAddress = account.proxy.address;
   handleTx({
     prefix: 'MKR_APPROVE',
