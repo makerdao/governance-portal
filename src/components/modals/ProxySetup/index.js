@@ -14,10 +14,12 @@ import {
   goToStep
 } from '../../../reducers/proxy';
 import { mul } from '../../../utils/misc';
-import { modalClose } from '../../../reducers/modal';
+import { modalOpen, modalClose } from '../../../reducers/modal';
 import Summary from './Summary';
 import MidLink from './MidLink';
 import Lock from '../Lock';
+import AddressSelection from '../AddressSelection';
+import PathSelection from '../PathSelection';
 
 class ProxySetup extends Component {
   componentDidMount() {
@@ -51,6 +53,7 @@ class ProxySetup extends Component {
     const {
       setupProgress,
       goToStep,
+      modalOpen,
       modalClose,
       activeAccount,
       accounts,
@@ -80,6 +83,8 @@ class ProxySetup extends Component {
             initiateLink={initiateLink}
             activeAccount={activeAccount}
             accounts={accounts}
+            connectTrezor={() => modalOpen(AddressSelection, { trezor: true })}
+            connectLedger={() => modalOpen(PathSelection)}
           />
         );
       case 'initiate':
@@ -221,6 +226,7 @@ const stateProps = state => {
 };
 
 const dispatchProps = {
+  modalOpen,
   modalClose,
   initiateLink,
   approveLink,

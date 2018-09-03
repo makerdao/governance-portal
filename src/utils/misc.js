@@ -198,3 +198,17 @@ export const formatRound = (num, decimals = 2) =>
         {},
         { minimumFractionDigits: decimals }
       );
+
+/**
+ * @desc Copy a string to the clipboard. Requires a global document object.
+ * @param  {String} string
+ */
+export const copyToClipboard = string => {
+  const textArea = document.createElement('textarea');
+  textArea.value = string;
+  // lol
+  document.body.appendChild(textArea);
+  textArea.select();
+  document.execCommand('Copy');
+  textArea.remove();
+};

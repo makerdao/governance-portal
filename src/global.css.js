@@ -1,8 +1,8 @@
 import { injectGlobal } from 'styled-components';
 import { fonts, colors } from './theme';
 
-const globalStyles = `  
-    * {
+const globalStyles = `
+  * {
     border: 0;
     box-sizing: inherit;
     -webkit-font-smoothing: antialiased;
@@ -12,8 +12,6 @@ const globalStyles = `
     padding: 0;
     text-decoration: none;
     text-rendering: optimizeLegibility;
-    -webkit-appearance: none;
-    -moz-appearance: none;
   }
   html {
     display: flex;

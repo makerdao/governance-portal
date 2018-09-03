@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
+import reverse from 'ramda/src/reverse';
+import omit from 'ramda/src/omit';
 
 import { modalClose } from '../../reducers/modal';
 import Card from '../Card';
-import { colors, responsive } from '../../theme';
+import { responsive } from '../../theme';
 
 const fallDownIn = keyframes`
 0% {
@@ -58,7 +60,7 @@ const LightBox = styled.div`
   opacity: ${({ modal }) => (modal ? 1 : 0)};
   visibility: ${({ modal }) => (modal ? 'visible' : 'hidden')};
   pointer-events: ${({ modal }) => (modal ? 'auto' : 'none')};
-  background: rgba(${colors.dark}, 0.2);
+  background: rgba(0, 0, 0, 0.7);
 `;
 
 const Hitbox = styled.div`
@@ -118,7 +120,15 @@ const Modal = props => {
   );
 };
 
+const Modals = ({ stack, modalClose }) => {
+  if (stack.length === 0) return null;
+
+  return reverse(stack).map(props => (
+    <Modal key={props.key} {...omit(['key'], props)} modalClose={modalClose} />
+  ));
+};
+
 export default connect(
-  state => state.modal.stack[0] || {},
+  state => ({ stack: state.modal.stack }),
   { modalClose }
-)(Modal);
+)(Modals);

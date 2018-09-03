@@ -13,7 +13,7 @@ const StyledButton = styled.button`
   box-sizing: border-box;
   background-color: ${({ color }) => `rgb(${colors[color]})`};
   color: ${({ theme }) => theme.generic.white};
-  border-radius: 2px;
+  border-radius: 4px;
   font-size: ${({ theme }) => theme.fonts.size.large};
   font-weight: ${fonts.weight.semibold};
   padding: 0 15px;

@@ -251,13 +251,10 @@ export const getVoteTally = async () => {
  * @async @desc use event logs to get all etched slates
  * @return {String} balance
  */
-export const getMkrBalance = async (address, network) => {
-  const hexBalance = await ethCall(
-    'mkr',
-    'balanceOf(address)',
-    [removeHexPrefix(address)],
-    network
-  );
+export const getMkrBalance = async address => {
+  const hexBalance = await ethCall('mkr', 'balanceOf(address)', [
+    removeHexPrefix(address)
+  ]);
   return weiToEther(hexBalance);
 };
 

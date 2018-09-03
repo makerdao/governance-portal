@@ -9,13 +9,11 @@ import { cutMiddle, firstLetterCapital } from '../utils/misc';
 import { numberForAddress } from '../utils/ethereum';
 import arrow from '../imgs/arrow.svg';
 import { fonts, colors, shadows } from '../theme';
-import {
-  getActiveAccount,
-  setActiveAccount,
-  getHardwareAccount
-} from '../reducers/accounts';
-import { TREZOR, LEDGER } from '../chain/hw-wallet';
+import { getActiveAccount, setActiveAccount } from '../reducers/accounts';
 import jazzicon from 'jazzicon';
+import { modalOpen } from '../reducers/modal';
+import AddressSelection from './modals/AddressSelection';
+import PathSelection from './modals/PathSelection';
 
 const StyledArrow = styled.img`
   margin-left: 0.7em;
@@ -159,8 +157,8 @@ class AccountBox extends Component {
       allAccounts,
       activeAccount,
       fetching,
-      getHardwareAccount,
-      darkText
+      darkText,
+      modalOpen
     } = this.props;
 
     if (fetching)
@@ -198,12 +196,16 @@ class AccountBox extends Component {
               </DropdownRow>
             ))}
             <DropdownRowForLink>
-              <ConnectLink onClick={() => getHardwareAccount(TREZOR)}>
+              <ConnectLink
+                onClick={() => {
+                  modalOpen(AddressSelection, { trezor: true });
+                }}
+              >
                 Connect to Trezor
               </ConnectLink>
             </DropdownRowForLink>
             <DropdownRowForLink>
-              <ConnectLink onClick={() => getHardwareAccount(LEDGER)}>
+              <ConnectLink onClick={() => modalOpen(PathSelection)}>
                 Connect to Ledger
               </ConnectLink>
             </DropdownRowForLink>
@@ -236,5 +238,5 @@ const mapStateToProps = ({ accounts }, props) => ({
 
 export default connect(
   mapStateToProps,
-  { setActiveAccount, getHardwareAccount }
+  { setActiveAccount, modalOpen }
 )(AccountBox);

@@ -16,6 +16,8 @@ function makeError(msg, id) {
   return err;
 }
 
+const ledgerLiveRegex = /^(44'\/(?:1|60|61)'\/)(\d+)('?)$/;
+
 export function obtainPathComponentsFromDerivationPath(derivationPath) {
   // check if derivation path follows 44'/60'/x'/n pattern
   const regExp = /^(44'\/(?:1|60|61)'\/\d+'?\/(?:\d+'?\/)?)(\d+)$/;
@@ -93,17 +95,30 @@ export default function createLedgerSubprovider(
       const eth = new AppEth(transport);
       const addresses = {};
 
-      //get address(es) using the new ledger path
-      const pathComponents = obtainPathComponentsFromDerivationPath(path);
-      const addressGenerator = await new AddressGenerator(
-        await eth.getAddress(pathComponents.basePath, askConfirm, true)
-      );
-      for (let i = accountsOffset; i < accountsOffset + accountsLength; i++) {
-        const path =
-          pathComponents.basePath + (pathComponents.index + i).toString();
-        const address = addressGenerator.getAddressString(i);
-        addresses[path] = address;
-        addressToPathMap[address.toLowerCase()] = path;
+      if (path.match(ledgerLiveRegex)) {
+        for (let i = 0; i < accountsLength; i++) {
+          const newPath =
+            path.replace(
+              ledgerLiveRegex,
+              (_, g1, g2, g3) =>
+                g1 + String(parseInt(g2) + accountsOffset + i) + g3
+            ) + '/0/0';
+          const { address } = await eth.getAddress(newPath, askConfirm, true);
+          addresses[newPath] = address;
+          addressToPathMap[address.toLowerCase()] = newPath;
+        }
+      } else {
+        const pathComponents = obtainPathComponentsFromDerivationPath(path);
+        const addressGenerator = await new AddressGenerator(
+          await eth.getAddress(pathComponents.basePath, askConfirm, true)
+        );
+        for (let i = accountsOffset; i < accountsOffset + accountsLength; i++) {
+          const path =
+            pathComponents.basePath + (pathComponents.index + i).toString();
+          const address = addressGenerator.getAddressString(i);
+          addresses[path] = address;
+          addressToPathMap[address.toLowerCase()] = path;
+        }
       }
 
       return addresses;
