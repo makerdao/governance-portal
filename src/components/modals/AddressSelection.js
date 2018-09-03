@@ -1,15 +1,17 @@
 import React, { Fragment, Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+
 import { StyledTitle, StyledBlurb, StyledTop } from './shared/styles';
 import Button from '../Button';
 import { modalClose } from '../../reducers/modal';
-import { addAccount } from '../../reducers/accounts';
+import { addAccount, setActiveAccount } from '../../reducers/accounts';
 import { LEDGER, TREZOR } from '../../chain/hw-wallet';
 import { createSubProvider } from '../../chain/hw-wallet';
 import { getMkrBalance } from '../../chain/read';
 import { netNameToId } from '../../utils/ethereum';
-import { cutMiddle } from '../../utils/misc';
+import { cutMiddle, copyToClipboard } from '../../utils/misc';
+import copy from '../../imgs/copy.svg';
 
 const TREZOR_PATH = "44'/60'/0'/0/0";
 
@@ -38,6 +40,29 @@ const AddressContainer = styled.div`
   border: 1px solid #d7d7d7;
   border-radius: 4px;
   width: 100%;
+`;
+
+const InlineTd = styled.td`
+  display: inline-flex;
+`;
+
+const CopyBtnPadding = styled.div`
+  margin-left: 8px;
+  margin-right: -8px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  cursor: pointer;
+  &:hover {
+    background-color: #f5f5f5;
+  }
+`;
+
+const CopyBtn = styled.p`
+  height: 14px;
+  width: 14px;
+  margin: auto;
+  background: url(${copy}) no-repeat;
 `;
 
 class AddressSelection extends Component {
@@ -80,7 +105,12 @@ class AddressSelection extends Component {
             <tbody>
               {accounts.map(({ address, balance, path }) => (
                 <tr key={address}>
-                  <td>{cutMiddle(address, 9, 10)}</td>
+                  <InlineTd>
+                    {cutMiddle(address, 9, 10)}
+                    <CopyBtnPadding onClick={() => copyToClipboard(address)}>
+                      <CopyBtn />
+                    </CopyBtnPadding>
+                  </InlineTd>
                   <td>{balance || '…'} MKR</td>
                   <td className="radio">
                     <input
@@ -116,14 +146,15 @@ class AddressSelection extends Component {
   }
 
   useSelectedAccount = () => {
-    const { addAccount, modalClose, trezor } = this.props;
+    const { addAccount, setActiveAccount, modalClose, trezor } = this.props;
     const { accounts, selectedPath, subprovider } = this.state;
+    const address = accounts.find(a => a.path === selectedPath).address;
 
     addAccount({
-      address: accounts.find(a => a.path === selectedPath).address,
+      address,
       type: trezor ? TREZOR : LEDGER,
       subprovider
-    });
+    }).then(() => setActiveAccount(address));
 
     modalClose();
   };
@@ -160,7 +191,7 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { addAccount, modalClose }
+  { addAccount, setActiveAccount, modalClose }
 )(AddressSelection);
 
 const Loading = ({ type }) => (
@@ -168,5 +199,13 @@ const Loading = ({ type }) => (
     <StyledTop>
       <StyledTitle>Connecting to {type} wallet...</StyledTitle>
     </StyledTop>
+    {/* <StyledBlurb>
+      Make sure the latest Ethereum app is installed on your device. If this is
+      your first time using this ledger with a dapp, you'll also need to approve
+      contract data in the settings.
+    </StyledBlurb> */}
+    {/* maybe this ^ should fade in after a timeout? 
+    otherwise it passes by too quick for people who already have their ledger configured 
+    which makes you feel like you missed something */}
   </Fragment>
 );

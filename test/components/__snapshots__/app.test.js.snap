@@ -2,8 +2,8 @@
 
 exports[`render everything 1`] = `
 "<div class=\\"App\\">
-  <div class=\\"sc-bXGyLb dUBkMS\\">
-    <div class=\\"sc-cbkKFq hFvFMZ\\">
+  <div class=\\"sc-dUjcNx jpUFyM\\">
+    <div class=\\"sc-eerKOB ktmeez\\">
       <div class=\\"sc-EHOje fxMFWJ\\">
         <div class=\\"sc-gzVnrw bEUVcv\\">
           <div><a href=\\"/\\">
@@ -113,32 +113,32 @@ exports[`render everything 1`] = `
           </div>
         </div>
       </div>
-      <div class=\\"sc-cpmLhU kUQaPn\\"></div>
-      <div class=\\"sc-krvtoX llKqRW\\">
-        <div class=\\"sc-fYiAbW iyMdsQ\\"><a class=\\"sc-eerKOB eaJkjg\\" href=\\"/\\">
-            <div class=\\"sc-fOKMvo iOkdBV\\">Governance</div>
+      <div class=\\"sc-rBLzX kWJnlq\\"></div>
+      <div class=\\"sc-emmjRN lfxhkj\\">
+        <div class=\\"sc-cpmLhU fsRWwZ\\"><a class=\\"sc-jzgbtB hTmYvC\\" href=\\"/\\">
+            <div class=\\"sc-dymIpo kEYiIX\\">Governance</div>
           </a>
-          <div class=\\"sc-dymIpo bfHFxj\\"></div>
-          <div class=\\"sc-gHboQg fHtJmu\\" style=\\"z-index: 100;\\">
-            <div class=\\"sc-eilVRo bXgUmw\\">Voting Contract</div>
-            <div class=\\"sc-RefOD hcgOAf\\">
+          <div class=\\"sc-bMvGRv lotjNM\\"></div>
+          <div class=\\"sc-gFaPwZ letxjC\\" style=\\"z-index: 100;\\">
+            <div class=\\"sc-fhYwyz kwonXk\\">Voting Contract</div>
+            <div class=\\"sc-epnACN ecHxAD\\">
               <div class=\\"sc-csuQGl cPeIcJ\\" size=\\"20\\" color=\\"background\\"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class=\\"sc-lkqHmb idygyU\\">
-      <div class=\\"sc-eLExRp hHXtjQ\\">
-        <div class=\\"sc-dUjcNx fFFdcO\\">
-          <div class=\\"sc-bnXvFD fDBUnz\\">
+    <div class=\\"sc-gHboQg hgqbqt\\">
+      <div class=\\"sc-eilVRo fZGZRu\\">
+        <div class=\\"sc-bnXvFD flvbTp\\">
+          <div class=\\"sc-CtfFt iiNScX\\">
             <div class=\\"sc-csuQGl YzMuK\\" size=\\"20\\" color=\\"header\\"></div>
           </div>
         </div>
-        <div class=\\"sc-emmjRN pOkdT\\"></div>
+        <div class=\\"sc-gJWqzi dJfaLG\\"></div>
       </div>
     </div>
-    <div class=\\"sc-GMQeP kwWTsa\\"></div>
+    <div class=\\"sc-eLExRp jVZZGy\\"></div>
     <footer class=\\"sc-chPdSV ilkTwW\\">
       <div class=\\"sc-kgoBCf jWcGNC\\">
         <div class=\\"sc-kGXeez deQYPn\\">
