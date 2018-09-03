@@ -33,7 +33,11 @@ const initialState = { stack: [] };
 
 const modal = createReducer(initialState, {
   [MODAL_OPEN]: (state, { payload: { modal, props, replace } }) => {
-    const newModal = { modal, ...props, visible: true };
+    // this key is for use when rendering the modal stack
+    const key = Math.random()
+      .toString()
+      .slice(2, 7);
+    const newModal = { modal, ...props, visible: true, key };
     return replace
       ? { ...state, stack: [newModal].concat(state.stack.slice(1)) }
       : { ...state, stack: [newModal].concat(state.stack) };
