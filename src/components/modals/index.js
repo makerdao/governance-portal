@@ -56,11 +56,12 @@ const LightBox = styled.div`
   width: 100vw;
   height: 100vh;
   overflow: scroll;
-  transition: ${({ theme }) => theme.transitions.x_long};
-  opacity: ${({ modal }) => (modal ? 1 : 0)};
-  visibility: ${({ modal }) => (modal ? 'visible' : 'hidden')};
-  pointer-events: ${({ modal }) => (modal ? 'auto' : 'none')};
-  background: rgba(0, 0, 0, 0.7);
+  transition: ${({ theme, animate }) =>
+    animate ? theme.transitions.x_long : 'none'};
+  opacity: ${({ visible }) => (visible ? 1 : 0)};
+  pointer-events: ${({ visible }) => (visible ? 'auto' : 'none')};
+  background: ${({ frontmost }) =>
+    frontmost ? 'rgba(0, 0, 0, 0.7)' : 'transparent'};
 `;
 
 const Hitbox = styled.div`
@@ -101,14 +102,21 @@ const CloseButton = styled(props => <div {...props}>&times;</div>)`
 `;
 
 const Modal = props => {
-  const { modal: ModalClass, visible, modalClose, ...otherProps } = props;
+  const {
+    modal: ModalClass,
+    visible,
+    animate,
+    modalClose,
+    frontmost,
+    ...otherProps
+  } = props;
   if (!ModalClass) return null;
 
   const body = document.body || document.getElementsByTagName('body')[0];
   body.style.overflow = visible ? 'hidden' : 'auto';
 
   return (
-    <LightBox modal={visible}>
+    <LightBox visible={visible} frontmost={frontmost} animate={animate}>
       <Hitbox onClick={modalClose} />
       <Column maxWidth={600} modal={visible}>
         <ModalCard background="white">
@@ -121,10 +129,21 @@ const Modal = props => {
 };
 
 const Modals = ({ stack, modalClose }) => {
-  if (stack.length === 0) return null;
+  const size = stack.length;
+  if (size === 0) return null;
 
-  return reverse(stack).map(props => (
-    <Modal key={props.key} {...omit(['key'], props)} modalClose={modalClose} />
+  return reverse(stack).map((props, index) => (
+    <Modal
+      animate={size === 1}
+      frontmost={
+        // the second clause prevents the overlay from fading out and back in
+        // when a modal closes and another modal below it is revealed
+        index === size - 1 || (index === size - 2 && !stack[0].visible)
+      }
+      key={props.key}
+      {...omit(['key'], props)}
+      modalClose={modalClose}
+    />
   ));
 };
 

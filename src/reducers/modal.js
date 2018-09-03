@@ -24,7 +24,7 @@ export const modalOpen = (modal, props = {}, replace = false) => {
 
 export const modalClose = () => dispatch => {
   dispatch({ type: MODAL_FADE });
-  timeout = setTimeout(() => dispatch({ type: MODAL_CLOSE }), 250);
+  timeout = setTimeout(() => dispatch({ type: MODAL_CLOSE }), 400);
 };
 
 // Reducer ------------------------------------------------
