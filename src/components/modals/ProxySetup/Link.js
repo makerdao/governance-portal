@@ -18,12 +18,14 @@ import { AccountBlurb } from '../../AccountBox';
 import { AccountTypes } from '../../../utils/constants';
 import { eq } from '../../../utils/misc';
 
-const Swap = styled.button`
-  cursor: pointer;
-  pointer-events: ${({ dim }) => (dim ? 'none' : 'auto')};
-  opacity: ${({ dim }) => (dim ? '0.5' : '1')};
-  font-size: 16px;
-  margin-top: 8px;
+const EndRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const Section = styled.div`
+  margin-bottom: 16px;
 `;
 
 class Link extends Component {
@@ -51,29 +53,37 @@ class Link extends Component {
     }
   }
 
-  swapAccountTypes = () =>
-    this.setState(({ hot, cold }) => ({ hot: cold, cold: hot }));
+  pickFromDropdown(choice, accountType) {
+    switch (choice.address) {
+      case 'connectTrezor':
+        return this.props.connectTrezor();
+      case 'connectLedger':
+        return this.props.connectLedger();
+      default:
+    }
+
+    this.ensureUniquePick(choice.address, accountType);
+    this.setState({ [accountType]: choice });
+  }
+
+  ensureUniquePick(address, accountType) {
+    const other = accountType === 'hot' ? 'cold' : 'hot';
+    const currentPick = this.state[other];
+    if (currentPick && currentPick.address === address) {
+      const newPick = this.props.accounts
+        .filter(a => !a.hasProxy)
+        .find(a => a.address !== address);
+      this.setState({ [other]: newPick });
+    }
+  }
 
   render() {
-    const hotExists = this.state.hot && this.state.hot.address.length > 0;
-    const coldExists = this.state.cold && this.state.cold.address.length > 0;
-    const swappable = !!coldExists && !!hotExists;
-    const validAccounts = this.props.accounts.filter(account => {
-      return !account.hasProxy;
-    });
-    const someAccountAlreadyLinked =
-      validAccounts.length < this.props.accounts.length;
-    const accountsMinusHot = this.state.hot
-      ? differenceWith((a, b) => eq(a.address, b.address), validAccounts, [
-          this.state.hot
-        ])
-      : validAccounts;
+    const { hot, cold } = this.state;
+    const { accounts } = this.props;
 
-    const accountsMinusCold = this.state.cold
-      ? differenceWith((a, b) => eq(a.address, b.address), validAccounts, [
-          this.state.cold
-        ])
-      : validAccounts;
+    const validAccounts = accounts
+      .filter(account => !account.hasProxy)
+      .concat([{ address: 'connectTrezor' }, { address: 'connectLedger' }]);
 
     return (
       <Fragment>
@@ -99,100 +109,91 @@ class Link extends Component {
           </TooltipCard>{' '}
           you would like to link it to.
         </StyledBlurb>
-        <InputLabels>Select cold wallet</InputLabels>
-        <Dropdown
-          value={this.state.cold}
-          onSelect={account => this.setState({ cold: account })}
-          items={accountsMinusHot}
-          itemKey="address"
-          emptyMsg={
-            someAccountAlreadyLinked
-              ? 'no other not already linked accounts detected'
-              : ''
-          }
-          renderItem={account => (
-            <AccountBlurb
-              noAddressCut
-              type={account.type}
-              address={account.address}
-            />
-          )}
-        />
-        <Note style={{ opacity: '1' }}>
-          <Dim>This wallet must be connected. How to connect</Dim>{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://google.com"
-          >
-            MetaMask,
-          </a>{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://google.com"
-          >
-            Ledger
-          </a>{' '}
-          <Dim>and</Dim>{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://google.com"
-          >
-            Trezor
-          </a>
-        </Note>
-        <Swap dim={!swappable} onClick={this.swapAccountTypes}>
-          ▲ swap ▼
-        </Swap>
-        <InputLabels>Select hot wallet</InputLabels>
-        <Dropdown
-          value={this.state.hot}
-          onSelect={account => this.setState({ hot: account })}
-          items={accountsMinusCold}
-          itemKey="address"
-          emptyMsg={
-            someAccountAlreadyLinked
-              ? 'no other not already linked accounts detected'
-              : ''
-          }
-          renderItem={account => (
-            <AccountBlurb
-              noAddressCut
-              type={account.type}
-              address={account.address}
-            />
-          )}
-        />
-        <Note>
-          Reminder: this is the address that will be able to vote with your MKR.
-        </Note>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginTop: '20px'
-          }}
-        >
+        <Section>
+          <InputLabels>Select cold wallet</InputLabels>
+          <AccountDropdown
+            value={cold}
+            onSelect={account => this.pickFromDropdown(account, 'cold')}
+            items={validAccounts}
+          />
+          <Note style={{ opacity: '1' }}>
+            <Dim>This wallet must be connected. How to connect</Dim>{' '}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://google.com"
+            >
+              MetaMask,
+            </a>{' '}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://google.com"
+            >
+              Ledger
+            </a>{' '}
+            <Dim>and</Dim>{' '}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://google.com"
+            >
+              Trezor
+            </a>
+          </Note>
+        </Section>
+        <Section>
+          <InputLabels>Select hot wallet</InputLabels>
+          <AccountDropdown
+            value={hot}
+            onSelect={account => this.pickFromDropdown(account, 'hot')}
+            items={validAccounts}
+          />
+          <Note>
+            Reminder: this is the address that will be able to vote with your
+            MKR.
+          </Note>
+        </Section>
+        <EndRow>
           <StyledAnchor blue>Read more about linking</StyledAnchor>
           <EndButton
             style={{ marginTop: '0' }}
             slim
-            onClick={() =>
-              this.props.initiateLink({
-                cold: this.state.cold,
-                hot: this.state.hot
-              })
-            }
+            onClick={() => this.props.initiateLink({ cold, hot })}
           >
             Link Wallets
           </EndButton>
-        </div>
+        </EndRow>
       </Fragment>
     );
   }
 }
 
 export default Link;
+
+const AccountDropdown = ({ value, onSelect, items }) => (
+  <Dropdown
+    value={value}
+    onSelect={onSelect}
+    items={items}
+    itemKey="address"
+    renderItem={renderAccountDropdownItem}
+  />
+);
+
+function renderAccountDropdownItem(account) {
+  switch (account.address) {
+    case 'connectTrezor':
+      return <span>Connect to Trezor</span>;
+    case 'connectLedger':
+      return <span>Connect to Ledger</span>;
+    default:
+      return (
+        <AccountBlurb
+          noAddressCut
+          type={account.type}
+          address={account.address}
+        />
+      );
+  }
+}

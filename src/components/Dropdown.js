@@ -84,7 +84,6 @@ const Arrow = styled.img`
   background-color: black;
   height: 9px;
   width: 16px;
-  margin-top: 5px;
   margin-left: 5px;
 `;
 
