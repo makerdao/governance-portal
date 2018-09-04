@@ -13,6 +13,7 @@ import SecureVoting from '../components/modals/SecureVoting';
 import Loader from '../components/Loader';
 import AccountBox from '../components/AccountBox';
 import Toasts from '../components/Toasts';
+import play from '../imgs/play.svg';
 
 const StyledLayout = styled.div`
   position: relative;
@@ -78,6 +79,14 @@ const DimHeaderElement = styled.div`
   margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
 `;
 
+const DimHeaderLink = styled.a`
+  cursor: pointer;
+  color: ${({ theme }) => theme.text.header_dim};
+  font-weight: 500;
+  font-size: ${fonts.size.medium};
+  margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
+`;
+
 const StyledLink = styled(Link)`
   display: flex;
   align-items: center;
@@ -103,6 +112,13 @@ const NoContent = styled.div`
   justify-content: center;
   margin-bottom: 350px;
   font-style: oblique;
+`;
+
+const PlayBtn = styled.div`
+  background: url(${play}) no-repeat;
+  width: 18.2px;
+  height: 18.2px;
+  margin-right: 6px;
 `;
 
 const BaseLayout = ({
@@ -142,6 +158,16 @@ const BaseLayout = ({
               {childrenShouldMount && `${network}`}
             </NetworkNotification>
             <Flex style={{ zIndex: '100' }}>
+              <DimHeaderLink
+                href="https://google.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                mr={50}
+                style={{ display: 'flex', alignItems: 'center' }}
+              >
+                <PlayBtn />
+                Watch set up video
+              </DimHeaderLink>
               <DimHeaderElement
                 onClick={() => {
                   if (!accountsFetching) modalOpen(SecureVoting);
