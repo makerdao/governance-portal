@@ -15,7 +15,8 @@ try {
   // do nothing here; throw an error only if we later attempt to use ganache
 }
 
-let web3Instance;
+// cached singleton values
+let web3Instance, web3NetworkName;
 
 // this is exported for use in tests; it should not be used outside this file
 // otherwise.
@@ -63,6 +64,7 @@ export const setWeb3Provider = provider => {
   } else {
     web3Instance.setProvider(providerObj);
   }
+  web3NetworkName = null;
 };
 
 /**
@@ -87,9 +89,11 @@ export const sendTxUnlocked = txObject =>
  * @return {String}
  */
 export const getNetworkName = async () => {
-  const networkId = await getWeb3Instance().eth.net.getId();
-  const network = netIdToName(networkId);
-  return network;
+  if (!web3NetworkName) {
+    const networkId = await getWeb3Instance().eth.net.getId();
+    web3NetworkName = netIdToName(networkId);
+  }
+  return web3NetworkName;
 };
 
 export const getBalance = async address => {
@@ -271,9 +275,8 @@ export const awaitTx = async (txHash, { confirmations = 3 }) => {
   }
 };
 
-// FIXME network shouldn't be an explicit argument here, since we're using a
-// web3 instance that is already connected to a network
-export async function ethCall(to, method, args, network) {
+export async function ethCall(to, method, args) {
+  const network = await getNetworkName();
   switch (to) {
     case 'mkr':
       to = await getMkrAddress(network);

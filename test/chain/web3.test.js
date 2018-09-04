@@ -17,6 +17,7 @@ test('singleton setup', async () => {
   expect(name).toEqual('kovan');
 
   provider.injectResult('1');
+  setWeb3Provider(provider);
   name = await getNetworkName();
   expect(name).toEqual('mainnet');
 });
