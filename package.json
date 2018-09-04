@@ -63,7 +63,8 @@
     "pretty": "^2.0.0",
     "react-styleguidist": "^7.0.20",
     "redux-mock-store": "^1.5.3",
-    "web3-fake-provider": "^0.1.0"
+    "web3-fake-provider": "^0.1.0",
+    "whatwg-fetch": "^2.0.4"
   },
   "now": {
     "alias": "dai-gov-master"
