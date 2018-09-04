@@ -116,8 +116,8 @@ const NoContent = styled.div`
 
 const PlayBtn = styled.div`
   background: url(${play}) no-repeat;
-  width: 18.2px;
-  height: 18.2px;
+  width: 19px;
+  height: 19px;
   margin-right: 6px;
 `;
 
