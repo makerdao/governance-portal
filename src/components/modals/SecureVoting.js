@@ -90,6 +90,7 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
         </PaddedFlexContainer>
         <EndButton
           slim
+          disabled={!isColdWallet}
           onClick={() => {
             modalOpen(Lock);
           }}

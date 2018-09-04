@@ -100,7 +100,7 @@ const Intro = ({ nextStep, linkCost }) => (
           marginLeft: '8px'
         }}
       >
-        <Bold>3</Bold>
+        <Bold>4</Bold>
         <Bold>${formatRound(linkCost, 2)}</Bold>
       </div>
     </IntroTxBox>
