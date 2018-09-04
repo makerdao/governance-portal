@@ -15,7 +15,7 @@ const mockedBackend = mocked;
 
 // Constants ----------------------------------------------
 
-const TOPICS_SUCCESS = 'toics/TOPICS_SUCCESS';
+const TOPICS_SUCCESS = 'topics/TOPICS_SUCCESS';
 
 // Selectors ----------------------------------------------
 
