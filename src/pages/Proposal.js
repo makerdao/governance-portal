@@ -213,7 +213,6 @@ class Proposal extends Component {
       canVote,
       votingFor
     } = this.props;
-    const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
     const supporters = voteState[proposal.source.toLowerCase()] || null;
     return (
       <RiseUp>
@@ -294,7 +293,7 @@ class Proposal extends Component {
                 <Address
                   target="_blank"
                   rel="noopener noreferrer"
-                  href={ethScanLink(proposal.source, networkShown)}
+                  href={ethScanLink(proposal.source, network)}
                 >
                   {cutMiddle(proposal.source, 8, 8)}
                 </Address>
@@ -310,7 +309,7 @@ class Proposal extends Component {
                       <Address
                         target="_blank"
                         rel="noopener noreferrer"
-                        href={ethScanLink(supporter.address, networkShown)}
+                        href={ethScanLink(supporter.address, network)}
                       >
                         {toChecksum(supporter.address)}
                       </Address>

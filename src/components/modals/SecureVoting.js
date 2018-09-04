@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { getActiveAccount } from '../../reducers/accounts';
-import { modalOpen } from '../../reducers/modal';
+import { modalOpen, modalClose } from '../../reducers/modal';
 import { cutMiddle, formatRound } from '../../utils/misc';
 import { ethScanLink } from '../../utils/ethereum';
 import ProxySetup from './ProxySetup';
@@ -48,8 +48,7 @@ export const BoxMiddle = styled.span`
   padding: 12px;
 `;
 
-const SecureVoting = ({ modalOpen, activeAccount, network }) => {
-  const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
+const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
   if (activeAccount !== undefined && activeAccount.hasProxy) {
     const { linkedAccount } = activeAccount.proxy;
     const isColdWallet = activeAccount.proxyRole === 'cold';
@@ -82,7 +81,7 @@ const SecureVoting = ({ modalOpen, activeAccount, network }) => {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href={ethScanLink(linkedAccount.address, networkShown)}
+                href={ethScanLink(linkedAccount.address, network)}
               >
                 Etherscan
               </a>
@@ -98,7 +97,14 @@ const SecureVoting = ({ modalOpen, activeAccount, network }) => {
           Top-up voting contract
         </EndButton>
         <FlexRowEnd>
-          <Skip mr={10} mt={13} onClick={() => modalOpen(BreakLink)}>
+          <Skip
+            mr={10}
+            mt={13}
+            onClick={() => {
+              modalClose();
+              modalOpen(BreakLink);
+            }}
+          >
             Break wallet link
           </Skip>
           <LineSpacer> | </LineSpacer>
@@ -116,5 +122,5 @@ export default connect(
     activeAccount: getActiveAccount(state),
     network: state.metamask.network
   }),
-  { modalOpen }
+  { modalOpen, modalClose }
 )(SecureVoting);

@@ -212,15 +212,39 @@ export const smartStepSkip = () => (dispatch, getState) => {
   return dispatch(modalClose());
 };
 
-export const postLinkUpdate = () => (dispatch, getState) => {
+export const refreshAccountDataLink = () => (dispatch, getState) => {
   const hotAccount = getAccount(getState(), getState().proxy.hotAddress);
   const coldAccount = getAccount(getState(), getState().proxy.coldAddress);
   if (hotAccount === undefined) return window.location.reload();
   const accounts = !!coldAccount ? [hotAccount, coldAccount] : [hotAccount];
-  // cold account is needed for the lock, so set it active
   if (!!coldAccount) dispatch(setActiveAccount(coldAccount.address));
   // this will replace duplicate accounts in the store
   dispatch(addAccounts(accounts));
+};
+
+export const refreshAccountDataBreak = () => (dispatch, getState) => {
+  const activeAccount = getActiveAccount(getState());
+  if (activeAccount.proxyRole === 'hot') {
+    const coldAccount = getAccount(
+      getState(),
+      activeAccount.proxy.linkedAccount.address
+    );
+    const accounts = !!coldAccount
+      ? [activeAccount, coldAccount]
+      : [activeAccount];
+    dispatch(addAccounts(accounts));
+  } else if (activeAccount.proxyRole === 'cold') {
+    const hotAccount = getAccount(
+      getState(),
+      activeAccount.proxy.linkedAccount.address
+    );
+    const accounts = !!hotAccount
+      ? [activeAccount, hotAccount]
+      : [activeAccount];
+    dispatch(addAccounts(accounts));
+  } else {
+    return window.location.reload();
+  }
 };
 
 export const mkrApproveProxy = () => (dispatch, getState) => {
@@ -378,9 +402,7 @@ const proxy = createReducer(withExisting, {
   }),
   [BREAK_LINK_SUCCESS]: state => ({
     ...state,
-    confirmingBreakLink: false,
-    hotAddress: '',
-    coldAddress: ''
+    confirmingBreakLink: false
   }),
   [BREAK_LINK_FAILURE]: state => ({
     ...state,

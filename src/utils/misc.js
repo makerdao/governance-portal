@@ -141,6 +141,8 @@ export const cleanErrorMsg = errorMsg => {
       return 'Transaction gas is too low';
     return errorMsg.replace('Error: ', '');
   }
+  if (errorMsg.search('Insufficient funds') > -1)
+    return 'The account you tried to send a transaction from does not have enough ETH to pay for gas';
   return errorMsg;
 };
 

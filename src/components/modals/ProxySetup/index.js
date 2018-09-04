@@ -134,7 +134,6 @@ class ProxySetup extends Component {
           <Summary
             {...{
               modalClose,
-              proxyClear,
               sendMkrAmount,
               hotAccount
             }}

@@ -15,7 +15,7 @@ export const Container = styled.div`
   max-width: 256px;
   background: transparent;
   pointer-events: none;
-  z-index: 100;
+  z-index: 10000000000;
 `;
 
 const toastFade = keyframes`
@@ -38,6 +38,7 @@ const toastFade = keyframes`
 `;
 
 const Toast = styled.div`
+  z-index: 10000000000;
   border-radius: 4px;
   padding: 8px 12px;
   color: #fff;

@@ -109,7 +109,6 @@ const VoterStatus = ({
         <WelcomeBanner linkRequested={linkRequested} modalOpen={modalOpen} />
       </FadeIn>
     );
-  const networkShown = network === 'kovan' ? 'kovan' : 'mainnet';
   const { linkedAccount } = account.proxy;
   const isColdWallet = account.proxyRole === 'cold';
   const coldWallet = isColdWallet ? account : linkedAccount;
@@ -135,7 +134,7 @@ const VoterStatus = ({
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href={ethScanLink(linkedAccount.address, networkShown)}
+          href={ethScanLink(linkedAccount.address, network)}
         >
           Etherscan
         </a>

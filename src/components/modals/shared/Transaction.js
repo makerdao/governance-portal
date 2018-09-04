@@ -48,7 +48,7 @@ const Transaction = ({
         )}
       </StyledTitle>
     </StyledTop>
-    <Logo name={!!account.type ? account.type.toLowerCase() : ''} />
+    <Logo name={account.type.toLowerCase()} />
     <div
       style={{
         alignSelf: 'center',

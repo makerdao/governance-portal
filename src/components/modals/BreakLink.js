@@ -9,13 +9,14 @@ import {
 } from './shared/styles';
 import Button from '../Button';
 import { connect } from 'react-redux';
-import { breakLink } from '../../reducers/proxy';
+import { breakLink, refreshAccountDataBreak } from '../../reducers/proxy';
 import Transaction from './shared/Transaction';
 import { modalClose } from '../../reducers/modal';
 import Withdraw from './Withdraw';
 import { modalOpen } from '../../reducers/modal';
 
 const BreakLink = ({
+  refreshAccountDataBreak,
   breakLink,
   modalClose,
   modalOpen,
@@ -30,7 +31,10 @@ const BreakLink = ({
       <Transaction
         lastCard
         {...{ txHash, confirming, network, account }}
-        nextStep={() => modalClose()}
+        nextStep={() => {
+          modalClose();
+          refreshAccountDataBreak();
+        }}
       />
     );
   }
@@ -113,5 +117,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { breakLink, modalClose, modalOpen }
+  { breakLink, modalClose, refreshAccountDataBreak, modalOpen }
 )(BreakLink);
