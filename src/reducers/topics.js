@@ -74,6 +74,22 @@ export function getWinningProp(state, topicId) {
 
 // Actions ------------------------------------------------
 
+const fetchTopics = async network => {
+  const backend = process.env.GOV_BACKEND || 'prod';
+
+  if (backend == 'mock') {
+    return mockedBackend[network];
+  }
+
+  if (backend == 'local') {
+    return mockedBackend[network];
+  }
+
+  if (backend == 'prod') {
+    return mockedBackend[network];
+  }
+};
+
 export const topicsInit = network => async dispatch => {
   if (network === 'ganache') {
     // look up all slates
@@ -89,7 +105,7 @@ export const topicsInit = network => async dispatch => {
     ];
     dispatch({ type: TOPICS_SUCCESS, payload: topics });
   } else {
-    dispatch({ type: TOPICS_SUCCESS, payload: mockedBackend[network] });
+    dispatch({ type: TOPICS_SUCCESS, payload: await fetchTopics(network) });
   }
   dispatch(initApprovalsFetch());
 };

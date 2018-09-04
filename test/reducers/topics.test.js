@@ -4,7 +4,8 @@ const dateRegex = '^\\d{4}-\\d{2}-\\d{2}$';
 
 test('topicsInit returns a TOPICS_SUCCESS action with topics as a payload', async () => {
   const dispatch = jest.fn();
-  topicsInit('mainnet')(dispatch);
+  await topicsInit('mainnet')(dispatch);
+
   expect(dispatch.mock.calls.length).toBe(2);
   expect(dispatch.mock.calls[0][0]).toEqual({
     type: 'topics/TOPICS_SUCCESS',
