@@ -17,7 +17,7 @@ import copy from '../../imgs/copy.svg';
 
 const TREZOR_PATH = "44'/60'/0'/0/0";
 
-const Table = styled.table`
+export const Table = styled.table`
   width: 100%;
   tr {
     border-bottom: 1px solid #e9e9e9;
@@ -38,17 +38,17 @@ const Table = styled.table`
   }
 `;
 
-const AddressContainer = styled.div`
+export const AddressContainer = styled.div`
   border: 1px solid #d7d7d7;
   border-radius: 4px;
   width: 100%;
 `;
 
-const InlineTd = styled.td`
+export const InlineTd = styled.td`
   display: inline-flex;
 `;
 
-const CopyBtn = styled.div`
+export const CopyBtn = styled.div`
   margin-left: 8px;
   margin-right: -8px;
   width: 24px;
@@ -60,7 +60,7 @@ const CopyBtn = styled.div`
   }
 `;
 
-const CopyBtnIcon = styled.p`
+export const CopyBtnIcon = styled.p`
   height: 14px;
   width: 14px;
   margin: auto;

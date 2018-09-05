@@ -14,6 +14,14 @@ import Transaction from './shared/Transaction';
 import { modalClose } from '../../reducers/modal';
 import Withdraw from './Withdraw';
 import { modalOpen } from '../../reducers/modal';
+import {
+  Table,
+  InlineTd,
+  AddressContainer,
+  CopyBtn,
+  CopyBtnIcon
+} from './AddressSelection';
+import { cutMiddle, copyToClipboard } from '../../utils/misc';
 
 const BreakLink = ({
   refreshAccountDataBreak,
@@ -42,6 +50,12 @@ const BreakLink = ({
   const isColdWallet = account.proxyRole === 'cold';
   const coldAddress = isColdWallet ? account.address : linkedAccount.address;
   const hotAddress = isColdWallet ? linkedAccount.address : account.address;
+  const mkrBalanceCold = isColdWallet
+    ? account.mkrBalance
+    : linkedAccount.mkrBalance;
+  const mkrBalanceHot = isColdWallet
+    ? linkedAccount.mkrBalance
+    : account.mkrBalance;
   if (account.proxy.votingPower > 0) {
     return (
       <Fragment>
@@ -87,6 +101,31 @@ const BreakLink = ({
           Either your hot or cold wallet can create the break link transaction
         </div>
       </StyledBlurb>
+      <AddressContainer>
+        <Table>
+          <thead>
+            <tr>
+              <th> Wallet </th>
+              <th>Address</th>
+              <th>MKR</th>
+              <th>ETH</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr key={coldAddress}>
+              <td> Cold </td>
+              <InlineTd title={coldAddress}>
+                {cutMiddle(coldAddress, 8, 6)}
+                <CopyBtn onClick={() => copyToClipboard(coldAddress)}>
+                  <CopyBtnIcon />
+                </CopyBtn>
+              </InlineTd>
+              <td>{mkrBalanceCold} MKR</td>
+              <td> ?? ETH </td>
+            </tr>
+          </tbody>
+        </Table>
+      </AddressContainer>
       <div
         style={{
           display: 'flex',
