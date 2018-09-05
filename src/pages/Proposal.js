@@ -189,7 +189,7 @@ class Proposal extends Component {
     this.setState({
       proposal,
       parent: topic.topic,
-      parentId: topic.id,
+      parentKey: topic.key,
       active: topic.active
     });
     fetch(proposal.about)
@@ -202,7 +202,7 @@ class Proposal extends Component {
   }
 
   render() {
-    const { proposal, markdown, parent, active, parentId } = this.state;
+    const { proposal, markdown, parent, active, parentKey } = this.state;
     if (Object.keys(proposal).length === 0) return <NotFound />;
     const {
       voteState,
@@ -259,7 +259,7 @@ class Proposal extends Component {
               </div>
             ) : (
               <ClosedStatus
-                topicId={parentId}
+                topicKey={parentKey}
                 proposalAddress={proposal.source}
               />
             )}

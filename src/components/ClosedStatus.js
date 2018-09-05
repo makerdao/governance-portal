@@ -100,7 +100,7 @@ const ClosedProposal = ({
 
 const mapStateToProps = ({ topics, approvals }, props) => ({
   approvalFetching: approvals.fetching,
-  winningProposal: getWinningProp({ approvals, topics }, props.topicId)
+  winningProposal: getWinningProp({ approvals, topics }, props.topicKey)
 });
 
 export default connect(

@@ -2,7 +2,7 @@ export default {
   mainnet: [
     {
       topic: 'Foundation Proposal Governance Vote',
-      id: 1,
+      key: 'foundation-proposal-governance-vote',
       active: true,
       govVote: true,
       topic_blurb: `Here you can vote YES or NO to the proposed five core principles of the Maker Governance philosophy as <a target="_blank" rel="noopener noreferrer" href="https://medium.com/makerdao/foundation-proposal-v2-f10d8ee5fe8c"> updated on Medium</a> on August 21, 2018.
@@ -61,7 +61,7 @@ export default {
   kovan: [
     {
       topic: 'Foundation Proposal Governance Vote',
-      id: 1,
+      key: 'foundation-proposal-governance-vote',
       active: true,
       govVote: true,
       topic_blurb: `Here you can vote YES or NO to the proposed five core principles of the Maker Governance philosophy as <a target="_blank" rel="noopener noreferrer" href="https://medium.com/makerdao/foundation-proposal-v2-f10d8ee5fe8c"> updated on Medium</a> on August 21, 2018

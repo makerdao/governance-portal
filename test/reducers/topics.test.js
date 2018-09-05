@@ -13,9 +13,9 @@ each(['mainnet', 'kovan']).test(
     expect(dispatch.mock.calls[0][0]).toEqual({
       type: 'topics/TOPICS_SUCCESS',
       payload: expect.arrayContaining([
-        {
+        expect.objectContaining({
           topic: expect.any(String),
-          id: expect.any(Number),
+          key: expect.any(String),
           active: expect.any(Boolean),
           govVote: expect.any(Boolean),
           topic_blurb: expect.any(String),
@@ -27,7 +27,7 @@ each(['mainnet', 'kovan']).test(
             link: expect.any(String)
           },
           proposals: expect.arrayContaining([
-            {
+            expect.objectContaining({
               title: expect.any(String),
               proposal_blurb: expect.any(String),
               about: expect.any(String),
@@ -40,14 +40,14 @@ each(['mainnet', 'kovan']).test(
                 link: expect.any(String)
               },
               documents: expect.arrayContaining([
-                {
+                expect.objectContaining({
                   name: expect.any(String),
                   link: expect.any(String)
-                }
+                })
               ])
-            }
+            })
           ])
-        }
+        })
       ])
     });
   }
