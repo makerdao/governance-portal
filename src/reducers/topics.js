@@ -17,6 +17,8 @@ const mockedBackend = mocked;
 
 const TOPICS_SUCCESS = 'topics/TOPICS_SUCCESS';
 
+const CMS_URL = 'https://content.makerfoundation.com';
+
 // Selectors ----------------------------------------------
 
 export function getProposal(state, proposalAddress) {
@@ -30,15 +32,15 @@ export function getProposal(state, proposalAddress) {
   return null;
 }
 
-export function getTopic(state, topicId) {
+export function getTopic(state, topicKey) {
   for (let topic of state.topics) {
-    if (topic.id === topicId) return topic;
+    if (topic.key === topicKey) return topic;
   }
   return null;
 }
 
-export function getWinningProp(state, topicId) {
-  const proposals = getTopic(state, topicId).proposals;
+export function getWinningProp(state, topicKey) {
+  const proposals = getTopic(state, topicKey).proposals;
   // all child proposals of a topic must have the snapshot for this to work
   const hasEndSnapshot = proposals =>
     proposals.every(
@@ -76,17 +78,20 @@ export function getWinningProp(state, topicId) {
 
 const fetchTopics = async network => {
   const backend = process.env.GOV_BACKEND || 'prod';
+  const path = 'content/governance-dashboard';
 
   if (backend == 'mock') {
     return mockedBackend[network];
   }
 
   if (backend == 'local') {
-    return mockedBackend[network];
+    const res = await fetch(`http://localhost:3000/${path}?network=${network}`);
+    return await res.json();
   }
 
   if (backend == 'prod') {
-    return mockedBackend[network];
+    const res = await fetch(`${CMS_URL}/${path}?network=${network}`);
+    return await res.json();
   }
 };
 
