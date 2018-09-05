@@ -3,10 +3,16 @@ import each from 'jest-each';
 
 const dateRegex = '^\\d{4}-\\d{2}-\\d{2}$';
 
-each(['mainnet', 'kovan']).test(
-  'topicsInit returns a TOPICS_SUCCESS action with topics as a payload',
-  async network => {
+each([
+  ['mainnet', 'mock'],
+  ['kovan', 'mock'],
+  ['mainnet', 'prod'],
+  ['kovan', 'prod']
+]).test(
+  'topicsInit returns a TOPICS_SUCCESS action with topics as a payload (%s / %s)',
+  async (network, backend) => {
     const dispatch = jest.fn();
+    process.env.GOV_BACKEND = backend;
     await topicsInit(network)(dispatch);
 
     expect(dispatch.mock.calls.length).toBe(2);
