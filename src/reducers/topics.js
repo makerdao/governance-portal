@@ -77,7 +77,7 @@ export function getWinningProp(state, topicKey) {
 // Actions ------------------------------------------------
 
 const fetchTopics = async network => {
-  const backend = process.env.GOV_BACKEND || 'prod';
+  const backend = process.env.REACT_APP_GOV_BACKEND || 'prod';
   const path = 'content/governance-dashboard';
 
   if (backend == 'mock') {
@@ -85,7 +85,7 @@ const fetchTopics = async network => {
   }
 
   if (backend == 'local') {
-    const res = await fetch(`http://localhost:3000/${path}?network=${network}`);
+    const res = await fetch(`http://127.0.0.1:3000/${path}?network=${network}`);
     return await res.json();
   }
 
