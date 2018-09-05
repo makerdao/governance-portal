@@ -13,7 +13,7 @@ import LedgerType from './LedgerType';
 const LEDGER_LIVE_PATH = "44'/60'/0'";
 const LEDGER_LEGACY_PATH = "44'/60'/0'/0/0";
 
-const CenterBlurb = StyledBlurb.extend`
+const CenterBlurb = styled(StyledBlurb)`
   text-align: center;
   font-size: 16px;
   line-height: 24px;

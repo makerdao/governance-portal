@@ -132,7 +132,7 @@ const Tag = styled.div`
   margin-left: ${({ ml }) => (ml ? `${ml}px` : '')};
 `;
 
-const VoteType = Tag.extend`
+const VoteType = styled(Tag)`
   background-color: ${({ governance }) => (governance ? '#FFE3DB' : '#EAEFF7')};
   color: ${({ governance }) => (governance ? '#F77249' : '#546978')};
   &::after {
@@ -141,7 +141,7 @@ const VoteType = Tag.extend`
   }
 `;
 
-const TopicStatus = Tag.extend`
+const TopicStatus = styled(Tag)`
   background-color: ${({ active }) => (active ? '#d2f9f1' : '#EAEFF7')};
   color: ${({ active }) => (active ? '#30bd9f' : '#546978')};
   &::after {
