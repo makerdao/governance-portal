@@ -28,7 +28,7 @@
     "redux-devtools-extension": "^2.13.5",
     "redux-thunk": "^2.3.0",
     "reselect": "^3.0.1",
-    "styled-components": "^3.3.3",
+    "styled-components": "^3.4.2",
     "web3": "1.0.0-beta.34",
     "web3-provider-engine": "14.0.4"
   },
@@ -60,7 +60,6 @@
     "node-fetch": "^2.2.0",
     "prettier": "^1.13.5",
     "pretty": "^2.0.0",
-    "react-styleguidist": "^7.0.20",
     "redux-mock-store": "^1.5.3",
     "web3-fake-provider": "^0.1.0"
   },

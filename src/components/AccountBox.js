@@ -127,7 +127,7 @@ const DropdownRow = styled.div`
   }
 `;
 
-const DropdownRowForLink = DropdownRow.extend`
+const DropdownRowForLink = styled(DropdownRow)`
   padding: 0;
 `;
 
