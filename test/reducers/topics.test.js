@@ -1,30 +1,32 @@
 import { topicsInit } from '../../src/reducers/topics';
 import each from 'jest-each';
+import { runWithMockedFetch } from '../helpers';
 
 const dateRegex = '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$';
 
 test('topicsInit dispatches a TOPICS_FAILURE action when it cannot reach the backend', async () => {
-  process.env.REACT_APP_GOV_BACKEND = 'prod';
-  global.fetch = require('jest-fetch-mock');
+  runWithMockedFetch(async () => {
+    process.env.REACT_APP_GOV_BACKEND = 'prod';
 
-  fetch.mockResponseOnce('Forbidden', {
-    status: 403,
-    headers: { 'content-type': 'text/plain; charset=utf-8' }
-  });
+    fetch.mockResponseOnce('Forbidden', {
+      status: 403,
+      headers: { 'content-type': 'text/plain; charset=utf-8' }
+    });
 
-  const dispatch = jest.fn();
-  await topicsInit('maintnet')(dispatch);
+    const dispatch = jest.fn();
+    await topicsInit('maintnet')(dispatch);
 
-  expect(dispatch.mock.calls.length).toBe(3);
+    expect(dispatch.mock.calls.length).toBe(3);
 
-  expect(dispatch.mock.calls[0][0]).toEqual({
-    type: 'topics/TOPICS_REQUEST',
-    payload: {}
-  });
+    expect(dispatch.mock.calls[0][0]).toEqual({
+      type: 'topics/TOPICS_REQUEST',
+      payload: {}
+    });
 
-  expect(dispatch.mock.calls[1][0]).toEqual({
-    type: 'topics/TOPICS_FAILURE',
-    payload: { error: expect.any(Error) }
+    expect(dispatch.mock.calls[1][0]).toEqual({
+      type: 'topics/TOPICS_FAILURE',
+      payload: { error: expect.any(Error) }
+    });
   });
 });
 
@@ -34,7 +36,7 @@ each([
   ['mainnet', 'prod'],
   ['kovan', 'prod']
 ]).test(
-  'topicsInit dispatches a TOPICS_SUCCESS action with topics as a payload (%s / %s)',
+  'topicsInit dispatches a TOPICS_SUCCESS action when it can reach the backend (%s / %s)',
   async (network, backend) => {
     const dispatch = jest.fn();
     process.env.REACT_APP_GOV_BACKEND = backend;

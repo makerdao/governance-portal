@@ -71,3 +71,12 @@ export const ganacheCoinbase = {
 // ^ our default coinbase BUT we should probably avoid using it for
 // tests (besides sending mkr) since it's the address the contracts are deployed
 // from on ganache, so it has special privledges that could affect test results
+
+export const runWithMockedFetch = async testFn => {
+  const oldFetch = global.fetch;
+  global.fetch = require('jest-fetch-mock');
+
+  await testFn();
+
+  global.fetch = oldFetch;
+};

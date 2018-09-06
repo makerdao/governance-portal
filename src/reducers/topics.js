@@ -125,6 +125,7 @@ export const topicsInit = network => async dispatch => {
     dispatch({ type: TOPICS_REQUEST, payload: {} });
     try {
       const topics = await fetchTopics(network);
+
       dispatch({ type: TOPICS_SUCCESS, payload: topics });
     } catch (err) {
       dispatch({
