@@ -71,36 +71,57 @@ export function getWinningProp(state, topicKey) {
   }
 }
 
-// Actions ------------------------------------------------
+// Backend ------------------------------------------------
 
-const fetchTopics = async network => {
-  const path = 'content/governance-dashboard';
-  const prod_cms_url = 'https://content.makerfoundation.com';
-  const local_cms_url = 'http://127.0.0.1:3000';
+const local = 'http://127.0.0.1:3000';
+const prod = 'https://content.makerfoundation.com';
 
-  const check = async res => {
-    if (!res.ok) {
-      throw new Error(
-        `unable to fetch topics: ${res.status} - ${await res.text()}`
-      );
-    }
-  };
+const path = 'content/governance-dashboard';
 
-  if (process.env.REACT_APP_GOV_BACKEND == 'mock') {
-    const mocked = await import('../_mock/topics');
-    return mocked.default[network];
+// util
+
+const check = async res => {
+  if (!res.ok) {
+    throw new Error(
+      `unable to fetch topics: ${res.status} - ${await res.text()}`
+    );
   }
+};
 
-  if (process.env.REACT_APP_GOV_BACKEND == 'local') {
-    const res = await fetch(`${local_cms_url}/${path}?network=${network}`);
-    await check(res);
-    return await res.json();
-  }
+// backends
 
-  const res = await fetch(`${prod_cms_url}/${path}?network=${network}`);
+const fetchMock = async network => {
+  const mocked = await import('../_mock/topics');
+  return mocked.default[network];
+};
+
+const fetchLocal = async network => {
+  const res = await fetch(`${local}/${path}?network=${network}`);
   await check(res);
   return await res.json();
 };
+
+const fetchProd = async network => {
+  const res = await fetch(`${prod}/${path}?network=${network}`);
+  await check(res);
+  return await res.json();
+};
+
+// dispatch
+
+const fetchTopics = async network => {
+  if (process.env.REACT_APP_GOV_BACKEND == 'mock') {
+    return await fetchMock(network);
+  }
+
+  if (process.env.REACT_APP_GOV_BACKEND == 'local') {
+    return await fetchLocal(network);
+  }
+
+  return await fetchProd(network);
+};
+
+// Actions ------------------------------------------------
 
 export const topicsInit = network => async dispatch => {
   if (network === 'ganache') {
