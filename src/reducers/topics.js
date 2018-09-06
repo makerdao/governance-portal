@@ -7,7 +7,6 @@ import round from 'lodash.round';
 
 import { createReducer } from '../utils/redux';
 import { initApprovalsFetch } from './approvals';
-import mocked from '../_mock/topics';
 import { getEtchedSlates } from '../chain/read';
 import { eq, div, mul, promiseRetry } from '../utils/misc';
 
@@ -18,9 +17,6 @@ const mockedBackend = mocked;
 const TOPICS_REQUEST = 'topics/TOPICS_REQUEST';
 const TOPICS_SUCCESS = 'topics/TOPICS_SUCCESS';
 const TOPICS_FAILURE = 'topics/TOPICS_FAILURE';
-
-const PROD_CMS_URL = 'https://content.makerfoundation.com';
-const LOCAL_CMS_URL = 'http://127.0.0.1:3000';
 
 // Selectors ----------------------------------------------
 
@@ -80,8 +76,9 @@ export function getWinningProp(state, topicKey) {
 // Actions ------------------------------------------------
 
 const fetchTopics = async network => {
-  const backend = process.env.REACT_APP_GOV_BACKEND || 'prod';
   const path = 'content/governance-dashboard';
+  const prod_cms_url = 'https://content.makerfoundation.com';
+  const local_cms_url = 'http://127.0.0.1:3000';
 
   const check = async res => {
     if (!res.ok) {
@@ -91,21 +88,20 @@ const fetchTopics = async network => {
     }
   };
 
-  if (backend == 'mock') {
+  if (process.env.REACT_APP_GOV_BACKEND == 'mock') {
+    import mocked from '../_mock/topics';
     return mockedBackend[network];
   }
 
-  if (backend == 'local') {
-    const res = await fetch(`${LOCAL_CMS_URL}/${path}?network=${network}`);
+  if (process.env.REACT_APP_GOV_BACKEND == 'local') {
+    const res = await fetch(`${local_cms_url}/${path}?network=${network}`);
     await check(res);
     return await res.json();
   }
 
-  if (backend == 'prod') {
-    const res = await fetch(`${PROD_CMS_URL}/${path}?network=${network}`);
-    await check(res);
-    return await res.json();
-  }
+  const res = await fetch(`${prod_cms_url}/${path}?network=${network}`);
+  await check(res);
+  return await res.json();
 };
 
 export const topicsInit = network => async dispatch => {
