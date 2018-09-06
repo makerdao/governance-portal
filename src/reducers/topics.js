@@ -10,8 +10,6 @@ import { initApprovalsFetch } from './approvals';
 import { getEtchedSlates } from '../chain/read';
 import { eq, div, mul, promiseRetry } from '../utils/misc';
 
-const mockedBackend = mocked;
-
 // Constants ----------------------------------------------
 
 const TOPICS_REQUEST = 'topics/TOPICS_REQUEST';
@@ -89,8 +87,8 @@ const fetchTopics = async network => {
   };
 
   if (process.env.REACT_APP_GOV_BACKEND == 'mock') {
-    import mocked from '../_mock/topics';
-    return mockedBackend[network];
+    const mocked = await import('../_mock/topics');
+    return mocked.default[network];
   }
 
   if (process.env.REACT_APP_GOV_BACKEND == 'local') {
