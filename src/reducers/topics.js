@@ -9,7 +9,7 @@ import { createReducer } from '../utils/redux';
 import { initApprovalsFetch } from './approvals';
 import mocked from '../_mock/topics';
 import { getEtchedSlates } from '../chain/read';
-import { eq, div, mul } from '../utils/misc';
+import { eq, div, mul, promiseRetry } from '../utils/misc';
 
 const mockedBackend = mocked;
 
@@ -19,7 +19,8 @@ const TOPICS_REQUEST = 'topics/TOPICS_REQUEST';
 const TOPICS_SUCCESS = 'topics/TOPICS_SUCCESS';
 const TOPICS_FAILURE = 'topics/TOPICS_FAILURE';
 
-const CMS_URL = 'https://content.makerfoundation.com';
+const PROD_CMS_URL = 'https://content.makerfoundation.com';
+const LOCAL_CMS_URL = 'http://127.0.0.1:3000';
 
 // Selectors ----------------------------------------------
 
@@ -95,13 +96,13 @@ const fetchTopics = async network => {
   }
 
   if (backend == 'local') {
-    const res = await fetch(`http://127.0.0.1:3000/${path}?network=${network}`);
+    const res = await fetch(`${LOCAL_CMS_URL}/${path}?network=${network}`);
     await check(res);
     return await res.json();
   }
 
   if (backend == 'prod') {
-    const res = await fetch(`${CMS_URL}/${path}?network=${network}`);
+    const res = await fetch(`${PROD_CMS_URL}/${path}?network=${network}`);
     await check(res);
     return await res.json();
   }
@@ -124,7 +125,12 @@ export const topicsInit = network => async dispatch => {
   } else {
     dispatch({ type: TOPICS_REQUEST, payload: {} });
     try {
-      const topics = await fetchTopics(network);
+      const topics = await promiseRetry({
+        fn: fetchTopics,
+        args: [network],
+        times: 4,
+        delay: 1
+      });
 
       dispatch({ type: TOPICS_SUCCESS, payload: topics });
     } catch (err) {
