@@ -1,7 +1,7 @@
 import { topicsInit } from '../../src/reducers/topics';
 import each from 'jest-each';
 
-const dateRegex = '^\\d{4}-\\d{2}-\\d{2}$';
+const dateRegex = '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$';
 
 each([
   ['mainnet', 'mock'],
