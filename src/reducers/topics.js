@@ -15,7 +15,9 @@ const mockedBackend = mocked;
 
 // Constants ----------------------------------------------
 
+const TOPICS_REQUEST = 'topics/TOPICS_REQUEST';
 const TOPICS_SUCCESS = 'topics/TOPICS_SUCCESS';
+const TOPICS_FAILURE = 'topics/TOPICS_FAILURE';
 
 const CMS_URL = 'https://content.makerfoundation.com';
 
@@ -110,7 +112,13 @@ export const topicsInit = network => async dispatch => {
     ];
     dispatch({ type: TOPICS_SUCCESS, payload: topics });
   } else {
-    dispatch({ type: TOPICS_SUCCESS, payload: await fetchTopics(network) });
+    dispatch({ type: TOPICS_REQUEST, payload: {} });
+    try {
+      const topics = await fetchTopics(network);
+      dispatch({ type: TOPICS_SUCCESS, payload: topics });
+    } catch (err) {
+      dispatch({ type: TOPICS_FAILURE, payload: topics });
+    }
   }
   dispatch(initApprovalsFetch());
 };

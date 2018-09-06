@@ -15,8 +15,14 @@ each([
     process.env.REACT_APP_GOV_BACKEND = backend;
     await topicsInit(network)(dispatch);
 
-    expect(dispatch.mock.calls.length).toBe(2);
+    expect(dispatch.mock.calls.length).toBe(3);
+
     expect(dispatch.mock.calls[0][0]).toEqual({
+      type: 'topics/TOPICS_REQUEST',
+      payload: {}
+    });
+
+    expect(dispatch.mock.calls[1][0]).toEqual({
       type: 'topics/TOPICS_SUCCESS',
       payload: expect.arrayContaining([
         expect.objectContaining({
