@@ -82,17 +82,27 @@ const fetchTopics = async network => {
   const backend = process.env.REACT_APP_GOV_BACKEND || 'prod';
   const path = 'content/governance-dashboard';
 
+  const check = async res => {
+    if (!res.ok) {
+      throw new Error(
+        `unable to fetch topics: ${res.status} - ${await res.text()}`
+      );
+    }
+  };
+
   if (backend == 'mock') {
     return mockedBackend[network];
   }
 
   if (backend == 'local') {
     const res = await fetch(`http://127.0.0.1:3000/${path}?network=${network}`);
+    await check(res);
     return await res.json();
   }
 
   if (backend == 'prod') {
     const res = await fetch(`${CMS_URL}/${path}?network=${network}`);
+    await check(res);
     return await res.json();
   }
 };
@@ -117,7 +127,12 @@ export const topicsInit = network => async dispatch => {
       const topics = await fetchTopics(network);
       dispatch({ type: TOPICS_SUCCESS, payload: topics });
     } catch (err) {
-      dispatch({ type: TOPICS_FAILURE, payload: topics });
+      dispatch({
+        type: TOPICS_FAILURE,
+        payload: {
+          error: err
+        }
+      });
     }
   }
   dispatch(initApprovalsFetch());
