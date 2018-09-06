@@ -62,8 +62,9 @@ const SelectedItem = styled.div`
   padding: 6px 10px;
   font-size: 15px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  width: 232px;
+  width: 242px;
   font-weight: ${fonts.weight.normal};
   font-family: ${fonts.family.System};
 `;
