@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { Bold } from './styles';
 import { cutMiddle, copyToClipboard } from '../../../utils/misc';
-import { getMkrBalance } from '../../../chain/read';
-import { getBalance } from '../../../chain/web3';
-import round from 'lodash.round';
 import styled from 'styled-components';
 import copy from '../../../imgs/copy.svg';
 
@@ -58,22 +55,6 @@ export const CopyBtnIcon = styled.p`
 `;
 
 class HotColdTable extends Component {
-  async componentDidMount() {
-    const { hotAddress, coldAddress } = this.props;
-    const [ethHot, ethCold, mkrHot, mkrCold] = await Promise.all([
-      getBalance(hotAddress, 3),
-      getBalance(coldAddress, 3),
-      getMkrBalance(hotAddress, 3),
-      getMkrBalance(coldAddress, 3)
-    ]);
-    this.setState({
-      ethHot: round(ethHot, 3),
-      ethCold: round(ethCold, 3),
-      mkrHot: round(mkrHot, 3),
-      mkrCold: round(mkrCold, 3)
-    });
-  }
-
   render() {
     const {
       hotAddress,

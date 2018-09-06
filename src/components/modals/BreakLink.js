@@ -110,8 +110,8 @@ class BreakLink extends Component {
         <HotColdTable
           hotAddress={hotAddress}
           coldAddress={coldAddress}
-          mkrBalanceHot={mkrBalanceHot}
-          mkrBalanceCold={mkrBalanceCold}
+          mkrBalanceHot={round(mkrBalanceHot, 3)}
+          mkrBalanceCold={round(mkrBalanceCold, 3)}
           ethBalanceHot={this.state.ethHot}
           ethBalanceCold={this.state.ethCold}
         />
