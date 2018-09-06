@@ -224,22 +224,13 @@ export const refreshAccountDataLink = () => (dispatch, getState) => {
 
 export const refreshAccountDataBreak = () => (dispatch, getState) => {
   const activeAccount = getActiveAccount(getState());
-  if (activeAccount.proxyRole === 'hot') {
-    const coldAccount = getAccount(
+  if (activeAccount.hasProxy) {
+    const otherAccount = getAccount(
       getState(),
       activeAccount.proxy.linkedAccount.address
     );
-    const accounts = !!coldAccount
-      ? [activeAccount, coldAccount]
-      : [activeAccount];
-    dispatch(addAccounts(accounts));
-  } else if (activeAccount.proxyRole === 'cold') {
-    const hotAccount = getAccount(
-      getState(),
-      activeAccount.proxy.linkedAccount.address
-    );
-    const accounts = !!hotAccount
-      ? [activeAccount, hotAccount]
+    const accounts = !!otherAccount
+      ? [activeAccount, otherAccount]
       : [activeAccount];
     dispatch(addAccounts(accounts));
   } else {
@@ -285,7 +276,7 @@ const initialState = {
 
 const withExisting = { ...initialState, ...existingState };
 
-const proxy = createReducer(withExisting, {
+const proxy = createReducer(initialState, {
   // Initiate ---------------------------------------
   [INITIATE_LINK_REQUEST]: (state, { payload }) => ({
     ...state,

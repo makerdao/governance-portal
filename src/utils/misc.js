@@ -143,6 +143,7 @@ export const cleanErrorMsg = errorMsg => {
   }
   if (errorMsg.search('Insufficient funds') > -1)
     return 'The account you tried to send a transaction from does not have enough ETH to pay for gas';
+  if (errorMsg.search('transport') > -1) return 'Ledger connect failed';
   return errorMsg;
 };
 

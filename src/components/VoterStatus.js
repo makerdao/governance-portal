@@ -49,7 +49,7 @@ const Black = styled.span`
   color: ${theme.text.default};
 `;
 
-const Strong = Black.extend`
+const Strong = styled(Black)`
   color: ${theme.text.default};
   font-weight: bold;
 `;

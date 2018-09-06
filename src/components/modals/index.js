@@ -72,7 +72,7 @@ const Hitbox = styled.div`
   bottom: 0;
 `;
 
-const ModalCard = Card.extend`
+const ModalCard = styled(Card)`
   overflow: visible;
   padding: 30px 26px;
   display: flex;

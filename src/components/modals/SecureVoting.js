@@ -23,15 +23,15 @@ import {
   BoxRight
 } from './shared/styles';
 
-const PaddedFlexContainer = FlexContainer.extend`
+const PaddedFlexContainer = styled(FlexContainer)`
   padding-top: 24px;
 `;
 
-const JustifiedFlexContainer = FlexContainer.extend`
+const JustifiedFlexContainer = styled(FlexContainer)`
   justify-content: space-between;
 `;
 
-const LineSpacer = FlexContainer.extend`
+const LineSpacer = styled(FlexContainer)`
   margin-top: 13px;
   color: ${theme.text.dim_grey};
   font-size: 18px;
