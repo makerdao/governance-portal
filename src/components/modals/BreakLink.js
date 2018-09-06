@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, Component } from 'react';
 import { getActiveAccount } from '../../reducers/accounts';
 import {
   StyledTitle,
@@ -22,6 +22,81 @@ import {
   CopyBtnIcon
 } from './AddressSelection';
 import { cutMiddle, copyToClipboard } from '../../utils/misc';
+import { getMkrBalance } from '../../chain/read';
+import { getBalance } from '../../chain/web3';
+import round from 'lodash.round';
+
+export class HotColdTable extends Component {
+  async componentDidMount() {
+    const { hotAddress, coldAddress } = this.props;
+    const [ethHot, ethCold, mkrHot, mkrCold] = await Promise.all([
+      getBalance(hotAddress, 3),
+      getBalance(coldAddress, 3),
+      getMkrBalance(hotAddress, 3),
+      getMkrBalance(coldAddress, 3)
+    ]);
+    this.setState({
+      ethHot: round(ethHot, 3),
+      ethCold: round(ethCold, 3),
+      mkrHot: round(mkrHot, 3),
+      mkrCold: round(mkrCold, 3)
+    });
+  }
+
+  render() {
+    const {
+      hotAddress,
+      coldAddress,
+      mkrBalanceCold,
+      mkrBalanceHot,
+      ethBalanceHot,
+      ethBalanceCold
+    } = this.props;
+
+    return (
+      <AddressContainer style={{ marginTop: '10px' }}>
+        <Table>
+          <thead>
+            <tr>
+              <th> Wallet </th>
+              <th>Address</th>
+              <th>MKR</th>
+              <th>ETH</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <Bold> Cold </Bold>
+              </td>
+              <InlineTd title={coldAddress}>
+                {cutMiddle(coldAddress, 8, 6)}
+                <CopyBtn onClick={() => copyToClipboard(coldAddress)}>
+                  <CopyBtnIcon />
+                </CopyBtn>
+              </InlineTd>
+              <td>{mkrBalanceCold} MKR</td>
+              <td> {ethBalanceCold} ETH </td>
+            </tr>
+            <tr>
+              <td>
+                <Bold> Hot </Bold>
+              </td>
+              <InlineTd title={hotAddress}>
+                {cutMiddle(hotAddress, 8, 6)}
+                <CopyBtn onClick={() => copyToClipboard(hotAddress)}>
+                  <CopyBtnIcon />
+                </CopyBtn>
+              </InlineTd>
+              <td>{mkrBalanceHot} MKR</td>
+              <td> {ethBalanceHot} ETH </td>
+            </tr>
+          </tbody>
+        </Table>
+      </AddressContainer>
+    );
+  }
+}
 
 const BreakLink = ({
   refreshAccountDataBreak,
@@ -62,16 +137,14 @@ const BreakLink = ({
         <StyledTop>
           <StyledTitle>Break Wallet Link</StyledTitle>
         </StyledTop>
-        <StyledBlurb style={{ textAlign: 'center', marginTop: '30px' }}>
-          <div style={{ marginTop: '20px' }}>
-            Before you can break your wallet link, you must withdraw all MKR
-            from the voting contract
-          </div>
+        <StyledBlurb style={{ textAlign: 'center', marginTop: '20px' }}>
+          Before you can break your wallet link, you must withdraw all MKR from
+          the voting contract
         </StyledBlurb>
         <div
           style={{
             display: 'flex',
-            marginTop: '20px',
+            marginTop: '10px',
             justifyContent: 'flex-end'
           }}
         >
@@ -90,42 +163,17 @@ const BreakLink = ({
   return (
     <Fragment>
       <StyledTop>
-        <StyledTitle>Break Wallet Link</StyledTitle>
+        <StyledTitle>Break wallet link</StyledTitle>
       </StyledTop>
-      <StyledBlurb style={{ textAlign: 'center', marginTop: '30px' }}>
-        <Bold>Cold wallet:</Bold> <Oblique> {coldAddress} </Oblique>
-        <br />
-        <Bold>Hot wallet:</Bold> <Oblique> {hotAddress} </Oblique>
-        <br />
-        <div style={{ marginTop: '20px' }}>
-          Either your hot or cold wallet can create the break link transaction
-        </div>
+      <StyledBlurb style={{ textAlign: 'center' }}>
+        Both addresses below will be unlinked
       </StyledBlurb>
-      <AddressContainer>
-        <Table>
-          <thead>
-            <tr>
-              <th> Wallet </th>
-              <th>Address</th>
-              <th>MKR</th>
-              <th>ETH</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr key={coldAddress}>
-              <td> Cold </td>
-              <InlineTd title={coldAddress}>
-                {cutMiddle(coldAddress, 8, 6)}
-                <CopyBtn onClick={() => copyToClipboard(coldAddress)}>
-                  <CopyBtnIcon />
-                </CopyBtn>
-              </InlineTd>
-              <td>{mkrBalanceCold} MKR</td>
-              <td> ?? ETH </td>
-            </tr>
-          </tbody>
-        </Table>
-      </AddressContainer>
+      <HotColdTable
+        hotAddress={hotAddress}
+        coldAddress={coldAddress}
+        mkrBalanceHot={mkrBalanceHot}
+        mkrBalanceCold={mkrBalanceCold}
+      />
       <div
         style={{
           display: 'flex',
