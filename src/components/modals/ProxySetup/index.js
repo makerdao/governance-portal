@@ -100,7 +100,6 @@ class ProxySetup extends Component {
       case 'midLink':
         return (
           <MidLink
-            account={activeAccount}
             hotAddress={hotAddress}
             coldAddress={coldAddress}
             goToStep={goToStep}

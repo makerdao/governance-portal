@@ -4,14 +4,11 @@ import {
   StyledTitle,
   StyledBlurb,
   StyledTop,
-  Oblique,
-  Bold,
   Skip,
   EndButton,
   FlexRowEnd
 } from '../shared/styles';
-import Button from '../../Button';
-import { HotColdTable } from '../BreakLink';
+import HotColdTable from '../shared/HotColdTable';
 import { getMkrBalance } from '../../../chain/read';
 import { getBalance } from '../../../chain/web3';
 import round from 'lodash.round';
@@ -19,7 +16,13 @@ import round from 'lodash.round';
 class MidLink extends Component {
   constructor(props) {
     super(props);
-    this.state = { ethHot: 0, ethCold: 0, mkrHot: 0, mkrCold: 0 };
+    const zero = 0;
+    this.state = {
+      ethHot: zero.toFixed(3),
+      ethCold: zero.toFixed(3),
+      mkrHot: zero.toFixed(3),
+      mkrCold: zero.toFixed(3)
+    };
   }
 
   async componentDidMount() {
@@ -40,7 +43,6 @@ class MidLink extends Component {
 
   render() {
     const {
-      account,
       hotAddress,
       coldAddress,
       proxyClear,

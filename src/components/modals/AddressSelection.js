@@ -1,5 +1,4 @@
 import React, { Fragment, Component } from 'react';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
 import round from 'lodash.round';
 
@@ -13,59 +12,15 @@ import { getMkrBalance } from '../../chain/read';
 import { getBalance } from '../../chain/web3';
 import { netNameToId } from '../../utils/ethereum';
 import { cutMiddle, copyToClipboard } from '../../utils/misc';
-import copy from '../../imgs/copy.svg';
+import {
+  AddressContainer,
+  Table,
+  InlineTd,
+  CopyBtn,
+  CopyBtnIcon
+} from './shared/HotColdTable';
 
 const TREZOR_PATH = "44'/60'/0'/0/0";
-
-export const Table = styled.table`
-  width: 100%;
-  tr {
-    border-bottom: 1px solid #e9e9e9;
-  }
-  tbody tr:last-child {
-    border-bottom: none;
-  }
-  th,
-  td {
-    padding: 10px 20px;
-  }
-  th {
-    font-weight: bold;
-    opacity: 0.5;
-  }
-  .radio {
-    text-align: center;
-  }
-`;
-
-export const AddressContainer = styled.div`
-  border: 1px solid #d7d7d7;
-  border-radius: 4px;
-  width: 100%;
-`;
-
-export const InlineTd = styled.td`
-  display: inline-flex;
-`;
-
-export const CopyBtn = styled.div`
-  margin-left: 8px;
-  margin-right: -8px;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  cursor: pointer;
-  &:hover {
-    background-color: #f5f5f5;
-  }
-`;
-
-export const CopyBtnIcon = styled.p`
-  height: 14px;
-  width: 14px;
-  margin: auto;
-  background: url(${copy}) no-repeat;
-`;
 
 class AddressSelection extends Component {
   constructor(props) {
