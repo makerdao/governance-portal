@@ -253,6 +253,10 @@ const updateProxyBalance = adding => (state, { payload: amount }) => {
       ...linkedAccount,
       proxy: {
         ...linkedAccount.proxy,
+        linkedAccount: {
+          ...linkedAccount.proxy.linkedAccount, // TODO: maybe just refresh  account data via fetches, this is slightly confusing
+          mkrBalance: subtract(account.mkrBalance, amount)
+        },
         votingPower: add(linkedAccount.proxy.votingPower, amount)
       }
     };
