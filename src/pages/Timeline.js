@@ -125,7 +125,7 @@ const Timeline = ({ modalOpen, topics, canVote, fetching, votingFor }) => (
                   </Fragment>
                 ) : (
                   <ClosedStatus
-                    topicId={topic.id}
+                    topicKey={topic.key}
                     proposalAddress={proposal.source}
                   />
                 )}

@@ -170,8 +170,7 @@ const StyledLink = styled(Link)`
 
 class Proposal extends Component {
   state = {
-    proposal: {},
-    markdown: ''
+    proposal: {}
   };
 
   componentDidMount() {
@@ -189,20 +188,13 @@ class Proposal extends Component {
     this.setState({
       proposal,
       parent: topic.topic,
-      parentId: topic.id,
+      parentKey: topic.key,
       active: topic.active
     });
-    fetch(proposal.about)
-      .then(response => response.text())
-      .then(markdown => {
-        this.setState({
-          markdown
-        });
-      });
   }
 
   render() {
-    const { proposal, markdown, parent, active, parentId } = this.state;
+    const { proposal, parent, active, parentKey } = this.state;
     if (Object.keys(proposal).length === 0) return <NotFound />;
     const {
       voteState,
@@ -259,7 +251,7 @@ class Proposal extends Component {
               </div>
             ) : (
               <ClosedStatus
-                topicId={parentId}
+                topicKey={parentKey}
                 proposalAddress={proposal.source}
               />
             )}
@@ -267,15 +259,11 @@ class Proposal extends Component {
         </WhiteBackground>
         <ConentWrapper>
           <DescriptionCard>
-            {markdown ? (
-              <ReactMarkdown
-                className="markdown"
-                skipHtml={true}
-                source={markdown}
-              />
-            ) : (
-              <div />
-            )}
+            <ReactMarkdown
+              className="markdown"
+              skipHtml={true}
+              source={proposal.about}
+            />
           </DescriptionCard>
           <RightPanels>
             <DetailsCard>

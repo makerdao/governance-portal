@@ -7,15 +7,14 @@ import round from 'lodash.round';
 
 import { createReducer } from '../utils/redux';
 import { initApprovalsFetch } from './approvals';
-import mocked from '../_mock/topics';
 import { getEtchedSlates } from '../chain/read';
-import { eq, div, mul } from '../utils/misc';
-
-const mockedBackend = mocked;
+import { eq, div, mul, promiseRetry } from '../utils/misc';
 
 // Constants ----------------------------------------------
 
-const TOPICS_SUCCESS = 'toics/TOPICS_SUCCESS';
+const TOPICS_REQUEST = 'topics/TOPICS_REQUEST';
+const TOPICS_SUCCESS = 'topics/TOPICS_SUCCESS';
+const TOPICS_FAILURE = 'topics/TOPICS_FAILURE';
 
 // Selectors ----------------------------------------------
 
@@ -30,15 +29,15 @@ export function getProposal(state, proposalAddress) {
   return null;
 }
 
-export function getTopic(state, topicId) {
+export function getTopic(state, topicKey) {
   for (let topic of state.topics) {
-    if (topic.id === topicId) return topic;
+    if (topic.key === topicKey) return topic;
   }
   return null;
 }
 
-export function getWinningProp(state, topicId) {
-  const proposals = getTopic(state, topicId).proposals;
+export function getWinningProp(state, topicKey) {
+  const proposals = getTopic(state, topicKey).proposals;
   // all child proposals of a topic must have the snapshot for this to work
   const hasEndSnapshot = proposals =>
     proposals.every(
@@ -72,6 +71,56 @@ export function getWinningProp(state, topicId) {
   }
 }
 
+// Backend ------------------------------------------------
+
+const local = 'http://127.0.0.1:3000';
+const prod = 'https://content.makerfoundation.com';
+
+const path = 'content/governance-dashboard';
+
+// util
+
+const check = async res => {
+  if (!res.ok) {
+    throw new Error(
+      `unable to fetch topics: ${res.status} - ${await res.text()}`
+    );
+  }
+};
+
+// backends
+
+const fetchMock = async network => {
+  const mocked = await import('../_mock/topics');
+  return mocked.default[network];
+};
+
+const fetchLocal = async network => {
+  const res = await fetch(`${local}/${path}?network=${network}`);
+  await check(res);
+  return await res.json();
+};
+
+const fetchProd = async network => {
+  const res = await fetch(`${prod}/${path}?network=${network}`);
+  await check(res);
+  return await res.json();
+};
+
+// dispatch
+
+const fetchTopics = async network => {
+  if (process.env.REACT_APP_GOV_BACKEND == 'mock') {
+    return await fetchMock(network);
+  }
+
+  if (process.env.REACT_APP_GOV_BACKEND == 'local') {
+    return await fetchLocal(network);
+  }
+
+  return await fetchProd(network);
+};
+
 // Actions ------------------------------------------------
 
 export const topicsInit = network => async dispatch => {
@@ -89,7 +138,24 @@ export const topicsInit = network => async dispatch => {
     ];
     dispatch({ type: TOPICS_SUCCESS, payload: topics });
   } else {
-    dispatch({ type: TOPICS_SUCCESS, payload: mockedBackend[network] });
+    dispatch({ type: TOPICS_REQUEST, payload: {} });
+    try {
+      const topics = await promiseRetry({
+        fn: fetchTopics,
+        args: [network],
+        times: 4,
+        delay: 1
+      });
+
+      dispatch({ type: TOPICS_SUCCESS, payload: topics });
+    } catch (err) {
+      dispatch({
+        type: TOPICS_FAILURE,
+        payload: {
+          error: err
+        }
+      });
+    }
   }
   dispatch(initApprovalsFetch());
 };

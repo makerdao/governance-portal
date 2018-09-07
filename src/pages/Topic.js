@@ -175,7 +175,7 @@ const Topic = ({ match, topics, fetching, canVote, modalOpen, votingFor }) => {
               </div>
             ) : (
               <ClosedStatus
-                topicId={topic.id}
+                topicKey={topic.key}
                 proposalAddress={proposal.source}
               />
             )}
