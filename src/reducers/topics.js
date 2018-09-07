@@ -123,6 +123,16 @@ const fetchTopics = async network => {
 
 // Actions ------------------------------------------------
 
+const formatTopic = network => topic => {
+  return {
+    ...topic,
+    proposals: topic.proposals.map(({ source, ...otherProps }) => ({
+      ...otherProps,
+      source: source.startsWith('{') ? JSON.parse(source)[network] : source
+    }))
+  };
+};
+
 export const topicsInit = network => async dispatch => {
   if (network === 'ganache') {
     // look up all slates
@@ -136,7 +146,10 @@ export const topicsInit = network => async dispatch => {
         }))
       }
     ];
-    dispatch({ type: TOPICS_SUCCESS, payload: topics });
+    dispatch({
+      type: TOPICS_SUCCESS,
+      payload: topics.map(formatTopic(network))
+    });
   } else {
     dispatch({ type: TOPICS_REQUEST, payload: {} });
     try {
@@ -147,7 +160,10 @@ export const topicsInit = network => async dispatch => {
         delay: 1
       });
 
-      dispatch({ type: TOPICS_SUCCESS, payload: topics });
+      dispatch({
+        type: TOPICS_SUCCESS,
+        payload: topics.map(formatTopic(network))
+      });
     } catch (err) {
       dispatch({
         type: TOPICS_FAILURE,
