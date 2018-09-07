@@ -35,6 +35,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
   action: proxyLock,
+  maxAction: proxyLock,
   modalClose,
   skip: smartStepSkip,
   clearProxyState

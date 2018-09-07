@@ -6,6 +6,7 @@ import {
   approveLink as _approveLink,
   proxyLock as _proxyLock,
   proxyFree as _proxyFree,
+  proxyFreeAll as _proxyFreeAll,
   breakLink as _breakLink,
   mkrApprove as _mkrApprove
 } from '../chain/write';
@@ -43,6 +44,11 @@ const WITHDRAW_MKR_REQUEST = 'proxy/WITHDRAW_MKR_REQUEST';
 const WITHDRAW_MKR_SENT = 'proxy/WITHDRAW_MKR_SENT';
 export const WITHDRAW_MKR_SUCCESS = 'proxy/WITHDRAW_MKR_SUCCESS';
 const WITHDRAW_MKR_FAILURE = 'proxy/WITHDRAW_MKR_FAILURE';
+
+const WITHDRAW_ALL_MKR_REQUEST = 'proxy/WITHDRAW_ALL_MKR_REQUEST';
+const WITHDRAW_ALL_MKR_SENT = 'proxy/WITHDRAW_ALL_MKR_SENT';
+export const WITHDRAW_ALL_MKR_SUCCESS = 'proxy/WITHDRAW_ALL_MKR_SUCCESS';
+const WITHDRAW_ALL_MKR_FAILURE = 'proxy/WITHDRAW_ALL_MKR_FAILURE';
 
 const BREAK_LINK_REQUEST = 'proxy/BREAK_LINK_REQUEST';
 const BREAK_LINK_SENT = 'proxy/BREAK_LINK_SENT';
@@ -190,6 +196,20 @@ export const free = value => (dispatch, getState) => {
     prefix: 'WITHDRAW_MKR',
     dispatch,
     action: _proxyFree({ account, value }),
+    successPayload: value,
+    acctType: account.type
+  });
+};
+
+export const freeAll = value => (dispatch, getState) => {
+  if (Number(value) === 0) return dispatch(smartStepSkip());
+
+  const account = getActiveAccount(getState());
+  dispatch({ type: WITHDRAW_ALL_MKR_REQUEST, payload: value });
+  handleTx({
+    prefix: 'WITHDRAW_ALL_MKR',
+    dispatch,
+    action: _proxyFreeAll({ account, value }),
     successPayload: value,
     acctType: account.type
   });
@@ -365,6 +385,25 @@ const proxy = createReducer(initialState, {
     confirmingWithdrawMkr: false
   }),
   [WITHDRAW_MKR_FAILURE]: state => ({
+    ...state,
+    confirmingWithdrawMkr: false,
+    withdrawMkrAmount: 0
+  }),
+  // WithdrawAll ---------------------------------------
+  [WITHDRAW_ALL_MKR_REQUEST]: (state, { payload: value }) => ({
+    ...state,
+    withdrawMkrAmount: value
+  }),
+  [WITHDRAW_ALL_MKR_SENT]: (state, { payload }) => ({
+    ...state,
+    confirmingWithdrawMkr: true,
+    withdrawMkrTxHash: payload.txHash
+  }),
+  [WITHDRAW_ALL_MKR_SUCCESS]: state => ({
+    ...state,
+    confirmingWithdrawMkr: false
+  }),
+  [WITHDRAW_ALL_MKR_FAILURE]: state => ({
     ...state,
     confirmingWithdrawMkr: false,
     withdrawMkrAmount: 0

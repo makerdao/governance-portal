@@ -4,7 +4,8 @@ import { getActiveAccount } from '../../reducers/accounts';
 import {
   free as proxyFree,
   smartStepSkip,
-  clear as clearProxyState
+  clear as clearProxyState,
+  freeAll as proxyFreeAll
 } from '../../reducers/proxy';
 import { modalClose } from '../../reducers/modal';
 import AmountInput from './shared/AmountInput';
@@ -29,6 +30,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
   action: proxyFree,
+  maxAction: proxyFreeAll,
   modalClose,
   skip: smartStepSkip,
   clearProxyState

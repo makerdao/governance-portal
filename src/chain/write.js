@@ -232,3 +232,15 @@ export const proxyFree = async ({ account, value }) => {
     ['uint256', etherToWei(value)]
   ]);
 };
+
+//!!!!! this is only temporary, this needs to be updated once the freeAll function is added to the contract
+export const proxyFreeAll = async ({ account, value }) => {
+  if (!account.hasProxy)
+    throw new Error(
+      `${account.address} cannot free because account doesn't have a proxy`
+    );
+  const { address: proxyAddress } = account.proxy;
+  return simpleSendTx(account, proxyAddress, 'free(uint256)', [
+    ['uint256', etherToWei(value)]
+  ]);
+};

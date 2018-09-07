@@ -20,6 +20,7 @@ export default class AmountInput extends Component {
   constructor(props) {
     super(props);
     this.state = { amount: '' };
+    this.maxSelected = false;
   }
 
   componentDidMount() {
@@ -34,10 +35,12 @@ export default class AmountInput extends Component {
   }
 
   setAmount = event => {
+    this.maxSelected = false;
     this.setState({ amount: event.target.value });
   };
 
   setMaxAmount = () => {
+    this.maxSelected = true;
     this.setState({ amount: this.props.balance });
   };
 
@@ -46,9 +49,11 @@ export default class AmountInput extends Component {
   };
 
   submit(amount) {
-    const { action, balance } = this.props;
+    const { action, maxAction, balance } = this.props;
     if (!amount || isNaN(Number(amount)) || Number(amount) > balance) {
       window.alert('Please enter a valid amount');
+    } else if (this.maxSelected) {
+      maxAction(amount);
     } else {
       action(amount);
     }

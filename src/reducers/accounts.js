@@ -18,6 +18,7 @@ import { add, eq, subtract, promisedProperties } from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
+  WITHDRAW_ALL_MKR_SUCCESS,
   INITIATE_LINK_REQUEST,
   MKR_APPROVE_SUCCESS
   // BREAK_LINK_SUCCESS
@@ -363,6 +364,7 @@ const accounts = createReducer(initialState, {
   [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),
   // [BREAK_LINK_SUCCESS]: breakProxyLink(),
   [WITHDRAW_MKR_SUCCESS]: updateProxyBalance(false),
+  [WITHDRAW_ALL_MKR_SUCCESS]: updateProxyBalance(false),
   [INITIATE_LINK_REQUEST]: (state, { payload }) => {
     const hotAccount = {
       ...getAccount({ accounts: state }, payload.hotAddress),
