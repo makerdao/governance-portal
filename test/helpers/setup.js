@@ -26,6 +26,3 @@ class LocalStorageMock {
 }
 
 global.localStorage = new LocalStorageMock();
-
-// Default to mocked backend for tests
-process.env.GOV_BACKED = 'mock';
