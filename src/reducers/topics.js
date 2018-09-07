@@ -110,11 +110,11 @@ const fetchProd = async network => {
 // dispatch
 
 const fetchTopics = async network => {
-  if (process.env.REACT_APP_GOV_BACKEND == 'mock') {
+  if (process.env.REACT_APP_GOV_BACKEND === 'mock') {
     return await fetchMock(network);
   }
 
-  if (process.env.REACT_APP_GOV_BACKEND == 'local') {
+  if (process.env.REACT_APP_GOV_BACKEND === 'local') {
     return await fetchLocal(network);
   }
 
