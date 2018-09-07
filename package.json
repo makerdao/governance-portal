@@ -41,6 +41,7 @@
     "cover": "jest --coverage",
     "eject": "react-scripts eject",
     "precommit": "lint-staged",
+    "prepush": "yarn test",
     "remove-sourcemaps": "rm -rf build/static/js/*.map"
   },
   "lint-staged": {
