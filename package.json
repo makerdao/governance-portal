@@ -41,7 +41,7 @@
     "cover": "jest --coverage",
     "eject": "react-scripts eject",
     "precommit": "lint-staged",
-    "prepush": "if git-branch-is master; then yarn test; fi",
+    "prepush": "if git-branch-is -q master; then yarn test; fi",
     "remove-sourcemaps": "rm -rf build/static/js/*.map"
   },
   "lint-staged": {
