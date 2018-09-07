@@ -52,7 +52,7 @@ const store = createStore(
 store.dispatch(metamaskConnectInit());
 
 if (process.env.NODE_ENV === 'production') {
-  ReactGA.initialize('UA-123682690-1');
+  ReactGA.initialize('UA-65766767-7');
   ReactGA.pageview(window.location.pathname + window.location.search);
 }
 
