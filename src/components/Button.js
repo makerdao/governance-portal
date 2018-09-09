@@ -65,7 +65,11 @@ const Button = ({
     wide={wide}
     {...props}
   >
-    {loading ? <Loader size={20} color="white" background={color} /> : children}
+    {loading ? (
+      <Loader alt size={12} color="white" background={color} />
+    ) : (
+      children
+    )}
   </StyledButton>
 );
 

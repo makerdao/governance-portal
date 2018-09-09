@@ -134,7 +134,9 @@ function requireCorrectAccount(state, requiredAccount, typeNeeded) {
 }
 
 export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
-  if (!requireCorrectAccount(getState(), cold, 'cold')) return;
+  if (!!getAccount(getState(), cold.address)) {
+    dispatch(setActiveAccount(cold.address));
+  } else if (!requireCorrectAccount(getState(), cold, 'cold')) return;
   const network = getState().metamask.network;
   dispatch({
     type: INITIATE_LINK_REQUEST,
@@ -215,15 +217,16 @@ export const freeAll = value => (dispatch, getState) => {
   });
 };
 
-export const breakLink = () => (dispatch, getState) => {
+export const breakLink = () => async (dispatch, getState) => {
   dispatch({ type: BREAK_LINK_REQUEST });
   const account = getActiveAccount(getState());
-  handleTx({
+  await handleTx({
     prefix: 'BREAK_LINK',
     dispatch,
     action: _breakLink(account),
     acctType: account.type
   });
+  dispatch(refreshAccountData());
 };
 
 export const smartStepSkip = () => (dispatch, getState) => {
@@ -242,7 +245,7 @@ export const refreshAccountDataLink = () => (dispatch, getState) => {
   dispatch(addAccounts(accounts));
 };
 
-export const refreshAccountDataBreak = () => (dispatch, getState) => {
+export const refreshAccountData = () => (dispatch, getState) => {
   const activeAccount = getActiveAccount(getState());
   if (activeAccount.hasProxy) {
     const otherAccount = getAccount(
@@ -273,9 +276,9 @@ export const mkrApproveProxy = () => (dispatch, getState) => {
 
 // Reducer ------------------------------------------------
 
-const existingState = localStorage.getItem('linkInitiatedState')
-  ? JSON.parse(localStorage.getItem('linkInitiatedState'))
-  : {};
+// const existingState = localStorage.getItem('linkInitiatedState')
+//   ? JSON.parse(localStorage.getItem('linkInitiatedState'))
+//   : {};
 
 const initialState = {
   sendMkrTxHash: '',
@@ -294,7 +297,7 @@ const initialState = {
   linkGas: getLinkGas() || 0
 };
 
-const withExisting = { ...initialState, ...existingState };
+// const withExisting = { ...initialState, ...existingState };
 
 const proxy = createReducer(initialState, {
   // Initiate ---------------------------------------
@@ -412,7 +415,7 @@ const proxy = createReducer(initialState, {
   [CLEAR]: state =>
     linkResumable({ proxy: state })
       ? {
-          ...withExisting,
+          ...initialState,
           ...JSON.parse(localStorage.getItem('linkInitiatedState'))
         }
       : { ...initialState },

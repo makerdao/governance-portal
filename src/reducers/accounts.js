@@ -52,7 +52,13 @@ export function getActiveAccount(state) {
 
 export function getActiveVotingFor(state) {
   const activeAccount = getActiveAccount(state);
-  return activeAccount ? activeAccount.votingFor : '';
+  if (
+    !activeAccount ||
+    !activeAccount.hasProxy ||
+    !(activeAccount.proxy.votingPower > 0)
+  )
+    return '';
+  return activeAccount.votingFor;
 }
 
 export function activeCanVote(state) {
@@ -256,7 +262,10 @@ const updateProxyBalance = adding => (state, { payload: amount }) => {
         ...linkedAccount.proxy,
         linkedAccount: {
           ...linkedAccount.proxy.linkedAccount, // TODO: maybe just refresh  account data via fetches, this is slightly confusing
-          mkrBalance: subtract(account.mkrBalance, amount)
+          mkrBalance:
+            linkedAccount.proxyRole === 'cold'
+              ? subtract(account.mkrBalance, amount)
+              : account.mkrBalance
         },
         votingPower: add(linkedAccount.proxy.votingPower, amount)
       }

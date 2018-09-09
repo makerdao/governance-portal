@@ -1,9 +1,18 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 import external from '../../../imgs/external.svg';
 import theme from '../../../theme';
 import Button from '../../Button';
+
+const fadeIn = keyframes`
+0% {
+  opacity: 0;
+}
+100% {
+  opacity: 1;
+}
+`;
 
 export const StyledTitle = styled.div`
   font-weight: bold;
@@ -154,6 +163,8 @@ export const InfoBoxHeading = styled.div`
 `;
 
 export const TxHash = styled.a`
+  animation: ${fadeIn} 0.5s forwards;
+  font-style: oblique;
   padding: 6px;
   padding-top: 20px;
   font-size: 14px;

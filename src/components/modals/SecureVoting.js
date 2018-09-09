@@ -102,8 +102,7 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
             mr={10}
             mt={13}
             onClick={() => {
-              modalClose();
-              modalOpen(BreakLink);
+              modalOpen(BreakLink, {}, true);
             }}
           >
             Break wallet link

@@ -107,7 +107,9 @@ const NetworkNotification = styled.div`
 `;
 
 const NoContent = styled.div`
-  margin-top: 150px;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 200px;
   display: flex;
   justify-content: center;
   margin-bottom: 350px;

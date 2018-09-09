@@ -57,6 +57,9 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const Center = styled.div`
+  font-size: 26px;
+  font-weight: bold;
+  font-style: oblique;
   display: flex;
   justify-content: center;
   margin-top: 6em;

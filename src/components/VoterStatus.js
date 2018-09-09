@@ -139,7 +139,7 @@ const VoterStatus = ({
           Etherscan
         </a>
         <DotSpacer />
-        {account.votingFor ? (
+        {account.votingFor && account.proxy.votingPower > 0 ? (
           <Fragment>
             Currently voting for{' '}
             <WithVote proposalAddress={account.votingFor}>

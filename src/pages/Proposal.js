@@ -216,7 +216,12 @@ class Proposal extends Component {
                 dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
               />
               {active ? (
-                <Timer endTimestamp={proposal.end_timestamp} small mt="6" />
+                <Timer
+                  fs={16}
+                  endTimestamp={proposal.end_timestamp}
+                  small
+                  mt="6"
+                />
               ) : null}
             </StyledCenter>
             {active ? (
@@ -305,7 +310,12 @@ class Proposal extends Component {
                   ))
                 ) : voteStateFetching ? (
                   <LoadingWrapper>
-                    <Loader size={20} color="header" background="white" />
+                    <Loader
+                      size={20}
+                      mt={100}
+                      color="header"
+                      background="white"
+                    />
                   </LoadingWrapper>
                 ) : (
                   <NoSupporters>No supporters found</NoSupporters>

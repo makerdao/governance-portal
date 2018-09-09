@@ -1,16 +1,17 @@
 import React, { Fragment, Component } from 'react';
+import { connect } from 'react-redux';
+
 import { getActiveAccount } from '../../reducers/accounts';
 import { StyledTitle, StyledBlurb, StyledTop } from './shared/styles';
 import Button from '../Button';
-import { connect } from 'react-redux';
-import { breakLink, refreshAccountDataBreak } from '../../reducers/proxy';
+import { breakLink } from '../../reducers/proxy';
 import Transaction from './shared/Transaction';
 import { modalClose } from '../../reducers/modal';
 import Withdraw from './Withdraw';
 import { modalOpen } from '../../reducers/modal';
 import HotColdTable from './shared/HotColdTable';
 import { getBalance } from '../../chain/web3';
-import round from 'lodash.round';
+import { formatRound } from '../../utils/misc';
 
 class BreakLink extends Component {
   constructor(props) {
@@ -31,14 +32,13 @@ class BreakLink extends Component {
       getBalance(coldAddress, 3)
     ]);
     this.setState({
-      ethHot: round(ethHot, 3),
-      ethCold: round(ethCold, 3)
+      ethHot: formatRound(ethHot, 3),
+      ethCold: formatRound(ethCold, 3)
     });
   }
 
   render() {
     const {
-      refreshAccountDataBreak,
       breakLink,
       modalClose,
       modalOpen,
@@ -55,7 +55,6 @@ class BreakLink extends Component {
           {...{ txHash, confirming, network, account }}
           nextStep={() => {
             modalClose();
-            refreshAccountDataBreak();
           }}
         />
       );
@@ -110,8 +109,8 @@ class BreakLink extends Component {
         <HotColdTable
           hotAddress={hotAddress}
           coldAddress={coldAddress}
-          mkrBalanceHot={round(mkrBalanceHot, 3)}
-          mkrBalanceCold={round(mkrBalanceCold, 3)}
+          mkrBalanceHot={formatRound(mkrBalanceHot, 3)}
+          mkrBalanceCold={formatRound(mkrBalanceCold, 3)}
           ethBalanceHot={this.state.ethHot}
           ethBalanceCold={this.state.ethCold}
         />
@@ -146,5 +145,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { breakLink, modalClose, refreshAccountDataBreak, modalOpen }
+  { breakLink, modalClose, modalOpen }
 )(BreakLink);
