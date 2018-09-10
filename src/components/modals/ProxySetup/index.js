@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ReactGA from 'react-ga';
 import Intro from './Intro';
+import TOS from './TOS';
 import Link from './Link';
 import Transaction from '../shared/Transaction';
 import Stepper, { progressMap } from './Stepper';
@@ -76,7 +77,14 @@ class ProxySetup extends Component {
     switch (setupProgress) {
       case 'intro':
       default:
-        return <Intro linkCost={linkCost} nextStep={() => goToStep('link')} />;
+        return <Intro linkCost={linkCost} nextStep={() => goToStep('tos')} />;
+      case 'tos':
+        return (
+          <TOS
+            modalClose={() => modalClose()}
+            nextStep={() => goToStep('link')}
+          />
+        );
       case 'link':
         return (
           <Link

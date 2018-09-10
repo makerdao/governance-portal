@@ -58,6 +58,7 @@ const Stepper = ({ progress }) =>
 export const progressMap = new Proxy(
   {
     intro: 0,
+    tos: 0,
     link: 1,
     initiate: 1,
     approve: 1,
