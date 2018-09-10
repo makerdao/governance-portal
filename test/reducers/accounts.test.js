@@ -78,7 +78,7 @@ test('locking updates account values', () => {
       proxy: {
         votingPower: '7.1',
         linkedAccount: {
-          mkrBalance: '0.3'
+          mkrBalance: '1.7'
         }
       }
     },
@@ -109,7 +109,7 @@ test('withdrawing updates account values', () => {
       proxy: {
         votingPower: '4.3',
         linkedAccount: {
-          mkrBalance: '5.9'
+          mkrBalance: '4.5'
         }
       }
     },

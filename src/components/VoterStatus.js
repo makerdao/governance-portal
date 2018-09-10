@@ -38,9 +38,9 @@ const FadeIn = styled.div`
 
 const SmallMediumText = styled.p`
   margin-top: 20px;
-  margin-bottom: 16px;
+  margin-bottom: 50px;
   text-align: left;
-  line-height: 1.8;
+  line-height: 2;
   font-size: 14px;
   color: ${theme.text.dim_grey};
 `;
@@ -61,6 +61,15 @@ const StyledLink = styled(Link)`
 
 const Content = styled.div`
   display: flex;
+`;
+
+const BorderBottom = styled.div`
+  height: 1px;
+  background: #dbdddd;
+  position: absolute;
+  top: 228px;
+  left: 0;
+  width: 100%;
 `;
 
 const WelcomeBanner = ({ modalOpen, linkRequested }) => {
@@ -118,11 +127,12 @@ const VoterStatus = ({
         <Strong>{isColdWallet ? 'Cold wallet:' : 'Hot wallet:'}</Strong> In
         voting contract{' '}
         <Black>{formatRound(account.proxy.votingPower, 4)} MKR</Black>{' '}
-        {account.proxyRole === 'cold' && (
-          <a onClick={() => modalOpen(Lock)}> Top-up </a>
-        )}
         {account.proxyRole === 'cold' &&
-          Number(account.proxy.votingPower) > 0 && <span> | </span>}
+          Number(account.mkrBalance) > 0 && (
+            <a onClick={() => modalOpen(Lock)}> Top-up </a>
+          )}
+        {account.proxyRole === 'cold' &&
+          Number(account.mkrBalance) > 0 && <span> | </span>}
         {Number(account.proxy.votingPower) > 0 && (
           <a onClick={() => modalOpen(Withdraw)}>Withdraw</a>
         )}
@@ -138,14 +148,14 @@ const VoterStatus = ({
         >
           Etherscan
         </a>
-        <DotSpacer />
-        {account.votingFor ? (
+        <br />
+        {account.votingFor && account.proxy.votingPower > 0 ? (
           <Fragment>
             Currently voting for{' '}
             <WithVote proposalAddress={account.votingFor}>
               {({ proposalTitle, proposalSlug, noVote }) => (
                 <StyledLink disabled={noVote} to={proposalSlug}>
-                  {cutMiddle(proposalTitle, 20, 10)}
+                  {proposalTitle}
                 </StyledLink>
               )}
             </WithVote>
@@ -154,6 +164,7 @@ const VoterStatus = ({
           'Currently not voting'
         )}
       </SmallMediumText>
+      <BorderBottom />
     </FadeIn>
   );
 };

@@ -11,7 +11,7 @@ import {
 import HotColdTable from '../shared/HotColdTable';
 import { getMkrBalance } from '../../../chain/read';
 import { getBalance } from '../../../chain/web3';
-import round from 'lodash.round';
+import { formatRound } from '../../../utils/misc';
 
 class MidLink extends Component {
   constructor(props) {
@@ -34,10 +34,10 @@ class MidLink extends Component {
       getMkrBalance(coldAddress, 3)
     ]);
     this.setState({
-      ethHot: round(ethHot, 3),
-      ethCold: round(ethCold, 3),
-      mkrHot: round(mkrHot, 3),
-      mkrCold: round(mkrCold, 3)
+      ethHot: formatRound(ethHot, 3),
+      ethCold: formatRound(ethCold, 3),
+      mkrHot: formatRound(mkrHot, 3),
+      mkrCold: formatRound(mkrCold, 3)
     });
   }
 
@@ -55,7 +55,7 @@ class MidLink extends Component {
           <StyledTitle>You've initiated the following link</StyledTitle>
         </StyledTop>
         <StyledBlurb style={{ textAlign: 'center' }}>
-          The below addresses will be linked
+          The below addresses will be linked. You may undo this at anytime.
         </StyledBlurb>
         <HotColdTable
           hotAddress={hotAddress}

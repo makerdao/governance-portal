@@ -17,7 +17,7 @@ const Wrapper = styled.div`
 const WrapperSmall = styled.div`
   display: flex;
   color: ${theme.text.darker_default};
-  font-size: ${({ theme }) => theme.fonts.size.medium};
+  font-size: ${({ theme, fs }) => (fs ? `${fs}px` : theme.fonts.size.medium)};
   font-weight: 300;
   align-items: center;
   margin-bottom: ${({ mb }) => (mb ? `${mb}px` : '')};
@@ -84,15 +84,18 @@ class Timer extends Component {
         <Bold>
           {days > 0 && (
             <Fragment>
-              {days} day{Sday}{' '}
+              {days} day
+              {Sday}{' '}
             </Fragment>
           )}
           {hours > 0 && (
             <Fragment>
-              {hours} hour{Shour}{' '}
+              {hours} hour
+              {Shour}{' '}
             </Fragment>
           )}
-          {minutes} minute{Sminute}
+          {minutes} minute
+          {Sminute}
         </Bold>
       </div>
     );
@@ -102,7 +105,7 @@ class Timer extends Component {
     const { small } = this.props;
     if (small) {
       return (
-        <WrapperSmall mb={this.props.mb} mt={this.props.mt}>
+        <WrapperSmall fs={this.props.fs} mb={this.props.mb} mt={this.props.mt}>
           <SmallClock />
           {this.renderCore()}
         </WrapperSmall>

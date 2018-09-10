@@ -64,7 +64,7 @@ class AddressSelection extends Component {
               {accounts.map(({ address, eth, mkr, path }) => (
                 <tr key={address}>
                   <InlineTd title={address}>
-                    {cutMiddle(address, 8, 6)}
+                    {cutMiddle(address, 7, 5)}
                     <CopyBtn onClick={() => copyToClipboard(address)}>
                       <CopyBtnIcon />
                     </CopyBtn>

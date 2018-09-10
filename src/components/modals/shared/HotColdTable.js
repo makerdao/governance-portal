@@ -14,7 +14,7 @@ export const Table = styled.table`
   }
   th,
   td {
-    padding: 10px 20px;
+    padding: 10px 18px;
   }
   th {
     font-weight: bold;
@@ -81,7 +81,7 @@ class HotColdTable extends Component {
                 <Bold> Cold </Bold>
               </td>
               <InlineTd title={coldAddress}>
-                {cutMiddle(coldAddress, 8, 6)}
+                {cutMiddle(coldAddress, 7, 5)}
                 <CopyBtn onClick={() => copyToClipboard(coldAddress)}>
                   <CopyBtnIcon />
                 </CopyBtn>
@@ -94,7 +94,7 @@ class HotColdTable extends Component {
                 <Bold> Hot </Bold>
               </td>
               <InlineTd title={hotAddress}>
-                {cutMiddle(hotAddress, 8, 6)}
+                {cutMiddle(hotAddress, 7, 5)}
                 <CopyBtn onClick={() => copyToClipboard(hotAddress)}>
                   <CopyBtnIcon />
                 </CopyBtn>

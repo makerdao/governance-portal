@@ -188,6 +188,7 @@ const stateProps = state => {
     accounts,
     eth: { price, gasCost },
     proxy: {
+      confirmingBreakLink,
       initiateLinkTxHash,
       approveLinkTxHash,
       sendMkrTxHash,
@@ -207,6 +208,7 @@ const stateProps = state => {
     accounts: accounts.allAccounts,
     activeAccount: getActiveAccount({ accounts }),
     network: metamask.network,
+    confirmingBreakLink,
     initiateLinkTxHash,
     sendMkrTxHash,
     sendMkrAmount,

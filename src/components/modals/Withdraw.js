@@ -21,7 +21,7 @@ const mapStateToProps = state => {
     network: state.metamask.network,
     title: 'Withdraw MKR',
     blurb:
-      'Please select the amount of MKR to withdraw from the voting contract.',
+      'Please select the amount of MKR to withdraw from the voting contract. This will be sent back to the designated cold wallet.',
     amountLabel: 'MKR in voting system',
     buttonLabel: 'Withdraw MKR',
     txSent: !!state.proxy.withdrawMkrAmount

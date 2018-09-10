@@ -12,6 +12,15 @@ const load = keyframes`
   }
 `;
 
+const expand = keyframes`
+0% {
+  transform: scale(1);
+}
+25% {
+  transform: scale(2);
+}
+`;
+
 const StyledLoader = styled.div`
   position: relative;
   font-size: ${fonts.size.tiny};
@@ -55,18 +64,64 @@ const StyledLoader = styled.div`
   }
 `;
 
-const Loader = ({ size, color, background, ...props }) => (
-  <StyledLoader size={size} color={color} background={background} {...props} />
-);
+const LoaderLineWrapper = styled.div``;
+
+const Line = styled.div`
+  animation: ${expand} 1s ease-in-out infinite;
+  border-radius: 10px;
+  display: inline-block;
+  transform-origin: center center;
+  margin: 0 3px;
+  width: 2px;
+  height: ${({ size }) => `${size}px`};
+  &:nth-child(1) {
+    background: ${({ color }) => `rgb(${colors[color]})`};
+  }
+  &:nth-child(2) {
+    animation-delay: 180ms;
+    background: ${({ color }) => `rgb(${colors[color]})`};
+  }
+  &:nth-child(3) {
+    animation-delay: 360ms;
+    background: ${({ color }) => `rgb(${colors[color]})`};
+  }
+  &:nth-child(4) {
+    animation-delay: 540ms;
+    background: ${({ color }) => `rgb(${colors[color]})`};
+  }
+`;
+
+const Loader = ({ size, color, background, alt, ...props }) => {
+  if (alt)
+    return (
+      <LoaderLineWrapper {...props}>
+        <Line color={color} size={size} />
+        <Line color={color} size={size} />
+        <Line color={color} size={size} />
+        <Line color={color} size={size} />
+      </LoaderLineWrapper>
+    );
+  else
+    return (
+      <StyledLoader
+        size={size}
+        color={color}
+        background={background}
+        {...props}
+      />
+    );
+};
 
 Loader.propTypes = {
   size: PropTypes.number,
+  alt: PropTypes.bool,
   color: PropTypes.string,
   background: PropTypes.string
 };
 
 Loader.defaultProps = {
   size: 20,
+  alt: false,
   color: 'dark',
   background: 'white'
 };

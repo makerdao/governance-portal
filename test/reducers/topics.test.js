@@ -80,13 +80,7 @@ each([
               submitted_by: {
                 name: expect.any(String),
                 link: expect.any(String)
-              },
-              documents: expect.arrayContaining([
-                expect.objectContaining({
-                  name: expect.any(String),
-                  link: expect.any(String)
-                })
-              ])
+              }
             })
           ])
         })

@@ -2,9 +2,8 @@ import React, { Fragment } from 'react';
 import styled from 'styled-components';
 
 import { ethScanLink } from '../../../utils/ethereum';
-import { StyledTitle, StyledTop, TxHash } from './styles';
+import { StyledTitle, StyledTop, TxInfo, TxHash } from './styles';
 import Button from '../../Button';
-import Loader from '../../Loader';
 import metamask from '../../../imgs/metamask.svg';
 import ledger from '../../../imgs/ledger.svg';
 import trezor from '../../../imgs/trezor.png';
@@ -18,15 +17,11 @@ const Logo = styled.div`
   margin: 24px;
 `;
 
-const InlineLoader = styled(Loader)`
-  display: inline-block;
-  margin-left: 1em;
-`;
-
 const Transaction = ({
   txHash,
   nextStep,
   network,
+  txPurpose,
   confirming,
   lastCard,
   account
@@ -36,10 +31,7 @@ const Transaction = ({
       <StyledTitle>
         {txHash ? (
           confirming ? (
-            <Fragment>
-              Waiting for confirmation...
-              <InlineLoader size={20} color="header" background="white" />
-            </Fragment>
+            <Fragment>awaiting confirmation...</Fragment>
           ) : (
             'Transaction confirmed'
           )
@@ -55,7 +47,7 @@ const Transaction = ({
         textAlign: 'center'
       }}
     >
-      {txHash && (
+      {txHash ? (
         <Fragment>
           <TxHash
             href={ethScanLink(txHash, network)}
@@ -65,12 +57,18 @@ const Transaction = ({
             View on Etherscan
           </TxHash>
           <br />
-          {!confirming && (
-            <Button style={{ marginTop: '10px' }} slim onClick={nextStep}>
-              {lastCard ? 'Finish and close' : 'Continue'}
-            </Button>
-          )}
+          <Button
+            loading={confirming}
+            disabled={confirming || !txHash}
+            style={{ marginTop: '10px' }}
+            slim
+            onClick={nextStep}
+          >
+            {lastCard ? 'Finish and close' : 'Continue'}
+          </Button>
         </Fragment>
+      ) : (
+        <TxInfo>{txPurpose}</TxInfo>
       )}
     </div>
   </Fragment>
