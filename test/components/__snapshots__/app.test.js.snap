@@ -2,8 +2,8 @@
 
 exports[`render everything 1`] = `
 "<div class=\\"App\\">
-  <div class=\\"sc-eilVRo fgrWNC\\">
-    <div class=\\"sc-cpmLhU cxhhsG\\">
+  <div class=\\"sc-eerKOB gBrRtJ\\">
+    <div class=\\"sc-dymIpo dPRkTF\\">
       <div class=\\"sc-EHOje fxMFWJ\\">
         <div class=\\"sc-gzVnrw bEUVcv\\">
           <div><a href=\\"/\\">
@@ -112,34 +112,34 @@ exports[`render everything 1`] = `
           </div>
         </div>
       </div>
-      <div class=\\"sc-laTMn drzNbU\\"></div>
-      <div class=\\"sc-dymIpo htpMBk\\">
-        <div class=\\"sc-bnXvFD fKnsTF\\"><a class=\\"sc-bMvGRv gNiOJJ\\" href=\\"/\\">
-            <div class=\\"sc-gFaPwZ jrxUWS\\">Governance</div>
+      <div class=\\"sc-hGoxap jCviDC\\"></div>
+      <div class=\\"sc-bnXvFD fpEMOX\\">
+        <div class=\\"sc-gFaPwZ eRjpUs\\"><a class=\\"sc-CtfFt bkKinR\\" href=\\"/\\">
+            <div class=\\"sc-fhYwyz eKWEmB\\">Governance</div>
           </a>
-          <div class=\\"sc-hGoxap eBWvxt\\"></div>
-          <div class=\\"sc-jzgbtB hTmYvC\\" style=\\"z-index: 100;\\"><a class=\\"sc-rBLzX cryLNb\\" href=\\"https://google.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\" style=\\"display: flex;\\">
-              <div class=\\"sc-TFwJa ixqxEr\\"></div>Watch set up video
+          <div class=\\"sc-fjmCvl lafrkL\\"></div>
+          <div class=\\"sc-gJWqzi klKTgj\\" style=\\"z-index: 100;\\"><a class=\\"sc-bMvGRv ednDxz\\" href=\\"https://google.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\" style=\\"display: flex;\\">
+              <div class=\\"sc-bHwgHz iHdPOZ\\"></div>Watch set up video
             </a>
-            <div class=\\"sc-gJWqzi CCIFi\\">Voting Contract</div>
-            <div class=\\"sc-bsbRJL byQArk\\">
+            <div class=\\"sc-rBLzX cryLNb\\">Voting Contract</div>
+            <div class=\\"sc-hZSUBg dcwzyE\\">
               <div class=\\"sc-csuQGl cPeIcJ\\" size=\\"20\\" color=\\"background\\"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class=\\"sc-eerKOB hZbUSD\\">
-      <div class=\\"sc-emmjRN jOGQMX\\">
-        <div class=\\"sc-fhYwyz kMyOiB\\">
-          <div class=\\"sc-fjmCvl gtlyyD\\">
+    <div class=\\"sc-emmjRN bSTVKP\\">
+      <div class=\\"sc-cpmLhU ioFCII\\">
+        <div class=\\"sc-jzgbtB kSFQiu\\">
+          <div class=\\"sc-TFwJa fPEigs\\">
             <div class=\\"sc-csuQGl YzMuK\\" size=\\"20\\" color=\\"header\\"></div>
           </div>
         </div>
-        <div class=\\"sc-CtfFt lkwyxz\\"></div>
+        <div class=\\"sc-laTMn bCDhK\\"></div>
       </div>
     </div>
-    <div class=\\"sc-krvtoX bTWwbU\\"></div>
+    <div class=\\"sc-fYiAbW dZLIuY\\"></div>
     <footer class=\\"sc-chPdSV ilkTwW\\">
       <div class=\\"sc-kgoBCf jWcGNC\\">
         <div class=\\"sc-kGXeez deQYPn\\">
