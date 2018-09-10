@@ -167,7 +167,17 @@ export const TxHash = styled.a`
   font-style: oblique;
   padding: 6px;
   padding-top: 20px;
-  font-size: 14px;
+  font-size: 16px;
+`;
+
+export const TxInfo = styled.p`
+  animation: ${fadeIn} 0.5s forwards;
+  margin: auto;
+  color: #868997;
+  font-style: oblique;
+  width: 58%;
+  display: flex;
+  font-size: 16px;
 `;
 
 const Input = styled.input`

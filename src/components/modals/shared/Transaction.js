@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import styled from 'styled-components';
 
 import { ethScanLink } from '../../../utils/ethereum';
-import { StyledTitle, StyledTop, TxHash } from './styles';
+import { StyledTitle, StyledTop, TxInfo, TxHash } from './styles';
 import Button from '../../Button';
 import metamask from '../../../imgs/metamask.svg';
 import ledger from '../../../imgs/ledger.svg';
@@ -21,6 +21,7 @@ const Transaction = ({
   txHash,
   nextStep,
   network,
+  txPurpose,
   confirming,
   lastCard,
   account
@@ -46,8 +47,8 @@ const Transaction = ({
         textAlign: 'center'
       }}
     >
-      <Fragment>
-        {txHash && (
+      {txHash ? (
+        <Fragment>
           <TxHash
             href={ethScanLink(txHash, network)}
             rel="noopener noreferrer"
@@ -55,18 +56,20 @@ const Transaction = ({
           >
             View on Etherscan
           </TxHash>
-        )}
-        <br />
-        <Button
-          loading={confirming}
-          disabled={confirming || !txHash}
-          style={{ marginTop: '10px' }}
-          slim
-          onClick={nextStep}
-        >
-          {lastCard ? 'Finish and close' : 'Continue'}
-        </Button>
-      </Fragment>
+          <br />
+          <Button
+            loading={confirming}
+            disabled={confirming || !txHash}
+            style={{ marginTop: '10px' }}
+            slim
+            onClick={nextStep}
+          >
+            {lastCard ? 'Finish and close' : 'Continue'}
+          </Button>
+        </Fragment>
+      ) : (
+        <TxInfo>{txPurpose}</TxInfo>
+      )}
     </div>
   </Fragment>
 );

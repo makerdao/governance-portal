@@ -72,13 +72,14 @@ export default class AmountInput extends Component {
       account,
       balance,
       buttonLabel,
+      txPurpose,
       skip
     } = this.props;
     if (txSent)
       return (
         <Transaction
           lastCard
-          {...{ txHash, confirming, network, account }}
+          {...{ txHash, txPurpose, confirming, network, account }}
           nextStep={() => modalClose()}
         />
       );
