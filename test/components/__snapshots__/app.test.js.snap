@@ -2,12 +2,12 @@
 
 exports[`render everything 1`] = `
 "<div class=\\"App\\">
-  <div class=\\"sc-cpmLhU dLiPeu\\">
-    <div class=\\"sc-gFaPwZ bICQCx\\">
-      <div class=\\"sc-EHOje fxMFWJ\\">
-        <div class=\\"sc-gzVnrw bEUVcv\\">
+  <div class=\\"sc-hZSUBg egPEDE\\">
+    <div class=\\"sc-esOvli dXoQRU\\">
+      <div class=\\"header__HeaderDiv-eHZkLb iXFzMI\\">
+        <div class=\\"header__Level-jRuHJA joXakb\\">
           <div><a href=\\"/\\">
-              <div class=\\"sc-bdVaJa fULMvQ\\"><svg width=\\"117\\" height=\\"23\\" viewBox=\\"0 0 117 23\\" fill=\\"none\\" xmlns=\\"http://www.w3.org/2000/svg\\">
+              <div class=\\"logo__LogoWrapper-bUjJFS hLfClz\\"><svg width=\\"117\\" height=\\"23\\" viewBox=\\"0 0 117 23\\" fill=\\"none\\" xmlns=\\"http://www.w3.org/2000/svg\\">
                   <path class=\\"text\\" d=\\"M108.375 6.08c-.157 0-.236.08-.393.16a.614.614 0 0 0-.157.398v11.724c0 .16.079.24.157.399.079.08.236.16.393.16.157 0 .236-.08.393-.16a.614.614 0 0 0 .157-.399v-5.344h2.987l2.75 5.663c.08.16.237.319.472.319.079 0 .158 0 .236-.08.157-.08.236-.16.236-.319.079-.16 0-.239 0-.398l-2.515-5.185c.865-.16 1.65-.558 2.2-1.196.63-.638.865-1.356.865-2.233 0-.957-.393-1.755-1.1-2.472-.707-.638-1.572-1.037-2.594-1.037h-4.087zm5.895 5.104c-.472.479-1.1.718-1.808.718h-3.537V7.117h3.459c.707 0 1.336.239 1.886.717.55.479.786 1.037.786 1.675 0 .638-.314 1.197-.786 1.675zm-11.24 7.736c.158 0 .236-.08.393-.16a.614.614 0 0 0 .158-.398c0-.16-.079-.24-.158-.399a.596.596 0 0 0-.393-.16h-6.523v-4.785h4.873c.157 0 .236-.08.393-.16a.614.614 0 0 0 .157-.398c0-.16-.078-.24-.157-.399a.596.596 0 0 0-.393-.16h-4.873V7.118h6.523c.158 0 .236-.08.393-.16a.614.614 0 0 0 .158-.399c0-.16-.079-.239-.158-.398a.596.596 0 0 0-.393-.16h-7.073c-.157 0-.236.08-.393.16a.614.614 0 0 0-.157.398v11.804c0 .16.078.24.157.399.078.08.236.16.393.16h7.073zm-19.57-.239a.614.614 0 0 0 .157-.399v-3.43l1.572-1.674 5.266 5.583c.079.08.236.16.393.16.157 0 .236-.08.393-.16a.614.614 0 0 0 .157-.399c0-.16-.079-.24-.157-.399l-5.266-5.662 5.109-5.344a.614.614 0 0 0 .157-.399c0-.16-.079-.239-.157-.398A.595.595 0 0 0 90.69 6c-.157 0-.236.08-.393.16l-6.681 7.177V6.558c0-.16-.079-.239-.157-.398a.596.596 0 0 0-.393-.16c-.157 0-.236.08-.393.16 0 .159-.079.239-.079.398v11.724c0 .16.079.24.157.399.079.08.236.16.393.16.079 0 .236-.08.315-.16zm-14.934.24c.236 0 .393-.08.472-.32l1.1-2.711h6.445l1.1 2.711c.08.24.236.32.472.32.079 0 .157 0 .236-.08a.618.618 0 0 0 .314-.32c.079-.159.079-.239 0-.398l-1.257-3.031-3.616-8.773s0-.08-.078-.08v-.08h-.079c-.079-.08-.157-.08-.157-.08h-.157-.157c-.08 0-.158 0-.158.08h-.078v.08s0 .08-.079.08l-3.615 8.773-1.258 3.03c-.079.16-.079.24 0 .4.079.159.157.239.314.318.079.08.158.08.236.08zm1.965-4.068l2.83-6.86 2.83 6.86h-5.66zm-18.313-6.3l4.794 7.975v.08H57.916v-.08l4.794-7.976v9.89c0 .16.079.239.157.399.079.08.236.159.393.159.157 0 .236-.08.393-.16a.614.614 0 0 0 .157-.398V6.638c0-.24-.157-.478-.393-.478-.235-.08-.471 0-.628.239l-5.345 8.773-5.266-8.853c-.157-.24-.393-.319-.629-.24-.236.08-.393.24-.393.559v11.804c0 .16.079.239.157.398.079 0 .236.08.393.08.158 0 .236-.08.393-.16a.614.614 0 0 0 .158-.398v-9.81h-.079z\\" fill=\\"#291A41\\" stroke=\\"#291A41\\" stroke-width=\\".35\\"></path>
                   <path class=\\"left-arch\\" d=\\"M15.872 20.69v-9.44a2 2 0 0 0-.893-1.666L3.602 2.031a1 1 0 0 0-1.553.833V20.69\\" stroke=\\"#291A41\\" stroke-width=\\"2.2\\"></path>
                   <path class=\\"right-arch\\" d=\\"M21.212 20.69v-9.44a2 2 0 0 1 .894-1.666l11.377-7.553a1 1 0 0 1 1.553.833V20.69\\" stroke=\\"#291A41\\" stroke-width=\\"2.2\\"></path>
@@ -17,172 +17,170 @@ exports[`render everything 1`] = `
                   <rect class=\\"left-arch-ends\\" width=\\"2.2\\" height=\\"3\\" rx=\\"1.1\\" transform=\\"translate(14.77 19.2)\\" fill=\\"#291A41\\"></rect>
                 </svg></div>
             </a></div>
-          <div class=\\"sc-iwsKbI gXYHy\\">
-            <div class=\\"sc-gZMcBi hQkdaS\\"><span></span><span></span><span></span></div>
+          <div class=\\"header__MobileMenuSelector-cWAlPM kbMINR\\">
+            <div class=\\"header__Hamburger-fzpmda dZLXSr\\"><span></span><span></span><span></span></div>
           </div>
-          <div class=\\"sc-htoDjs cLWRuZ\\">
-            <div class=\\"sc-dnqmqq fXtgyq\\">
-              <div class=\\"sc-bwzfXH gCvMMt\\"><a class=\\"trigger sc-htpNat diiRuo\\">Products</a>
-                <div class=\\"item-container sc-bxivhb dsQfus\\">
+          <div class=\\"header__HeaderItems-brUDbC jVIotE\\">
+            <div class=\\"header__HeaderItem-FLiNi LBZTs\\">
+              <div class=\\"dropdown__Dropdown-gSFiCr nmpWy\\"><a class=\\"trigger dropdown__Trigger-dtcGaF iqpfdg\\">Products</a>
+                <div class=\\"item-container dropdown__ItemContainer-iLlNYd ckjRGj\\">
                   <ul>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://makerdao.netlify.com/dai\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Dai Stablecoin</a></li>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://simple-dai-portal.surge.sh/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">CDP Portal</a></li>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://mkr.tools/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Platform Data</a></li>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://oasis.direct\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Oasis Direct</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://makerdao.com/dai\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Dai Stablecoin</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://simple-dai-portal.surge.sh/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">CDP Portal</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://vote.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Governance</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://mkr.tools/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Platform Data</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://oasis.direct\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Oasis Direct</a></li>
                   </ul>
                 </div>
               </div>
             </div>
-            <div class=\\"sc-dnqmqq fXtgyq\\">
-              <div class=\\"sc-bwzfXH gCvMMt\\"><a class=\\"trigger sc-htpNat diiRuo\\">Learn</a>
-                <div class=\\"item-container sc-bxivhb dsQfus\\">
+            <div class=\\"header__HeaderItem-FLiNi LBZTs\\">
+              <div class=\\"dropdown__Dropdown-gSFiCr nmpWy\\"><a class=\\"trigger dropdown__Trigger-dtcGaF iqpfdg\\">Learn</a>
+                <div class=\\"item-container dropdown__ItemContainer-iLlNYd ckjRGj\\">
                   <ul>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://makerdao.netlify.com/faq\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">FAQ</a></li>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://developer.makerdao.com/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Developer</a></li>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://makerdao.netlify.com/whitepaper\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">White Paper</a></li>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://makerdao.com/purple/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Purple Paper</a></li>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://stable.fund/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">The Stable Fund</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://developer.makerdao.com/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Developer</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://makerdao.com/whitepaper\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">White Paper</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://makerdao.com/purple/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Purple Paper</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://stable.fund/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">The Stable Fund</a></li>
                   </ul>
                 </div>
               </div>
             </div>
-            <div class=\\"sc-dnqmqq fXtgyq\\">
-              <div class=\\"sc-bwzfXH gCvMMt\\"><a class=\\"trigger sc-htpNat diiRuo\\">Foundation</a>
-                <div class=\\"item-container sc-bxivhb dsQfus\\">
+            <div class=\\"header__HeaderItem-FLiNi LBZTs\\">
+              <div class=\\"dropdown__Dropdown-gSFiCr nmpWy\\"><a class=\\"trigger dropdown__Trigger-dtcGaF iqpfdg\\">Foundation</a>
+                <div class=\\"item-container dropdown__ItemContainer-iLlNYd ckjRGj\\">
                   <ul>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://makerdao.netlify.com/team\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Team</a></li>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://makerdao.netlify.com/careers\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Careers</a></li>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://makerdao.netlify.com/contact\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Contact</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://makerdao.com/team\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Team</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://makerdao.com/careers\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Careers</a></li>
                   </ul>
                 </div>
               </div>
             </div>
-            <div class=\\"sc-dnqmqq fXtgyq\\">
-              <div class=\\"sc-bwzfXH gCvMMt\\"><a class=\\"trigger sc-htpNat diiRuo\\">Community</a>
-                <div class=\\"item-container sc-bxivhb dsQfus\\">
+            <div class=\\"header__HeaderItem-FLiNi LBZTs\\">
+              <div class=\\"dropdown__Dropdown-gSFiCr nmpWy\\"><a class=\\"trigger dropdown__Trigger-dtcGaF iqpfdg\\">Community</a>
+                <div class=\\"item-container dropdown__ItemContainer-iLlNYd ckjRGj\\">
                   <ul>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://makerdao.netlify.com/events\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Events</a></li>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://chat.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Chat</a></li>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://www.reddit.com/r/MakerDAO\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Subreddit</a></li>
-                    <li class=\\"sc-ifAKCX fiVDwW\\"><a href=\\"https://medium.com/makerdao\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Blog</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://makerdao.com/events\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Events</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://chat.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Chat</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://www.reddit.com/r/MakerDAO\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Subreddit</a></li>
+                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://medium.com/makerdao\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Blog</a></li>
                   </ul>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class=\\"sc-jTzLTM dOIdvZ\\">
+        <div class=\\"header__MobileMenu-eQkFKo fBKOvj\\">
           <div class=\\"inner\\">
-            <div class=\\"sc-jzJRlG jlvTfb\\">
-              <div class=\\"sc-fjdhpX hHUJjz\\">Products</div>
-              <div class=\\"sc-cSHVUG cftXYG\\">
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://makerdao.netlify.com/dai\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Dai Stablecoin</a></div>
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://simple-dai-portal.surge.sh/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">CDP Portal</a></div>
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://mkr.tools/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Platform Data</a></div>
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://oasis.direct\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Oasis Direct</a></div>
+            <div class=\\"header__MobileDropdownContainer-btzIvV hLFJCN\\">
+              <div class=\\"header__Level-iUkPoN hMiBSA\\">Products</div>
+              <div class=\\"header__MobileDropdownItemsContainer-feaEgk MxWPi\\">
+                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://makerdao.com/dai\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Dai Stablecoin</a></div>
+                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://simple-dai-portal.surge.sh/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">CDP Portal</a></div>
+                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://mkr.tools/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Platform Data</a></div>
+                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://oasis.direct\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Oasis Direct</a></div>
               </div>
             </div>
-            <div class=\\"sc-jzJRlG jlvTfb\\">
-              <div class=\\"sc-fjdhpX hHUJjz\\">Learn</div>
-              <div class=\\"sc-cSHVUG cftXYG\\">
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://makerdao.netlify.com/faq\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">FAQ</a></div>
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://developer.makerdao.com/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Developer</a></div>
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://makerdao.netlify.com/whitepaper\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">White Paper</a></div>
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://makerdao.com/purple/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Purple Paper</a></div>
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://stable.fund/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">The Stable Fund</a></div>
+            <div class=\\"header__MobileDropdownContainer-btzIvV hLFJCN\\">
+              <div class=\\"header__Level-iUkPoN hMiBSA\\">Learn</div>
+              <div class=\\"header__MobileDropdownItemsContainer-feaEgk MxWPi\\">
+                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://developer.makerdao.com/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Developer</a></div>
+                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://makerdao.com/whitepaper\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">White Paper</a></div>
+                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://makerdao.com/purple/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Purple Paper</a></div>
+                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://stable.fund/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">The Stable Fund</a></div>
               </div>
             </div>
-            <div class=\\"sc-jzJRlG jlvTfb\\">
-              <div class=\\"sc-fjdhpX hHUJjz\\">Foundation</div>
-              <div class=\\"sc-cSHVUG cftXYG\\">
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://makerdao.netlify.com/team\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Team</a></div>
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://makerdao.netlify.com/careers\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Careers</a></div>
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://makerdao.netlify.com/contact\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Contact</a></div>
+            <div class=\\"header__MobileDropdownContainer-btzIvV hLFJCN\\">
+              <div class=\\"header__Level-iUkPoN hMiBSA\\">Foundation</div>
+              <div class=\\"header__MobileDropdownItemsContainer-feaEgk MxWPi\\">
+                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://makerdao.com/team\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Team</a></div>
+                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://makerdao.com/careers\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Careers</a></div>
               </div>
             </div>
-            <div class=\\"sc-jzJRlG jlvTfb\\">
-              <div class=\\"sc-fjdhpX hHUJjz\\">Community</div>
-              <div class=\\"sc-cSHVUG cftXYG\\">
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://makerdao.netlify.com/events\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Events</a></div>
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://chat.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Chat</a></div>
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://www.reddit.com/r/MakerDAO\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Subreddit</a></div>
-                <div class=\\"sc-kAzzGY kpJPed\\"><a href=\\"https://medium.com/makerdao\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Blog</a></div>
+            <div class=\\"header__MobileDropdownContainer-btzIvV hLFJCN\\">
+              <div class=\\"header__Level-iUkPoN hMiBSA\\">Community</div>
+              <div class=\\"header__MobileDropdownItemsContainer-feaEgk MxWPi\\">
+                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://makerdao.com/events\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Events</a></div>
+                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://chat.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Chat</a></div>
+                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://www.reddit.com/r/MakerDAO\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Subreddit</a></div>
+                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://medium.com/makerdao\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Blog</a></div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class=\\"sc-TFwJa eWdPsA\\"></div>
-      <div class=\\"sc-fhYwyz gIrxNY\\">
-        <div class=\\"sc-jzgbtB jdomcE\\"><a class=\\"sc-hGoxap kmaILE\\" href=\\"/\\">
-            <div class=\\"sc-gJWqzi cywuVE\\">Governance</div>
+      <div class=\\"sc-exAgwC QDuko\\"></div>
+      <div class=\\"sc-cmthru ilYDqb\\">
+        <div class=\\"sc-hMFtBS fyJALD\\"><a class=\\"sc-iujRgT gcPhkW\\" href=\\"/\\">
+            <div class=\\"sc-cLQEGU qrffE\\">Governance</div>
           </a>
-          <div class=\\"sc-bHwgHz iQWUDL\\"></div>
-          <div class=\\"sc-bMvGRv gNiOJJ\\" style=\\"z-index: 100;\\"><a class=\\"sc-laTMn bBiaDH\\" href=\\"https://google.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\" style=\\"display: flex;\\">
-              <div class=\\"sc-dTdPqK jiqytJ\\"></div>Watch set up video
+          <div class=\\"sc-cQFLBn gjESme\\"></div>
+          <div class=\\"sc-hORach dOAjLC\\" style=\\"z-index: 100;\\"><a class=\\"sc-bAeIUo YmcvB\\" href=\\"https://google.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\" style=\\"display: flex;\\">
+              <div class=\\"sc-daURTG hUfUkv\\"></div>Watch intro video
             </a>
-            <div class=\\"sc-CtfFt fUCAef\\">Voting Contract</div>
-            <div class=\\"sc-iuJeZd dHlUOh\\">
-              <div class=\\"sc-csuQGl cPeIcJ\\" size=\\"20\\" color=\\"background\\"></div>
+            <div class=\\"sc-bMVAic foKyWc\\">Voting Contract</div>
+            <div class=\\"sc-lhVmIH liKqDw\\">
+              <div class=\\"sc-jTzLTM bBbWkd\\" size=\\"20\\" color=\\"background\\"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class=\\"sc-dymIpo gEpZTW\\">
-      <div class=\\"sc-bnXvFD efxjwX\\">
-        <div class=\\"sc-rBLzX fkZSrc\\">
-          <div class=\\"sc-krDsej eSXfIt\\">
-            <div class=\\"sc-csuQGl YzMuK\\" size=\\"20\\" color=\\"header\\"></div>
+    <div class=\\"sc-cMhqgX claCmi\\">
+      <div class=\\"sc-iuJeZd bFKxRo\\">
+        <div class=\\"sc-gqPbQI jqzBqO\\">
+          <div class=\\"sc-gojNiO bkmbox\\">
+            <div class=\\"sc-jTzLTM jQOqgh\\" size=\\"20\\" color=\\"header\\"></div>
           </div>
         </div>
-        <div class=\\"sc-fjmCvl elrsam\\"></div>
+        <div class=\\"sc-GMQeP iGQhjS\\"></div>
       </div>
     </div>
-    <div class=\\"sc-dUjcNx gIyaNc\\"></div>
-    <footer class=\\"sc-chPdSV ilkTwW\\">
-      <div class=\\"sc-kgoBCf jWcGNC\\">
-        <div class=\\"sc-kGXeez deQYPn\\">
-          <div class=\\"sc-kpOJdX hWpHRl\\">Learn</div>
-          <ul class=\\"sc-dxgOiQ exajKO\\">
-            <li><a href=\\"https://makerdao.netlify.com/faq\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">FAQ</a></li>
-            <li><a href=\\"https://makerdao.netlify.com/whitepaper\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">White Paper</a></li>
+    <div class=\\"sc-gwVKww jXhMEx\\"></div>
+    <footer class=\\"footer__FooterContainer-eSBSwT bcoNly\\">
+      <div class=\\"footer__Columns-fYZkS ldvJyo\\">
+        <div class=\\"footer__Column-wXdwK dyQhFg\\">
+          <div class=\\"footer__LinkListHeader-eSRxip iThdwF\\">Learn</div>
+          <ul class=\\"footer__LinkList-kvnAHi kkQpyy\\">
+            <li><a href=\\"https://makerdao.com/whitepaper\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">White Paper</a></li>
+            <li><a href=\\"https://makerdao.com/purple\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Purple Paper</a></li>
             <li><a href=\\"https://stable.fund\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">The Stable Fund</a></li>
+            <li><a href=\\"https://makerdao.com/privacy\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Privacy Policy</a></li>
           </ul>
         </div>
-        <div class=\\"sc-kGXeez deQYPn\\">
-          <div class=\\"sc-kpOJdX hWpHRl\\">Products</div>
-          <ul class=\\"sc-dxgOiQ exajKO\\">
-            <li><a href=\\"https://makerdao.netlify.com/dai\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Dai Stablecoin</a></li>
+        <div class=\\"footer__Column-wXdwK dyQhFg\\">
+          <div class=\\"footer__LinkListHeader-eSRxip iThdwF\\">Products</div>
+          <ul class=\\"footer__LinkList-kvnAHi kkQpyy\\">
+            <li><a href=\\"https://makerdao.com/dai\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Dai Stablecoin</a></li>
             <li><a href=\\"https://simple-dai-portal.surge.sh/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">CDP Portal</a></li>
+            <li><a href=\\"https://vote.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Governance</a></li>
             <li><a href=\\"https://mkr.tools\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Platform Data</a></li>
           </ul>
         </div>
-        <div class=\\"sc-kGXeez deQYPn\\">
-          <div class=\\"sc-kpOJdX hWpHRl\\">Developer</div>
-          <ul class=\\"sc-dxgOiQ exajKO\\">
+        <div class=\\"footer__Column-wXdwK dyQhFg\\">
+          <div class=\\"footer__LinkListHeader-eSRxip iThdwF\\">Developer</div>
+          <ul class=\\"footer__LinkList-kvnAHi kkQpyy\\">
             <li><a href=\\"https://makerdao.com/documentation/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Documentation</a></li>
             <li><a href=\\"https://github.com/makerdao/dai.js\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Dai.js</a></li>
             <li><a href=\\"https://developer.makerdao.com/dai/1/graphql/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">GraphQL API</a></li>
           </ul>
         </div>
-        <div class=\\"sc-kGXeez deQYPn\\">
-          <div class=\\"sc-kpOJdX hWpHRl\\">Foundation</div>
-          <ul class=\\"sc-dxgOiQ exajKO\\">
-            <li><a href=\\"https://makerdao.netlify.com/team\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Team</a></li>
-            <li><a href=\\"https://makerdao.netlify.com/careers\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Careers</a></li>
-            <li><a href=\\"https://makerdao.netlify.com/contact\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Contact</a></li>
+        <div class=\\"footer__Column-wXdwK dyQhFg\\">
+          <div class=\\"footer__LinkListHeader-eSRxip iThdwF\\">Foundation</div>
+          <ul class=\\"footer__LinkList-kvnAHi kkQpyy\\">
+            <li><a href=\\"https://makerdao.com/team\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Team</a></li>
+            <li><a href=\\"https://makerdao.com/careers\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Careers</a></li>
           </ul>
         </div>
-        <div class=\\"narrow sc-kGXeez deQYPn\\">
-          <div class=\\"sc-ckVGcZ jGvonR\\">
-            <div class=\\"sc-jKJlTe fbhgEC\\">
+        <div class=\\"narrow footer__Column-wXdwK dyQhFg\\">
+          <div class=\\"footer__FooterEnd-kzSZvq dWVijA\\">
+            <div class=\\"footer__Subscribe-fbCLXK dFEcCp\\">
               <div>Sign up for the latest content and updates.</div>
-              <form action=\\"//makerdao.us16.list-manage.com/subscribe/post?u=f717b15a4a763e79ee910dbe6&amp;id=86313139e4\\" method=\\"post\\" target=\\"_blank\\" novalidate=\\"\\"><input class=\\"sc-kEYyzF eWkQvz\\" placeholder=\\"Email address\\" name=\\"EMAIL\\" type=\\"email\\" required=\\"\\">
-                <div style=\\"position: absolute; left: -5000px;\\" aria-hidden=\\"true\\"><input type=\\"text\\" name=\\"b_f717b15a4a763e79ee910dbe6_86313139e4\\" tabindex=\\"-1\\" value=\\"\\"></div><button class=\\"sc-eNQAEJ jVNjIW\\" type=\\"submit\\">Subscribe</button>
+              <form action=\\"//makerdao.us16.list-manage.com/subscribe/post?u=f717b15a4a763e79ee910dbe6&amp;id=86313139e4\\" method=\\"post\\" target=\\"_blank\\" novalidate=\\"\\">
+                <div style=\\"position: absolute; left: -5000px;\\" aria-hidden=\\"true\\"><input type=\\"text\\" name=\\"b_f717b15a4a763e79ee910dbe6_86313139e4\\" tabindex=\\"-1\\" value=\\"\\"></div><input class=\\"footer__EmailInput-kVWabg eHSyLN\\" placeholder=\\"Email address\\" name=\\"EMAIL\\" type=\\"email\\" required=\\"\\"><button class=\\"footer__SubscribeButton-fLZZnx fTNbg\\" type=\\"submit\\">Subscribe</button>
               </form>
             </div>
-            <div class=\\"sc-hMqMXs ijKgmv\\"><a href=\\"https://twitter.com/MakerDAO\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\">
+            <div class=\\"footer__Icons-fhsgGk isjdMT\\"><a href=\\"https://twitter.com/MakerDAO\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\">
                   <path d=\\"M24 4.557a9.83 9.83 0 0 1-2.828.775 4.932 4.932 0 0 0 2.165-2.724 9.864 9.864 0 0 1-3.127 1.195 4.916 4.916 0 0 0-3.594-1.555c-3.179 0-5.515 2.966-4.797 6.045A13.978 13.978 0 0 1 1.671 3.149a4.93 4.93 0 0 0 1.523 6.574 4.903 4.903 0 0 1-2.229-.616c-.054 2.281 1.581 4.415 3.949 4.89a4.935 4.935 0 0 1-2.224.084 4.928 4.928 0 0 0 4.6 3.419A9.9 9.9 0 0 1 0 19.54a13.94 13.94 0 0 0 7.548 2.212c9.142 0 14.307-7.721 13.995-14.646A10.025 10.025 0 0 0 24 4.557z\\"></path>
                 </svg></a><a href=\\"https://www.reddit.com/r/MakerDAO/\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\">
                   <path d=\\"M14.238 15.348a.215.215 0 0 1 0 .306c-.465.462-1.194.687-2.231.687l-.008-.002-.008.002c-1.036 0-1.766-.225-2.231-.688a.214.214 0 0 1 0-.305.219.219 0 0 1 .307 0c.379.377 1.008.561 1.924.561l.008.002.008-.002c.915 0 1.544-.184 1.924-.561a.219.219 0 0 1 .307 0zm-3.44-2.418a.922.922 0 0 0-1.845 0c0 .506.414.918.923.918a.92.92 0 0 0 .922-.918zM24 12c0 6.627-5.373 12-12 12S0 18.627 0 12 5.373 0 12 0s12 5.373 12 12zm-5-.129a1.548 1.548 0 0 0-2.624-1.108c-1.056-.695-2.485-1.137-4.066-1.194l.865-2.724 2.343.549-.003.034c0 .696.569 1.262 1.268 1.262.699 0 1.267-.566 1.267-1.262a1.266 1.266 0 0 0-2.446-.458l-2.525-.592a.216.216 0 0 0-.257.145l-.965 3.038c-1.656.02-3.155.466-4.258 1.181A1.546 1.546 0 0 0 5 11.871c0 .566.311 1.056.768 1.325-.03.164-.05.331-.05.5 0 2.281 2.805 4.137 6.253 4.137s6.253-1.856 6.253-4.137c0-.16-.017-.317-.044-.472.486-.261.82-.766.82-1.353zm-4.872.141a.921.921 0 0 0-.922.919.921.921 0 0 0 1.844 0 .921.921 0 0 0-.922-.919z\\"></path>

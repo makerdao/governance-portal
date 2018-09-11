@@ -168,7 +168,7 @@ const BaseLayout = ({
                 style={{ display: 'flex', alignItems: 'center' }}
               >
                 <PlayBtn />
-                Watch set up video
+                Watch intro video
               </DimHeaderLink>
               <DimHeaderElement
                 onClick={() => {
