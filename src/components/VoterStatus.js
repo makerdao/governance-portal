@@ -132,7 +132,7 @@ const VoterStatus = ({
             <a onClick={() => modalOpen(Lock)}> Top-up </a>
           )}
         {account.proxyRole === 'cold' &&
-          Number(account.mkrBalance) > 0 && <span> | </span>}
+          Number(account.proxy.votingPower) > 0 && <span> | </span>}
         {Number(account.proxy.votingPower) > 0 && (
           <a onClick={() => modalOpen(Withdraw)}>Withdraw</a>
         )}

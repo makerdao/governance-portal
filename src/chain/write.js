@@ -162,7 +162,7 @@ export const voteExec = async ({ account, proposalAddress }) => {
       `${account.address} cannot vote because account doesn't have a proxy`
     );
   const { address: proxyAddress } = account.proxy;
-  return simpleSendTx(account, proxyAddress, 'voteExec(address[])', [
+  return simpleSendTx(account, proxyAddress, 'vote(address[])', [
     ['address[]', [proposalAddress]]
   ]);
 };
@@ -173,7 +173,7 @@ export const voteExecNone = async ({ account }) => {
       `${account.address} cannot vote because account doesn't have a proxy`
     );
   const { address: proxyAddress } = account.proxy;
-  return simpleSendTx(account, proxyAddress, 'voteExec(address[])', [
+  return simpleSendTx(account, proxyAddress, 'vote(address[])', [
     ['address[]', []]
   ]);
 };
