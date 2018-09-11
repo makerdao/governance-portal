@@ -31,7 +31,7 @@ const Transaction = ({
       <StyledTitle>
         {txHash ? (
           confirming ? (
-            <Fragment>awaiting confirmation...</Fragment>
+            <Fragment>Awaiting confirmation...</Fragment>
           ) : (
             'Transaction confirmed'
           )
