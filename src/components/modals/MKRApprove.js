@@ -13,32 +13,30 @@ import {
   Skip
 } from './shared/styles';
 import Button from '../Button';
+import { setInfMkrApproval } from '../../reducers/accounts';
 
 class MKRApprove extends Component {
   state = {
-    txSent: false,
     lock: false
   };
-  componentDidUpdate(prevProps) {
-    if (prevProps.mkrApproveProxyTxHash !== this.props.mkrApproveProxyTxHash)
-      this.setState({ txSent: true });
-  }
+
   render() {
     if (this.state.lock) return <Lock {...this.props} />;
     const {
+      mkrApproveInitiated: initiated,
       confirmingMkrApproveProxy: confirming,
       network,
       activeAccount,
       mkrApproveProxyTxHash: txHash
     } = this.props;
-    if (this.state.txSent) {
+    if (initiated) {
       return (
         <Transaction
           confirming={confirming}
           network={network}
           txHash={txHash}
           account={activeAccount}
-          nextStep={() => this.setState({ lock: true })}
+          nextStep={() => this.props.setInfMkrApproval()}
         />
       );
     } else {
@@ -83,7 +81,8 @@ export default connect(
     activeAccount: getActiveAccount({ accounts }),
     network: metamask.network,
     mkrApproveProxyTxHash: proxy.mkrApproveProxyTxHash,
-    confirmingMkrApproveProxy: proxy.confirmingMkrApproveProxy
+    confirmingMkrApproveProxy: proxy.confirmingMkrApproveProxy,
+    mkrApproveInitiated: proxy.mkrApproveInitiated
   }),
-  { mkrApproveProxy, goToStep, smartStepSkip }
+  { mkrApproveProxy, goToStep, smartStepSkip, setInfMkrApproval }
 )(MKRApprove);

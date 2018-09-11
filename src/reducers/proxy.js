@@ -360,6 +360,10 @@ const proxy = createReducer(initialState, {
     confirmingSendMkr: false
   }),
   // MKR Approve Proxy ------------------------------
+  [MKR_APPROVE_REQUEST]: state => ({
+    ...state,
+    mkrApproveInitiated: true
+  }),
   [MKR_APPROVE_SENT]: (state, { payload }) => ({
     ...state,
     confirmingMkrApproveProxy: true,
@@ -371,7 +375,8 @@ const proxy = createReducer(initialState, {
   }),
   [MKR_APPROVE_FAILURE]: state => ({
     ...state,
-    confirmingMkrApproveProxy: false
+    confirmingMkrApproveProxy: false,
+    mkrApproveInitiated: false
   }),
   // Withdraw ---------------------------------------
   [WITHDRAW_MKR_REQUEST]: (state, { payload: value }) => ({

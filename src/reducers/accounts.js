@@ -19,8 +19,7 @@ import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
   WITHDRAW_ALL_MKR_SUCCESS,
-  INITIATE_LINK_REQUEST,
-  MKR_APPROVE_SUCCESS
+  INITIATE_LINK_REQUEST
   // BREAK_LINK_SUCCESS
 } from './proxy';
 import { createSubProvider } from '../chain/hw-wallet';
@@ -39,6 +38,7 @@ const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
 const FIND_HARDWARE_ACCOUNT = 'accounts/FIND_HARDWARE_ACCOUNT';
 const FIND_HARDWARE_ACCOUNT_FAILURE = 'accounts/FIND_HARDWARE_ACCOUNT_FAILURE';
 export const NO_METAMASK_ACCOUNTS = 'accounts/NO_METAMASK_ACCOUNTS';
+const SET_INF_MKR_APPROVAL = 'accounts/SET_INF_MKR_APPROVAL';
 
 // Selectors ----------------------------------------------
 
@@ -181,6 +181,12 @@ export const getHardwareAccount = (type, options = {}) => async (
     console.error(err);
     dispatch({ type: FIND_HARDWARE_ACCOUNT_FAILURE, payload: err });
   }
+};
+
+export const setInfMkrApproval = () => dispatch => {
+  return dispatch({
+    type: SET_INF_MKR_APPROVAL
+  });
 };
 
 // Reducer ------------------------------------------------
@@ -364,7 +370,7 @@ const accounts = createReducer(initialState, {
     ...state,
     fetching: false
   }),
-  [MKR_APPROVE_SUCCESS]: state => {
+  [SET_INF_MKR_APPROVAL]: state => {
     const _updatedAccount = {
       ...getActiveAccount({ accounts: state }),
       proxy: {
