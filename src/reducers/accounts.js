@@ -245,6 +245,13 @@ const updateProxyBalance = adding => (state, { payload: amount }) => {
     mkrBalance: subtract(account.mkrBalance, amount),
     proxy: {
       ...account.proxy,
+      linkedAccount: {
+        ...account.proxy.linkedAccount,
+        mkrBalance:
+          account.proxyRole === 'hot'
+            ? subtract(account.proxy.linkedAccount.mkrBalance, amount)
+            : account.proxy.linkedAccount.mkrBalance
+      },
       votingPower: add(account.proxy.votingPower, amount)
     }
   };

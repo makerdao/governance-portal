@@ -139,15 +139,19 @@ const VoterStatus = ({
         <DotSpacer />
         In cold wallet{' '}
         <Black>{formatRound(coldWallet.mkrBalance, 4)} MKR</Black> <DotSpacer />
-        {firstLetterCapital(linkedAccount.proxyRole)} wallet:{' '}
-        {cutMiddle(linkedAccount.address)}{' '}
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href={ethScanLink(linkedAccount.address, network)}
-        >
-          Etherscan
-        </a>
+        {linkedAccount.address !== '0x' && (
+          <Fragment>
+            {firstLetterCapital(linkedAccount.proxyRole)} wallet:{' '}
+            {cutMiddle(linkedAccount.address)}{' '}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href={ethScanLink(linkedAccount.address, network)}
+            >
+              Etherscan
+            </a>
+          </Fragment>
+        )}
         <br />
         {account.votingFor && account.proxy.votingPower > 0 ? (
           <Fragment>

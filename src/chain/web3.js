@@ -194,6 +194,7 @@ export const toChecksum = address =>
 export const getTxDetails = async ({ from, to, data, value, ganache }) => {
   let { gasLimit, gasPrice } = await estimateGas({ from, to, data, value });
   // we're underestimate gas limit when on ganache –> figure out why that is
+  gasPrice = Number(gasPrice) + 1000000000;
   if (ganache) gasLimit += 200000; // FIXME
   const nonce = await getTransactionCount(from);
   return {
@@ -242,8 +243,8 @@ export const sendSignedTx = signedTx =>
  * @param  {Object} { confirmations }
  * @return {Promise}
  */
-export const awaitTx = async (txHash, { confirmations = 3 }) => {
-  const delay = () => new Promise(resolve => setTimeout(resolve, 500));
+export const awaitTx = async (txHash, { confirmations = 1 }) => {
+  const delay = () => new Promise(resolve => setTimeout(resolve, 250));
   const { eth } = getWeb3Instance();
 
   // eslint-disable-next-line no-constant-condition
