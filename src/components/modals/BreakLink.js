@@ -52,6 +52,7 @@ class BreakLink extends Component {
       return (
         <Transaction
           lastCard
+          txPurpose="This transaction is to break your hot-cold wallet link"
           {...{ txHash, confirming, network, account }}
           nextStep={() => {
             modalClose();

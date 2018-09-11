@@ -175,7 +175,7 @@ export const TxInfo = styled.p`
   margin: auto;
   color: #868997;
   font-style: oblique;
-  width: 58%;
+  width: 88%;
   display: flex;
   font-size: 16px;
 `;

@@ -28,7 +28,7 @@ const mapStateToProps = state => {
     blurb:
       'Locking your MKR allows you to vote. The more you lock the more voting power you have. You can withdraw it at anytime',
     txPurpose:
-      "This transaction will move MKR from your cold wallet to you personal voting contract which will deposit them into Maker's official voting system on your behalf",
+      'This transaction is to lock your MKR. Your funds are safe. You can withdrawn them at anytime',
     amountLabel: 'MKR balance',
     buttonLabel: 'Lock MKR',
     txSent: !!state.proxy.sendMkrAmount
