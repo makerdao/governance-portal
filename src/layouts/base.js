@@ -179,7 +179,7 @@ const BaseLayout = ({
             {/* cheap network notification, probably to be replaced */}
             <Flex style={{ zIndex: '100' }}>
               <DimHeaderLink
-                href="https://google.com"
+                href="https://www.youtube.com/watch?v=wP7DedWcEmg"
                 target="_blank"
                 rel="noopener noreferrer"
                 mr={50}
@@ -194,7 +194,7 @@ const BaseLayout = ({
                 }}
                 mr={50}
               >
-                Voting Contract
+                Personal Voting Contract
               </DimHeaderElement>
               <AccountBox fetching={!wrongNetwork && metamaskFetching} />
             </Flex>
