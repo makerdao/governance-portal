@@ -127,7 +127,8 @@ const PlayBtn = styled.div`
 const Circle = styled.div`
   height: 10px;
   width: 10px;
-  background-color: #30bd9f;
+  background-color: ${({ network }) =>
+    network === 'kovan' ? '#9055AF' : '#30bd9f'};
   border-radius: 50%;
   display: inline-block;
   margin-right: 4px;
@@ -169,7 +170,7 @@ const BaseLayout = ({
               <NetworkNotification style={{ marginLeft: '16px' }}>
                 {childrenShouldMount && (
                   <React.Fragment>
-                    <Circle />
+                    <Circle network={network} />
                     {firstLetterCapital(network)}
                   </React.Fragment>
                 )}
@@ -178,7 +179,7 @@ const BaseLayout = ({
             {/* cheap network notification, probably to be replaced */}
             <Flex style={{ zIndex: '100' }}>
               <DimHeaderLink
-                href="https://google.com"
+                href="https://www.youtube.com/watch?v=wP7DedWcEmg"
                 target="_blank"
                 rel="noopener noreferrer"
                 mr={50}
@@ -193,7 +194,7 @@ const BaseLayout = ({
                 }}
                 mr={50}
               >
-                Voting Contract
+                Personal Voting Contract
               </DimHeaderElement>
               <AccountBox fetching={!wrongNetwork && metamaskFetching} />
             </Flex>

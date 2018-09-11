@@ -159,6 +159,7 @@ class Vote extends Component {
       case 'signTx':
         return (
           <Transaction
+            txPurpose="This transaction is to break your hot-cold wallet link"
             txHash={this.props.voteTxHash}
             nextStep={() => this.props.modalClose()}
             network={this.props.network}

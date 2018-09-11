@@ -121,14 +121,14 @@ class Link extends Component {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://google.com"
+              href="https://www.youtube.com/watch?v=13UxGR5HxXE&index=3&list=PLLzkWCj8ywWP6yCPPm1IRKysNsrzg3LQ6"
             >
               MetaMask,
             </a>{' '}
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://google.com"
+              href="https://www.youtube.com/watch?v=LyLxhbIMK8E&list=PLLzkWCj8ywWP6yCPPm1IRKysNsrzg3LQ6&index=2"
             >
               Ledger
             </a>{' '}
@@ -136,7 +136,7 @@ class Link extends Component {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://google.com"
+              href="https://medium.com/makerdao/the-makerdao-voting-proxy-contract-5765dd5946b4"
             >
               Trezor
             </a>
