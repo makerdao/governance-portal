@@ -11,7 +11,7 @@ import {
   sendSignedTx,
   sendTxUnlocked
 } from './web3';
-import { getProxyStatus } from './read';
+import { getProxyStatus, getNumDeposits } from './read';
 import {
   generateCallData,
   removeHexPrefix,
@@ -233,14 +233,15 @@ export const proxyFree = async ({ account, value }) => {
   ]);
 };
 
-//!!!!! this is only temporary, this needs to be updated once the freeAll function is added to the contract
-export const proxyFreeAll = async ({ account, value }) => {
+//check balance, then free that amount
+export const proxyFreeAll = async ({ account }) => {
   if (!account.hasProxy)
     throw new Error(
       `${account.address} cannot free because account doesn't have a proxy`
     );
   const { address: proxyAddress } = account.proxy;
+  const mkrBalance = await getNumDeposits(account.proxy.address);
   return simpleSendTx(account, proxyAddress, 'free(uint256)', [
-    ['uint256', etherToWei(value)]
+    ['uint256', etherToWei(mkrBalance)]
   ]);
 };
