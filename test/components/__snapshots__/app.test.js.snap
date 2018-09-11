@@ -111,10 +111,12 @@ exports[`render everything 1`] = `
       </div>
       <div class=\\"sc-exAgwC QDuko\\"></div>
       <div class=\\"sc-cmthru ilYDqb\\">
-        <div class=\\"sc-hMFtBS fyJALD\\"><a class=\\"sc-iujRgT gcPhkW\\" href=\\"/\\">
-            <div class=\\"sc-cLQEGU qrffE\\">Governance</div>
-          </a>
-          <div class=\\"sc-cQFLBn gjESme\\"></div>
+        <div class=\\"sc-hMFtBS fyJALD\\">
+          <div style=\\"display: flex;\\"><a class=\\"sc-iujRgT gcPhkW\\" href=\\"/\\">
+              <div class=\\"sc-cLQEGU qrffE\\">Governance</div>
+            </a>
+            <div class=\\"sc-cQFLBn gjESme\\" style=\\"margin-left: 16px;\\"></div>
+          </div>
           <div class=\\"sc-hORach dOAjLC\\" style=\\"z-index: 100;\\"><a class=\\"sc-bAeIUo YmcvB\\" href=\\"https://google.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\" style=\\"display: flex;\\">
               <div class=\\"sc-daURTG hUfUkv\\"></div>Watch intro video
             </a>

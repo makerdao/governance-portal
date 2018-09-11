@@ -7,6 +7,7 @@ import { withRouter } from 'react-router';
 import Header from '@makerdao/ui-components/dist/components/header';
 import Footer from '@makerdao/ui-components/dist/components/footer';
 import { colors, fonts } from '../theme';
+import { firstLetterCapital } from '../utils/misc';
 import { modalOpen } from '../reducers/modal';
 import Modals from '../components/modals';
 import SecureVoting from '../components/modals/SecureVoting';
@@ -123,6 +124,15 @@ const PlayBtn = styled.div`
   margin-right: 6px;
 `;
 
+const Circle = styled.div`
+  height: 10px;
+  width: 10px;
+  background-color: #30bd9f;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+`;
+
 const BaseLayout = ({
   children,
   network,
@@ -152,13 +162,20 @@ const BaseLayout = ({
         <BorderLine />
         <HeaderBottom>
           <HeaderBottomContent>
-            <StyledLink to="/">
-              <HeaderBottomLeft>Governance</HeaderBottomLeft>
-            </StyledLink>
+            <div style={{ display: 'flex' }}>
+              <StyledLink to="/">
+                <HeaderBottomLeft>Governance</HeaderBottomLeft>
+              </StyledLink>
+              <NetworkNotification style={{ marginLeft: '16px' }}>
+                {childrenShouldMount && (
+                  <React.Fragment>
+                    <Circle />
+                    {firstLetterCapital(network)}
+                  </React.Fragment>
+                )}
+              </NetworkNotification>
+            </div>
             {/* cheap network notification, probably to be replaced */}
-            <NetworkNotification>
-              {childrenShouldMount && `${network}`}
-            </NetworkNotification>
             <Flex style={{ zIndex: '100' }}>
               <DimHeaderLink
                 href="https://google.com"
