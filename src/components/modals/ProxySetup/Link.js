@@ -8,7 +8,7 @@ import {
   StyledTop,
   TooltipCard,
   InputLabels,
-  StyledAnchor,
+  // StyledAnchor,
   EndButton,
   Dim,
   Note

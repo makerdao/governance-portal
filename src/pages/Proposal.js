@@ -19,7 +19,10 @@ import WithTally from '../components/hocs/WithTally';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import NotFound from './NotFound';
 import theme, { colors } from '../theme';
-import { formatDate, cutMiddle } from '../utils/misc';
+import {
+  // formatDate,
+  cutMiddle
+} from '../utils/misc';
 import { modalOpen } from '../reducers/modal';
 
 const riseUp = keyframes`

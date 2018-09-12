@@ -5,7 +5,7 @@ import {
   StyledTitle,
   StyledBlurb,
   Column,
-  StyledAnchor,
+  // StyledAnchor,
   CircledNum,
   Section,
   GuideWrapper,

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-import external from '../../../imgs/external.svg';
+// import external from '../../../imgs/external.svg';
 import theme from '../../../theme';
 import Button from '../../Button';
 
@@ -304,18 +304,18 @@ const TooltipBody = styled.p`
   color: ${({ theme }) => theme.generic.black};
   margin-bottom: 4px;
 `;
-const TooltipLink = styled.a`
-  color: ${({ theme }) => theme.brand.default};
-  font-size: 14px;
-  &:after {
-    content: '';
-    width: 30px;
-    height: 9px;
-    margin-left: 5px;
-    display: inline-block;
-    background: url(${external}) center no-repeat;
-  }
-`;
+// const TooltipLink = styled.a`
+//   color: ${({ theme }) => theme.brand.default};
+//   font-size: 14px;
+//   &:after {
+//     content: '';
+//     width: 30px;
+//     height: 9px;
+//     margin-left: 5px;
+//     display: inline-block;
+//     background: url(${external}) center no-repeat;
+//   }
+// `;
 
 const HoverTarget = styled.div`
   user-select: none;
