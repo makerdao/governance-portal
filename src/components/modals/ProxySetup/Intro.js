@@ -34,7 +34,7 @@ const Intro = ({ nextStep, linkCost }) => (
       but be able to vote with your MKR via a{' '}
       <TooltipCard
         link="https://google.com"
-        body="This the wallet you vote with. This account will never be able to withdraw your tokens to itself."
+        body="This is the wallet you vote with. This account will never be able to withdraw your tokens to itself."
         title="Hot Wallet"
       >
         hot wallet
