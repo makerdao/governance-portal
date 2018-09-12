@@ -11,7 +11,7 @@ import LedgerType from './LedgerType';
 // i.e. the second path for Live is "44'/60'/1'/0/0"
 // and the second path for Legacy is "44'/60'/0'/0/1"
 const LEDGER_LIVE_PATH = "44'/60'/0'";
-const LEDGER_LEGACY_PATH = "44'/60'/0'/0/0";
+const LEDGER_LEGACY_PATH = "44'/60'/0'/0";
 
 const CenterBlurb = styled(StyledBlurb)`
   text-align: center;
