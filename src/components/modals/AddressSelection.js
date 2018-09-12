@@ -20,6 +20,7 @@ import {
   CopyBtnIcon
 } from './shared/HotColdTable';
 import { Wrapper, Blurb } from './LedgerType';
+import Loader from '../Loader';
 
 const TREZOR_PATH = "44'/60'/0'/0/0";
 
@@ -45,10 +46,22 @@ const ListItem = styled(Wrapper)`
   margin-bottom: 18px;
 `;
 
+const CenteredWrapper = styled(Wrapper)`
+  align-self: center;
+`;
+
 const ListText = styled(Blurb)`
   line-height: 25px;
   font-size: 17px;
   color: #868997;
+`;
+
+const Connecting = styled.div`
+  line-height: 24px;
+  font-size: 16px;
+  color: #231536;
+  margin-left: 16px;
+  margin-top: 7px;
 `;
 
 class AddressSelection extends Component {
@@ -232,8 +245,12 @@ const TrezorLoading = () => (
 const Loading = ({ type }) => (
   <Fragment>
     <StyledTop>
-      <StyledTitle>Connecting to {type} wallet...</StyledTitle>
+      <StyledTitle>Connect your {type} wallet</StyledTitle>
     </StyledTop>
     {type === 'ledger' ? <LedgerLoading /> : <TrezorLoading />}
+    <CenteredWrapper>
+      <Loader size={40} />
+      <Connecting>Connecting...</Connecting>
+    </CenteredWrapper>
   </Fragment>
 );
