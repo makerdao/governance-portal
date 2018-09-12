@@ -102,7 +102,7 @@ class Link extends Component {
           , we support MetaMask, Ledger and Trezor. Then select the{' '}
           <TooltipCard
             link="https://google.com"
-            body="This the wallet you vote with. This account will never be able to withdraw your tokens to itself."
+            body="This is the wallet you vote with. This account will never be able to withdraw your tokens to itself."
             title="Hot Wallet"
           >
             hot wallet
