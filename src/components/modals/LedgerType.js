@@ -28,11 +28,11 @@ const LedgerIcon = styled.div`
   background-position: 13px 13px;
 `;
 
-const Wrapper = styled(FlexContainer)`
+export const Wrapper = styled(FlexContainer)`
   align-items: flex-start;
 `;
 
-const Blurb = styled.div`
+export const Blurb = styled.div`
   margin-top: 5px;
   margin-right: 16px;
   flex-grow: 1;

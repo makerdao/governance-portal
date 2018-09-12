@@ -1,7 +1,7 @@
 import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import round from 'lodash.round';
-
+import styled from 'styled-components';
 import { StyledTitle, StyledBlurb, StyledTop } from './shared/styles';
 import Button from '../Button';
 import { modalClose } from '../../reducers/modal';
@@ -19,8 +19,37 @@ import {
   CopyBtn,
   CopyBtnIcon
 } from './shared/HotColdTable';
+import { Wrapper, Blurb } from './LedgerType';
 
 const TREZOR_PATH = "44'/60'/0'/0/0";
+
+const CircleNumber = styled.div`
+  width: 32px;
+  min-width: 32px;
+  line-height: 28px;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 16px;
+  border: 2px solid #30bd9f;
+  margin-right: 18px;
+  margin-top: 4px;
+`;
+
+const ListContainer = styled.div`
+  margin-top: 33px;
+  margin-left: 32px;
+  margin-right: 32px;
+`;
+
+const ListItem = styled(Wrapper)`
+  margin-bottom: 18px;
+`;
+
+const ListText = styled(Blurb)`
+  line-height: 25px;
+  font-size: 17px;
+  color: #868997;
+`;
 
 class AddressSelection extends Component {
   constructor(props) {
@@ -154,18 +183,57 @@ export default connect(
   { addAccount, setActiveAccount, modalClose }
 )(AddressSelection);
 
+const LedgerLoading = () => (
+  <ListContainer>
+    <ListItem>
+      <CircleNumber>1</CircleNumber>
+      <ListText>Connect your Ledger to begin</ListText>
+    </ListItem>
+    <ListItem>
+      <CircleNumber>2</CircleNumber>
+      <ListText>Open the Ethereum app on the Ledger</ListText>
+    </ListItem>
+    <ListItem>
+      <CircleNumber>3</CircleNumber>
+      <ListText>
+        Ensure the Browser Support and Contract Data is enabled in Settings
+      </ListText>
+    </ListItem>
+    <ListItem>
+      <CircleNumber>4</CircleNumber>
+      <ListText>
+        You may need to update the firmware if Browser Support is not available
+      </ListText>
+    </ListItem>
+  </ListContainer>
+);
+
+const TrezorLoading = () => (
+  <ListContainer>
+    <ListItem>
+      <CircleNumber>1</CircleNumber>
+      <ListText>Connect your TREZOR Wallet to begin</ListText>
+    </ListItem>
+    <ListItem>
+      <CircleNumber>2</CircleNumber>
+      <ListText>
+        When the popop asks if you want to export the public key, select export
+      </ListText>
+    </ListItem>
+    <ListItem>
+      <CircleNumber>3</CircleNumber>
+      <ListText>
+        If required, enter your pin or password to unlock the TREZOR
+      </ListText>
+    </ListItem>
+  </ListContainer>
+);
+
 const Loading = ({ type }) => (
   <Fragment>
     <StyledTop>
       <StyledTitle>Connecting to {type} wallet...</StyledTitle>
     </StyledTop>
-    {/* <StyledBlurb>
-      Make sure the latest Ethereum app is installed on your device. If this is
-      your first time using this ledger with a dapp, you'll also need to approve
-      contract data in the settings.
-    </StyledBlurb> */}
-    {/* maybe this ^ should fade in after a timeout?
-    otherwise it passes by too quick for people who already have their ledger configured
-    which makes you feel like you missed something */}
+    {type === 'ledger' ? <LedgerLoading /> : <TrezorLoading />}
   </Fragment>
 );
