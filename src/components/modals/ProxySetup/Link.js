@@ -155,9 +155,9 @@ class Link extends Component {
           </Note>
         </Section>
         <EndRow>
-          <StyledAnchor blue>Read more about linking</StyledAnchor>
+          {/* <StyledAnchor blue>Read more about linking</StyledAnchor> */}
           <EndButton
-            style={{ marginTop: '0' }}
+            style={{ marginTop: '0', marginLeft: 'auto' }}
             disabled={!this.state.hot || !this.state.cold}
             slim
             onClick={() => this.props.initiateLink({ cold, hot })}

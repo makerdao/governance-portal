@@ -359,9 +359,9 @@ export const TooltipCard = ({ link, body, title, children }) => (
       <TooltipWrapper>
         <TooltipTitle>{title}</TooltipTitle>
         <TooltipBody>{body}</TooltipBody>
-        <TooltipLink href={link} rel="noopener noreferrer" target="_blank">
+        {/* <TooltipLink href={link} rel="noopener noreferrer" target="_blank">
           Read more
-        </TooltipLink>
+        </TooltipLink> */}
       </TooltipWrapper>
     </HoverTarget>
   </div>

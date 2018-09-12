@@ -279,7 +279,13 @@ class Proposal extends Component {
               </Supporter>
               <Supporter>
                 <Detail>Started</Detail>
-                <Detail>{formatDate(proposal.date)}</Detail>
+                <Detail>
+                  {
+                    // FIXME
+                    'Sep 12, 2018'
+                    // formatDate(proposal.date)
+                  }
+                </Detail>
               </Supporter>
               <Supporter>
                 <Detail>Source</Detail>

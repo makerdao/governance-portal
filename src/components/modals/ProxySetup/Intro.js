@@ -104,7 +104,7 @@ const Intro = ({ nextStep, linkCost }) => (
         <Bold>${formatRound(linkCost, 2)}</Bold>
       </div>
     </IntroTxBox>
-    <StyledAnchor
+    {/* <StyledAnchor
       href="https://makerdao.netlify.com/faq"
       target="_blank"
       rel="noopener noreferrer"
@@ -112,8 +112,10 @@ const Intro = ({ nextStep, linkCost }) => (
       blue
     >
       Read more on our FAQ’s page
-    </StyledAnchor>
-    <Button onClick={nextStep}>Great get started</Button>
+    </StyledAnchor> */}
+    <Button style={{ marginTop: '22px' }} onClick={nextStep}>
+      Great get started
+    </Button>
   </Column>
 );
 
