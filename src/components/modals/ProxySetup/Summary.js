@@ -32,7 +32,7 @@ export default ({ modalClose, sendMkrAmount, hotAccount }) => (
       Your voting contract has been successfully set up. You can now vote using
       your{' '}
       <TooltipCard
-        link="https://google.com"
+        link="https://makerdao.com/faq/"
         body="his the wallet you vote with. This account will never be able to withdraw your tokens to itself."
         title="Hot Wallet"
       >

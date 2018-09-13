@@ -8,7 +8,7 @@ import {
   StyledTop,
   TooltipCard,
   InputLabels,
-  // StyledAnchor,
+  StyledAnchor,
   EndButton,
   Dim,
   Note
@@ -93,7 +93,7 @@ class Link extends Component {
         <StyledBlurb>
           Please connect your{' '}
           <TooltipCard
-            link="https://google.com"
+            link="https://makerdao.com/faq/"
             body="This is where you store your MKR. You will be able to send your tokens back to this account at any time."
             title="Cold Wallet"
           >
@@ -101,7 +101,7 @@ class Link extends Component {
           </TooltipCard>
           , we support MetaMask, Ledger and Trezor. Then select the{' '}
           <TooltipCard
-            link="https://google.com"
+            link="https://makerdao.com/faq/"
             body="This is the wallet you vote with. This account will never be able to withdraw your tokens to itself."
             title="Hot Wallet"
           >
@@ -121,14 +121,14 @@ class Link extends Component {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://www.youtube.com/watch?v=13UxGR5HxXE&index=3&list=PLLzkWCj8ywWP6yCPPm1IRKysNsrzg3LQ6"
+              href="https://medium.com/makerdao/how-to-setup-the-voting-contract-using-two-metamask-accounts-4e83e4fec602"
             >
               MetaMask,
             </a>{' '}
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://www.youtube.com/watch?v=LyLxhbIMK8E&list=PLLzkWCj8ywWP6yCPPm1IRKysNsrzg3LQ6&index=2"
+              href="https://medium.com/makerdao/how-to-setup-the-voting-contract-using-a-ledger-hardware-wallet-1f00d49ce43a"
             >
               Ledger
             </a>{' '}
@@ -136,7 +136,7 @@ class Link extends Component {
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://medium.com/makerdao/the-makerdao-voting-proxy-contract-5765dd5946b4"
+              href="https://medium.com/makerdao/how-to-setup-the-voting-contract-using-a-trezor-hardware-wallet-af4969aa157f"
             >
               Trezor
             </a>
@@ -155,9 +155,16 @@ class Link extends Component {
           </Note>
         </Section>
         <EndRow>
-          {/* <StyledAnchor blue>Read more about linking</StyledAnchor> */}
+          <StyledAnchor
+            href="https://medium.com/makerdao/the-makerdao-voting-proxy-contract-5765dd5946b4"
+            target="_blank"
+            rel="noopener noreferrer"
+            blue
+          >
+            Read more about linking
+          </StyledAnchor>
           <EndButton
-            style={{ marginTop: '0', marginLeft: 'auto' }}
+            style={{ marginTop: '0' }}
             disabled={!this.state.hot || !this.state.cold}
             slim
             onClick={() => this.props.initiateLink({ cold, hot })}

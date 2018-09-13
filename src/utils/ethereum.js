@@ -55,7 +55,7 @@ export const removeHexPrefix = hex => hex.toLowerCase().replace('0x', '');
  * @param  {String} hex
  * @return {String}
  */
-export const hexToNumString = hex => BigNumber(`${hex}`).toString();
+export const hexToNumString = hex => BigNumber(`${hex}`).toFixed();
 
 /**
  * @desc convert hex to number
@@ -72,7 +72,7 @@ export const numberForAddress = address => parseInt(address.slice(2, 10), 16);
 export const weiToEther = value =>
   BigNumber(`${value}`)
     .div(ETHER)
-    .toString();
+    .toFixed();
 
 /**
  * @desc convert number string from ether to wei
@@ -82,7 +82,7 @@ export const weiToEther = value =>
 export const etherToWei = value =>
   BigNumber(`${value}`)
     .times(ETHER)
-    .toString();
+    .toFixed();
 
 /**
  * @desc get network name
@@ -130,7 +130,7 @@ export const isZeroAddress = address => !BigNumber(address).toNumber();
  * @param  {String} string
  * @return {String} 0x hex
  */
-export const stringToHex = string => BigNumber(`${string}`).toString(16);
+export const stringToHex = string => BigNumber(`${string}`).toFixed(16);
 
 /**
  * @desc returns whether txString is a syntactically correct tx

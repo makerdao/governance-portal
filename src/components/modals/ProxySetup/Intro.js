@@ -5,7 +5,7 @@ import {
   StyledTitle,
   StyledBlurb,
   Column,
-  // StyledAnchor,
+  StyledAnchor,
   CircledNum,
   Section,
   GuideWrapper,
@@ -25,7 +25,7 @@ const Intro = ({ nextStep, linkCost }) => (
       To vote you will need to set up a voting contract. This contract enables
       you to keep you MKR stored safely in a{' '}
       <TooltipCard
-        link="https://google.com"
+        link="https://makerdao.com/faq/"
         body="This is where you store your MKR. You will be able to send your tokens back to this account at any time."
         title="Cold Wallet"
       >
@@ -33,7 +33,7 @@ const Intro = ({ nextStep, linkCost }) => (
       </TooltipCard>{' '}
       but be able to vote with your MKR via a{' '}
       <TooltipCard
-        link="https://google.com"
+        link="https://makerdao.com/faq/"
         body="This is the wallet you vote with. This account will never be able to withdraw your tokens to itself."
         title="Hot Wallet"
       >
@@ -48,7 +48,7 @@ const Intro = ({ nextStep, linkCost }) => (
           <GuideInfo>
             Link your{' '}
             <TooltipCard
-              link="https://google.com"
+              link="https://makerdao.com/faq/"
               body="This is where you store your MKR. You will be able to send your tokens back to this account at any time."
               title="Cold Wallet"
             >
@@ -56,7 +56,7 @@ const Intro = ({ nextStep, linkCost }) => (
             </TooltipCard>{' '}
             and{' '}
             <TooltipCard
-              link="https://google.com"
+              link="https://makerdao.com/faq/"
               body="This the wallet you vote with. This account will never be able to withdraw your tokens to itself."
               title="Hot Wallet"
             >
@@ -72,7 +72,7 @@ const Intro = ({ nextStep, linkCost }) => (
           <GuideTitle>Lock MKR</GuideTitle>
           <GuideInfo>
             <TooltipCard
-              link="https://google.com"
+              link="https://makerdao.com/faq/"
               body="Redeem your MKR tokens for voting rights"
               title="Locking MKR"
             >
@@ -104,18 +104,16 @@ const Intro = ({ nextStep, linkCost }) => (
         <Bold>${formatRound(linkCost, 2)}</Bold>
       </div>
     </IntroTxBox>
-    {/* <StyledAnchor
-      href="https://makerdao.netlify.com/faq"
+    <StyledAnchor
+      href="https://makerdao.com/faq"
       target="_blank"
       rel="noopener noreferrer"
       style={{ margin: '15px 0px' }}
       blue
     >
       Read more on our FAQ’s page
-    </StyledAnchor> */}
-    <Button style={{ marginTop: '22px' }} onClick={nextStep}>
-      Great get started
-    </Button>
+    </StyledAnchor>
+    <Button onClick={nextStep}>Great get started</Button>
   </Column>
 );
 
