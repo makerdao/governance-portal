@@ -2,8 +2,8 @@
 
 exports[`render everything 1`] = `
 "<div class=\\"App\\">
-  <div class=\\"sc-hMFtBS gKoPqz\\">
-    <div class=\\"sc-hORach kvnaSz\\">
+  <div class=\\"sc-cLQEGU jNxtbi\\">
+    <div class=\\"sc-bMVAic jQTmFK\\">
       <div class=\\"header__HeaderDiv-eHZkLb iXFzMI\\">
         <div class=\\"header__Level-jRuHJA joXakb\\">
           <div><a href=\\"/\\">
@@ -109,36 +109,36 @@ exports[`render everything 1`] = `
           </div>
         </div>
       </div>
-      <div class=\\"sc-lkqHmb fivMEt\\"></div>
-      <div class=\\"sc-bMVAic gvyaxc\\">
-        <div class=\\"sc-bAeIUo eywTqy\\">
-          <div style=\\"display: flex;\\"><a class=\\"sc-daURTG hoiRTa\\" href=\\"/\\">
-              <div class=\\"sc-iujRgT jjMmYd\\">Governance</div>
+      <div class=\\"sc-eLExRp cYhKDv\\"></div>
+      <div class=\\"sc-bAeIUo fXYFqf\\">
+        <div class=\\"sc-iujRgT iLaFVK\\">
+          <div style=\\"display: flex;\\"><a class=\\"sc-bXGyLb ljsPys\\" href=\\"/\\">
+              <div class=\\"sc-GMQeP fToviv\\">Governance</div>
             </a>
-            <div class=\\"sc-eLExRp fELlbW\\" style=\\"margin-left: 16px;\\"></div>
+            <div class=\\"sc-cbkKFq cNGYMw\\" style=\\"margin-left: 16px;\\"></div>
           </div>
-          <div class=\\"sc-exAgwC jZxzzE\\" style=\\"z-index: 100;\\"><a class=\\"sc-gojNiO feWkhi\\" href=\\"https://www.youtube.com/watch?v=wP7DedWcEmg\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\" style=\\"display: flex;\\">
-              <div class=\\"sc-krvtoX jVLJRh\\"></div>Watch intro video
+          <div class=\\"sc-cQFLBn kKeAXz\\" style=\\"z-index: 100;\\"><a class=\\"sc-daURTG hqlFdx\\" href=\\"https://www.youtube.com/watch?v=wP7DedWcEmg\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\" style=\\"display: flex;\\">
+              <div class=\\"sc-fYiAbW jdSgsx\\"></div>Watch intro video
             </a>
-            <div class=\\"sc-cQFLBn cjdsXP\\">Personal Voting Contract</div>
-            <div class=\\"sc-dqBHgY gAUUkL\\">
+            <div class=\\"sc-gojNiO feWkhi\\">Personal Voting Contract</div>
+            <div class=\\"sc-gxMtzJ flGjQB\\">
               <div class=\\"sc-jTzLTM bBbWkd\\" size=\\"20\\" color=\\"background\\"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class=\\"sc-cLQEGU kAHfil\\">
-      <div class=\\"sc-gqPbQI gCRiFW\\">
-        <div class=\\"sc-GMQeP hnfwnh\\">
-          <div class=\\"sc-cbkKFq gqzMbX\\">
+    <div class=\\"sc-gqPbQI jocauR\\">
+      <div class=\\"sc-hORach eTnJTa\\">
+        <div class=\\"sc-exAgwC cFLXwF\\">
+          <div class=\\"sc-krvtoX kkeWTs\\">
             <div class=\\"sc-jTzLTM jQOqgh\\" size=\\"20\\" color=\\"header\\"></div>
           </div>
         </div>
-        <div class=\\"sc-bXGyLb ktDMPs\\"></div>
+        <div class=\\"sc-lkqHmb hIlKiZ\\"></div>
       </div>
     </div>
-    <div class=\\"sc-hZSUBg hspRcV\\"></div>
+    <div class=\\"sc-cMhqgX jERTje\\"></div>
     <footer class=\\"footer__FooterContainer-eSBSwT bcoNly\\">
       <div class=\\"footer__Columns-fYZkS ldvJyo\\">
         <div class=\\"footer__Column-wXdwK dyQhFg\\">

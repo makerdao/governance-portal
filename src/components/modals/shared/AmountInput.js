@@ -24,9 +24,7 @@ export default class AmountInput extends Component {
   }
 
   componentDidMount() {
-    if (this.props.reset !== false) {
-      this.props.clearProxyState();
-    }
+    if (this.props.reset !== false) this.props.clearProxyState();
     ReactGA.modalview(toSlug(this.props.title || 'amount-input'));
   }
 

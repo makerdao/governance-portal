@@ -92,7 +92,7 @@ const check = async res => {
 
 const fetchMock = async network => {
   const mocked = await import('../_mock/topics');
-  return mocked.default;
+  return mocked.default[network];
 };
 
 const fetchLocal = async network => {
