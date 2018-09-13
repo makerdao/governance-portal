@@ -104,31 +104,22 @@ export const firstLetterCapital = string =>
 export const add = (a, b) =>
   BigNumber(a)
     .plus(BigNumber(b))
-    .toString();
+    .toFixed();
 
 export const subtract = (a, b) =>
   BigNumber(a)
     .minus(BigNumber(b))
-    .toString();
+    .toFixed();
 
 export const mul = (a, b) =>
   BigNumber(a)
     .times(BigNumber(b))
-    .toString();
+    .toFixed();
 
 export const div = (a, b) =>
   BigNumber(a)
     .dividedBy(BigNumber(b))
-    .toString();
-
-/**
- * @desc to fixed number of decimals
- * @param  {Number|String} num
- * @param  {Number}        decimals
- * @return {String}
- */
-export const toFixed = (value, decimals) =>
-  BigNumber(BigNumber(value).toFixed(decimals)).toString();
+    .toFixed();
 
 /**
  * @desc make error messages more understandable
