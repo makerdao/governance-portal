@@ -6,10 +6,9 @@ import ReduxThunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
 import Raven from 'raven-js';
 import ReactGA from 'react-ga';
-import styled, { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from 'styled-components';
 
 import rootReducer from './reducers';
-import { isMobile } from './utils/misc';
 import Router from './Routes';
 import {
   localLinkProgress,
@@ -56,15 +55,6 @@ if (process.env.NODE_ENV === 'production') {
   ReactGA.pageview(window.location.pathname + window.location.search);
 }
 
-const Center = styled.div`
-  font-size: 26px;
-  font-weight: bold;
-  font-style: oblique;
-  display: flex;
-  justify-content: center;
-  margin-top: 6em;
-`;
-
 if (process.env.NODE_ENV === 'production') {
   Raven.config(
     'https://424db452238242e4bd8d7e5ab064e413@sentry.io/1270414'
@@ -73,7 +63,7 @@ if (process.env.NODE_ENV === 'production') {
     ReactDOM.render(
       <ThemeProvider theme={currTheme}>
         <Provider store={store}>
-          {isMobile() ? <Center>No mobile support yet</Center> : <Router />}
+          <Router />
         </Provider>
       </ThemeProvider>,
       document.getElementById('root')
@@ -83,7 +73,7 @@ if (process.env.NODE_ENV === 'production') {
   ReactDOM.render(
     <ThemeProvider theme={currTheme}>
       <Provider store={store}>
-        {isMobile() ? <Center>No mobile support yet</Center> : <Router />}
+        <Router />
       </Provider>
     </ThemeProvider>,
     document.getElementById('root')

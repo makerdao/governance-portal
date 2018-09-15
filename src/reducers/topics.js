@@ -46,7 +46,9 @@ export function getWinningProp(state, topicKey) {
         proposal.end_percentage !== undefined
     );
   if (hasEndSnapshot(proposals)) {
-    return proposals.sort((a, b) => a.end_approvals - b.end_approvals)[0];
+    return proposals.sort(
+      (a, b) => Number(b.end_approvals) - Number(a.end_approvals)
+    )[0];
   } else {
     // the end block hasn't been spashotted, so we look at fetched approvals
     const approvalObj = state.approvals.approvals;
@@ -90,9 +92,9 @@ const check = async res => {
 
 // backends
 
-const fetchMock = async network => {
+const fetchMock = async () => {
   const mocked = await import('../_mock/topics');
-  return mocked.default[network];
+  return mocked.default;
 };
 
 const fetchLocal = async network => {
