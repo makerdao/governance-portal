@@ -21,9 +21,7 @@ const StyledLayout = styled.div`
   width: 100%;
   height: 100%;
   min-height: 100vh;
-  @media (max-width: 877px) {
-    width: 1000px;
-  }
+  min-width: 1000px;
 `;
 const AppWrapper = styled.div`
   padding: 0px 16px;
@@ -81,9 +79,6 @@ const DimHeaderElement = styled.div`
   font-weight: 500;
   font-size: ${fonts.size.medium};
   margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
-  @media (max-width: 960px) {
-    font-size: 90%;
-  }
 `;
 
 const DimHeaderLink = styled.a`
@@ -92,9 +87,6 @@ const DimHeaderLink = styled.a`
   font-weight: 500;
   font-size: ${fonts.size.medium};
   margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
-  @media (max-width: 960px) {
-    font-size: 90%;
-  }
 `;
 
 const StyledLink = styled(Link)`
