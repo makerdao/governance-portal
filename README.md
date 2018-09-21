@@ -6,7 +6,10 @@ Maker Governance Dashboard
 The Primary Interface for Dai Credit System Governance
 </h3>
 
-Live demo version: https://dai-gov.now.sh/
+
+
+
+Live demo: https://dai-gov.now.sh/
 
 ### Getting started
 
@@ -42,6 +45,12 @@ By default the production backend ([`content.makerfoundation.com`](https://conte
 
 - `local`: uses a local dev copy of the backend (`127.0.0.1:3000`)
 - `mock`: uses the mocked backend (see [`/src/_mock/topics.js`](/src/_mock/topics.js))
+
+## Codebase
+
+All calls to the [Ethereum](https://www.ethereum.org/) blockchain can be found in the `chain/` folder, split into "writes", "reads" and "web3 utils". These calls are generated from [redux thunks](https://github.com/reduxjs/redux-thunk) (where the results are used to update app-wide state) and sent via [infura](https://infura.io/) nodes (regardless of what provider is injected into the page). 
+
+As for styling, we have css-in-js, & wherever possible, use official [maker ui components](https://github.com/makerdao/ui-components)
 
 ## Code Style
 
