@@ -41,6 +41,7 @@
     "cover": "jest --coverage",
     "eject": "react-scripts eject",
     "precommit": "lint-staged",
+    "prepush": "if git-branch-is -q master; then yarn test; fi",
     "remove-sourcemaps": "rm -rf build/static/js/*.map"
   },
   "lint-staged": {
@@ -56,6 +57,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "enzyme": "^3.3.0",
     "ganache-cli": "^6.1.6",
+    "git-branch-is": "^2.0.0",
     "husky": "^0.14.3",
     "jest-each": "^23.5.0",
     "jest-fetch-mock": "^1.6.5",
