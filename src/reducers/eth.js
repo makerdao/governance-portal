@@ -1,6 +1,5 @@
 import { createReducer } from '../utils/redux';
-import { getEthPrice } from '../chain/read';
-import { getGasPriceEstimate } from '../chain/web3';
+import maker from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -13,8 +12,8 @@ const ETH_INFO_FAILURE = 'eth/ETH_INFO_FAILURE';
 export const ethInit = () => async dispatch => {
   try {
     dispatch({ type: ETH_INFO_REQUEST });
-    const price = await getEthPrice();
-    const gasCost = await getGasPriceEstimate();
+    const price = await maker.service('price').getEthPrice();
+    const gasCost = await maker.getGasPriceEstimate();
     dispatch({ type: ETH_INFO_SUCCESS, payload: { price, gasCost } });
   } catch (err) {
     dispatch({ type: ETH_INFO_FAILURE });

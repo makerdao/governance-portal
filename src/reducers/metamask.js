@@ -1,10 +1,11 @@
 import { createReducer } from '../utils/redux';
-import { getMetamaskNetworkName, setWeb3Network } from '../chain/web3';
 import { addAccount, setActiveAccount, NO_METAMASK_ACCOUNTS } from './accounts';
+import { netIdToName } from '../utils/ethereum';
 import { ethInit } from './eth';
 import { voteTallyInit } from './tally';
 import { topicsInit } from './topics';
 import { hatInit } from './hat';
+import maker from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -24,7 +25,7 @@ const pollForMetamaskChanges = () => async (dispatch, getState) => {
     accounts: { fetching }
   } = getState();
   try {
-    const newNetwork = await getMetamaskNetworkName();
+    const newNetwork = netIdToName(maker.service('web3').networkId());
     // all the data in the store could be wrong now. later on we could clear out
     // any network-specific data from the store carefully, but for now the
     // simplest thing is to start over from scratch.
@@ -54,13 +55,14 @@ export const metamaskConnectInit = () => async dispatch => {
 
   if (typeof window.web3 !== 'undefined') {
     try {
-      network = await getMetamaskNetworkName();
+      await maker.authenticate();
+      network = netIdToName(maker.service('web3').networkId());
       if (network !== 'mainnet' && network !== 'kovan') {
         dispatch({ type: NO_METAMASK_ACCOUNTS });
         return dispatch({ type: WRONG_NETWORK });
       }
       dispatch({ type: CONNECT_SUCCESS, payload: { network } });
-      setWeb3Network(network);
+      maker.setWeb3Network(network);
       networkIsSet = true;
 
       // don't await this, so that account lookup and voting data can occur in
@@ -77,7 +79,7 @@ export const metamaskConnectInit = () => async dispatch => {
     dispatch({ type: NO_METAMASK_ACCOUNTS }); // accounts reducer
   }
 
-  if (!networkIsSet) setWeb3Network(network);
+  if (!networkIsSet) maker.setWeb3Network(network);
   dispatch(voteTallyInit());
   dispatch(topicsInit(network));
   dispatch(hatInit());

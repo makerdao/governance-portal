@@ -1,18 +1,7 @@
 import ReactGA from 'react-ga';
 
 import { createReducer } from '../utils/redux';
-import {
-  initiateLink as _initiateLink,
-  approveLink as _approveLink,
-  proxyLock as _proxyLock,
-  proxyFree as _proxyFree,
-  proxyFreeAll as _proxyFreeAll,
-  breakLink as _breakLink,
-  mkrApprove as _mkrApprove
-} from '../chain/write';
 import { parseError } from '../utils/misc';
-import { awaitTx } from '../chain/web3';
-import { getLinkGas } from '../chain/read';
 import {
   getActiveAccount,
   getAccount,
@@ -22,6 +11,7 @@ import {
 import { AccountTypes } from '../utils/constants';
 import { modalClose } from './modal';
 import { addToastWithTimeout, ToastTypes } from './toasts';
+import maker from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -93,7 +83,7 @@ const handleTx = async ({
   try {
     const txHash = await action;
     dispatch({ type: `proxy/${prefix}_SENT`, payload: { txHash } });
-    const receipt = await awaitTx(txHash, { confirmations: 1 });
+    const receipt = await maker.awaitTx(txHash, { confirmations: 1 });
     dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
     ReactGA.event({
       category: 'Link TX Success',
@@ -145,7 +135,7 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
   await handleTx({
     prefix: 'INITIATE_LINK',
     dispatch,
-    action: _initiateLink({
+    action: maker.initiateLink({
       coldAccount: cold,
       hotAddress: hot.address,
       network
@@ -165,7 +155,7 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
   handleTx({
     prefix: 'APPROVE_LINK',
     dispatch,
-    action: _approveLink({ hotAccount, coldAddress, network }),
+    action: maker.approveLink({ hotAccount, coldAddress, network }),
     successPayload: { coldAddress, hotAddress: hotAccount.address },
     acctType: hotAccount.type
   });
@@ -183,7 +173,7 @@ export const lock = value => (dispatch, getState) => {
   handleTx({
     prefix: 'SEND_MKR_TO_PROXY',
     dispatch,
-    action: _proxyLock({ account, value }),
+    action: maker.proxyLock({ account, value }),
     successPayload: value,
     acctType: account.type
   });
@@ -197,7 +187,7 @@ export const free = value => (dispatch, getState) => {
   handleTx({
     prefix: 'WITHDRAW_MKR',
     dispatch,
-    action: _proxyFree({ account, value }),
+    action: maker.proxyFree({ account, value }),
     successPayload: value,
     acctType: account.type
   });
@@ -211,7 +201,7 @@ export const freeAll = value => (dispatch, getState) => {
   handleTx({
     prefix: 'WITHDRAW_ALL_MKR',
     dispatch,
-    action: _proxyFreeAll({ account, value }),
+    action: maker.proxyFreeAll({ account, value }),
     successPayload: value,
     acctType: account.type
   });
@@ -223,7 +213,7 @@ export const breakLink = () => async (dispatch, getState) => {
   await handleTx({
     prefix: 'BREAK_LINK',
     dispatch,
-    action: _breakLink(account),
+    action: maker.breakLink(account),
     acctType: account.type
   });
   dispatch(refreshAccountData());
@@ -269,7 +259,7 @@ export const mkrApproveProxy = () => (dispatch, getState) => {
   handleTx({
     prefix: 'MKR_APPROVE',
     dispatch,
-    action: _mkrApprove(account, proxyAddress),
+    action: maker.mkrApprove(account, proxyAddress),
     acctType: account.type
   });
 };
@@ -294,7 +284,7 @@ const initialState = {
   coldAddress: '',
   sendMkrAmount: 0,
   withdrawMkrAmount: 0,
-  linkGas: getLinkGas() || 0
+  linkGas: maker.getLinkGas() || 0
 };
 
 // const withExisting = { ...initialState, ...existingState };

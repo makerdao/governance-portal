@@ -1,12 +1,11 @@
 import ReactGA from 'react-ga';
 
 import { createReducer } from '../utils/redux';
-import { voteExec, voteExecNone } from '../chain/write';
-import { awaitTx } from '../chain/web3';
 import { getActiveAccount, getAccount, UPDATE_ACCOUNT } from './accounts';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { voteTallyInit } from './tally';
 import { initApprovalsFetch } from './approvals';
+import maker from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -58,12 +57,12 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
   try {
     if (!activeAccount || !activeAccount.hasProxy)
       throw new Error('must have account active');
-    const txHash = await voteExec({
+    const txHash = await maker.voteExec({
       account: activeAccount,
       proposalAddress
     });
     dispatch({ type: VOTE_SENT, payload: { txHash } });
-    const txReceipt = await awaitTx(txHash, { confirmations: 1 });
+    const txReceipt = await maker.awaitTx(txHash, { confirmations: 1 });
     console.log('mined:', txReceipt);
     dispatch({ type: VOTE_SUCCESS });
 
@@ -90,9 +89,9 @@ export const withdrawVote = () => async (dispatch, getState) => {
   try {
     if (!activeAccount || !activeAccount.hasProxy)
       throw new Error('must have account active');
-    const txHash = await voteExecNone({ account: activeAccount });
+    const txHash = await maker.voteExecNone({ account: activeAccount });
     dispatch({ type: WITHDRAW_SENT, payload: { txHash } });
-    const txReceipt = await awaitTx(txHash, { confirmations: 1 });
+    const txReceipt = await maker.awaitTx(txHash, { confirmations: 1 });
     console.log('mined:', txReceipt);
     dispatch({ type: WITHDRAW_SUCCESS });
 

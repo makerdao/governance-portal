@@ -1,9 +1,9 @@
 import round from 'lodash.round';
 
 import { createReducer } from '../utils/redux';
-import { getApprovalCount } from '../chain/read';
 import flatten from 'ramda/src/flatten';
 import { add } from '../utils/misc';
+import maker from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -21,7 +21,7 @@ export const initApprovalsFetch = () => (dispatch, getState) => {
   dispatch({ type: APPROVALS_REQUEST });
   Promise.all(
     proposals.map(({ source }) =>
-      getApprovalCount(source).then(approvals => ({
+      maker.getApprovalCount(source).then(approvals => ({
         [source]: approvals
       }))
     )

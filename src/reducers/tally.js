@@ -1,6 +1,6 @@
 import { createReducer } from '../utils/redux';
-import { getVoteTally } from '../chain/read';
 import { promiseRetry } from '../utils/misc';
+import maker from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -13,7 +13,7 @@ export const TALLY_UPDATE = 'voteTally/TALLY_UPDATE';
 
 export const voteTallyInit = () => dispatch => {
   dispatch({ type: TALLY_REQUEST });
-  promiseRetry({ times: 3, fn: getVoteTally, delay: 500 })
+  promiseRetry({ times: 3, fn: maker.getVoteTally, delay: 500 })
     .then(tally => {
       dispatch({ type: TALLY_SUCCESS, payload: { tally } });
     })
