@@ -4,28 +4,18 @@ import pipe from 'ramda/src/pipe';
 import differenceWith from 'ramda/src/differenceWith';
 
 import { createReducer } from '../utils/redux';
-import {
-  getMkrBalance,
-  getProxyStatus,
-  getLinkedAddress,
-  getVotedSlate,
-  getSlateAddresses,
-  getNumDeposits,
-  hasInfMkrApproval as _hasInfMkrApproval
-} from '../chain/read';
 import { AccountTypes } from '../utils/constants';
-import { add, eq, subtract, promisedProperties } from '../utils/misc';
+import { add, eq, subtract, toNum, promisedProperties } from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
   WITHDRAW_ALL_MKR_SUCCESS,
   INITIATE_LINK_REQUEST
-  // BREAK_LINK_SUCCESS
 } from './proxy';
 import { createSubProvider } from '../chain/hw-wallet';
 import { netNameToId } from '../utils/ethereum';
-import { toChecksum } from '../chain/web3';
 import values from 'ramda/src/values';
+import maker from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -83,7 +73,8 @@ export const addAccounts = accounts => async (dispatch, getState) => {
       hasProxy,
       type: proxyRole,
       address: proxyAddress
-    } = await getProxyStatus(account.address, network);
+    } = await maker.getProxyStatus(account.address, network);
+    const mkrToken = maker.service('token').getToken('MKR');
     let currProposal = Promise.resolve('');
     if (hasProxy) {
       currProposal = currProposal.then(() =>
@@ -91,31 +82,31 @@ export const addAccounts = accounts => async (dispatch, getState) => {
         // assuming that they're only voting for one in the frontend. This
         // should be changed if that changes
         (async () => {
-          const slate = await getVotedSlate(proxyAddress, network);
-          const addresses = await getSlateAddresses(slate, network);
+          const slate = await maker.getVotedSlate(proxyAddress, network);
+          const addresses = await maker.getSlateAddresses(slate, network);
           return addresses[0] || '';
         })()
       );
     }
     const _payload = {
       ...account,
-      address: toChecksum(account.address),
-      mkrBalance: getMkrBalance(account.address),
+      address: maker.toChecksum(account.address),
+      mkrBalance: mkrToken.balanceOf(account.address).then(toNum),
       hasProxy,
       proxyRole,
       votingFor: currProposal,
       proxy: promisedProperties({
-        address: hasProxy ? toChecksum(proxyAddress) : '',
-        votingPower: hasProxy ? getNumDeposits(proxyAddress, network) : 0,
+        address: hasProxy ? maker.toChecksum(proxyAddress) : '',
+        votingPower: hasProxy ? maker.getNumDeposits(proxyAddress, network) : 0,
         hasInfMkrApproval: hasProxy
-          ? _hasInfMkrApproval(account.address, proxyAddress, network)
+          ? maker.hasInfMkrApproval(account.address, proxyAddress, network)
           : false
       })
     };
     const fetchLinkedAccountData = async () => {
       if (hasProxy) {
         const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
-        const linkedAddress = await getLinkedAddress(
+        const linkedAddress = await maker.getLinkedAddress(
           proxyAddress,
           otherRole,
           network
@@ -123,7 +114,7 @@ export const addAccounts = accounts => async (dispatch, getState) => {
         return {
           address: linkedAddress,
           proxyRole: otherRole,
-          mkrBalance: await getMkrBalance(linkedAddress)
+          mkrBalance: await mkrToken.balanceOf(linkedAddress).then(toNum)
         };
       } else return {};
     };

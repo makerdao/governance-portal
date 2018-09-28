@@ -209,3 +209,5 @@ export const copyToClipboard = string => {
   document.execCommand('Copy');
   textArea.remove();
 };
+
+export const toNum = val => val.toNumber();
