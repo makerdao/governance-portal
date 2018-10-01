@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom';
 
 import { toSlug, eq } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
-import { toChecksum } from '../chain/web3';
 import VoteTally from '../components/VoteTally';
 import Vote from '../components/modals/Vote';
 import Button from '../components/Button';
@@ -24,6 +23,7 @@ import {
   cutMiddle
 } from '../utils/misc';
 import { modalOpen } from '../reducers/modal';
+import maker from '../chain/maker';
 
 const riseUp = keyframes`
 0% {
@@ -313,7 +313,9 @@ class Proposal extends Component {
                         rel="noopener noreferrer"
                         href={ethScanLink(supporter.address, network)}
                       >
-                        {toChecksum(supporter.address)}
+                        {maker
+                          .service('web3')
+                          ._web3.toChecksumAddress(supporter.address)}
                       </Address>
                     </Supporter>
                   ))

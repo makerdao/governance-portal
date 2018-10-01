@@ -7,7 +7,7 @@ import round from 'lodash.round';
 
 import { createReducer } from '../utils/redux';
 import { initApprovalsFetch } from './approvals';
-import { getEtchedSlates } from '../chain/read';
+import maker from '../chain/maker';
 import { eq, div, mul, promiseRetry } from '../utils/misc';
 
 // Constants ----------------------------------------------
@@ -138,7 +138,7 @@ const formatTopic = network => topic => {
 export const topicsInit = network => async dispatch => {
   if (network === 'ganache') {
     // look up all slates
-    const slates = await getEtchedSlates();
+    const slates = await maker.service('chief').getEtchedSlates();
     const topics = [
       {
         topic: 'Test topic',

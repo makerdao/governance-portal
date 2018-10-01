@@ -2,7 +2,7 @@ import round from 'lodash.round';
 
 import { createReducer } from '../utils/redux';
 import flatten from 'ramda/src/flatten';
-import { add } from '../utils/misc';
+import { add, toNum } from '../utils/misc';
 import maker from '../chain/maker';
 
 // Constants ----------------------------------------------
@@ -21,9 +21,11 @@ export const initApprovalsFetch = () => (dispatch, getState) => {
   dispatch({ type: APPROVALS_REQUEST });
   Promise.all(
     proposals.map(({ source }) =>
-      maker.getApprovalCount(source).then(approvals => ({
-        [source]: approvals
-      }))
+      toNum(maker.service('chief').getApprovalCount(source)).then(
+        approvals => ({
+          [source]: approvals
+        })
+      )
     )
   )
     .then(approvals => {

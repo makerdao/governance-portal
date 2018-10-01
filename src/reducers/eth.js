@@ -12,9 +12,17 @@ const ETH_INFO_FAILURE = 'eth/ETH_INFO_FAILURE';
 export const ethInit = () => async dispatch => {
   try {
     dispatch({ type: ETH_INFO_REQUEST });
-    const price = await maker.service('price').getEthPrice();
-    const gasCost = await maker.getGasPriceEstimate();
-    dispatch({ type: ETH_INFO_SUCCESS, payload: { price, gasCost } });
+    const ethPrice = await maker.service('price').getEthPrice();
+    maker.service('web3')._web3.eth.getGasPrice((error, gasPrice) => {
+      if (error) throw new Error('unable to fetch current gas price');
+      dispatch({
+        type: ETH_INFO_SUCCESS,
+        payload: {
+          price: ethPrice.toNumber(),
+          gasCost: gasPrice.shift(-18).toFixed()
+        }
+      });
+    });
   } catch (err) {
     dispatch({ type: ETH_INFO_FAILURE });
   }

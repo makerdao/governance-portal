@@ -8,10 +8,8 @@ import { modalClose } from '../../reducers/modal';
 import { addAccount, setActiveAccount } from '../../reducers/accounts';
 import { LEDGER, TREZOR } from '../../chain/hw-wallet';
 import { createSubProvider } from '../../chain/hw-wallet';
-import { getMkrBalance } from '../../chain/read';
-import { getBalance } from '../../chain/web3';
 import { netNameToId } from '../../utils/ethereum';
-import { cutMiddle, copyToClipboard } from '../../utils/misc';
+import { cutMiddle, toNum, copyToClipboard } from '../../utils/misc';
 import {
   AddressContainer,
   Table,
@@ -21,6 +19,7 @@ import {
 } from './shared/HotColdTable';
 import { Wrapper, Blurb } from './LedgerType';
 import Loader from '../Loader';
+import maker, { ETH, MKR } from '../../chain/maker';
 
 const TREZOR_PATH = "44'/60'/0'/0/0";
 
@@ -168,6 +167,7 @@ class AddressSelection extends Component {
       promisify: true,
       accountsLength: 5
     };
+
     const subprovider = createSubProvider(type, combinedOptions);
     try {
       const accountsObj = await subprovider.getAccounts();
@@ -175,8 +175,24 @@ class AddressSelection extends Component {
         Object.keys(accountsObj).map(async path => ({
           path,
           address: accountsObj[path],
-          eth: round(await getBalance(accountsObj[path]), 3),
-          mkr: round(await getMkrBalance(accountsObj[path]), 3)
+          eth: round(
+            await toNum(
+              maker
+                .service('token')
+                .getToken(ETH)
+                .balanceOf(accountsObj[path])
+            ),
+            3
+          ),
+          mkr: round(
+            await toNum(
+              maker
+                .service('token')
+                .getToken(MKR)
+                .balanceOf(accountsObj[path])
+            ),
+            3
+          )
         }))
       );
       console.log(accounts);

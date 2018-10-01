@@ -15,7 +15,7 @@ import {
 import { createSubProvider } from '../chain/hw-wallet';
 import { netNameToId } from '../utils/ethereum';
 import values from 'ramda/src/values';
-import maker from '../chain/maker';
+import maker, { MKR } from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -74,7 +74,7 @@ export const addAccounts = accounts => async (dispatch, getState) => {
       type: proxyRole,
       address: proxyAddress
     } = await maker.getProxyStatus(account.address, network);
-    const mkrToken = maker.service('token').getToken('MKR');
+    const mkrToken = maker.service('token').getToken(MKR);
     let currProposal = Promise.resolve('');
     if (hasProxy) {
       currProposal = currProposal.then(() =>
@@ -90,18 +90,24 @@ export const addAccounts = accounts => async (dispatch, getState) => {
     }
     const _payload = {
       ...account,
-      address: maker.toChecksum(account.address),
-      mkrBalance: mkrToken.balanceOf(account.address).then(toNum),
+      address: maker.service('web3')._web3.toChecksumAddress(account.address),
+      mkrBalance: toNum(mkrToken.balanceOf(account.address)),
       hasProxy,
       proxyRole,
       votingFor: currProposal,
-      proxy: promisedProperties({
-        address: hasProxy ? maker.toChecksum(proxyAddress) : '',
-        votingPower: hasProxy ? maker.getNumDeposits(proxyAddress, network) : 0,
-        hasInfMkrApproval: hasProxy
-          ? maker.hasInfMkrApproval(account.address, proxyAddress, network)
-          : false
-      })
+      proxy: hasProxy
+        ? promisedProperties({
+            address: maker
+              .service('web3')
+              ._web3.toChecksumAddress(proxyAddress),
+            votingPower: maker.getNumDeposits(proxyAddress, network),
+            hasInfMkrApproval: maker.hasInfMkrApproval(
+              account.address,
+              proxyAddress,
+              network
+            )
+          })
+        : { address: '', votingPower: 0, hasInfMkrApproval: false }
     };
     const fetchLinkedAccountData = async () => {
       if (hasProxy) {
@@ -114,7 +120,7 @@ export const addAccounts = accounts => async (dispatch, getState) => {
         return {
           address: linkedAddress,
           proxyRole: otherRole,
-          mkrBalance: await mkrToken.balanceOf(linkedAddress).then(toNum)
+          mkrBalance: await toNum(mkrToken.balanceOf(linkedAddress))
         };
       } else return {};
     };
