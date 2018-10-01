@@ -14,7 +14,7 @@ const HAT_FAILURE = 'hat/HAT_FAILURE';
 export const hatInit = () => async dispatch => {
   try {
     dispatch({ type: HAT_REQUEST });
-    const bytes32 = await maker.getHat();
+    const bytes32 = await maker.service('chief').getHat();
     const address = paddedBytes32ToAddress(bytes32);
     const approvals = await toNum(
       maker.service('chief').getApprovalCount(address)

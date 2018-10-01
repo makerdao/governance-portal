@@ -48,12 +48,12 @@ class ChiefService extends Maker.PrivateService {
   getNumDeposits = address =>
     this._chiefContract()
       .deposits(address)
-      .then(ETH.wei);
+      .then(MKR.wei);
 
   getApprovalCount = address =>
     this._chiefContract()
       .approvals(address)
-      .then(ETH.wei);
+      .then(MKR.wei);
 
   getHat = () => this._chiefContract().hat();
 
@@ -88,6 +88,8 @@ class ChiefService extends Maker.PrivateService {
     });
 
   getVoteTally = () => {}; // TODO
+
+  getVoteProxy = address => {}; // TODO
 
   // Internal --------------------------------------------
 
@@ -125,14 +127,9 @@ class VoteProxyFactoryService extends Maker.PrivateService {
   // getVoteProxy
 }
 
-const _maker = Maker.create('browser', {
-  plugins: [trezorPlugin, ledgerPlugin],
-  additionalServices: ['chief', 'voteProxy', 'voteProxyFactory'],
-  chief: [ChiefService],
-  voteProxy: [VoteProxyService],
-  voteProxyFactory: [VoteProxyFactoryService],
-  smartContract: {
-    addContracts: {
+class Governance {
+  constructor(preset, config = {}) {
+    const addContracts = {
       [CHIEF]: {
         address: addresses.mainnet.chief, // can we parameterize this by network?
         abi: require('./chief-abi.json')
@@ -141,20 +138,37 @@ const _maker = Maker.create('browser', {
         address: addresses.mainnet.proxy_factory,
         abi: require('./proxy-factory-abi.json')
       }
-    }
-  },
-  log: false
-});
+    };
+    this.maker = Maker.create(preset, {
+      ...config,
+      additionalServices: ['chief', 'voteProxy', 'voteProxyFactory'],
+      chief: [ChiefService],
+      voteProxy: [VoteProxyService],
+      voteProxyFactory: [VoteProxyFactoryService],
+      smartContract: { addContracts }
+    });
+  }
+}
 
-class Governance {}
 Object.assign(Governance.prototype, { ...reads });
 Object.assign(Governance.prototype, { ...writes });
 Object.assign(Governance.prototype, { ...web3 });
 
-Governance.prototype.authenticate = () => _maker.authenticate();
-Governance.prototype.service = name => _maker.service(name);
+for (let method of ['authenticate', 'service']) {
+  Governance.prototype[method] = function(...args) {
+    return this.maker[method](...args);
+  };
+}
 
-const governance = new Governance();
+Governance.create = function(preset, config) {
+  return new Governance(preset, config);
+};
+
+const governance = Governance.create('browser', {
+  plugins: [trezorPlugin, ledgerPlugin],
+  log: false
+});
+
 Object.freeze(governance);
 
 export { ETH, MKR };
