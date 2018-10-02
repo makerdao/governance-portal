@@ -101,9 +101,8 @@ class ChiefService extends Maker.PrivateService {
 }
 
 class VoteProxyService extends Maker.PrivateService {
-  constructor(name = 'voteProxy', address = null, role = null) {
+  constructor(name = 'voteProxy') {
     super(name, ['smartContract', 'chief']);
-    this._proxyAddress = address;
   }
 
   lock = (proxyAddress, amt, unit = MKR) => {
