@@ -8,6 +8,7 @@ import * as reads from './read';
 import * as writes from './write';
 import * as web3 from './web3';
 import addresses from './addresses.json';
+import voteProxyAbi from './vote-proxy-abi.json';
 
 const { ETH, MKR } = Maker;
 
@@ -100,31 +101,102 @@ class ChiefService extends Maker.PrivateService {
 }
 
 class VoteProxyService extends Maker.PrivateService {
-  constructor(name = 'voteProxy', address = null) {
-    super(name, ['smartContract', 'web3', 'token']);
+  constructor(name = 'voteProxy', address = null, role = null) {
+    super(name, ['smartContract', 'chief']);
     this._proxyAddress = address;
   }
-  // voteExec
-  // lock
-  // free
-  // getStatus
-  // getAddress
+
+  lock = (proxyAddress, amt, unit = MKR) => {
+    const mkrAmt = getCurrency(amt, unit).toEthersBigNumber('wei');
+    return this._proxyContract(proxyAddress).lock(mkrAmt);
+  };
+
+  free = (proxyAddress, amt, unit = MKR) => {
+    const mkrAmt = getCurrency(amt, unit).toEthersBigNumber('wei');
+    return this._proxyContract(proxyAddress).free(mkrAmt);
+  };
+
+  voteExec = (proxyAddress, picks) => {
+    if (Array.isArray(picks))
+      return this._proxyContract(proxyAddress)['vote(address[])'](picks);
+    return this._proxyContract(proxyAddress)['vote(bytes32)'](picks);
+  };
+
+  getLinkedAddress = (proxyAddress, proxyRole) => {
+    if (proxyRole === 'hot') return this._proxyContract(proxyAddress).cold();
+    else if (proxyRole === 'cold')
+      return this._proxyContract(proxyAddress).hot();
+    return null;
+  };
+
+  getNumDeposits = proxyAddress =>
+    this.get('chief').getNumDeposits(proxyAddress);
+
   // getVotedSlate
   // getVotedProposals
-  // getNumDeposits
-  // hasInfMkrApproval
-  // getLinkedAddress
-  // getVoteProxy
+
+  getVoteProxy = (address, role) => new VoteProxy(this, address, role);
+
+  _proxyContract = address =>
+    this.get('smartContract').getContractByAddressAndAbi(address, voteProxyAbi);
 }
 
+class VoteProxy {
+  constructor(voteProxyService, address = null, role = null) {
+    this._voteProxyService = voteProxyService;
+    this._address = address;
+    this._role = role;
+  }
+
+  getAddress = () => this._address;
+  getRole = () => this._role;
+  getStatus = () => ({
+    proxyAddress: this.getAddress(),
+    proxyRole: this.getRole()
+  });
+}
+
+const passthroughMethods = ['lock', 'free', 'voteExec', 'getLinkedAddress'];
+
+Object.assign(
+  VoteProxy.prototype,
+  passthroughMethods.reduce((acc, name) => {
+    acc[name] = function(...args) {
+      return this._voteProxyService[name](this._address, ...args);
+    };
+    return acc;
+  }, {})
+);
+
 class VoteProxyFactoryService extends Maker.PrivateService {
-  constructor(name = 'voteProxy') {
-    super(name, ['smartContract', 'web3', 'token']);
+  constructor(name = 'voteProxyFactory') {
+    super(name, ['smartContract', 'voteProxy']);
   }
   // initiateLink
   // approveLink
-  // breakLink
-  // getVoteProxy
+  //   breakLink
+  getVoteProxy = async address => {
+    const { hasProxy, proxyRole, proxyAddress } = await this.getProxyStatus(
+      address
+    );
+    if (!hasProxy) throw new Error('');
+    return new VoteProxy(this.get('voteProxy'), proxyAddress, proxyRole);
+  };
+
+  getProxyStatus = async address => {
+    const [proxyAddressCold, proxyAddressHot] = await Promise.all([
+      this._proxyFactoryContract().coldMap(address),
+      this._proxyFactoryContract().hotMap(address)
+    ]);
+    if (proxyAddressCold !== '0x0000000000000000000000000000000000000000')
+      return { type: 'cold', address: proxyAddressCold, hasProxy: true };
+    if (proxyAddressHot !== '0x0000000000000000000000000000000000000000')
+      return { type: 'hot', address: proxyAddressHot, hasProxy: true };
+    return { type: null, address: '', hasProxy: false };
+  };
+
+  _proxyFactoryContract = () =>
+    this.get('smartContract').getContractByName(PROXY_FACTORY);
 }
 
 class Governance {

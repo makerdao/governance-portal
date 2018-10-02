@@ -13,7 +13,7 @@ import {
   INITIATE_LINK_REQUEST
 } from './proxy';
 import { createSubProvider } from '../chain/hw-wallet';
-import { netNameToId } from '../utils/ethereum';
+import { netNameToId, MAX_UINT_ETH_BN } from '../utils/ethereum';
 import values from 'ramda/src/values';
 import maker, { MKR } from '../chain/maker';
 
@@ -101,14 +101,15 @@ export const addAccounts = accounts => async (dispatch, getState) => {
               .service('web3')
               ._web3.toChecksumAddress(proxyAddress),
             votingPower: maker.getNumDeposits(proxyAddress, network),
-            hasInfMkrApproval: maker.hasInfMkrApproval(
-              account.address,
-              proxyAddress,
-              network
-            )
+            hasInfMkrApproval: maker
+              .service('token')
+              .getToken(MKR)
+              .allowance(account.address, proxyAddress)
+              .then(val => val.eq(MAX_UINT_ETH_BN))
           })
         : { address: '', votingPower: 0, hasInfMkrApproval: false }
     };
+
     const fetchLinkedAccountData = async () => {
       if (hasProxy) {
         const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';

@@ -7,7 +7,7 @@ export const WEI = 1;
 export const GWEI = 1000000000;
 export const ETHER = 1000000000000000000;
 export const MAX_UINT = `0x${Array(64 + 1).join('f')}`;
-export const MAX_UINT_BN = BigNumber(MAX_UINT);
+export const MAX_UINT_ETH_BN = BigNumber(MAX_UINT).shiftedBy(-18);
 
 /**
  * @desc pad string to specific width and padding
