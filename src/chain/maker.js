@@ -134,8 +134,6 @@ class VoteProxyService extends Maker.PrivateService {
   // getVotedSlate
   // getVotedProposals
 
-  getVoteProxy = (address, role) => new VoteProxy(this, address, role);
-
   _proxyContract = address =>
     this.get('smartContract').getContractByAddressAndAbi(address, voteProxyAbi);
 }
@@ -153,9 +151,11 @@ class VoteProxy {
     proxyAddress: this.getAddress(),
     proxyRole: this.getRole()
   });
+  getLinkedAddress = () =>
+    this._voteProxyService.getLinkedAddress(this.getAddress(), this.getRole());
 }
 
-const passthroughMethods = ['lock', 'free', 'voteExec', 'getLinkedAddress'];
+const passthroughMethods = ['lock', 'free', 'voteExec', 'getNumDeposits'];
 
 Object.assign(
   VoteProxy.prototype,
@@ -187,6 +187,7 @@ class VoteProxyFactoryService extends Maker.PrivateService {
       this._proxyFactoryContract().coldMap(address),
       this._proxyFactoryContract().hotMap(address)
     ]);
+
     if (proxyAddressCold !== '0x0000000000000000000000000000000000000000')
       return { type: 'cold', address: proxyAddressCold, hasProxy: true };
     if (proxyAddressHot !== '0x0000000000000000000000000000000000000000')
