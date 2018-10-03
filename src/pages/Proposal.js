@@ -23,7 +23,8 @@ import {
   cutMiddle
 } from '../utils/misc';
 import { modalOpen } from '../reducers/modal';
-import maker from '../chain/maker';
+import web3 from 'web3';
+const { toChecksumAddress } = web3.utils;
 
 const riseUp = keyframes`
 0% {
@@ -313,9 +314,7 @@ class Proposal extends Component {
                         rel="noopener noreferrer"
                         href={ethScanLink(supporter.address, network)}
                       >
-                        {maker
-                          .service('web3')
-                          ._web3.toChecksumAddress(supporter.address)}
+                        {toChecksumAddress(supporter.address)}
                       </Address>
                     </Supporter>
                   ))

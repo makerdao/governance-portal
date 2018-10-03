@@ -2,6 +2,7 @@ import uniqWith from 'ramda/src/uniqWith';
 import concat from 'ramda/src/concat';
 import pipe from 'ramda/src/pipe';
 import differenceWith from 'ramda/src/differenceWith';
+import web3 from 'web3';
 
 import { createReducer } from '../utils/redux';
 import { AccountTypes } from '../utils/constants';
@@ -16,6 +17,7 @@ import { createSubProvider } from '../chain/hw-wallet';
 import { netNameToId, MAX_UINT_ETH_BN } from '../utils/ethereum';
 import values from 'ramda/src/values';
 import maker, { MKR } from '../chain/maker';
+const { toChecksumAddress } = web3.utils;
 
 // Constants ----------------------------------------------
 
@@ -90,16 +92,14 @@ export const addAccounts = accounts => async (dispatch, getState) => {
     }
     const _payload = {
       ...account,
-      address: maker.service('web3')._web3.toChecksumAddress(account.address),
+      address: toChecksumAddress(account.address),
       mkrBalance: toNum(mkrToken.balanceOf(account.address)),
       hasProxy,
       proxyRole,
       votingFor: currProposal,
       proxy: hasProxy
         ? promisedProperties({
-            address: maker
-              .service('web3')
-              ._web3.toChecksumAddress(proxyAddress),
+            address: toChecksumAddress(proxyAddress),
             votingPower: maker.getNumDeposits(proxyAddress, network),
             hasInfMkrApproval: maker
               .service('token')
