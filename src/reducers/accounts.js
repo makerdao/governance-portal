@@ -69,14 +69,12 @@ export const addAccounts = accounts => async (dispatch, getState) => {
     type: FETCHING_ACCOUNT_DATA,
     payload: true
   });
-  const network = getState().metamask.network;
   for (let account of accounts) {
-    const {
-      hasProxy,
-      type: proxyRole,
-      address: proxyAddress
-    } = await maker.getProxyStatus(account.address, network);
     const mkrToken = maker.getToken(MKR);
+    const { hasProxy, voteProxy } = await maker
+      .service('voteProxy')
+      .getVoteProxy(account.address);
+
     let currProposal = Promise.resolve('');
     if (hasProxy) {
       currProposal = currProposal.then(() =>
@@ -84,8 +82,7 @@ export const addAccounts = accounts => async (dispatch, getState) => {
         // assuming that they're only voting for one in the frontend. This
         // should be changed if that changes
         (async () => {
-          const slate = await maker.getVotedSlate(proxyAddress, network);
-          const addresses = await maker.getSlateAddresses(slate, network);
+          const addresses = await voteProxy.getVotedProposalAddresses();
           return addresses[0] || '';
         })()
       );
@@ -95,14 +92,14 @@ export const addAccounts = accounts => async (dispatch, getState) => {
       address: toChecksumAddress(account.address),
       mkrBalance: toNum(mkrToken.balanceOf(account.address)),
       hasProxy,
-      proxyRole,
+      proxyRole: hasProxy ? voteProxy.getRole() : '',
       votingFor: currProposal,
       proxy: hasProxy
         ? promisedProperties({
-            address: toChecksumAddress(proxyAddress),
-            votingPower: maker.getNumDeposits(proxyAddress, network),
+            address: toChecksumAddress(voteProxy.getAddress()),
+            votingPower: toNum(voteProxy.getNumDeposits()),
             hasInfMkrApproval: mkrToken
-              .allowance(account.address, proxyAddress)
+              .allowance(account.address, voteProxy.getAddress())
               .then(val => val.eq(MAX_UINT_ETH_BN))
           })
         : { address: '', votingPower: 0, hasInfMkrApproval: false }
@@ -110,12 +107,8 @@ export const addAccounts = accounts => async (dispatch, getState) => {
 
     const fetchLinkedAccountData = async () => {
       if (hasProxy) {
-        const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
-        const linkedAddress = await maker.getLinkedAddress(
-          proxyAddress,
-          otherRole,
-          network
-        );
+        const otherRole = voteProxy.getRole() === 'hot' ? 'cold' : 'hot';
+        const linkedAddress = await voteProxy.getLinkedAddress();
         return {
           address: linkedAddress,
           proxyRole: otherRole,

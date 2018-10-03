@@ -128,8 +128,6 @@ class VoteProxyService extends Maker.PrivateService {
     super(name, ['smartContract', 'chief']);
   }
 
-  // TODO: getVoteProxy
-
   // Writes -----------------------------------------------
 
   lock(proxyAddress, amt, unit = MKR) {
@@ -162,6 +160,18 @@ class VoteProxyService extends Maker.PrivateService {
     return this.get('chief').getSlateAddresses(_slate);
   }
 
+  async getVoteProxy(voterAddress) {
+    const {
+      hasProxy,
+      role,
+      address: proxyAddress
+    } = await this._getProxyStatus(voterAddress);
+    return {
+      hasProxy,
+      voteProxy: hasProxy ? new VoteProxy(this, proxyAddress, role) : null
+    };
+  }
+
   // Internal --------------------------------------------
 
   _proxyContract(address) {
@@ -174,9 +184,21 @@ class VoteProxyService extends Maker.PrivateService {
   _proxyFactoryContract() {
     return this.get('smartContract').getContractByName(PROXY_FACTORY);
   }
+
+  async _getProxyStatus(address) {
+    const [proxyAddressCold, proxyAddressHot] = await Promise.all([
+      this._proxyFactoryContract().coldMap(address),
+      this._proxyFactoryContract().hotMap(address)
+    ]);
+    if (proxyAddressCold !== ZERO_ADDRESS)
+      return { role: 'cold', address: proxyAddressCold, hasProxy: true };
+    if (proxyAddressHot !== ZERO_ADDRESS)
+      return { role: 'hot', address: proxyAddressHot, hasProxy: true };
+    return { role: null, address: '', hasProxy: false };
+  }
 }
 
-// add Chief Service methods to the Vote Proxy Service
+// add a few Chief Service methods to the Vote Proxy Service
 Object.assign(
   VoteProxyService.prototype,
   ['getVotedSlate', 'getNumDeposits'].reduce((acc, name) => {
@@ -217,7 +239,13 @@ class VoteProxy {
   }
 }
 
-const passthroughMethods = ['lock', 'free', 'voteExec', 'getNumDeposits'];
+const passthroughMethods = [
+  'lock',
+  'free',
+  'voteExec',
+  'getNumDeposits',
+  'getVotedProposalAddresses'
+];
 
 Object.assign(
   VoteProxy.prototype,
@@ -236,26 +264,8 @@ class VoteProxyFactoryService extends Maker.PrivateService {
 
   // TODO: initiateLink, approveLink, breakLink
 
-  async getVoteProxy(address) {
-    const { hasProxy, proxyRole, proxyAddress } = await this.getProxyStatus(
-      address
-    );
-    if (!hasProxy)
-      throw new Error(`address ${address} doesn't have a vote proxy`);
-    return new VoteProxy(this.get('voteProxy'), proxyAddress, proxyRole);
-  }
-
-  async getProxyStatus(address) {
-    const [proxyAddressCold, proxyAddressHot] = await Promise.all([
-      this._proxyFactoryContract().coldMap(address),
-      this._proxyFactoryContract().hotMap(address)
-    ]);
-
-    if (proxyAddressCold !== ZERO_ADDRESS)
-      return { type: 'cold', address: proxyAddressCold, hasProxy: true };
-    if (proxyAddressHot !== ZERO_ADDRESS)
-      return { type: 'hot', address: proxyAddressHot, hasProxy: true };
-    return { type: null, address: '', hasProxy: false };
+  getVoteProxy(address) {
+    return this.get('voteProxy').getVoteProxy(address);
   }
 
   _proxyFactoryContract() {
