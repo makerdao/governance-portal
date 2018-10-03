@@ -6,10 +6,14 @@ import {
   removeHexPrefix,
   weiToEther
 } from '../utils/ethereum';
-import addresses from './addresses.json';
+
+const addresses = {
+  kovan: require('./addresses/kovan.json'),
+  mainnet: require('./addresses/mainnet.json')
+};
 
 try {
-  const testnetAddresses = require('./testnet-addresses.json');
+  const testnetAddresses = require('./addresses/testnet.json');
   addresses.ganache = testnetAddresses;
 } catch (err) {
   // do nothing here; throw an error only if we later attempt to use ganache

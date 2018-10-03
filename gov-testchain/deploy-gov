@@ -46,7 +46,7 @@ PROXY_FACTORY=$(dapp create VoteProxyFactory $CHIEF)
 cd -
 
 # Save the contract addresses to a JSON file
-cat > $CWD/../src/chain/testnet-addresses.json <<- EOM
+cat > $CWD/../src/chain/addresses/testnet.json <<- EOM
 {
   "mkr": "$GOV",
   "iou": "$IOU",

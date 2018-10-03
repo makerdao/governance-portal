@@ -7,8 +7,20 @@ import { getCurrency } from '@makerdao/dai/src/eth/Currency';
 import * as reads from './read';
 import * as writes from './write';
 import * as web3 from './web3';
-import addresses from './addresses.json';
-import voteProxyAbi from './vote-proxy-abi.json';
+import voteProxyAbi from './abis/VoteProxy.json';
+import { map, prop } from 'ramda';
+
+const contractAddresses = {
+  kovan: require('./addresses/kovan.json'),
+  mainnet: require('./addresses/mainnet.json')
+};
+
+try {
+  const testnetAddresses = require('./addresses/testnet.json');
+  contractAddresses.testnet = testnetAddresses;
+} catch (err) {
+  // do nothing here; throw an error only if we later attempt to use ganache
+}
 
 const { ETH, MKR } = Maker;
 
@@ -203,12 +215,12 @@ class Governance {
   constructor(preset, config = {}) {
     const addContracts = {
       [CHIEF]: {
-        address: addresses.mainnet.chief, // can we parameterize this by network?
-        abi: require('./chief-abi.json')
+        address: map(prop('chief'), contractAddresses),
+        abi: require('./abis/DSChief.json')
       },
       [PROXY_FACTORY]: {
-        address: addresses.mainnet.proxy_factory,
-        abi: require('./proxy-factory-abi.json')
+        address: map(prop('proxy_factory'), contractAddresses),
+        abi: require('./abis/VoteProxyFactory.json')
       }
     };
     this.maker = Maker.create(preset, {

@@ -12,7 +12,6 @@
 # testchain
 **/ganache.out
 gov-testchain/addresses.json
-src/chain/testnet-addresses.json
 gov-testchain/node_modules
 
 # misc
