@@ -76,7 +76,7 @@ export const addAccounts = accounts => async (dispatch, getState) => {
       type: proxyRole,
       address: proxyAddress
     } = await maker.getProxyStatus(account.address, network);
-    const mkrToken = maker.service('token').getToken(MKR);
+    const mkrToken = maker.getToken(MKR);
     let currProposal = Promise.resolve('');
     if (hasProxy) {
       currProposal = currProposal.then(() =>
@@ -101,9 +101,7 @@ export const addAccounts = accounts => async (dispatch, getState) => {
         ? promisedProperties({
             address: toChecksumAddress(proxyAddress),
             votingPower: maker.getNumDeposits(proxyAddress, network),
-            hasInfMkrApproval: maker
-              .service('token')
-              .getToken(MKR)
+            hasInfMkrApproval: mkrToken
               .allowance(account.address, proxyAddress)
               .then(val => val.eq(MAX_UINT_ETH_BN))
           })

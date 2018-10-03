@@ -176,21 +176,11 @@ class AddressSelection extends Component {
           path,
           address: accountsObj[path],
           eth: round(
-            await toNum(
-              maker
-                .service('token')
-                .getToken(ETH)
-                .balanceOf(accountsObj[path])
-            ),
+            await toNum(maker.getToken(ETH).balanceOf(accountsObj[path])),
             3
           ),
           mkr: round(
-            await toNum(
-              maker
-                .service('token')
-                .getToken(MKR)
-                .balanceOf(accountsObj[path])
-            ),
+            await toNum(maker.getToken(MKR).balanceOf(accountsObj[path])),
             3
           )
         }))

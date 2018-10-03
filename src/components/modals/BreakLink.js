@@ -26,7 +26,7 @@ class BreakLink extends Component {
     const isColdWallet = account.proxyRole === 'cold';
     const coldAddress = isColdWallet ? account.address : linkedAccount.address;
     const hotAddress = isColdWallet ? linkedAccount.address : account.address;
-    const ethToken = maker.service('token').getToken(ETH);
+    const ethToken = maker.getToken(ETH);
     const [ethHot, ethCold] = await Promise.all([
       toNum(ethToken.balanceOf(hotAddress)),
       toNum(ethToken.balanceOf(coldAddress))
