@@ -71,14 +71,28 @@ class AddressSelection extends Component {
 
   componentDidMount() {
     if (this.props.trezor) {
-      this.getAddresses(TREZOR, TREZOR_PATH);
+      console.log('trezor not refactored yet');
+      //this.getAddresses(TREZOR, TREZOR_PATH);
     } else {
-      this.getAddresses(LEDGER, this.props.path);
+      maker.addAccount('myLedger', {
+        type: 'ledger',
+        path: this.props.path,
+        accountsLength: 5,
+        choose: async (addresses, callback) => {
+          this.setState({
+            accounts: await this.getInfo(addresses),
+            pickAccount: callback
+          });
+        }
+      });
+      console.log('ledger account added');
+      //this.getAddresses(LEDGER, this.props.path);
     }
   }
 
   render() {
-    const { accounts, selectedPath } = this.state;
+    const { accounts, selectedIndex } = this.state;
+    console.log('accounts', accounts);
     if (accounts.length === 0) {
       return <Loading type={this.props.trezor ? 'trezor' : 'ledger'} />;
     }
@@ -117,8 +131,8 @@ class AddressSelection extends Component {
                       type="radio"
                       name="address"
                       value={path}
-                      checked={path === selectedPath}
-                      onChange={() => this.setState({ selectedPath: path })}
+                      checked={path === selectedIndex}
+                      onChange={() => this.setState({ selectedIndex: path })}
                     />
                   </td>
                 </tr>
@@ -135,7 +149,7 @@ class AddressSelection extends Component {
         >
           <Button
             slim
-            disabled={!selectedPath}
+            disabled={!selectedIndex}
             onClick={this.useSelectedAccount}
           >
             Unlock Wallet
@@ -147,49 +161,31 @@ class AddressSelection extends Component {
 
   useSelectedAccount = () => {
     const { addAccount, setActiveAccount, modalClose, trezor } = this.props;
-    const { accounts, selectedPath, subprovider } = this.state;
-    const address = accounts.find(a => a.path === selectedPath).address;
+    const { accounts, selectedIndex } = this.state;
+    const address = accounts.find(a => a.index === selectedIndex).address;
 
     addAccount({
       address,
-      type: trezor ? TREZOR : LEDGER,
-      subprovider
+      type: trezor ? TREZOR : LEDGER
     }).then(() => setActiveAccount(address));
-
+    this.state.pickAccount(null, address); //add the account to the maker object
     modalClose();
   };
 
-  async getAddresses(type, path) {
-    const { network } = this.props;
-    const combinedOptions = {
-      path,
-      networkId: netNameToId(network),
-      promisify: true,
-      accountsLength: 5
-    };
-
-    const subprovider = createSubProvider(type, combinedOptions);
-    try {
-      const accountsObj = await subprovider.getAccounts();
-      const accounts = await Promise.all(
-        Object.keys(accountsObj).map(async path => ({
-          path,
-          address: accountsObj[path],
-          eth: round(
-            await toNum(maker.getToken(ETH).balanceOf(accountsObj[path])),
+  getInfo(addresses) {
+    return Promise.all(
+      Object.keys(addresses).map(async index => ({
+        index: index,
+        address: addresses[index],
+        eth: await Promise.resolve(
+          1
+        ) /*round(
+            await toNum(maker.getToken(ETH).balanceOf(addresses[index])),
             3
-          ),
-          mkr: round(
-            await toNum(maker.getToken(MKR).balanceOf(accountsObj[path])),
-            3
-          )
-        }))
-      );
-      console.log(accounts);
-      this.setState({ accounts, subprovider });
-    } catch (err) {
-      console.error(err);
-    }
+          )*/,
+        mkr: await Promise.resolve(2)
+      }))
+    );
   }
 }
 
