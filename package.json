@@ -34,7 +34,7 @@
   },
   "scripts": {
     "start": "HTTPS=true NODE_ENV=development react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && rm build/package.json && cp now.json build/",
     "test": "jest",
     "testnet": "./gov-testchain/deploy-gov",
     "ci": "./gov-testchain/deploy-gov --ci jest --coverage",
@@ -66,9 +66,6 @@
     "redux-mock-store": "^1.5.3",
     "web3-fake-provider": "^0.1.0",
     "whatwg-fetch": "^2.0.4"
-  },
-  "now": {
-    "alias": "dai-gov-master"
   },
   "jest": {
     "coverageReporters": [
