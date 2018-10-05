@@ -105,6 +105,45 @@ const handleTx = async ({
   }
 };
 
+const handleTxMakerJS = async ({
+  prefix,
+  dispatch,
+  txObject,
+  successPayload = '',
+  acctType
+}) => {
+  // await new lifecycle method release?
+  const txMgr = maker.service('transactionManager');
+  txMgr.listen(txObject, {
+    pending: tx => {
+      dispatch({
+        type: `proxy/${prefix}_SENT`,
+        payload: { txHash: tx.hash }
+      });
+    },
+    mined: tx => {
+      dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
+      ReactGA.event({
+        category: 'Link TX Success',
+        action: prefix,
+        label: `wallet type ${acctType || 'unknown'}`
+      });
+      console.log('mined:', tx);
+    }
+    // TODO: error handle and get descriptive failure messages
+    // error: tx => {
+    //   console.error(err);
+    //   dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
+    //   dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+    //   ReactGA.event({
+    //     category: 'User notification error',
+    //     action: 'proxy',
+    //     label: parseError(err)
+    //   });
+    // }
+  });
+};
+
 function requireCorrectAccount(state, requiredAccount, typeNeeded) {
   if (!requiredAccount) {
     window.alert(
@@ -161,19 +200,21 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
   });
 };
 
-export const lock = value => (dispatch, getState) => {
+export const lock = value => async (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
 
   const account = getActiveAccount(getState());
   if (!account || account.proxyRole !== 'cold') {
     return window.alert(`Switch to your cold wallet before continuing.`);
   }
+  maker.useAccount(account.id);
+  const lock = maker.service('voteProxy').lock(account.proxy.address, value);
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
-  handleTx({
+  handleTxMakerJS({
     prefix: 'SEND_MKR_TO_PROXY',
     dispatch,
-    action: maker.proxyLock({ account, value }),
+    txObject: lock,
     successPayload: value,
     acctType: account.type
   });
@@ -183,11 +224,14 @@ export const free = value => (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
 
   const account = getActiveAccount(getState());
+  maker.useAccount(account.id);
+  const free = maker.service('voteProxy').free(account.proxy.address, value);
+
   dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
-  handleTx({
+  handleTxMakerJS({
     prefix: 'WITHDRAW_MKR',
     dispatch,
-    action: maker.proxyFree({ account, value }),
+    txObject: free,
     successPayload: value,
     acctType: account.type
   });
