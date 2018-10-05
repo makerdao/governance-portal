@@ -216,3 +216,9 @@ export const toNum = async promise => {
   const val = await promise;
   return val.toNumber();
 };
+
+export const uniqueId = () =>
+  '_' +
+  Math.random()
+    .toString(36)
+    .substr(2, 9);

@@ -5,6 +5,13 @@ export const AccountTypes = {
   GANACHE: 'GANACHE'
 };
 
+export const MakerJSAcctTypeConversion = {
+  [AccountTypes.LEDGER]: 'ledger',
+  [AccountTypes.TREZOR]: 'trezor',
+  [AccountTypes.METAMASK]: 'browser',
+  [AccountTypes.GANACHE]: 'provider'
+};
+
 export const Toasts = {
   ERROR: 'ERROR',
   NEUTRAL: 'NEUTRAL',
