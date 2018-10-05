@@ -35,7 +35,7 @@
   "scripts": {
     "start": "HTTPS=true NODE_ENV=development react-scripts start",
     "build": "react-scripts build",
-    "deploy": "now ./build -A ../now.json",
+    "deploy": "now ./build -A ./now.json",
     "test": "jest",
     "testnet": "./gov-testchain/deploy-gov",
     "ci": "./gov-testchain/deploy-gov --ci jest --coverage",
