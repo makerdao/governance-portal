@@ -4,9 +4,6 @@
   "scripts": {
     "start": "serve --single"
   },
-  "now": {
-    "alias": "dai-gov-master"
-  },
   "dependencies": {
     "serve": "latest"
   }
