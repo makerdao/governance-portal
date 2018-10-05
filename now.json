@@ -1,4 +1,5 @@
 {
+  "name": "maker-governance-dashboard",
   "type": "static",
   "static": {
     "rewrites": [
