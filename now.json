@@ -1,6 +1,7 @@
 {
   "name": "maker-governance-dashboard",
   "type": "static",
+  "alias": "dai-gov-master",
   "static": {
     "rewrites": [
       {
