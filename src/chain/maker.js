@@ -140,6 +140,10 @@ class VoteProxyService extends Maker.PrivateService {
     return this._proxyContract(proxyAddress).free(mkrAmt);
   }
 
+  freeAll(proxyAddress) {
+    return this._proxyContract(proxyAddress).freeAll();
+  }
+
   voteExec(proxyAddress, picks) {
     if (Array.isArray(picks))
       return this._proxyContract(proxyAddress)['vote(address[])'](picks);
@@ -262,7 +266,17 @@ class VoteProxyFactoryService extends Maker.PrivateService {
     super(name, ['smartContract', 'voteProxy']);
   }
 
-  // TODO: initiateLink, approveLink, breakLink
+  initiateLink(hotAddress) {
+    return this._proxyFactoryContract().initiateLink(hotAddress);
+  }
+
+  approveLink(coldAddress) {
+    return this._proxyFactoryContract().approveLink(coldAddress);
+  }
+
+  breakLink() {
+    return this._proxyFactoryContract().breakLink();
+  }
 
   getVoteProxy(address) {
     return this.get('voteProxy').getVoteProxy(address);

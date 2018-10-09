@@ -29,8 +29,8 @@ class MidLink extends Component {
     const mkrToken = maker.getToken(MKR);
     const ethToken = maker.getToken(ETH);
     const [ethHot, ethCold, mkrHot, mkrCold] = await Promise.all([
-      toNum(ethToken.balanceOf(hotAddress)),
-      toNum(ethToken.balanceOf(coldAddress)),
+      ethToken.balanceOf(hotAddress),
+      ethToken.balanceOf(coldAddress),
       toNum(mkrToken.balanceOf(hotAddress)),
       toNum(mkrToken.balanceOf(coldAddress))
     ]);

@@ -5,7 +5,7 @@ import differenceWith from 'ramda/src/differenceWith';
 import web3 from 'web3';
 
 import { createReducer } from '../utils/redux';
-import { AccountTypes, MakerJSAcctTypeConversion } from '../utils/constants';
+import { AccountTypes } from '../utils/constants';
 import {
   add,
   eq,

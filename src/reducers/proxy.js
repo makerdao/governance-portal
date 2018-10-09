@@ -11,7 +11,7 @@ import {
 import { AccountTypes } from '../utils/constants';
 import { modalClose } from './modal';
 import { addToastWithTimeout, ToastTypes } from './toasts';
-import maker from '../chain/maker';
+import maker, { MKR } from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -73,46 +73,45 @@ export const goToStep = step => ({ type: GO_TO_STEP, payload: step });
 
 // FIXME sometimes this causes an exception because of a null receipt; something
 // wrong with awaitTx logic?
-const handleTx = async ({
-  prefix,
-  dispatch,
-  action,
-  successPayload = '',
-  acctType
-}) => {
-  try {
-    const txHash = await action;
-    dispatch({ type: `proxy/${prefix}_SENT`, payload: { txHash } });
-    const receipt = await maker.awaitTx(txHash, { confirmations: 1 });
-    dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
-    ReactGA.event({
-      category: 'Link TX Success',
-      action: prefix,
-      label: `wallet type ${acctType || 'unknown'}`
-    });
-    console.log('mined:', receipt);
-  } catch (err) {
-    console.error(err);
-    dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
-    dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
-    ReactGA.event({
-      category: 'User notification error',
-      action: 'proxy',
-      label: parseError(err)
-    });
-    // TODO display this error to the user; it could require user intervention,
-    // e.g. it could be due to insufficient funds
-  }
-};
+// const handleTx = async ({
+//   prefix,
+//   dispatch,
+//   action,
+//   successPayload = '',
+//   acctType
+// }) => {
+//   try {
+//     const txHash = await action;
+//     dispatch({ type: `proxy/${prefix}_SENT`, payload: { txHash } });
+//     const receipt = await maker.awaitTx(txHash, { confirmations: 1 });
+//     dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
+//     ReactGA.event({
+//       category: 'Link TX Success',
+//       action: prefix,
+//       label: `wallet type ${acctType || 'unknown'}`
+//     });
+//     console.log('mined:', receipt);
+//   } catch (err) {
+//     console.error(err);
+//     dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
+//     dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+//     ReactGA.event({
+//       category: 'User notification error',
+//       action: 'proxy',
+//       label: parseError(err)
+//     });
+//     // TODO display this error to the user; it could require user intervention,
+//     // e.g. it could be due to insufficient funds
+//   }
+// };
 
-const handleTxMakerJS = async ({
+const handleTx = async ({
   prefix,
   dispatch,
   txObject,
   successPayload = '',
   acctType
 }) => {
-  // await new lifecycle method release?
   const txMgr = maker.service('transactionManager');
   txMgr.listen(txObject, {
     pending: tx => {
@@ -166,21 +165,23 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
   if (!!getAccount(getState(), cold.address)) {
     dispatch(setActiveAccount(cold.address));
   } else if (!requireCorrectAccount(getState(), cold, 'cold')) return;
-  const network = getState().metamask.network;
+
+  maker.useAccount(cold.id);
+  const initiateLink = maker
+    .service('voteProxyFactory')
+    .initiateLink(hot.address);
+
   dispatch({
     type: INITIATE_LINK_REQUEST,
     payload: { hotAddress: hot.address, coldAddress: cold.address }
   });
-  await handleTx({
+  handleTx({
     prefix: 'INITIATE_LINK',
     dispatch,
-    action: maker.initiateLink({
-      coldAccount: cold,
-      hotAddress: hot.address,
-      network
-    }),
+    txObject: initiateLink,
     acctType: cold.type
   });
+
   if (!!getAccount(getState(), getState().proxy.hotAddress)) {
     dispatch(setActiveAccount(getState().proxy.hotAddress));
   }
@@ -188,13 +189,18 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
 
 export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
   if (!requireCorrectAccount(getState(), hotAccount, 'hot')) return;
-  const network = getState().metamask.network;
-  dispatch({ type: APPROVE_LINK_REQUEST });
   const { coldAddress } = getState().proxy;
+  maker.useAccount(hotAccount.id);
+  const approveLink = maker
+    .service('voteProxyFactory')
+    .approveLink(coldAddress);
+
+  dispatch({ type: APPROVE_LINK_REQUEST });
+
   handleTx({
     prefix: 'APPROVE_LINK',
     dispatch,
-    action: maker.approveLink({ hotAccount, coldAddress, network }),
+    txObject: approveLink,
     successPayload: { coldAddress, hotAddress: hotAccount.address },
     acctType: hotAccount.type
   });
@@ -211,7 +217,7 @@ export const lock = value => async (dispatch, getState) => {
   const lock = maker.service('voteProxy').lock(account.proxy.address, value);
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
-  handleTxMakerJS({
+  handleTx({
     prefix: 'SEND_MKR_TO_PROXY',
     dispatch,
     txObject: lock,
@@ -228,7 +234,7 @@ export const free = value => (dispatch, getState) => {
   const free = maker.service('voteProxy').free(account.proxy.address, value);
 
   dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
-  handleTxMakerJS({
+  handleTx({
     prefix: 'WITHDRAW_MKR',
     dispatch,
     txObject: free,
@@ -239,14 +245,16 @@ export const free = value => (dispatch, getState) => {
 
 export const freeAll = value => (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
-
   const account = getActiveAccount(getState());
+
+  maker.useAccount(account.id);
+  const freeAll = maker.service('voteProxy').freeAll(account.proxy.address);
+
   dispatch({ type: WITHDRAW_ALL_MKR_REQUEST, payload: value });
   handleTx({
     prefix: 'WITHDRAW_ALL_MKR',
     dispatch,
-    action: maker.proxyFreeAll({ account, value }),
-    successPayload: value,
+    txObject: freeAll,
     acctType: account.type
   });
 };
@@ -254,10 +262,14 @@ export const freeAll = value => (dispatch, getState) => {
 export const breakLink = () => async (dispatch, getState) => {
   dispatch({ type: BREAK_LINK_REQUEST });
   const account = getActiveAccount(getState());
-  await handleTx({
+
+  maker.useAccount(account.id);
+  const breakLink = maker.service('voteProxyFactory').breakLink();
+
+  handleTx({
     prefix: 'BREAK_LINK',
     dispatch,
-    action: maker.breakLink(account),
+    txObject: breakLink,
     acctType: account.type
   });
   dispatch(refreshAccountData());
@@ -298,12 +310,17 @@ export const refreshAccountData = () => (dispatch, getState) => {
 export const mkrApproveProxy = () => (dispatch, getState) => {
   const account = getActiveAccount(getState());
   if (!requireCorrectAccount(getState(), account, 'cold')) return;
+
+  maker.useAccount(account.id);
+  const giveProxyAllowance = maker
+    .getToken(MKR)
+    .approveUnlimited(account.proxy.address);
+
   dispatch({ type: MKR_APPROVE_REQUEST });
-  const proxyAddress = account.proxy.address;
   handleTx({
     prefix: 'MKR_APPROVE',
     dispatch,
-    action: maker.mkrApprove(account, proxyAddress),
+    txObject: giveProxyAllowance,
     acctType: account.type
   });
 };
