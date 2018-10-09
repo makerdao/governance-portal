@@ -25,3 +25,5 @@ deploy:
     skip_cleanup: true
     on:
       master: true
+  notifications:
+      webhooks: https://chat.makerdao.com/hooks/TLXyKZsRYHPg4SCTX/gJwX6deFjszbR5M5azP99eYYNYobru2FxGGYXu6xw4uR95Bp
