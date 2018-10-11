@@ -13,12 +13,12 @@ import * as web3 from './web3';
 import { map, prop } from 'ramda';
 
 const contractAddresses = {
-  kovan: require('./addresses/kovan.json'),
-  mainnet: require('./addresses/mainnet.json')
+  kovan: require('../contracts/addresses/kovan.json'),
+  mainnet: require('../contracts/addresses/mainnet.json')
 };
 
 try {
-  const testnetAddresses = require('./addresses/testnet.json');
+  const testnetAddresses = require('../contracts/addresses/testnet.json');
   contractAddresses.testnet = testnetAddresses;
 } catch (err) {
   // do nothing here; throw an error only if we later attempt to use ganache
@@ -34,11 +34,11 @@ class Governance {
     const addContracts = {
       [CHIEF]: {
         address: map(prop('chief'), contractAddresses),
-        abi: require('./abis/DSChief.json')
+        abi: require('../contracts/abis/DSChief.json')
       },
       [PROXY_FACTORY]: {
         address: map(prop('proxy_factory'), contractAddresses),
-        abi: require('./abis/VoteProxyFactory.json')
+        abi: require('../contracts/abis/VoteProxyFactory.json')
       }
     };
     this.maker = Maker.create(preset, {

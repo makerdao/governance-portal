@@ -4,7 +4,7 @@ import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
 
 import Loader from './Loader';
-import { eq, formatDate, formatRound } from '../utils/misc';
+import { eq, formatDate, formatRound } from '../../src/utils/misc';
 import { getWinningProp } from '../reducers/topics';
 
 const fadeIn = keyframes`

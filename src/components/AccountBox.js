@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 
 import ClickOutside from './ClickOutside';
 import Loader from './Loader';
-import { cutMiddle, firstLetterCapital } from '../utils/misc';
-import { numberForAddress } from '../utils/ethereum';
+import { cutMiddle, firstLetterCapital } from '../../src/utils/misc';
+import { numberForAddress } from '../../src/utils/ethereum';
 import arrow from '../imgs/arrow.svg';
 import { fonts, colors, shadows } from '../theme';
 import { getActiveAccount, setActiveAccount } from '../reducers/accounts';

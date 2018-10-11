@@ -5,7 +5,7 @@ import {
   netIdToName,
   removeHexPrefix,
   weiToEther
-} from '../utils/ethereum';
+} from '../../src/utils/ethereum';
 
 const addresses = {
   kovan: require('./addresses/kovan.json'),

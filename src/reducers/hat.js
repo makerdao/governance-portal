@@ -1,6 +1,6 @@
-import { createReducer } from '../utils/redux';
-import { paddedBytes32ToAddress } from '../utils/ethereum';
-import { toNum } from '../utils/misc';
+import { createReducer } from '../../src/utils/redux';
+import { paddedBytes32ToAddress } from '../../src/utils/ethereum';
+import { toNum } from '../../src/utils/misc';
 import maker from '../chain/maker';
 
 // Constants ----------------------------------------------

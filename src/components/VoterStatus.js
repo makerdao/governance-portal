@@ -18,7 +18,7 @@ import {
 } from './Banner';
 import Loader from './Loader';
 import { cutMiddle, firstLetterCapital, formatRound } from '../utils/misc';
-import { ethScanLink } from '../utils/ethereum';
+import { ethScanLink } from '../../src/utils/ethereum';
 import Lock from './modals/Lock';
 import Withdraw from './modals/Withdraw';
 import ProxySetup from './modals/ProxySetup';

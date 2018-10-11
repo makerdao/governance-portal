@@ -16,8 +16,8 @@ import {
   generateCallData,
   removeHexPrefix,
   etherToWei
-} from '../utils/ethereum';
-import { AccountTypes } from '../utils/constants';
+} from '../../src/utils/ethereum';
+import { AccountTypes } from './utils/constants';
 
 async function sendTransactionWithAccount(account, tx) {
   const from = tx.from.substr(0, 2) === '0x' ? tx.from : `0x${tx.from}`;

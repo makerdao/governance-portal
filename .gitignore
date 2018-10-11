@@ -27,4 +27,5 @@ yarn-error.log*
 
 # developing separate services branch
 .vscode
-/governance-service/node_modules
+governance-service/node_modules
+gov-testchain/out

@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
 
 import descend from '../imgs/descend.svg';
-import { toSlug } from '../utils/misc';
+import { toSlug } from '../../src/utils/misc';
 import theme, { fonts, shadows } from '../theme';
 
 const Card = styled.div`

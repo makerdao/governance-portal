@@ -15,8 +15,8 @@ import {
   paddedBytes32ToAddress,
   isZeroAddress,
   MAX_UINT
-} from '../utils/ethereum';
-import { add } from '../utils/misc.js';
+} from '../../src/utils/ethereum';
+import { add } from '../../src/utils/misc.js';
 import contractInfo from './contract-info.json';
 
 const chiefInfo = contractInfo.chief;

@@ -5,15 +5,15 @@ import {
   netIdToName,
   removeHexPrefix,
   weiToEther
-} from '../utils/ethereum';
+} from '../../src/utils/ethereum';
 
 const addresses = {
-  kovan: require('./addresses/kovan.json'),
-  mainnet: require('./addresses/mainnet.json')
+  kovan: require('../contracts/addresses/kovan.json'),
+  mainnet: require('../contracts/addresses/mainnet.json')
 };
 
 try {
-  const testnetAddresses = require('./addresses/testnet.json');
+  const testnetAddresses = require('../contracts/addresses/testnet.json');
   addresses.ganache = testnetAddresses;
 } catch (err) {
   // do nothing here; throw an error only if we later attempt to use ganache

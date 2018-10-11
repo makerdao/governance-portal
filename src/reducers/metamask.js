@@ -1,6 +1,6 @@
-import { createReducer } from '../utils/redux';
+import { createReducer } from '../../src/utils/redux';
 import { addAccount, setActiveAccount, NO_METAMASK_ACCOUNTS } from './accounts';
-import { netIdToName } from '../utils/ethereum';
+import { netIdToName } from '../../src/utils/ethereum';
 import { ethInit } from './eth';
 import { voteTallyInit } from './tally';
 import { topicsInit } from './topics';
