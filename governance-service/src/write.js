@@ -79,6 +79,7 @@ export const initiateLink = async ({
   hotAddress,
   network = null
 }) => {
+  // factory is undefined?
   const factory = await getProxyFactory(network);
   const methodSig = getMethodSig('initiateLink(address)');
   const callData = generateCallData({
@@ -86,6 +87,7 @@ export const initiateLink = async ({
     args: [removeHexPrefix(hotAddress)]
   });
   const tx = { to: factory, from: coldAccount.address, data: callData };
+  console.log(tx);
   return sendTransactionWithAccount(coldAccount, tx);
 };
 

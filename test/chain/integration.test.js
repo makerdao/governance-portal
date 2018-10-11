@@ -2,7 +2,7 @@ import {
   getProxyStatus,
   getMkrBalance,
   hasInfMkrApproval
-} from '../../src/chain/read';
+} from '../../governance-service/src/read';
 import {
   initiateLink,
   approveLink,
@@ -10,7 +10,7 @@ import {
   sendMkr,
   mkrApprove,
   proxyLock
-} from '../../src/chain/write';
+} from '../../governance-service/src/write';
 import {
   useGanache,
   takeSnapshot,
@@ -44,7 +44,7 @@ const linkAccounts = async (cold, hot) => {
   });
 };
 
-test('can create and break a link', async () => {
+test.only('can create and break a link', async () => {
   const cold = ganacheAccounts[0];
   const hot = ganacheAccounts[1];
   await linkAccounts(cold, hot);

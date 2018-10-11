@@ -3,7 +3,7 @@ import {
   getEtchedSlates,
   getProxyStatus,
   getVoteTally
-} from '../../src/chain/read';
+} from '../../governance-service/src/read';
 import { useGanache, fakeAddresses } from '../helpers';
 
 beforeAll(() => {

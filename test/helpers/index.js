@@ -1,4 +1,4 @@
-import { setWeb3Provider } from '../../src/chain/web3';
+import { setWeb3Provider } from '../../governance-service/src/web3';
 import fetch from 'node-fetch';
 
 function ganacheAddress() {
