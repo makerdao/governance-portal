@@ -16,7 +16,7 @@ import {
   generateCallData,
   removeHexPrefix,
   etherToWei
-} from '../../src/utils/ethereum';
+} from './utils/ethereum';
 import { AccountTypes } from './utils/constants';
 
 async function sendTransactionWithAccount(account, tx) {
@@ -87,7 +87,6 @@ export const initiateLink = async ({
     args: [removeHexPrefix(hotAddress)]
   });
   const tx = { to: factory, from: coldAccount.address, data: callData };
-  console.log(tx);
   return sendTransactionWithAccount(coldAccount, tx);
 };
 

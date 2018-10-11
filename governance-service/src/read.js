@@ -15,7 +15,8 @@ import {
   paddedBytes32ToAddress,
   isZeroAddress,
   MAX_UINT
-} from '../../src/utils/ethereum';
+} from './utils/ethereum';
+// need to remove this dependency:
 import { add } from '../../src/utils/misc.js';
 import contractInfo from './contract-info.json';
 

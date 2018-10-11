@@ -1,8 +1,4 @@
-import {
-  getProxyStatus,
-  getMkrBalance,
-  hasInfMkrApproval
-} from '../../governance-service/src/read';
+import { getProxyStatus, getMkrBalance, hasInfMkrApproval } from '../src/read';
 import {
   initiateLink,
   approveLink,
@@ -10,14 +6,16 @@ import {
   sendMkr,
   mkrApprove,
   proxyLock
-} from '../../governance-service/src/write';
+} from '../src/write';
 import {
   useGanache,
   takeSnapshot,
   restoreSnapshot,
   ganacheAccounts,
   ganacheCoinbase
-} from '../helpers';
+} from './helpers';
+
+// TODO: figure out where to put helpers
 
 let snapshotId = null;
 
@@ -44,7 +42,7 @@ const linkAccounts = async (cold, hot) => {
   });
 };
 
-test.only('can create and break a link', async () => {
+test('can create and break a link', async () => {
   const cold = ganacheAccounts[0];
   const hot = ganacheAccounts[1];
   await linkAccounts(cold, hot);

@@ -6,6 +6,8 @@ import web3 from 'web3';
 
 import { createReducer } from '../../src/utils/redux';
 import { AccountTypes } from '../../src/utils/constants';
+//TODO: do we need to add this to a constants file with this export? or pull it from the lib?
+
 import {
   add,
   eq,
@@ -21,6 +23,7 @@ import {
   INITIATE_LINK_REQUEST
 } from './proxy';
 import { createSubProvider } from '../chain/hw-wallet';
+// for now this lives in 2 places until I figure out which project it should belong to:
 import { netNameToId, MAX_UINT_ETH_BN } from '../../src/utils/ethereum';
 import values from 'ramda/src/values';
 import maker, { MKR } from '../chain/maker';

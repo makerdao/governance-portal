@@ -5,12 +5,13 @@ import {
   getChief,
   getWeb3Instance,
   encodeParameter
-} from '../../src/chain/web3';
+} from '../src/web3';
 import FakeProvider from 'web3-fake-provider';
-import { useGanache } from '../helpers';
+import { useGanache } from './helpers';
 
 test('singleton setup', async () => {
   const provider = new FakeProvider();
+
   setWeb3Provider(provider);
   provider.injectResult('42');
   let name = await getNetworkName();

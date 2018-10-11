@@ -1,6 +1,4 @@
 import Maker from '@makerdao/dai';
-import trezorPlugin from '@makerdao/dai-plugin-trezor-web';
-import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 
 import ChiefService from './ChiefService';
 import VoteProxyService from './VoteProxyService';
@@ -23,8 +21,6 @@ try {
 } catch (err) {
   // do nothing here; throw an error only if we later attempt to use ganache
 }
-
-const { ETH, MKR } = Maker;
 
 const PROXY_FACTORY = 'PROXY_FACTORY';
 const CHIEF = 'CHIEF';
@@ -77,12 +73,4 @@ Governance.create = function(preset, config) {
   return new Governance(preset, config);
 };
 
-const governance = Governance.create('browser', {
-  plugins: [trezorPlugin, ledgerPlugin],
-  log: false
-});
-
-Object.freeze(governance);
-
-export { ETH, MKR };
-export default governance;
+export default Governance;

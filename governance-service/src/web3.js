@@ -5,7 +5,7 @@ import {
   netIdToName,
   removeHexPrefix,
   weiToEther
-} from '../../src/utils/ethereum';
+} from './utils/ethereum';
 
 const addresses = {
   kovan: require('../contracts/addresses/kovan.json'),
@@ -94,14 +94,9 @@ export const sendTxUnlocked = txObject =>
  */
 export const getNetworkName = async () => {
   if (!web3NetworkName) {
-    // this exists web3Instance
-    // console.log('WEB3NETWNAME', web3NetworkName);
     const networkId = await getWeb3Instance().eth.net.getId();
-    console.log('networkId', networkId);
     web3NetworkName = netIdToName(networkId);
-    console.log('web3NetworkName', web3NetworkName);
   }
-  console.log('web3NetworkNameafter ', web3NetworkName);
   return web3NetworkName;
 };
 
@@ -111,7 +106,6 @@ export const getBalance = async address => {
 };
 
 const getContractAddress = name => async network => {
-  console.log('NETWORK', network);
   if (!['chief', 'proxy_factory', 'mkr', 'pip'].includes(name)) {
     throw new Error(`Unrecognized contract name: "${name}"`);
   }
@@ -121,11 +115,7 @@ const getContractAddress = name => async network => {
       'No testnet contract addresses are configured. Did you run deploy-gov?'
     );
   }
-  // console.log('network NAME', network);
-  console.log('addressesNetwork', addresses[network]);
 
-  // name here is proxy_factory, but its not in the address list for ganache...
-  name = 'DS_PROXY_FACTORY';
   return addresses[network][name];
 };
 

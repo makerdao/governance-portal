@@ -3,8 +3,8 @@ import {
   getEtchedSlates,
   getProxyStatus,
   getVoteTally
-} from '../../governance-service/src/read';
-import { useGanache, fakeAddresses } from '../helpers';
+} from '../src/read';
+import { useGanache, fakeAddresses } from './helpers';
 
 beforeAll(() => {
   useGanache();
