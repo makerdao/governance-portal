@@ -29,3 +29,5 @@ yarn-error.log*
 .vscode
 governance-service/node_modules
 gov-testchain/out
+governance-service/gov-testchain/addresses.json
+governance-service/gov-testchain/node_modules

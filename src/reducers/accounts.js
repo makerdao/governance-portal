@@ -23,7 +23,7 @@ import {
   INITIATE_LINK_REQUEST
 } from './proxy';
 import { createSubProvider } from '../chain/hw-wallet';
-// for now this lives in 2 places until I figure out which project it should belong to:
+// TODO: for now this lives in 2 places until I figure out which project it should belong to:
 import { netNameToId, MAX_UINT_ETH_BN } from '../../src/utils/ethereum';
 import values from 'ramda/src/values';
 import maker, { MKR } from '../chain/maker';
