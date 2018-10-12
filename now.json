@@ -1,6 +1,24 @@
 {
-  "alias": "dai-gov-master.now.sh",
+  "name": "maker-governance-dashboard",
+  "type": "static",
+  "alias": "dai-gov-master",
   "static": {
-    "headers": []
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Frame-Options",
+            "value": "Deny"
+          }
+        ]
+      }
+    ]
   }
 }

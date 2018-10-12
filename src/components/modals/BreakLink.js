@@ -10,7 +10,7 @@ import { modalClose } from '../../reducers/modal';
 import Withdraw from './Withdraw';
 import { modalOpen } from '../../reducers/modal';
 import HotColdTable from './shared/HotColdTable';
-import { formatRound, toNum } from '../../utils/misc';
+import { formatRound } from '../../utils/misc';
 import maker, { ETH } from '../../chain/maker';
 
 class BreakLink extends Component {
@@ -28,8 +28,8 @@ class BreakLink extends Component {
     const hotAddress = isColdWallet ? linkedAccount.address : account.address;
     const ethToken = maker.getToken(ETH);
     const [ethHot, ethCold] = await Promise.all([
-      toNum(ethToken.balanceOf(hotAddress)),
-      toNum(ethToken.balanceOf(coldAddress))
+      ethToken.balanceOf(hotAddress),
+      ethToken.balanceOf(coldAddress)
     ]);
     this.setState({
       ethHot: formatRound(ethHot, 3),
