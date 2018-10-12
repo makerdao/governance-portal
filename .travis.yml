@@ -13,6 +13,9 @@ before_install:
   - . governance-service/gov-testchain/install-dapptools.sh
 install:
   - yarn install
+  - cd governance-service
+  - yarn install
+  - cd ..
 script:
   - yarn testnet --ci yarn test
 before_deploy:
