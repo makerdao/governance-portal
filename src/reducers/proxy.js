@@ -53,18 +53,6 @@ const MKR_APPROVE_FAILURE = 'proxy/MKR_APPROVE_FAILURE';
 const CLEAR = 'proxy/CLEAR';
 const GO_TO_STEP = 'proxy/GO_TO_STEP';
 
-// Selectors ----------------------------------------------
-
-export function linkResumable(state) {
-  return (
-    state.proxy.setupProgress === 'midLink' ||
-    ((state.proxy.setupProgress === 'initiate' ||
-      state.proxy.setupProgress === 'midLink') &&
-      (state.proxy.initiateLinkTxHash.length > 0 &&
-        !state.proxy.confirmingInitiate))
-  );
-}
-
 // Actions ------------------------------------------------
 
 export const clear = () => ({ type: CLEAR });
@@ -111,37 +99,39 @@ const handleTx = async ({
   txObject,
   successPayload = '',
   acctType
-}) => {
-  const txMgr = maker.service('transactionManager');
-  txMgr.listen(txObject, {
-    pending: tx => {
-      dispatch({
-        type: `proxy/${prefix}_SENT`,
-        payload: { txHash: tx.hash }
-      });
-    },
-    mined: tx => {
-      dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
-      ReactGA.event({
-        category: 'Link TX Success',
-        action: prefix,
-        label: `wallet type ${acctType || 'unknown'}`
-      });
-      console.log('mined:', tx);
-    }
-    // TODO: error handle and get descriptive failure messages
-    // error: tx => {
-    //   console.error(err);
-    //   dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
-    //   dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
-    //   ReactGA.event({
-    //     category: 'User notification error',
-    //     action: 'proxy',
-    //     label: parseError(err)
-    //   });
-    // }
+}) =>
+  new Promise(resolve => {
+    const txMgr = maker.service('transactionManager');
+    txMgr.listen(txObject, {
+      pending: tx => {
+        console.log('pending', tx);
+        dispatch({
+          type: `proxy/${prefix}_SENT`,
+          payload: { txHash: tx.hash }
+        });
+      },
+      mined: tx => {
+        dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
+        ReactGA.event({
+          category: 'Link TX Success',
+          action: prefix,
+          label: `wallet type ${acctType || 'unknown'}`
+        });
+        resolve();
+        console.log('mined:', tx);
+      }
+      // error: tx => {
+      //     console.error(err);
+      //     dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
+      //     dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+      //     ReactGA.event({
+      //       category: 'User notification error',
+      //       action: 'proxy',
+      //       label: parseError(err)
+      //     });
+      // }
+    });
   });
-};
 
 function requireCorrectAccount(state, requiredAccount, typeNeeded) {
   if (!requiredAccount) {
@@ -165,7 +155,6 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
   if (!!getAccount(getState(), cold.address)) {
     dispatch(setActiveAccount(cold.address));
   } else if (!requireCorrectAccount(getState(), cold, 'cold')) return;
-
   maker.useAccount(cold.id);
   const initiateLink = maker
     .service('voteProxyFactory')
@@ -175,7 +164,7 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
     type: INITIATE_LINK_REQUEST,
     payload: { hotAddress: hot.address, coldAddress: cold.address }
   });
-  handleTx({
+  await handleTx({
     prefix: 'INITIATE_LINK',
     dispatch,
     txObject: initiateLink,
@@ -266,7 +255,7 @@ export const breakLink = () => async (dispatch, getState) => {
   maker.useAccount(account.id);
   const breakLink = maker.service('voteProxyFactory').breakLink();
 
-  handleTx({
+  await handleTx({
     prefix: 'BREAK_LINK',
     dispatch,
     txObject: breakLink,
@@ -468,13 +457,7 @@ const proxy = createReducer(initialState, {
     withdrawMkrAmount: 0
   }),
   // Reset ------------------------------------------
-  [CLEAR]: state =>
-    linkResumable({ proxy: state })
-      ? {
-          ...initialState,
-          ...JSON.parse(localStorage.getItem('linkInitiatedState'))
-        }
-      : { ...initialState },
+  [CLEAR]: state => ({ ...initialState }),
   [GO_TO_STEP]: (state, { payload }) => ({
     ...state,
     setupProgress: payload

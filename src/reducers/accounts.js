@@ -79,7 +79,7 @@ export const addAccounts = accounts => async dispatch => {
   for (let account of accounts) {
     const _id = uniqueId();
     if (account.type === AccountTypes.METAMASK)
-      maker.addAccount(_id, { type: 'browser' });
+      maker.addAccount(_id, { type: 'provider' });
     const mkrToken = maker.getToken(MKR);
     const { hasProxy, voteProxy } = await maker
       .service('voteProxy')
