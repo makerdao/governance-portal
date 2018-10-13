@@ -21,8 +21,6 @@ import { Wrapper, Blurb } from './LedgerType';
 import Loader from '../Loader';
 import maker, { ETH, MKR } from '../../chain/maker';
 
-const TREZOR_PATH = "44'/60'/0'/0/0";
-
 const CircleNumber = styled.div`
   width: 32px;
   min-width: 32px;
@@ -71,10 +69,18 @@ class AddressSelection extends Component {
 
   componentDidMount() {
     if (this.props.trezor) {
-      console.log('trezor not refactored yet');
-      //this.getAddresses(TREZOR, TREZOR_PATH);
+      maker.addAccount({
+        type: 'trezor',
+        accountsLength: 5,
+        choose: async (addresses, callback) => {
+          this.setState({
+            accounts: await this.getInfo(addresses),
+            pickAccount: callback
+          });
+        }
+      });
     } else {
-      maker.addAccount('myLedger', {
+      maker.addAccount({
         type: 'ledger',
         path: this.props.path,
         accountsLength: 5,
@@ -85,14 +91,11 @@ class AddressSelection extends Component {
           });
         }
       });
-      console.log('ledger account added');
-      //this.getAddresses(LEDGER, this.props.path);
     }
   }
 
   render() {
     const { accounts, selectedIndex } = this.state;
-    console.log('accounts', accounts);
     if (accounts.length === 0) {
       return <Loading type={this.props.trezor ? 'trezor' : 'ledger'} />;
     }
@@ -116,7 +119,7 @@ class AddressSelection extends Component {
               </tr>
             </thead>
             <tbody>
-              {accounts.map(({ address, eth, mkr, path }) => (
+              {accounts.map(({ address, eth, mkr, index }) => (
                 <tr key={address}>
                   <InlineTd title={address}>
                     {cutMiddle(address, 7, 5)}
@@ -130,9 +133,9 @@ class AddressSelection extends Component {
                     <input
                       type="radio"
                       name="address"
-                      value={path}
-                      checked={path === selectedIndex}
-                      onChange={() => this.setState({ selectedIndex: path })}
+                      value={index}
+                      checked={index === selectedIndex}
+                      onChange={() => this.setState({ selectedIndex: index })}
                     />
                   </td>
                 </tr>
@@ -177,13 +180,14 @@ class AddressSelection extends Component {
       Object.keys(addresses).map(async index => ({
         index: index,
         address: addresses[index],
-        eth: await Promise.resolve(
-          1
-        ) /*round(
-            await toNum(maker.getToken(ETH).balanceOf(addresses[index])),
-            3
-          )*/,
-        mkr: await Promise.resolve(2)
+        eth: round(
+          await toNum(maker.getToken(ETH).balanceOf(addresses[index])),
+          3
+        ),
+        mkr: round(
+          await toNum(maker.getToken(MKR).balanceOf(addresses[index])),
+          3
+        )
       }))
     );
   }
