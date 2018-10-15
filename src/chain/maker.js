@@ -322,7 +322,8 @@ const delegatedMakerMethods = [
   'currentAccount',
   'currentAddress',
   'listAccounts',
-  'useAccount'
+  'useAccount',
+  'useAccountWithAddress'
 ];
 
 for (let method of delegatedMakerMethods) {

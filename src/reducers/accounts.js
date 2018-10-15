@@ -6,14 +6,7 @@ import web3 from 'web3';
 
 import { createReducer } from '../utils/redux';
 import { AccountTypes } from '../utils/constants';
-import {
-  add,
-  eq,
-  subtract,
-  toNum,
-  uniqueId,
-  promisedProperties
-} from '../utils/misc';
+import { add, eq, subtract, toNum, promisedProperties } from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
@@ -77,9 +70,8 @@ export const addAccounts = accounts => async dispatch => {
     payload: true
   });
   for (let account of accounts) {
-    const _id = uniqueId();
     if (account.type === AccountTypes.METAMASK)
-      maker.addAccount(_id, { type: 'provider' });
+      maker.addAccount({ type: 'provider' });
     const mkrToken = maker.getToken(MKR);
     const { hasProxy, voteProxy } = await maker
       .service('voteProxy')
@@ -99,7 +91,6 @@ export const addAccounts = accounts => async dispatch => {
     }
     const _payload = {
       ...account,
-      id: _id,
       address: toChecksumAddress(account.address),
       mkrBalance: toNum(mkrToken.balanceOf(account.address)),
       hasProxy,

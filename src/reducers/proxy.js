@@ -155,7 +155,7 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
   if (!!getAccount(getState(), cold.address)) {
     dispatch(setActiveAccount(cold.address));
   } else if (!requireCorrectAccount(getState(), cold, 'cold')) return;
-  maker.useAccount(cold.id);
+  maker.useAccountWithAddress(cold.address);
   const initiateLink = maker
     .service('voteProxyFactory')
     .initiateLink(hot.address);
@@ -179,7 +179,7 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
 export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
   if (!requireCorrectAccount(getState(), hotAccount, 'hot')) return;
   const { coldAddress } = getState().proxy;
-  maker.useAccount(hotAccount.id);
+  maker.useAccountWithAddress(hotAccount.address);
   const approveLink = maker
     .service('voteProxyFactory')
     .approveLink(coldAddress);
@@ -202,7 +202,7 @@ export const lock = value => async (dispatch, getState) => {
   if (!account || account.proxyRole !== 'cold') {
     return window.alert(`Switch to your cold wallet before continuing.`);
   }
-  maker.useAccount(account.id);
+  maker.useAccountWithAddress(account.address);
   const lock = maker.service('voteProxy').lock(account.proxy.address, value);
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
@@ -219,7 +219,7 @@ export const free = value => (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
 
   const account = getActiveAccount(getState());
-  maker.useAccount(account.id);
+  maker.useAccountWithAddress(account.address);
   const free = maker.service('voteProxy').free(account.proxy.address, value);
 
   dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
@@ -236,7 +236,7 @@ export const freeAll = value => (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
   const account = getActiveAccount(getState());
 
-  maker.useAccount(account.id);
+  maker.useAccountWithAddress(account.address);
   const freeAll = maker.service('voteProxy').freeAll(account.proxy.address);
 
   dispatch({ type: WITHDRAW_ALL_MKR_REQUEST, payload: value });
@@ -252,7 +252,7 @@ export const breakLink = () => async (dispatch, getState) => {
   dispatch({ type: BREAK_LINK_REQUEST });
   const account = getActiveAccount(getState());
 
-  maker.useAccount(account.id);
+  maker.useAccountWithAddress(account.address);
   const breakLink = maker.service('voteProxyFactory').breakLink();
 
   await handleTx({
@@ -300,7 +300,7 @@ export const mkrApproveProxy = () => (dispatch, getState) => {
   const account = getActiveAccount(getState());
   if (!requireCorrectAccount(getState(), account, 'cold')) return;
 
-  maker.useAccount(account.id);
+  maker.useAccountWithAddress(account.address);
   const giveProxyAllowance = maker
     .getToken(MKR)
     .approveUnlimited(account.proxy.address);
