@@ -1,4 +1,4 @@
-import Governance from '../../governance-service/src/index';
+import Governance from 'sdk-governance-service';
 import trezorPlugin from '@makerdao/dai-plugin-trezor-web';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 
