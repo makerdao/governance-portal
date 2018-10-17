@@ -111,6 +111,7 @@ const handleTx = async ({
         });
       },
       mined: tx => {
+        console.log('mined', tx);
         dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
         ReactGA.event({
           category: 'Link TX Success',
@@ -118,17 +119,18 @@ const handleTx = async ({
           label: `wallet type ${acctType || 'unknown'}`
         });
         resolve();
-        console.log('mined:', tx);
       }
-      // error: tx => {
-      //     console.error(err);
-      //     dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
-      //     dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
-      //     ReactGA.event({
-      //       category: 'User notification error',
-      //       action: 'proxy',
-      //       label: parseError(err)
-      //     });
+      // error: _ => {
+      //   const err = 'error';
+      //   console.error('error');
+      //   dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
+      //   dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+      //   ReactGA.event({
+      //     category: 'User notification error',
+      //     action: 'proxy',
+      //     label: parseError(err)
+      //   });
+      //   resolve();
       // }
     });
   });
@@ -143,7 +145,12 @@ function requireCorrectAccount(state, requiredAccount, typeNeeded) {
   const { address, type, proxyRole } = requiredAccount;
   if (type !== AccountTypes.METAMASK) return true;
   const activeAccount = getActiveAccount(state);
-  if (activeAccount.address === address) return true;
+  if (
+    activeAccount.address === address &&
+    // this check will eventually move to the sdk
+    window.web3.eth.defaultAccount.toLowerCase() === address.toLowerCase()
+  )
+    return true;
 
   window.alert(
     `Please switch to your ${proxyRole || 'other'} wallet before continuing.`
@@ -154,7 +161,8 @@ function requireCorrectAccount(state, requiredAccount, typeNeeded) {
 export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
   if (!!getAccount(getState(), cold.address)) {
     dispatch(setActiveAccount(cold.address));
-  } else if (!requireCorrectAccount(getState(), cold, 'cold')) return;
+  }
+  if (!requireCorrectAccount(getState(), cold, 'cold')) return;
   maker.useAccountWithAddress(cold.address);
   const initiateLink = maker
     .service('voteProxyFactory')
@@ -170,7 +178,6 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
     txObject: initiateLink,
     acctType: cold.type
   });
-
   if (!!getAccount(getState(), getState().proxy.hotAddress)) {
     dispatch(setActiveAccount(getState().proxy.hotAddress));
   }
