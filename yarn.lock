@@ -846,12 +846,13 @@
   dependencies:
     events "^2.0.0"
 
-"@makerdao/ui-components@1.0.0-alpha.4":
-  version "1.0.0-alpha.4"
-  resolved "https://registry.yarnpkg.com/@makerdao/ui-components/-/ui-components-1.0.0-alpha.4.tgz#d51ec73040bf1f44b9a6befa03026b4795f580f2"
-  integrity sha512-UcG1IMdPpEJQF7n4daqx6KDGfuutUHyuQldaP0OCdxW2j6mdBiPylAAnwgTW49M1PF1WietWPIyoFechoYJk9w==
+"@makerdao/ui-components@1.0.0-alpha.8":
+  version "1.0.0-alpha.8"
+  resolved "https://registry.yarnpkg.com/@makerdao/ui-components/-/ui-components-1.0.0-alpha.8.tgz#fa4a557b779a392d8d4989d7bff730535f57e629"
+  integrity sha512-HUpbV0gCyFpMcpz14pwKj+YMOKFujBMb7JGXaYv4RTWnw2AiPrhp7WOmEytEtdfYeiiOl06ql/R5kbwLw6Al0Q==
   dependencies:
     react-popper "^1.0.2"
+    url-parse "^1.4.3"
 
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
