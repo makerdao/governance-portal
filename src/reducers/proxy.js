@@ -147,7 +147,7 @@ function requireCorrectAccount(state, requiredAccount, typeNeeded) {
   const activeAccount = getActiveAccount(state);
   if (
     activeAccount.address === address &&
-    // this check will eventually move to the sdk
+    //check that account to use is currently selected in the browser wallet
     window.web3.eth.defaultAccount.toLowerCase() === address.toLowerCase()
   )
     return true;
@@ -206,7 +206,12 @@ export const lock = value => async (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
 
   const account = getActiveAccount(getState());
-  if (!account || account.proxyRole !== 'cold') {
+  if (
+    !account ||
+    account.proxyRole !== 'cold' ||
+    window.web3.eth.defaultAccount.toLowerCase() !==
+      account.address.toLowerCase()
+  ) {
     return window.alert(`Switch to your cold wallet before continuing.`);
   }
   maker.useAccountWithAddress(account.address);
