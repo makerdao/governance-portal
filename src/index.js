@@ -19,19 +19,18 @@ import './global.css.js';
 import { metamaskConnectInit } from './reducers/metamask';
 import theme from './theme';
 
-import darkTheme from '@makerdao/ui-components/dist/themes/dark';
-import lightTheme from '@makerdao/ui-components/dist/themes/light';
+import { themeDark, themeLight } from '@makerdao/ui-components';
 import '@makerdao/ui-components/dist/styles/global.css';
 
 const currTheme = {
   ...theme,
-  ...darkTheme,
+  ...themeDark,
   header: {
-    ...darkTheme.header,
+    ...themeDark.header,
     backgroundColor: theme.text.darker_default
   },
   footer: {
-    ...lightTheme.footer,
+    ...themeLight.footer,
     backgroundColor: theme.bg.default
   }
 };
