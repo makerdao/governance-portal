@@ -227,7 +227,7 @@ export const lock = value => async (dispatch, getState) => {
   });
 };
 
-function ensureBrowserAccountCorrect(activeAccount) {
+export function ensureBrowserAccountCorrect(activeAccount) {
   if (
     activeAccount.type === AccountTypes.METAMASK &&
     window.web3.eth.defaultAccount.toLowerCase() !==
