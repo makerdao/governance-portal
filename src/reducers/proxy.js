@@ -227,10 +227,25 @@ export const lock = value => async (dispatch, getState) => {
   });
 };
 
+function ensureBrowserAccountCorrect(activeAccount) {
+  if (
+    activeAccount.type === AccountTypes.METAMASK &&
+    window.web3.eth.defaultAccount.toLowerCase() !==
+      activeAccount.address.toLowerCase()
+  ) {
+    window.alert(
+      `Switch to your ${activeAccount.proxyRole} wallet before continuing.`
+    );
+    return false;
+  }
+  return true;
+}
+
 export const free = value => (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
 
   const account = getActiveAccount(getState());
+  if (!ensureBrowserAccountCorrect(account)) return;
   maker.useAccountWithAddress(account.address);
   const free = maker.service('voteProxy').free(account.proxy.address, value);
 
@@ -247,7 +262,7 @@ export const free = value => (dispatch, getState) => {
 export const freeAll = value => (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
   const account = getActiveAccount(getState());
-
+  if (!ensureBrowserAccountCorrect(account)) return;
   maker.useAccountWithAddress(account.address);
   const freeAll = maker.service('voteProxy').freeAll(account.proxy.address);
 
@@ -263,7 +278,7 @@ export const freeAll = value => (dispatch, getState) => {
 export const breakLink = () => async (dispatch, getState) => {
   dispatch({ type: BREAK_LINK_REQUEST });
   const account = getActiveAccount(getState());
-
+  if (!ensureBrowserAccountCorrect(account)) return;
   maker.useAccountWithAddress(account.address);
   const breakLink = maker.service('voteProxyFactory').breakLink();
 
