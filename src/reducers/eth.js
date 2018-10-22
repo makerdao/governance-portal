@@ -1,5 +1,6 @@
 import { createReducer } from '../utils/redux';
 import maker from '../chain/maker';
+import { weiToEther } from '../utils/ethereum';
 
 // Constants ----------------------------------------------
 
@@ -19,7 +20,7 @@ export const ethInit = () => async dispatch => {
         type: ETH_INFO_SUCCESS,
         payload: {
           price: ethPrice.toNumber(),
-          gasCost: gasPrice.shift(-18).toFixed()
+          gasCost: weiToEther(gasPrice)
         }
       });
     });
