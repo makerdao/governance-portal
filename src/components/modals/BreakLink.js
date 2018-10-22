@@ -32,8 +32,8 @@ class BreakLink extends Component {
       ethToken.balanceOf(coldAddress)
     ]);
     this.setState({
-      ethHot: formatRound(ethHot, 3),
-      ethCold: formatRound(ethCold, 3)
+      ethHot: formatRound(ethHot.toNumber(), 3),
+      ethCold: formatRound(ethCold.toNumber(), 3)
     });
   }
 

@@ -31,14 +31,14 @@ class MidLink extends Component {
     const [ethHot, ethCold, mkrHot, mkrCold] = await Promise.all([
       ethToken.balanceOf(hotAddress),
       ethToken.balanceOf(coldAddress),
-      toNum(mkrToken.balanceOf(hotAddress)),
-      toNum(mkrToken.balanceOf(coldAddress))
+      mkrToken.balanceOf(hotAddress),
+      mkrToken.balanceOf(coldAddress)
     ]);
     this.setState({
-      ethHot: formatRound(ethHot, 3),
-      ethCold: formatRound(ethCold, 3),
-      mkrHot: formatRound(mkrHot, 3),
-      mkrCold: formatRound(mkrCold, 3)
+      ethHot: formatRound(ethHot.toNumber(), 3),
+      ethCold: formatRound(ethCold.toNumber(), 3),
+      mkrHot: formatRound(mkrHot.toNumber(), 3),
+      mkrCold: formatRound(mkrCold.toNumber(), 3)
     });
   }
 
