@@ -1,5 +1,6 @@
 import { createReducer } from '../utils/redux';
 import maker from '../chain/maker';
+import BigNumber from 'bignumber.js';
 
 // Constants ----------------------------------------------
 
@@ -15,11 +16,12 @@ export const ethInit = () => async dispatch => {
     const ethPrice = await maker.service('price').getEthPrice();
     maker.service('web3')._web3.eth.getGasPrice((error, gasPrice) => {
       if (error) throw new Error('unable to fetch current gas price');
+      const gasCost = new BigNumber(gasPrice).shiftedBy(-18).toFixed();
       dispatch({
         type: ETH_INFO_SUCCESS,
         payload: {
           price: ethPrice.toNumber(),
-          gasCost: gasPrice.shift(-18).toFixed()
+          gasCost: gasCost
         }
       });
     });

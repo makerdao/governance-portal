@@ -23,8 +23,7 @@ import {
   cutMiddle
 } from '../utils/misc';
 import { modalOpen } from '../reducers/modal';
-import web3 from 'web3';
-const { toChecksumAddress } = web3.utils;
+import maker from '../chain/maker';
 
 const riseUp = keyframes`
 0% {
@@ -171,6 +170,12 @@ const StyledLink = styled(Link)`
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
+
+const toChecksumAddress = async address => {
+  await maker.authenticate();
+  const { toChecksumAddress } = maker.service('web3')._web3.utils;
+  return toChecksumAddress(address);
+};
 
 class Proposal extends Component {
   state = {

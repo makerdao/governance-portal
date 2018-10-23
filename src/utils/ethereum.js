@@ -120,6 +120,22 @@ export const netNameToId = name => {
 };
 
 /**
+ * @desc get network uri
+ * @param  {String} network
+ * @return {String}
+ */
+export const netToUri = network => {
+  switch (network) {
+    case 'kovan':
+      return `https://${network}.infura.io/`;
+    case 'ganache':
+      return 'http://127.0.0.1:2000/';
+    default:
+      return 'https://mainnet.infura.io/';
+  }
+};
+
+/**
  * @desc given address is "zero" address
  * @param  {String} address
  * @return {Boolean}

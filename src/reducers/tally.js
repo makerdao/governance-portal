@@ -1,6 +1,5 @@
 import { createReducer } from '../utils/redux';
-import { promiseRetry } from '../utils/misc';
-import maker from '../chain/maker';
+// import { promiseRetry } from '../utils/misc';
 
 // Constants ----------------------------------------------
 
@@ -13,16 +12,19 @@ export const TALLY_UPDATE = 'voteTally/TALLY_UPDATE';
 
 export const voteTallyInit = () => dispatch => {
   dispatch({ type: TALLY_REQUEST });
-  promiseRetry({ times: 3, fn: maker.getVoteTally, delay: 500 })
-    .then(tally => {
-      dispatch({ type: TALLY_SUCCESS, payload: { tally } });
-    })
-    // sometimes this fails when we're reading event logs
-    .catch(error => {
-      // TODO: notify user or throw to a fallback component
-      console.error(error);
-      dispatch({ type: TALLY_FAILURE });
-    });
+  // promiseRetry({ times: 3, fn: fakeCb, delay: 500 })
+  const tally = 5;
+  dispatch({ type: TALLY_SUCCESS, payload: { tally } });
+
+  // .then(tally => {
+  //   dispatch({ type: TALLY_SUCCESS, payload: { tally } });
+  // })
+  // // sometimes this fails when we're reading event logs
+  // .catch(error => {
+  //   // TODO: notify user or throw to a fallback component
+  //   console.error(error);
+  //   dispatch({ type: TALLY_FAILURE });
+  // });
 };
 
 // Reducer ------------------------------------------------

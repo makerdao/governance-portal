@@ -1,6 +1,6 @@
 import { createReducer } from '../../src/utils/redux';
 import { addAccount, setActiveAccount, NO_METAMASK_ACCOUNTS } from './accounts';
-import { netIdToName } from '../../src/utils/ethereum';
+import { netIdToName, netToUri } from '../../src/utils/ethereum';
 import { ethInit } from './eth';
 import { voteTallyInit } from './tally';
 import { topicsInit } from './topics';
@@ -53,16 +53,18 @@ export const metamaskConnectInit = () => async dispatch => {
   let network = 'mainnet';
   let networkIsSet = false;
 
+  await maker.authenticate();
+  const web3Service = maker.service('web3');
+
   if (typeof window.web3 !== 'undefined') {
     try {
-      await maker.authenticate();
-      network = netIdToName(maker.service('web3').networkId());
+      network = netIdToName(web3Service.networkId());
       if (network !== 'mainnet' && network !== 'kovan') {
         dispatch({ type: NO_METAMASK_ACCOUNTS });
         return dispatch({ type: WRONG_NETWORK });
       }
       dispatch({ type: CONNECT_SUCCESS, payload: { network } });
-      maker.setWeb3Network(network);
+      web3Service._web3.setProvider(netToUri(network));
       networkIsSet = true;
 
       // don't await this, so that account lookup and voting data can occur in
@@ -79,7 +81,7 @@ export const metamaskConnectInit = () => async dispatch => {
     dispatch({ type: NO_METAMASK_ACCOUNTS }); // accounts reducer
   }
 
-  if (!networkIsSet) maker.setWeb3Network(network);
+  if (!networkIsSet) web3Service._web3.setProvider(netToUri(network));
   dispatch(voteTallyInit());
   dispatch(topicsInit(network));
   dispatch(hatInit());

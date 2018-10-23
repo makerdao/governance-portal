@@ -128,18 +128,18 @@ const handleTx = async ({
         label: `wallet type ${acctType || 'unknown'}`
       });
       console.log('mined:', tx);
-    }
+    },
     // TODO: error handle and get descriptive failure messages
-    // error: tx => {
-    //   console.error(err);
-    //   dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
-    //   dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
-    //   ReactGA.event({
-    //     category: 'User notification error',
-    //     action: 'proxy',
-    //     label: parseError(err)
-    //   });
-    // }
+    error: (tx, err) => {
+      console.error(err.message);
+      dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
+      dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+      ReactGA.event({
+        category: 'User notification error',
+        action: 'proxy',
+        label: parseError(err)
+      });
+    }
   });
 };
 
@@ -345,7 +345,7 @@ const initialState = {
   coldAddress: '',
   sendMkrAmount: 0,
   withdrawMkrAmount: 0,
-  linkGas: maker.getLinkGas() || 0
+  linkGas: 0
 };
 
 // const withExisting = { ...initialState, ...existingState };

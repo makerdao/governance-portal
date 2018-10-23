@@ -1,4 +1,4 @@
-import { setWeb3Provider } from 'sdk-governance-service/src/web3';
+import maker from '../../src/chain/maker';
 import fetch from 'node-fetch';
 
 function ganacheAddress() {
@@ -6,8 +6,9 @@ function ganacheAddress() {
   return `http://localhost:${port}`;
 }
 
-export function useGanache() {
-  setWeb3Provider(ganacheAddress());
+export async function useGanache() {
+  await maker.authenticate();
+  maker.service('web3')._web3.setProvider(ganacheAddress());
 }
 
 let requestCount = 0;
