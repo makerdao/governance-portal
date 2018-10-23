@@ -9,15 +9,10 @@ cache:
     - node_modules
     - nix
   timeout: 9000
-before_install:
-  - . governance-service/gov-testchain/install-dapptools.sh
 install:
   - yarn install
-  - cd governance-service
-  - yarn install
-  - cd ..
 script:
-  - yarn testnet --ci yarn test
+  - yarn test
 before_deploy:
   - yarn build
   - cd build
