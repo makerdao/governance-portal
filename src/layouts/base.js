@@ -7,9 +7,9 @@ import { withRouter } from 'react-router';
 import { Header, Footer } from '@makerdao/ui-components';
 import { colors, fonts } from '../theme';
 import { firstLetterCapital } from '../utils/misc';
-import { modalOpen } from '../reducers/modal';
+import { onboardingOpen } from '../reducers/onboarding';
 import Modals from '../components/modals';
-import SecureVoting from '../components/modals/SecureVoting';
+import Onboarding from '../components/Onboarding';
 import Loader from '../components/Loader';
 import AccountBox from '../components/AccountBox';
 import Toasts from '../components/Toasts';
@@ -132,7 +132,7 @@ const Circle = styled.div`
 const BaseLayout = ({
   children,
   network,
-  modalOpen,
+  onboardingOpen,
   metamaskFetching,
   proposalsAvailable,
   accountsFetching,
@@ -186,7 +186,7 @@ const BaseLayout = ({
               </DimHeaderLink>
               <DimHeaderElement
                 onClick={() => {
-                  if (!accountsFetching) modalOpen(SecureVoting);
+                  if (!accountsFetching) onboardingOpen();
                 }}
                 mr={50}
               >
@@ -212,6 +212,7 @@ const BaseLayout = ({
       <Modals />
       <Toasts />
       <Footer />
+      <Onboarding />
     </StyledLayout>
   );
 };
@@ -231,6 +232,6 @@ const reduxProps = ({ metamask, proposals, accounts }) => ({
 export default withRouter(
   connect(
     reduxProps,
-    { modalOpen }
+    { onboardingOpen }
   )(BaseLayout)
 );
