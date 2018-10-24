@@ -3,8 +3,8 @@ import concat from 'ramda/src/concat';
 import pipe from 'ramda/src/pipe';
 import differenceWith from 'ramda/src/differenceWith';
 
-import { createReducer } from '../../src/utils/redux';
-import { AccountTypes } from '../../src/utils/constants';
+import { createReducer } from '../utils/redux';
+import { AccountTypes } from '../utils/constants';
 
 import {
   add,
@@ -13,7 +13,7 @@ import {
   toNum,
   uniqueId,
   promisedProperties
-} from '../../src/utils/misc';
+} from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
@@ -21,7 +21,7 @@ import {
   INITIATE_LINK_REQUEST
 } from './proxy';
 import { createSubProvider } from '../chain/hw-wallet';
-import { netNameToId, MAX_UINT_ETH_BN } from '../../src/utils/ethereum';
+import { netNameToId, MAX_UINT_ETH_BN } from '../utils/ethereum';
 import values from 'ramda/src/values';
 import maker, { MKR } from '../chain/maker';
 

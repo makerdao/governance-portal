@@ -5,8 +5,8 @@ import styled, { keyframes } from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import { Link } from 'react-router-dom';
 
-import { toSlug, eq } from '../../src/utils/misc';
-import { ethScanLink } from '../../src/utils/ethereum';
+import { toSlug, eq } from '../utils/misc';
+import { ethScanLink } from '../utils/ethereum';
 import VoteTally from '../components/VoteTally';
 import Vote from '../components/modals/Vote';
 import Button from '../components/Button';

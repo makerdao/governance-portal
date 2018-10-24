@@ -1,6 +1,0 @@
-[submodule "gov-testchain/src/ds-chief"]
-	path = governance-service/gov-testchain/src/ds-chief
-	url = https://github.com/dapphub/ds-chief
-[submodule "gov-testchain/src/vote-proxy"]
-	path = governance-service/gov-testchain/src/vote-proxy
-	url = https://github.com/makerdao/vote-proxy

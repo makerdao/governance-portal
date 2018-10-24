@@ -20,14 +20,9 @@ gov-testchain/node_modules
 .env.development.local
 .env.test.local
 .env.production.local
+.vscode
 
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# developing separate services branch
-.vscode
-governance-service/node_modules
-gov-testchain/out
-governance-service/gov-testchain/addresses.json
-governance-service/gov-testchain/node_modules
