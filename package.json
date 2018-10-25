@@ -8,7 +8,7 @@
     "@ledgerhq/hw-transport-u2f": "^4.19.0",
     "@makerdao/dai": "^0.9.5",
     "@makerdao/dai-plugin-ledger-web": "^0.9.2",
-    "@makerdao/dai-plugin-trezor-web": "^0.9.0",
+    "@makerdao/dai-plugin-trezor-web": "^0.9.1",
     "@makerdao/ui-components": "0.0.40",
     "bignumber.js": "^7.2.1",
     "enzyme-adapter-react-16": "^1.1.1",
@@ -37,6 +37,7 @@
   "scripts": {
     "start": "HTTPS=true NODE_ENV=development react-scripts start",
     "build": "react-scripts build",
+    "deploy": "now ./build -A ./now.json",
     "test": "jest",
     "cover": "jest --coverage",
     "eject": "react-scripts eject",
@@ -66,9 +67,6 @@
     "redux-mock-store": "^1.5.3",
     "web3-fake-provider": "^0.1.0",
     "whatwg-fetch": "^2.0.4"
-  },
-  "now": {
-    "alias": "dai-gov-master"
   },
   "jest": {
     "coverageReporters": [

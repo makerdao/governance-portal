@@ -37,10 +37,10 @@
     hdkey "^1.0.0"
     web3-provider-engine "14.0.4"
 
-"@makerdao/dai-plugin-trezor-web@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-trezor-web/-/dai-plugin-trezor-web-0.9.0.tgz#2300324c720a767471b8c2c3fe7615e11cba4417"
-  integrity sha512-zjqMf1jOkB1uQXP6TqFQhdzMR6MfLFHccDIKfdlY9Z3mzi/Ipa4XiXYc6lLeOpneoTrXjdMC/BUuuhb7WgYEXg==
+"@makerdao/dai-plugin-trezor-web@^0.9.1":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-trezor-web/-/dai-plugin-trezor-web-0.9.1.tgz#06f4d4a3fb677e96e4ecc8ca6e1c9bec3a1f3692"
+  integrity sha512-6Hl787OMW/FfGP6QjZpP765SbviVF3+ZRB/5rA5W3O3Oiqzr/ec8T1RHn8RmTP853q9A8Rdl6s6L0zxNWFG4Iw==
   dependencies:
     babel-runtime "^6.26.0"
     ethereumjs-tx "^1.3.6"

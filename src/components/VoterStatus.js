@@ -4,7 +4,6 @@ import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { modalOpen } from '../reducers/modal';
 import { getActiveAccount } from '../reducers/accounts';
-import { linkResumable } from '../reducers/proxy';
 import theme from '../theme';
 import DotSpacer from './DotSpacer';
 import WithVote from './hocs/WithVote';
@@ -72,7 +71,7 @@ const BorderBottom = styled.div`
   width: 100%;
 `;
 
-const WelcomeBanner = ({ modalOpen, linkRequested }) => {
+const WelcomeBanner = ({ modalOpen }) => {
   return (
     <Banner>
       <Content>
@@ -88,7 +87,7 @@ const WelcomeBanner = ({ modalOpen, linkRequested }) => {
         </BannerBody>
       </Content>
       <BannerButton onClick={() => modalOpen(ProxySetup)}>
-        {linkRequested ? 'Continue set up' : 'Set up now'}
+        Set up now
       </BannerButton>
     </Banner>
   );
@@ -98,13 +97,7 @@ const Padding = styled.div`
   margin-top: 20px;
 `;
 
-const VoterStatus = ({
-  account,
-  network,
-  modalOpen,
-  linkRequested,
-  fetching
-}) => {
+const VoterStatus = ({ account, network, modalOpen, fetching }) => {
   if (fetching) {
     return (
       <Padding>
@@ -115,7 +108,7 @@ const VoterStatus = ({
   if (!account || !account.hasProxy)
     return (
       <FadeIn>
-        <WelcomeBanner linkRequested={linkRequested} modalOpen={modalOpen} />
+        <WelcomeBanner modalOpen={modalOpen} />
       </FadeIn>
     );
   const { linkedAccount } = account.proxy;
@@ -176,7 +169,6 @@ const VoterStatus = ({
 const mapStateToProps = state => ({
   account: getActiveAccount(state),
   network: state.metamask.network,
-  linkRequested: linkResumable(state),
   fetching: state.accounts.fetching
 });
 

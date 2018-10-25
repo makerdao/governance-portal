@@ -15,11 +15,10 @@ script:
   - yarn cover
 before_deploy:
   - yarn build
-  - cd build
   - npm install now --no-save
 deploy:
   - provider: script
-    script: now --token $NOW_TOKEN && now alias --token $NOW_TOKEN
+    script: now ./build --token $NOW_TOKEN -A ../now.json && now alias --token $NOW_TOKEN
     skip_cleanup: true
     on:
       master: true
