@@ -1,10 +1,10 @@
-import Governance from '@makerdao/dai-plugin-governance';
+import governancePlugin from '@makerdao/dai-plugin-governance';
 import trezorPlugin from '@makerdao/dai-plugin-trezor-web';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
-import { ETH, MKR } from '@makerdao/dai';
+import Maker, { ETH, MKR } from '@makerdao/dai';
 
-const governance = Governance.create('browser', {
-  plugins: [trezorPlugin, ledgerPlugin],
+const governance = Maker.create('browser', {
+  plugins: [trezorPlugin, ledgerPlugin, governancePlugin],
   log: false
 });
 
