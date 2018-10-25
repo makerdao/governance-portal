@@ -34,6 +34,8 @@ const pollForMetamaskChanges = () => async (dispatch, getState) => {
     const address = window.web3.eth.defaultAccount;
     if (address !== undefined && address !== activeAddress) {
       dispatch({ type: UPDATE_ACCOUNT, payload: address });
+
+      // TODO: no need to add account again if we already know about it
       await dispatch(addAccount({ address, type: 'METAMASK' }));
       dispatch(setActiveAccount(address));
     } else if (fetching && !activeAddress) {

@@ -8,7 +8,13 @@ const governance = Governance.create('browser', {
   log: false
 });
 
-Object.freeze(governance);
+console.log('started creating governance');
+
+global.maker = governance;
+
+governance.authenticate().then(() => {
+  console.log('done authenticating');
+});
 
 export { ETH, MKR };
 export default governance;

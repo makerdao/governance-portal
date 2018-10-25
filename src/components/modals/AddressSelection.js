@@ -7,8 +7,6 @@ import Button from '../Button';
 import { modalClose } from '../../reducers/modal';
 import { addAccount, setActiveAccount } from '../../reducers/accounts';
 import { LEDGER, TREZOR } from '../../chain/hw-wallet';
-import { createSubProvider } from '../../chain/hw-wallet';
-import { netNameToId } from '../../utils/ethereum';
 import { cutMiddle, toNum, copyToClipboard } from '../../utils/misc';
 import {
   AddressContainer,

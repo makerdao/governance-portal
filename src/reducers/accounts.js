@@ -63,15 +63,14 @@ export function activeCanVote(state) {
 // Actions ------------------------------------------------
 
 export const addAccounts = accounts => async dispatch => {
-  const { toChecksumAddress } = maker.service('web3')._web3.utils;
-
   dispatch({
     type: FETCHING_ACCOUNT_DATA,
     payload: true
   });
   for (let account of accounts) {
     if (account.type === AccountTypes.METAMASK)
-      maker.addAccount({ type: 'browser' });
+      await maker.addAccount({ type: 'browser' });
+
     const mkrToken = maker.getToken(MKR);
     const { hasProxy, voteProxy } = await maker
       .service('voteProxy')
@@ -91,14 +90,14 @@ export const addAccounts = accounts => async dispatch => {
     }
     const _payload = {
       ...account,
-      address: toChecksumAddress(account.address),
+      address: account.address,
       mkrBalance: toNum(mkrToken.balanceOf(account.address)),
       hasProxy,
       proxyRole: hasProxy ? voteProxy.getRole() : '',
       votingFor: currProposal,
       proxy: hasProxy
         ? promisedProperties({
-            address: toChecksumAddress(voteProxy.getAddress()),
+            address: voteProxy.getAddress(),
             votingPower: toNum(voteProxy.getNumDeposits()),
             hasInfMkrApproval: mkrToken
               .allowance(account.address, voteProxy.getAddress())
