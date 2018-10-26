@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import ClickOutside from './ClickOutside';
 import Loader from './Loader';
-import { cutMiddle, firstLetterCapital } from '../utils/misc';
+import { cutMiddle } from '../utils/misc';
 import { numberForAddress } from '../utils/ethereum';
 import arrow from '../imgs/arrow.svg';
 import { fonts, colors, shadows } from '../theme';
@@ -78,6 +78,13 @@ const AccountBlurbWrapper = styled.div`
   align-items: center;
 `;
 
+const typeNames = {
+  ledger: 'Ledger',
+  trezor: 'Trezor',
+  browser: 'Metamask',
+  provider: 'Metamask'
+};
+
 export class AccountBlurb extends Component {
   constructor(props) {
     super(props);
@@ -100,8 +107,7 @@ export class AccountBlurb extends Component {
       <AccountBlurbWrapper>
         <div style={{ display: 'flex' }} ref={this.jazzicon} />
         <Account>
-          {firstLetterCapital(type)}{' '}
-          {noAddressCut ? address : cutMiddle(address)}
+          {typeNames[type]} {noAddressCut ? address : cutMiddle(address)}
         </Account>
       </AccountBlurbWrapper>
     );

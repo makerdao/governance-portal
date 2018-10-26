@@ -14,6 +14,7 @@ import {
   clear as proxyClear,
   goToStep
 } from '../../../reducers/proxy';
+import { AccountTypes } from '../../../utils/constants';
 import { mul } from '../../../utils/misc';
 import { modalOpen, modalClose } from '../../../reducers/modal';
 import Summary from './Summary';
@@ -172,14 +173,14 @@ let mock = false;
 
 const fakeColdAccount = {
   address: '0xbeefed1bedded2dabbed3defaced4decade5babe',
-  type: 'TREZOR',
+  type: AccountTypes.TREZOR,
   proxyRole: 'cold',
   mkrBalance: 456
 };
 
 const fakeHotAccount = {
   address: '0xbeefed1bedded2dabbed3defaced4decade5babe',
-  type: 'METAMASK',
+  type: AccountTypes.METAMASK,
   proxyRole: 'hot',
   mkrBalance: 123
 };

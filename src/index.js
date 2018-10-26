@@ -34,12 +34,11 @@ const currTheme = {
 const store = createStore();
 
 window.maker = maker;
+
 // TODO fail gracefully if authentication fails, e.g. if the user denies
 // Metamask access or there's a network problem. in order to still show
 // read-only data, we will have to re-run Maker.create with an Infura preset.
 maker.authenticate().then(async () => {
-  console.log('done authenticating');
-
   // initialize the store with the Metamask account that the Maker instance
   // has already added
   store.dispatch(updateAddress(maker.currentAddress()));

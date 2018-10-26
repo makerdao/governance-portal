@@ -9,7 +9,7 @@ import {
   FlexRowEnd
 } from '../shared/styles';
 import HotColdTable from '../shared/HotColdTable';
-import { formatRound, toNum } from '../../../utils/misc';
+import { formatRound } from '../../../utils/misc';
 import maker, { MKR, ETH } from '../../../chain/maker';
 
 class MidLink extends Component {
