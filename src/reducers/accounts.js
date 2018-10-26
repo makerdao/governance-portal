@@ -12,9 +12,7 @@ import {
   WITHDRAW_ALL_MKR_SUCCESS,
   INITIATE_LINK_REQUEST
 } from './proxy';
-import { createSubProvider } from '../chain/hw-wallet';
-import { netNameToId, MAX_UINT_ETH_BN } from '../utils/ethereum';
-import values from 'ramda/src/values';
+import { MAX_UINT_ETH_BN } from '../utils/ethereum';
 import maker, { MKR } from '../chain/maker';
 
 // Constants ----------------------------------------------
@@ -25,8 +23,6 @@ const FETCHING_ACCOUNT_DATA = 'accounts/FETCHING_ACCOUNT_DATA';
 export const UPDATE_ACCOUNT = 'accounts/UPDATE_ACCOUNT';
 const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
 const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
-const FIND_HARDWARE_ACCOUNT = 'accounts/FIND_HARDWARE_ACCOUNT';
-const FIND_HARDWARE_ACCOUNT_FAILURE = 'accounts/FIND_HARDWARE_ACCOUNT_FAILURE';
 export const NO_METAMASK_ACCOUNTS = 'accounts/NO_METAMASK_ACCOUNTS';
 const SET_INF_MKR_APPROVAL = 'accounts/SET_INF_MKR_APPROVAL';
 
@@ -63,14 +59,9 @@ export function activeCanVote(state) {
 // Actions ------------------------------------------------
 
 export const addAccounts = accounts => async dispatch => {
-  dispatch({
-    type: FETCHING_ACCOUNT_DATA,
-    payload: true
-  });
-  for (let account of accounts) {
-    if (account.type === AccountTypes.METAMASK)
-      await maker.addAccount({ type: 'browser' });
+  dispatch({ type: FETCHING_ACCOUNT_DATA, payload: true });
 
+  for (let account of accounts) {
     const mkrToken = maker.getToken(MKR);
     const { hasProxy, voteProxy } = await maker
       .service('voteProxy')
@@ -121,10 +112,11 @@ export const addAccounts = accounts => async dispatch => {
       promisedProperties(_payload),
       fetchLinkedAccountData()
     ]);
-    payload.proxy.linkedAccount = { ...linkedAccount };
-    await dispatch({ type: ADD_ACCOUNT, payload });
+    payload.proxy.linkedAccount = linkedAccount;
+    dispatch({ type: ADD_ACCOUNT, payload });
   }
-  return dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
+
+  dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
 };
 
 export const addAccount = account => async dispatch => {
@@ -141,36 +133,24 @@ export const updateAccount = account => ({
   payload: account
 });
 
-// After the initial load, this will generally be called when an account
-// is selected in the account box dropdown
-export const setActiveAccount = address => ({
-  type: SET_ACTIVE_ACCOUNT,
-  payload: address
-});
-
-export const getHardwareAccount = (type, options = {}) => async (
+// This is called when an account is selected in the account box dropdown, or
+// when Metamask is switched to a different account
+export const setActiveAccount = (address, isMetamask) => async (
   dispatch,
   getState
 ) => {
-  dispatch({ type: FIND_HARDWARE_ACCOUNT });
-  const combinedOptions = {
-    ...options,
-    networkId: netNameToId(getState().metamask.network),
-    promisify: true
-  };
-  const subprovider = createSubProvider(type, combinedOptions);
-  try {
-    const addressesMap = await subprovider.getAccounts();
-    console.log(
-      `${type} returned derivation paths:`,
-      Object.keys(addressesMap)
-    );
-    let address = values(addressesMap)[0];
-    dispatch(addAccount({ address, type, subprovider }));
-  } catch (err) {
-    console.error(err);
-    dispatch({ type: FIND_HARDWARE_ACCOUNT_FAILURE, payload: err });
+  // if we haven't seen this account before, fetch its data and add it to the
+  // Maker instance
+  if (
+    isMetamask &&
+    !getState().accounts.allAccounts.find(
+      a => a.address.toLowerCase() === address.toLowerCase()
+    )
+  ) {
+    await maker.addAccount({ type: 'browser' });
+    await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
   }
+  return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
 };
 
 export const setInfMkrApproval = () => dispatch => {
@@ -341,7 +321,8 @@ const accounts = createReducer(initialState, {
 
     return {
       ...state,
-      allAccounts: uniqConcat([account], state.allAccounts)
+      allAccounts: uniqConcat([account], state.allAccounts),
+      activeAccount: account.address
     };
   },
   [SET_ACTIVE_ACCOUNT]: (state, { payload: address }) => ({
