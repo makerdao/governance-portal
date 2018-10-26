@@ -136,6 +136,7 @@ function useColdAccount(dispatch, getState) {
 }
 
 export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
+  console.log('INITIATE link called');
   if (!useCorrectAccount(cold, dispatch, { label: 'cold' })) return;
   const initiateLink = maker
     .service('voteProxyFactory')
@@ -221,7 +222,9 @@ export const freeAll = value => dispatch => {
 
 export const breakLink = () => async dispatch => {
   dispatch({ type: BREAK_LINK_REQUEST });
+  // maker.service('accounts').initialize();
   const account = maker.currentAccount();
+  console.log('current account is', account);
   maker.useAccountWithAddress(account.address);
   const breakLink = maker.service('voteProxyFactory').breakLink();
 
@@ -251,6 +254,7 @@ export const refreshAccountDataLink = () => (dispatch, getState) => {
 };
 
 export const refreshAccountData = () => (dispatch, getState) => {
+  console.log('REFRESH ACCOUNT DATA');
   const state = getState();
   const activeAccount = getActiveAccount(state);
   const { hasProxy, proxy } = activeAccount;
