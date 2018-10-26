@@ -6,7 +6,7 @@ import { StyledTitle, StyledBlurb, StyledTop } from './shared/styles';
 import Button from '../Button';
 import { modalClose } from '../../reducers/modal';
 import { addAccount, setActiveAccount } from '../../reducers/accounts';
-import { LEDGER, TREZOR } from '../../chain/hw-wallet';
+import { AccountTypes } from '../../utils/constants';
 import { cutMiddle, toNum, copyToClipboard } from '../../utils/misc';
 import {
   AddressContainer,
@@ -66,20 +66,9 @@ class AddressSelection extends Component {
   }
 
   componentDidMount() {
-    if (this.props.trezor) {
-      maker.addAccount({
-        type: 'trezor',
-        accountsLength: 5,
-        choose: async (addresses, callback) => {
-          this.setState({
-            accounts: await this.getInfo(addresses),
-            pickAccount: callback
-          });
-        }
-      });
-    } else {
-      maker.addAccount({
-        type: 'ledger',
+    maker
+      .addAccount({
+        type: this.props.trezor ? 'trezor' : 'ledger',
         path: this.props.path,
         accountsLength: 5,
         choose: async (addresses, callback) => {
@@ -88,8 +77,8 @@ class AddressSelection extends Component {
             pickAccount: callback
           });
         }
-      });
-    }
+      })
+      .then(account => setActiveAccount(account.address));
   }
 
   render() {
@@ -167,7 +156,7 @@ class AddressSelection extends Component {
 
     addAccount({
       address,
-      type: trezor ? TREZOR : LEDGER
+      type: trezor ? AccountTypes.TREZOR : AccountTypes.LEDGER
     }).then(() => setActiveAccount(address));
     this.state.pickAccount(null, address); //add the account to the maker object
     modalClose();
