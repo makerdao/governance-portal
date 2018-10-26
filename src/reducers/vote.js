@@ -1,12 +1,11 @@
 import ReactGA from 'react-ga';
 
 import { createReducer } from '../utils/redux';
-import { getActiveAccount, getAccount, UPDATE_ACCOUNT } from './accounts';
+import { getAccount, UPDATE_ACCOUNT } from './accounts';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { voteTallyInit } from './tally';
 import { initApprovalsFetch } from './approvals';
 import maker from '../chain/maker';
-import { ensureBrowserAccountCorrect } from './proxy';
 
 // Constants ----------------------------------------------
 
@@ -53,13 +52,11 @@ const updateVotingFor = (
 };
 
 export const sendVote = proposalAddress => async (dispatch, getState) => {
-  const activeAccount = getActiveAccount(getState());
+  const activeAccount = getAccount(getState(), maker.currentAddress());
   if (!activeAccount || !activeAccount.hasProxy)
     throw new Error('must have account active');
-  if (!ensureBrowserAccountCorrect(activeAccount)) return;
   dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
   try {
-    maker.useAccountWithAddress(activeAccount.address);
     const txHash = await maker.voteExec({
       account: activeAccount,
       proposalAddress
@@ -87,13 +84,11 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
 };
 
 export const withdrawVote = () => async (dispatch, getState) => {
-  const activeAccount = getActiveAccount(getState());
+  const activeAccount = getAccount(getState(), maker.currentAddress());
   if (!activeAccount || !activeAccount.hasProxy)
     throw new Error('must have account active');
-  if (!ensureBrowserAccountCorrect(activeAccount)) return;
   dispatch({ type: WITHDRAW_REQUEST });
   try {
-    maker.useAccountWithAddress(activeAccount.address);
     const txHash = await maker.voteExecNone({ account: activeAccount });
     dispatch({ type: WITHDRAW_SENT, payload: { txHash } });
     const txReceipt = await maker.awaitTx(txHash, { confirmations: 1 });

@@ -38,11 +38,12 @@ const pollForMetamaskChanges = maker => async (dispatch, getState) => {
     const address = window.web3.eth.defaultAccount;
     if (address && address !== activeAddress) {
       dispatch(updateAddress(address));
-      dispatch(setActiveAccount(address, true));
+      await dispatch(setActiveAccount(address, true));
+      maker.useAccountWithAddress(address);
     } else if (fetching && !activeAddress) {
       dispatch({ type: NO_METAMASK_ACCOUNTS }); // accounts reducer
     }
-    setTimeout(() => dispatch(pollForMetamaskChanges(maker)), 2000);
+    setTimeout(() => dispatch(pollForMetamaskChanges(maker)), 1000);
   } catch (err) {
     console.error(err);
     console.error('stopped polling for metamask changes');

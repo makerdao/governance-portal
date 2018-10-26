@@ -147,17 +147,15 @@ export const setActiveAccount = (address, isMetamask) => async (
       a => a.address.toLowerCase() === address.toLowerCase()
     )
   ) {
-    await maker.addAccount({ type: 'browser' });
+    await maker.addAccount({ type: AccountTypes.METAMASK });
     await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
   }
   return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
 };
 
-export const setInfMkrApproval = () => dispatch => {
-  return dispatch({
-    type: SET_INF_MKR_APPROVAL
-  });
-};
+export function setInfMkrApproval() {
+  return { type: SET_INF_MKR_APPROVAL };
+}
 
 // Reducer ------------------------------------------------
 
@@ -315,7 +313,7 @@ const accounts = createReducer(initialState, {
     allAccounts: withUpdatedAccount(state.allAccounts, updatedAccount)
   }),
   [ADD_ACCOUNT]: (state, { payload: account }) => {
-    if (!Object.keys(AccountTypes).includes(account.type)) {
+    if (!Object.values(AccountTypes).includes(account.type)) {
       throw new Error(`Unrecognized account type: "${account.type}"`);
     }
 
@@ -343,16 +341,14 @@ const accounts = createReducer(initialState, {
     fetching: false
   }),
   [SET_INF_MKR_APPROVAL]: state => {
-    const _updatedAccount = {
-      ...getActiveAccount({ accounts: state }),
-      proxy: {
-        ...getActiveAccount({ accounts: state }).proxy,
-        hasInfMkrApproval: true
-      }
+    const account = getAccount({ accounts: state }, maker.currentAddress());
+    const updatedAccount = {
+      ...account,
+      proxy: { ...account.proxy, hasInfMkrApproval: true }
     };
     return {
       ...state,
-      allAccounts: withUpdatedAccount(state.allAccounts, _updatedAccount)
+      allAccounts: withUpdatedAccount(state.allAccounts, updatedAccount)
     };
   },
   [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),
