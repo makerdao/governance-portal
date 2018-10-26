@@ -24,6 +24,15 @@
   dependencies:
     events "^2.0.0"
 
+"@makerdao/dai-plugin-governance@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.1.0.tgz#5bcd41da58c56a198d683de2d0c55450ccbcc0c0"
+  integrity sha512-/JdRIK+dra3lQ7HHRvAkyrM0/R4Nsvx8yh1zC9lKlYdOijAHnNSnPcYlecWuKCDxnsS2/a8bDgwRac0hAb/9yg==
+  dependencies:
+    "@makerdao/dai" "^0.9.6"
+    babel-runtime "^6.26.0"
+    ramda "^0.25.0"
+
 "@makerdao/dai-plugin-ledger-web@^0.9.2":
   version "0.9.2"
   resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-ledger-web/-/dai-plugin-ledger-web-0.9.2.tgz#e24f5ee1531bcaa8fd0c8200333e28707f69f414"
@@ -11023,7 +11032,7 @@ web3-net@1.0.0-beta.36:
     web3-core-method "1.0.0-beta.36"
     web3-utils "1.0.0-beta.36"
 
-web3-provider-engine@14.0.4, "web3-provider-engine@github:makerdao/provider-engine#remove-provider-dist":
+web3-provider-engine@14.0.4, web3-provider-engine@makerdao/provider-engine#remove-provider-dist:
   version "14.0.4"
   resolved "https://codeload.github.com/makerdao/provider-engine/tar.gz/df251328c54b45982e5fd67fe8d74664b2243944"
   dependencies:
