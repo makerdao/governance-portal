@@ -7,6 +7,7 @@ import {
   onboardingNextStep,
   onboardingPrevStep
 } from '../reducers/onboarding';
+import Terms from './onboarding/Terms';
 
 import {
   OnboardingFullScreen,
@@ -88,56 +89,10 @@ const Onboarding = ({
         'Sign Cold TX'
       ]}
     >
-      <Box maxWidth="540px" m="0 auto">
-        <Grid gridRowGap="s">
-          <Text textAlign="center">
-            <h2>Terms of Use</h2>
-          </Text>
-          <Card p="m">
-            <Overflow height="270px" pr="m">
-              <Text t="p4">
-                Please read these Terms of Use (the “Terms” or “Terms of Use”)
-                carefully before using the Service. By using or otherwise
-                accessing the Service, or clicking to accept or agree to these
-                Terms where that option is made available, you (1) agree that
-                you have read and understand these Terms (2) accept and agree to
-                these Terms and (3) any additional terms, rules and conditions
-                of participation issued from time-to-time. If you do not agree
-                to the Terms, then you may not access or use the Content or
-                Service. MKR is a cryptographic governance token used in the Dai
-                System and Software, which is an autonomous system of smart
-                contract Please read these Terms of Use (the “Terms” or “Terms
-                of Use”) carefully before using the Service. By using or
-                otherwise accessing the Service, or clicking to accept or agree
-                to these Terms where that option is made available, you (1)
-                agree that you have read and understand these Terms (2) accept
-                and agree to these Terms and (3) any additional terms, rules and
-                conditions of participation issued from time-to-time. If you do
-                not agree to the Terms, then you may not access or use the
-                Content or Service. MKR is a cryptographic governance token used
-                in the Dai System and Software, which is an autonomous system of
-                smart contract Please read these Terms of Use (the “Terms” or
-                “Terms of Use”) carefully before using the Service. By using or
-                otherwise accessing the Service, or clicking to accept or agree
-                to these Terms where that option is made available, you (1)
-                agree that you have read and understand these Terms (2) accept
-                and agree to these Terms and (3) any additional terms, rules and
-                conditions of participation issued from time-to-time. If you do
-                not agree to the Terms, then you may not access or use the
-                Content or Service. MKR is a cryptographic governance token used
-                in the Dai System and Software, which is an autonomous system of
-                smart contract
-              </Text>
-            </Overflow>
-          </Card>
-          <Flex justifyContent="center">
-            <Button variant="secondary" onClick={onboardingClose} mr="s">
-              Cancel
-            </Button>
-            <Button onClick={onboardingNextStep}>I agree</Button>
-          </Flex>
-        </Grid>
-      </Box>
+      <Terms
+        onboardingClose={onboardingClose}
+        onboardingNextStep={onboardingNextStep}
+      />
 
       <Box maxWidth="930px" m="0 auto">
         <Grid

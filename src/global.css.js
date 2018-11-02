@@ -269,20 +269,6 @@ const globalStyles = `
     font-variant: small-caps;
     color: #0E1029;
   }
-  .legal-markdown {
-    font-size: 15px;
-    line-height: 24px;
-    color: #48495F;
-    font-family: ${fonts.family.System};
-  }
-  .legal-markdown h4 {
-    font-size: 16px;
-    line-height: 24px;
-    font-weight: 500;
-    margin-top: 1rem;
-    margin-bottom: 5px;
-    color: #231536;
-  }
   `;
 
 injectGlobal`${globalStyles}`;
