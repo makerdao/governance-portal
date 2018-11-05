@@ -2,26 +2,6 @@ import { topicsInit } from '../../src/reducers/topics';
 import each from 'jest-each';
 
 const dateRegex = '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$';
-// MOCK WEB3
-const origWindow = {};
-const mockProvider = {
-  sendAsync: ({ method }, callback) => {
-    if (method === 'eth_accounts') {
-      callback(null, { result: ['0xf00'] });
-    }
-  }
-};
-window.web3 = {
-  currentProvider: mockProvider,
-  eth: {
-    defaultAccount: '0xf00bae'
-  }
-};
-window.ethereum = {
-  enable: async () => {
-    window.ethereum['sendAsync'] = mockProvider.sendAsync;
-  }
-};
 
 test('topicsInit dispatches a TOPICS_FAILURE action when it cannot reach the backend', async () => {
   // SETUP
@@ -108,8 +88,3 @@ each([
     });
   }
 );
-
-// RESTORE WINDOW
-Object.assign(window, origWindow);
-delete window.web3;
-delete window.ethereum;
