@@ -117,7 +117,7 @@ const TermsWrapper = styled.div`
   }
 `;
 
-const Terms = ({ onboardingClose, onboardingNextStep }) => {
+const Terms = ({ onCancel, onComplete }) => {
   return (
     <Box maxWidth="548px" m="0 auto">
       <Grid gridRowGap="m">
@@ -145,10 +145,10 @@ const Terms = ({ onboardingClose, onboardingNextStep }) => {
           </Link>
         </Text>
         <Flex justifyContent="center">
-          <Button variant="secondary-outline" onClick={onboardingClose} mr="s">
+          <Button variant="secondary-outline" onClick={onCancel} mr="s">
             Cancel
           </Button>
-          <Button onClick={onboardingNextStep}>I agree</Button>
+          <Button onClick={onComplete}>I agree</Button>
         </Flex>
       </Grid>
     </Box>

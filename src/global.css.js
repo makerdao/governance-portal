@@ -20,7 +20,6 @@ const globalStyles = `
     max-height: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    font-size: 16px;
     line-height: 1.5;
     font-size: 10px;
     color: #53546A;

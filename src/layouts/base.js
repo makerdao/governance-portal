@@ -22,6 +22,7 @@ const StyledLayout = styled.div`
   min-height: 100vh;
   min-width: 1000px;
 `;
+
 const AppWrapper = styled.div`
   padding: 0px 16px;
 `;
@@ -132,6 +133,7 @@ const Circle = styled.div`
 const BaseLayout = ({
   children,
   network,
+  onboardingIsOpen,
   onboardingOpen,
   metamaskFetching,
   proposalsAvailable,
