@@ -136,7 +136,6 @@ function useColdAccount(dispatch, getState) {
 }
 
 export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
-  console.log('INITIATE link called');
   if (!useCorrectAccount(cold, dispatch, { label: 'cold' })) return;
   const initiateLink = maker
     .service('voteProxyFactory')
