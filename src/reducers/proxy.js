@@ -16,42 +16,42 @@ import maker, { MKR } from '../chain/maker';
 // Constants ----------------------------------------------
 
 export const INITIATE_LINK_REQUEST = 'proxy/INITIATE_LINK_REQUEST';
-const INITIATE_LINK_SENT = 'proxy/INITIATE_LINK_SENT';
-const INITIATE_LINK_SUCCESS = 'proxy/INITIATE_LINK_SUCCESS';
-const INITIATE_LINK_FAILURE = 'proxy/INITIATE_LINK_FAILURE';
+export const INITIATE_LINK_SENT = 'proxy/INITIATE_LINK_SENT';
+export const INITIATE_LINK_SUCCESS = 'proxy/INITIATE_LINK_SUCCESS';
+export const INITIATE_LINK_FAILURE = 'proxy/INITIATE_LINK_FAILURE';
 
-const APPROVE_LINK_REQUEST = 'proxy/APPROVE_LINK_REQUEST';
-const APPROVE_LINK_SENT = 'proxy/APPROVE_LINK_SENT';
+export const APPROVE_LINK_REQUEST = 'proxy/APPROVE_LINK_REQUEST';
+export const APPROVE_LINK_SENT = 'proxy/APPROVE_LINK_SENT';
 export const APPROVE_LINK_SUCCESS = 'proxy/APPROVE_LINK_SUCCESS';
-const APPROVE_LINK_FAILURE = 'proxy/APPROVE_LINK_FAILURE';
+export const APPROVE_LINK_FAILURE = 'proxy/APPROVE_LINK_FAILURE';
 
-const SEND_MKR_TO_PROXY_REQUEST = 'proxy/SEND_MKR_TO_PROXY_REQUEST';
-const SEND_MKR_TO_PROXY_SENT = 'proxy/SEND_MKR_TO_PROXY_SENT';
+export const SEND_MKR_TO_PROXY_REQUEST = 'proxy/SEND_MKR_TO_PROXY_REQUEST';
+export const SEND_MKR_TO_PROXY_SENT = 'proxy/SEND_MKR_TO_PROXY_SENT';
 export const SEND_MKR_TO_PROXY_SUCCESS = 'proxy/SEND_MKR_TO_PROXY_SUCCESS';
-const SEND_MKR_TO_PROXY_FAILURE = 'proxy/SEND_MKR_TO_PROXY_FAILURE';
+export const SEND_MKR_TO_PROXY_FAILURE = 'proxy/SEND_MKR_TO_PROXY_FAILURE';
 
-const WITHDRAW_MKR_REQUEST = 'proxy/WITHDRAW_MKR_REQUEST';
-const WITHDRAW_MKR_SENT = 'proxy/WITHDRAW_MKR_SENT';
+export const WITHDRAW_MKR_REQUEST = 'proxy/WITHDRAW_MKR_REQUEST';
+export const WITHDRAW_MKR_SENT = 'proxy/WITHDRAW_MKR_SENT';
 export const WITHDRAW_MKR_SUCCESS = 'proxy/WITHDRAW_MKR_SUCCESS';
-const WITHDRAW_MKR_FAILURE = 'proxy/WITHDRAW_MKR_FAILURE';
+export const WITHDRAW_MKR_FAILURE = 'proxy/WITHDRAW_MKR_FAILURE';
 
-const WITHDRAW_ALL_MKR_REQUEST = 'proxy/WITHDRAW_ALL_MKR_REQUEST';
-const WITHDRAW_ALL_MKR_SENT = 'proxy/WITHDRAW_ALL_MKR_SENT';
+export const WITHDRAW_ALL_MKR_REQUEST = 'proxy/WITHDRAW_ALL_MKR_REQUEST';
+export const WITHDRAW_ALL_MKR_SENT = 'proxy/WITHDRAW_ALL_MKR_SENT';
 export const WITHDRAW_ALL_MKR_SUCCESS = 'proxy/WITHDRAW_ALL_MKR_SUCCESS';
-const WITHDRAW_ALL_MKR_FAILURE = 'proxy/WITHDRAW_ALL_MKR_FAILURE';
+export const WITHDRAW_ALL_MKR_FAILURE = 'proxy/WITHDRAW_ALL_MKR_FAILURE';
 
-const BREAK_LINK_REQUEST = 'proxy/BREAK_LINK_REQUEST';
-const BREAK_LINK_SENT = 'proxy/BREAK_LINK_SENT';
+export const BREAK_LINK_REQUEST = 'proxy/BREAK_LINK_REQUEST';
+export const BREAK_LINK_SENT = 'proxy/BREAK_LINK_SENT';
 export const BREAK_LINK_SUCCESS = 'proxy/BREAK_LINK_SUCCESS';
-const BREAK_LINK_FAILURE = 'proxy/BREAK_LINK_FAILURE';
+export const BREAK_LINK_FAILURE = 'proxy/BREAK_LINK_FAILURE';
 
-const MKR_APPROVE_REQUEST = 'proxy/MKR_APPROVE_REQUEST';
-const MKR_APPROVE_SENT = 'proxy/MKR_APPROVE_SENT';
+export const MKR_APPROVE_REQUEST = 'proxy/MKR_APPROVE_REQUEST';
+export const MKR_APPROVE_SENT = 'proxy/MKR_APPROVE_SENT';
 export const MKR_APPROVE_SUCCESS = 'proxy/MKR_APPROVE_SUCCESS';
-const MKR_APPROVE_FAILURE = 'proxy/MKR_APPROVE_FAILURE';
+export const MKR_APPROVE_FAILURE = 'proxy/MKR_APPROVE_FAILURE';
 
-const CLEAR = 'proxy/CLEAR';
-const GO_TO_STEP = 'proxy/GO_TO_STEP';
+export const CLEAR = 'proxy/CLEAR';
+export const GO_TO_STEP = 'proxy/GO_TO_STEP';
 
 // Actions ------------------------------------------------
 
@@ -221,9 +221,7 @@ export const freeAll = value => dispatch => {
 
 export const breakLink = () => async dispatch => {
   dispatch({ type: BREAK_LINK_REQUEST });
-  // maker.service('accounts').initialize();
   const account = maker.currentAccount();
-  console.log('current account is', account);
   maker.useAccountWithAddress(account.address);
   const breakLink = maker.service('voteProxyFactory').breakLink();
 
@@ -253,7 +251,6 @@ export const refreshAccountDataLink = () => (dispatch, getState) => {
 };
 
 export const refreshAccountData = () => (dispatch, getState) => {
-  console.log('REFRESH ACCOUNT DATA');
   const state = getState();
   const activeAccount = getActiveAccount(state);
   const { hasProxy, proxy } = activeAccount;
