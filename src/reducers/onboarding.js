@@ -37,7 +37,7 @@ export const onboardingStartLinkedFlow = () => ({
 
 // Reducer ------------------------------------------------
 
-const initialState = { step: 0, open: true, flow: null };
+const initialState = { step: 1, open: true, flow: 'linked' };
 
 const onboarding = createReducer(initialState, {
   [ONBOARDING_OPEN]: state => ({

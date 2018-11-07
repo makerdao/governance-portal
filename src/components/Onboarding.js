@@ -63,12 +63,12 @@ const Onboarding = ({
         show={open && flow === 'linked'}
         onClose={onboardingClose}
         steps={[
-          'Terms',
-          'Choose Hot',
-          'Choose Cold',
-          'Sign Hot TX',
-          'Store MKR',
-          'Sign Cold TX'
+          'Terms of use',
+          'Select Voting Wallet',
+          'Select MKR Balance',
+          'Initiate Link',
+          'Lock MKR',
+          'Start Voting'
         ]}
       >
         <Terms
