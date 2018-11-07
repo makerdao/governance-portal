@@ -1,5 +1,6 @@
 import * as maker from '../../src/chain/maker';
 import * as reducer from '../../src/reducers/proxy';
+import * as accounts from '../../src/reducers/accounts';
 import { AccountTypes } from '../../src/utils/constants';
 
 import configureMockStore from 'redux-mock-store';
@@ -465,6 +466,9 @@ describe('Proxy Reducer', () => {
   });
 
   describe('Break Link', () => {
+    const mockAction = { type: FETCHING_ACCOUNT_DATA, payload: true };
+    accounts.addAccounts = jest.fn(() => mockAction);
+
     afterAll(() => {
       defaultFunctions.service = jest.fn(mockService);
     });
