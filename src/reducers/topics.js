@@ -77,6 +77,7 @@ export function getWinningProp(state, topicKey) {
 
 const local = 'http://127.0.0.1:3000';
 const prod = 'https://content.makerfoundation.com';
+const staging = 'https://elb.content.makerfoundation.com:444';
 
 const path = 'content/governance-dashboard';
 
@@ -97,14 +98,8 @@ const fetchMock = async () => {
   return mocked.default;
 };
 
-const fetchLocal = async network => {
-  const res = await fetch(`${local}/${path}?network=${network}`);
-  await check(res);
-  return await res.json();
-};
-
-const fetchProd = async network => {
-  const res = await fetch(`${prod}/${path}?network=${network}`);
+const fetchNetwork = async (url, network) => {
+  const res = await fetch(`${url}/${path}?network=${network}`);
   await check(res);
   return await res.json();
 };
@@ -117,10 +112,14 @@ const fetchTopics = async network => {
   }
 
   if (process.env.REACT_APP_GOV_BACKEND === 'local') {
-    return await fetchLocal(network);
+    return await fetchNetwork(local, network);
   }
 
-  return await fetchProd(network);
+  if (process.env.REACT_APP_GOV_BACKEND === 'staging') {
+    return await fetchNetwork(staging, network);
+  }
+
+  return await fetchNetwork(prod, network);
 };
 
 // Actions ------------------------------------------------

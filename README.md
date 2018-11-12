@@ -44,6 +44,7 @@ yarn build
 By default the production backend ([`content.makerfoundation.com`](https://content.makerfoundation.com)) will be used, but you can also set the `REACT_APP_GOV_BACKEND` environment variable to one of the following to override this:
 
 - `local`: uses a local dev copy of the backend (`127.0.0.1:3000`)
+- `staging`: uses the staging backend (`elb.content.makerfoundation.com:444`)
 - `mock`: uses the mocked backend (see [`/src/_mock/topics.js`](/src/_mock/topics.js))
 
 ## Codebase
