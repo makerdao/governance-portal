@@ -11,7 +11,7 @@ import {
 import { AccountTypes } from '../utils/constants';
 import { modalClose } from './modal';
 import { addToastWithTimeout, ToastTypes } from './toasts';
-import maker, { MKR } from '../chain/maker';
+import { MKR } from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -66,7 +66,7 @@ const handleTx = async ({
   successPayload = '',
   acctType
 }) => {
-  const txMgr = maker.service('transactionManager');
+  const txMgr = window.maker.service('transactionManager');
   txMgr.listen(txObject, {
     pending: tx => {
       dispatch({
@@ -81,11 +81,11 @@ const handleTx = async ({
         action: prefix,
         label: `wallet type ${acctType || 'unknown'}`
       });
-      console.log('mined:', tx);
+      // console.log('mined:', tx);
     },
     // TODO: error handle and get descriptive failure messages
     error: (tx, err) => {
-      console.error(err.message);
+      // console.error(err.message);
       dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
       dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
       ReactGA.event({
@@ -109,14 +109,14 @@ function useCorrectAccount(requiredAccount, dispatch, options = {}) {
     return false;
   }
 
-  if (maker.currentAddress().toLowerCase() !== address.toLowerCase()) {
+  if (window.maker.currentAddress().toLowerCase() !== address.toLowerCase()) {
     if (
       type === AccountTypes.METAMASK &&
-      maker.currentAccount().type === AccountTypes.METAMASK
+      window.maker.currentAccount().type === AccountTypes.METAMASK
     ) {
       console.warn('Should have auto-switched to this account...');
     }
-    maker.useAccountWithAddress(address);
+    window.maker.useAccountWithAddress(address);
   }
 
   // this is just so that we can see the change in the UI
@@ -127,7 +127,7 @@ function useCorrectAccount(requiredAccount, dispatch, options = {}) {
 
 function useColdAccount(dispatch, getState) {
   const state = getState();
-  const account = getAccount(state, maker.currentAddress());
+  const account = getAccount(state, window.maker.currentAddress());
   if (account.proxyRole !== 'cold') {
     const cold = state.accounts.allAccounts.find(a => a.proxyRole === 'cold');
     return useCorrectAccount(cold, dispatch);
@@ -137,7 +137,7 @@ function useColdAccount(dispatch, getState) {
 
 export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
   if (!useCorrectAccount(cold, dispatch, { label: 'cold' })) return;
-  const initiateLink = maker
+  const initiateLink = window.maker
     .service('voteProxyFactory')
     .initiateLink(hot.address);
 
@@ -159,7 +159,7 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
 export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
   if (!useCorrectAccount(hotAccount, dispatch, { label: 'hot' })) return;
   const { coldAddress } = getState().proxy;
-  const approveLink = maker
+  const approveLink = window.maker
     .service('voteProxyFactory')
     .approveLink(coldAddress);
 
@@ -177,8 +177,10 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
 export const lock = value => async (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
   if (!useColdAccount(dispatch, getState)) return;
-  const account = getAccount(getState(), maker.currentAddress());
-  const lock = maker.service('voteProxy').lock(account.proxy.address, value);
+  const account = getAccount(getState(), window.maker.currentAddress());
+  const lock = window.maker
+    .service('voteProxy')
+    .lock(account.proxy.address, value);
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
   handleTx({
@@ -192,8 +194,10 @@ export const lock = value => async (dispatch, getState) => {
 
 export const free = value => dispatch => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
-  const account = maker.currentAccount();
-  const free = maker.service('voteProxy').free(account.proxy.address, value);
+  const account = window.maker.currentAccount();
+  const free = window.maker
+    .service('voteProxy')
+    .free(account.proxy.address, value);
 
   dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
   handleTx({
@@ -207,8 +211,10 @@ export const free = value => dispatch => {
 
 export const freeAll = value => dispatch => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
-  const account = maker.currentAccount();
-  const freeAll = maker.service('voteProxy').freeAll(account.proxy.address);
+  const account = window.maker.currentAccount();
+  const freeAll = window.maker
+    .service('voteProxy')
+    .freeAll(account.proxy.address);
 
   dispatch({ type: WITHDRAW_ALL_MKR_REQUEST, payload: value });
   handleTx({
@@ -221,9 +227,9 @@ export const freeAll = value => dispatch => {
 
 export const breakLink = () => async dispatch => {
   dispatch({ type: BREAK_LINK_REQUEST });
-  const account = maker.currentAccount();
-  maker.useAccountWithAddress(account.address);
-  const breakLink = maker.service('voteProxyFactory').breakLink();
+  const account = window.maker.currentAccount();
+  window.maker.useAccountWithAddress(account.address);
+  const breakLink = window.maker.service('voteProxyFactory').breakLink();
 
   await handleTx({
     prefix: 'BREAK_LINK',
@@ -267,9 +273,9 @@ export const refreshAccountData = () => (dispatch, getState) => {
 
 export const mkrApproveProxy = () => (dispatch, getState) => {
   if (!useColdAccount(dispatch, getState)) return;
-  const account = getAccount(getState(), maker.currentAddress());
+  const account = getAccount(getState(), window.maker.currentAddress());
 
-  const giveProxyAllowance = maker
+  const giveProxyAllowance = window.maker
     .getToken(MKR)
     .approveUnlimited(account.proxy.address);
 

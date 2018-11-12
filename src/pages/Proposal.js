@@ -23,7 +23,6 @@ import {
   cutMiddle
 } from '../utils/misc';
 import { modalOpen } from '../reducers/modal';
-import maker from '../chain/maker';
 
 const riseUp = keyframes`
 0% {
@@ -171,9 +170,8 @@ const StyledLink = styled(Link)`
   text-overflow: ellipsis;
 `;
 
-const toChecksumAddress = async address => {
-  await maker.authenticate();
-  const { toChecksumAddress } = maker.service('web3')._web3.utils;
+const toChecksumAddress = address => {
+  const { toChecksumAddress } = window.maker.service('web3')._web3.utils;
   return toChecksumAddress(address);
 };
 

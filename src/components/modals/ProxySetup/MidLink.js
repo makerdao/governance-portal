@@ -10,7 +10,7 @@ import {
 } from '../shared/styles';
 import HotColdTable from '../shared/HotColdTable';
 import { formatRound } from '../../../utils/misc';
-import maker, { MKR, ETH } from '../../../chain/maker';
+import { MKR, ETH } from '../../../chain/maker';
 
 class MidLink extends Component {
   constructor(props) {
@@ -26,8 +26,8 @@ class MidLink extends Component {
 
   async componentDidMount() {
     const { hotAddress, coldAddress } = this.props;
-    const mkrToken = maker.getToken(MKR);
-    const ethToken = maker.getToken(ETH);
+    const mkrToken = window.maker.getToken(MKR);
+    const ethToken = window.maker.getToken(ETH);
     const [ethHot, ethCold, mkrHot, mkrCold] = await Promise.all([
       ethToken.balanceOf(hotAddress),
       ethToken.balanceOf(coldAddress),

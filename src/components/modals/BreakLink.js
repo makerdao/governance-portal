@@ -11,7 +11,7 @@ import Withdraw from './Withdraw';
 import { modalOpen } from '../../reducers/modal';
 import HotColdTable from './shared/HotColdTable';
 import { formatRound } from '../../utils/misc';
-import maker, { ETH } from '../../chain/maker';
+import { ETH } from '../../chain/maker';
 
 class BreakLink extends Component {
   constructor(props) {
@@ -26,7 +26,7 @@ class BreakLink extends Component {
     const isColdWallet = account.proxyRole === 'cold';
     const coldAddress = isColdWallet ? account.address : linkedAccount.address;
     const hotAddress = isColdWallet ? linkedAccount.address : account.address;
-    const ethToken = maker.getToken(ETH);
+    const ethToken = window.maker.getToken(ETH);
     const [ethHot, ethCold] = await Promise.all([
       ethToken.balanceOf(hotAddress),
       ethToken.balanceOf(coldAddress)

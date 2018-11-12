@@ -1,4 +1,4 @@
-import * as maker from '../../src/chain/maker';
+import { MKR } from '../../src/chain/maker';
 import * as reducer from '../../src/reducers/proxy';
 import * as accounts from '../../src/reducers/accounts';
 import { AccountTypes } from '../../src/utils/constants';
@@ -105,7 +105,7 @@ const mockServiceError = name => {
 };
 
 const tokenClass = token => {
-  if (token === maker.MKR) {
+  if (token === MKR) {
     return { approveUnlimited: approveUnlimited };
   }
 };
@@ -117,8 +117,6 @@ const defaultFunctions = {
   service: jest.fn(mockService),
   getToken: jest.fn(tokenClass)
 };
-
-maker.default = defaultFunctions;
 
 describe('Proxy Reducer', () => {
   beforeAll(() => {
@@ -141,6 +139,7 @@ describe('Proxy Reducer', () => {
       }
     };
     window.location.reload = jest.fn();
+    window.maker = defaultFunctions;
   });
 
   beforeEach(() => {

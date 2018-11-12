@@ -13,7 +13,7 @@ import {
   INITIATE_LINK_REQUEST
 } from './proxy';
 import { MAX_UINT_ETH_BN } from '../utils/ethereum';
-import maker, { MKR } from '../chain/maker';
+import { MKR } from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -62,8 +62,8 @@ export const addAccounts = accounts => async dispatch => {
   dispatch({ type: FETCHING_ACCOUNT_DATA, payload: true });
 
   for (let account of accounts) {
-    const mkrToken = maker.getToken(MKR);
-    const { hasProxy, voteProxy } = await maker
+    const mkrToken = window.maker.getToken(MKR);
+    const { hasProxy, voteProxy } = await window.maker
       .service('voteProxy')
       .getVoteProxy(account.address);
 
@@ -147,7 +147,7 @@ export const setActiveAccount = (address, isMetamask) => async (
       a => a.address.toLowerCase() === address.toLowerCase()
     )
   ) {
-    await maker.addAccount({ type: AccountTypes.METAMASK });
+    await window.maker.addAccount({ type: AccountTypes.METAMASK });
     await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
   }
   return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
@@ -341,7 +341,10 @@ const accounts = createReducer(initialState, {
     fetching: false
   }),
   [SET_INF_MKR_APPROVAL]: state => {
-    const account = getAccount({ accounts: state }, maker.currentAddress());
+    const account = getAccount(
+      { accounts: state },
+      window.maker.currentAddress()
+    );
     const updatedAccount = {
       ...account,
       proxy: { ...account.proxy, hasInfMkrApproval: true }

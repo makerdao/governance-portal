@@ -6,7 +6,6 @@ import { getAccount, UPDATE_ACCOUNT } from './accounts';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { voteTallyInit } from './tally';
 import { initApprovalsFetch } from './approvals';
-import maker from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -37,7 +36,7 @@ const handleTx = async ({
   activeAccount,
   proposalAddress = ''
 }) => {
-  const txMgr = maker.service('transactionManager');
+  const txMgr = window.maker.service('transactionManager');
   txMgr.listen(txObject, {
     pending: tx => {
       dispatch({
@@ -52,13 +51,13 @@ const handleTx = async ({
         action: prefix,
         label: `wallet type ${acctType || 'unknown'}`
       });
-      console.log('mined:', tx);
+      // console.log('mined:', tx);
       dispatch(voteTallyInit());
       dispatch(initApprovalsFetch());
       updateVotingFor(dispatch, getState, activeAccount, proposalAddress);
     },
     error: (tx, err) => {
-      console.error(err.message);
+      // console.error(err.message);
       dispatch({ type: `vote/${prefix}_FAILURE`, payload: err });
       dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
       ReactGA.event({
@@ -95,12 +94,12 @@ const updateVotingFor = (
 };
 
 export const sendVote = proposalAddress => async (dispatch, getState) => {
-  const activeAccount = getAccount(getState(), maker.currentAddress());
+  const activeAccount = getAccount(getState(), window.maker.currentAddress());
   if (!activeAccount || !activeAccount.hasProxy)
     throw new Error('must have account active');
   dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
 
-  const voteExec = maker.voteExec({
+  const voteExec = window.maker.voteExec({
     account: activeAccount,
     proposalAddress
   });
@@ -124,13 +123,15 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
 };
 
 export const withdrawVote = () => async (dispatch, getState) => {
-  const activeAccount = getAccount(getState(), maker.currentAddress());
+  const activeAccount = getAccount(getState(), window.maker.currentAddress());
   if (!activeAccount || !activeAccount.hasProxy)
     throw new Error('must have account active');
 
   dispatch({ type: WITHDRAW_REQUEST });
 
-  const voteExecNone = await maker.voteExecNone({ account: activeAccount });
+  const voteExecNone = await window.maker.voteExecNone({
+    account: activeAccount
+  });
 
   await handleTx({
     prefix: 'WITHDRAW',

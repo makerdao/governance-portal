@@ -1,4 +1,3 @@
-import * as maker from '../../src/chain/maker';
 import * as reducer from '../../src/reducers/vote';
 import * as accounts from '../../src/reducers/accounts';
 import * as approvals from '../../src/reducers/approvals';
@@ -70,8 +69,6 @@ const defaultFunctions = {
   voteExecNone: voteExecNone
 };
 
-maker.default = defaultFunctions;
-
 describe('Vote Reducer', () => {
   beforeAll(() => {
     const mockProvider = {
@@ -92,6 +89,7 @@ describe('Vote Reducer', () => {
         window.ethereum['sendAsync'] = mockProvider.sendAsync;
       }
     };
+    window.maker = defaultFunctions;
   });
 
   beforeEach(() => {
