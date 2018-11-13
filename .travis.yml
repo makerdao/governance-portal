@@ -12,7 +12,7 @@ cache:
 install:
   - yarn install
 before_script:
-  - npm install codecov --no-save
+  - npm install -g codecov
 script:
   - yarn cover
   - codecov
