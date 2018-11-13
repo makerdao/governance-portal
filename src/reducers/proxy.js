@@ -194,7 +194,8 @@ export const lock = value => async (dispatch, getState) => {
 
 export const free = value => dispatch => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
-  const account = window.maker.currentAccount();
+  const account = getAccount(getState(), window.maker.currentAddress());
+
   const free = window.maker
     .service('voteProxy')
     .free(account.proxy.address, value);
@@ -211,7 +212,8 @@ export const free = value => dispatch => {
 
 export const freeAll = value => dispatch => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
-  const account = window.maker.currentAccount();
+  const account = getAccount(getState(), window.maker.currentAddress());
+
   const freeAll = window.maker
     .service('voteProxy')
     .freeAll(account.proxy.address);
