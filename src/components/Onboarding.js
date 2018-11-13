@@ -7,16 +7,14 @@ import {
   onboardingNextStep,
   onboardingPrevStep,
   onboardingStartLinkedFlow,
-  onboardingChooseWallet
+  onboardingChooseWalletType
 } from '../reducers/onboarding';
 import Terms from './onboarding/Terms';
 import ChooseHotWallet from './onboarding/ChooseHotWallet';
+import ChooseColdWallet from './onboarding/ChooseColdWallet';
 import Introduction from './onboarding/Introduction';
 
 import { OnboardingFullScreen, Box } from '@makerdao/ui-components';
-import metamaskImg from '../imgs/metamask.svg';
-import trezorImg from '../imgs/trezor.png';
-import ledgerImg from '../imgs/ledger.svg';
 
 const Background = styled(Box)`
   opacity: 0;
@@ -41,11 +39,10 @@ const Onboarding = ({
   onboardingNextStep,
   onboardingPrevStep,
   onboardingStartLinkedFlow,
-  onboardingChooseWallet
+  onboardingChooseWalletType
 }) => {
   return (
     <Background
-      position="relative"
       show={open}
       zIndex="20000"
       bg="#F6F8F9"
@@ -72,11 +69,12 @@ const Onboarding = ({
         ]}
       >
         <Terms
-          onCancel={onboardingChooseWallet}
+          onCancel={onboardingChooseWalletType}
           onComplete={onboardingNextStep}
         />
 
         <ChooseHotWallet onComplete={onboardingNextStep} />
+        <ChooseColdWallet onComplete={onboardingNextStep} />
       </OnboardingFullScreen>
     </Background>
   );
@@ -85,7 +83,7 @@ const Onboarding = ({
 export default connect(
   state => state.onboarding,
   {
-    onboardingChooseWallet,
+    onboardingChooseWalletType,
     onboardingStartLinkedFlow,
     onboardingClose,
     onboardingNextStep,

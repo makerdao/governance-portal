@@ -72,7 +72,7 @@ const WalletCard = props => {
           </Box>
           <p>{props.subtitle}</p>
         </Box>
-        <img src={rightArrow} />
+        <img src={rightArrow} alt="" />
       </Grid>
     </Card>
   );
