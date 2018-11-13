@@ -174,11 +174,9 @@ export const getHardwareAccount = (type, options = {}) => async (
   }
 };
 
-export const setInfMkrApproval = () => dispatch => {
-  return dispatch({
-    type: SET_INF_MKR_APPROVAL
-  });
-};
+export function setInfMkrApproval() {
+  return { type: SET_INF_MKR_APPROVAL };
+}
 
 // Reducer ------------------------------------------------
 
