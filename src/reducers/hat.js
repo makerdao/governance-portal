@@ -1,7 +1,6 @@
 import { createReducer } from '../utils/redux';
 import { paddedBytes32ToAddress } from '../utils/ethereum';
 import { toNum } from '../utils/misc';
-import maker from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -14,10 +13,10 @@ const HAT_FAILURE = 'hat/HAT_FAILURE';
 export const hatInit = () => async dispatch => {
   try {
     dispatch({ type: HAT_REQUEST });
-    const bytes32 = await maker.service('chief').getHat();
+    const bytes32 = await window.maker.service('chief').getHat();
     const address = paddedBytes32ToAddress(bytes32);
     const approvals = await toNum(
-      maker.service('chief').getApprovalCount(address)
+      window.maker.service('chief').getApprovalCount(address)
     );
     dispatch({ type: HAT_SUCCESS, payload: { address, approvals } });
   } catch (err) {

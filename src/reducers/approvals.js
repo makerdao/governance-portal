@@ -3,7 +3,6 @@ import round from 'lodash.round';
 import { createReducer } from '../utils/redux';
 import flatten from 'ramda/src/flatten';
 import { add, toNum } from '../utils/misc';
-import maker from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -21,7 +20,7 @@ export const initApprovalsFetch = () => (dispatch, getState) => {
   dispatch({ type: APPROVALS_REQUEST });
   Promise.all(
     proposals.map(({ source }) =>
-      toNum(maker.service('chief').getApprovalCount(source)).then(
+      toNum(window.maker.service('chief').getApprovalCount(source)).then(
         approvals => ({
           [source]: approvals
         })
@@ -55,7 +54,7 @@ const initialState = {
 };
 
 const approvals = createReducer(initialState, {
-  [APPROVALS_REQUEST]: _ => ({
+  [APPROVALS_REQUEST]: () => ({
     ...initialState,
     fetching: true
   }),

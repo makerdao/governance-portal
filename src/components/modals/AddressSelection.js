@@ -17,7 +17,7 @@ import {
 } from './shared/HotColdTable';
 import { Wrapper, Blurb } from './LedgerType';
 import Loader from '../Loader';
-import maker, { ETH, MKR } from '../../chain/maker';
+import { ETH, MKR } from '../../chain/maker';
 
 const CircleNumber = styled.div`
   width: 32px;
@@ -66,7 +66,7 @@ class AddressSelection extends Component {
   }
 
   componentDidMount() {
-    maker
+    window.maker
       .addAccount({
         type: this.props.trezor ? 'trezor' : 'ledger',
         path: this.props.path,
@@ -168,11 +168,11 @@ class AddressSelection extends Component {
         index: index,
         address: addresses[index],
         eth: round(
-          await toNum(maker.getToken(ETH).balanceOf(addresses[index])),
+          await toNum(window.maker.getToken(ETH).balanceOf(addresses[index])),
           3
         ),
         mkr: round(
-          await toNum(maker.getToken(MKR).balanceOf(addresses[index])),
+          await toNum(window.maker.getToken(MKR).balanceOf(addresses[index])),
           3
         )
       }))

@@ -1,23 +1,23 @@
 import ReactGA from 'react-ga';
 
 import { createReducer } from '../utils/redux';
+import { parseError } from '../utils/misc';
 import { getAccount, UPDATE_ACCOUNT } from './accounts';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { voteTallyInit } from './tally';
 import { initApprovalsFetch } from './approvals';
-import maker from '../chain/maker';
 
 // Constants ----------------------------------------------
 
-const VOTE_REQUEST = 'vote/VOTE_REQUEST';
-const VOTE_SENT = 'vote/VOTE_SENT';
-const VOTE_SUCCESS = 'vote/VOTE_SUCCESS';
-const VOTE_FAILURE = 'vote/VOTE_FAILURE';
+export const VOTE_REQUEST = 'vote/VOTE_REQUEST';
+export const VOTE_SENT = 'vote/VOTE_SENT';
+export const VOTE_SUCCESS = 'vote/VOTE_SUCCESS';
+export const VOTE_FAILURE = 'vote/VOTE_FAILURE';
 
-const WITHDRAW_REQUEST = 'vote/WITHDRAW_REQUEST';
-const WITHDRAW_SENT = 'vote/WITHDRAW_SENT';
-const WITHDRAW_SUCCESS = 'vote/WITHDRAW_SUCCESS';
-const WITHDRAW_FAILURE = 'vote/WITHDRAW_FAILURE';
+export const WITHDRAW_REQUEST = 'vote/WITHDRAW_REQUEST';
+export const WITHDRAW_SENT = 'vote/WITHDRAW_SENT';
+export const WITHDRAW_SUCCESS = 'vote/WITHDRAW_SUCCESS';
+export const WITHDRAW_FAILURE = 'vote/WITHDRAW_FAILURE';
 
 const CLEAR = 'vote/CLEAR';
 
@@ -26,6 +26,48 @@ const CLEAR = 'vote/CLEAR';
 export const clear = () => ({
   type: CLEAR
 });
+
+const handleTx = async ({
+  prefix,
+  dispatch,
+  getState,
+  txObject,
+  acctType,
+  activeAccount,
+  proposalAddress = ''
+}) => {
+  const txMgr = window.maker.service('transactionManager');
+  txMgr.listen(txObject, {
+    pending: tx => {
+      dispatch({
+        type: `vote/${prefix}_SENT`,
+        payload: { txHash: tx.hash }
+      });
+    },
+    mined: tx => {
+      dispatch({ type: `vote/${prefix}_SUCCESS` });
+      ReactGA.event({
+        category: `${prefix} success`,
+        action: prefix,
+        label: `wallet type ${acctType || 'unknown'}`
+      });
+      // console.log('mined:', tx);
+      dispatch(voteTallyInit());
+      dispatch(initApprovalsFetch());
+      updateVotingFor(dispatch, getState, activeAccount, proposalAddress);
+    },
+    error: (tx, err) => {
+      // console.error(err.message);
+      dispatch({ type: `vote/${prefix}_FAILURE`, payload: err });
+      dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+      ReactGA.event({
+        category: 'User notification error',
+        action: 'vote',
+        label: parseError(err)
+      });
+    }
+  });
+};
 
 const updateVotingFor = (
   dispatch,
@@ -52,64 +94,60 @@ const updateVotingFor = (
 };
 
 export const sendVote = proposalAddress => async (dispatch, getState) => {
-  const activeAccount = getAccount(getState(), maker.currentAddress());
+  const activeAccount = getAccount(getState(), window.maker.currentAddress());
   if (!activeAccount || !activeAccount.hasProxy)
     throw new Error('must have account active');
   dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
-  try {
-    const txHash = await maker.voteExec({
-      account: activeAccount,
-      proposalAddress
-    });
-    dispatch({ type: VOTE_SENT, payload: { txHash } });
-    const txReceipt = await maker.awaitTx(txHash, { confirmations: 1 });
-    console.log('mined:', txReceipt);
-    dispatch({ type: VOTE_SUCCESS });
 
-    ReactGA.event({
-      category: 'Vote TX Success',
-      action: 'Cast',
-      label: `wallet type ${activeAccount.type || 'unknown'}`
-    });
+  const voteExec = window.maker.voteExec({
+    account: activeAccount,
+    proposalAddress
+  });
 
-    // update vote tally and approval nums
-    dispatch(voteTallyInit());
-    dispatch(initApprovalsFetch());
+  await handleTx({
+    prefix: 'VOTE',
+    dispatch,
+    getState,
+    txObject: voteExec,
+    acctType: activeAccount.type,
+    activeAccount,
+    proposalAddress
+  });
 
-    updateVotingFor(dispatch, getState, activeAccount, proposalAddress);
-  } catch (err) {
-    dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
-    dispatch({ type: VOTE_FAILURE });
-  }
+  /** TODO: This doesn't match exactly txManager, may need to double check this: */
+  // ReactGA.event({
+  //   category: 'Vote TX Success',
+  //   action: 'Cast',
+  //   label: `wallet type ${activeAccount.type || 'unknown'}`
+  // });
 };
 
 export const withdrawVote = () => async (dispatch, getState) => {
-  const activeAccount = getAccount(getState(), maker.currentAddress());
+  const activeAccount = getAccount(getState(), window.maker.currentAddress());
   if (!activeAccount || !activeAccount.hasProxy)
     throw new Error('must have account active');
+
   dispatch({ type: WITHDRAW_REQUEST });
-  try {
-    const txHash = await maker.voteExecNone({ account: activeAccount });
-    dispatch({ type: WITHDRAW_SENT, payload: { txHash } });
-    const txReceipt = await maker.awaitTx(txHash, { confirmations: 1 });
-    console.log('mined:', txReceipt);
-    dispatch({ type: WITHDRAW_SUCCESS });
 
-    ReactGA.event({
-      category: 'Vote TX Success',
-      action: 'Withdraw',
-      label: `wallet type ${activeAccount.type || 'unknown'}`
-    });
+  const voteExecNone = await window.maker.voteExecNone({
+    account: activeAccount
+  });
 
-    // update vote tally and approval nums
-    dispatch(voteTallyInit());
-    dispatch(initApprovalsFetch());
+  await handleTx({
+    prefix: 'WITHDRAW',
+    dispatch,
+    getState,
+    txObject: voteExecNone,
+    acctType: activeAccount.type,
+    activeAccount
+  });
 
-    updateVotingFor(dispatch, getState, activeAccount, '');
-  } catch (err) {
-    dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
-    dispatch({ type: WITHDRAW_FAILURE });
-  }
+  // TODO: double check this:
+  // ReactGA.event({
+  //   category: 'Vote TX Success',
+  //   action: 'Withdraw',
+  //   label: `wallet type ${activeAccount.type || 'unknown'}`
+  // });
 };
 
 // Reducer ------------------------------------------------

@@ -1,4 +1,3 @@
-import maker from '../../src/chain/maker';
 import fetch from 'node-fetch';
 
 function ganacheAddress() {
@@ -7,8 +6,8 @@ function ganacheAddress() {
 }
 
 export async function useGanache() {
-  await maker.authenticate();
-  maker.service('web3')._web3.setProvider(ganacheAddress());
+  await window.maker.authenticate();
+  window.maker.service('web3')._web3.setProvider(ganacheAddress());
 }
 
 let requestCount = 0;

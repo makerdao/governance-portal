@@ -7,7 +7,7 @@ import { ThemeProvider } from 'styled-components';
 
 import createStore from './store';
 import Router from './Routes';
-import maker from './chain/maker';
+import createMaker from './chain/maker';
 import { updateAddress, init } from './reducers/metamask';
 import { addAccount } from './reducers/accounts';
 import { AccountTypes } from './utils/constants';
@@ -31,8 +31,7 @@ const currTheme = {
 };
 
 const store = createStore();
-
-window.maker = maker;
+const maker = (window.maker = createMaker());
 
 // TODO fail gracefully if authentication fails, e.g. if the user denies
 // Metamask access or there's a network problem. in order to still show
