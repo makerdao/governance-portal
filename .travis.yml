@@ -9,12 +9,10 @@ cache:
     - node_modules
     - nix
   timeout: 9000
-before_install:
-  - . gov-testchain/install-dapptools.sh
 install:
   - yarn install
 script:
-  - yarn testnet --ci yarn test
+  - yarn cover
 before_deploy:
   - yarn build
   - npm install now --no-save
@@ -23,6 +21,7 @@ deploy:
     script: now ./build --token $NOW_TOKEN -A ../now.json && now alias --token $NOW_TOKEN
     skip_cleanup: true
     on:
+      master: true
       master: true
     notifications:
       webhooks:

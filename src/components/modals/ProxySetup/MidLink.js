@@ -9,9 +9,8 @@ import {
   FlexRowEnd
 } from '../shared/styles';
 import HotColdTable from '../shared/HotColdTable';
-import { getMkrBalance } from '../../../chain/read';
-import { getBalance } from '../../../chain/web3';
 import { formatRound } from '../../../utils/misc';
+import { MKR, ETH } from '../../../chain/maker';
 
 class MidLink extends Component {
   constructor(props) {
@@ -27,17 +26,19 @@ class MidLink extends Component {
 
   async componentDidMount() {
     const { hotAddress, coldAddress } = this.props;
+    const mkrToken = window.maker.getToken(MKR);
+    const ethToken = window.maker.getToken(ETH);
     const [ethHot, ethCold, mkrHot, mkrCold] = await Promise.all([
-      getBalance(hotAddress, 3),
-      getBalance(coldAddress, 3),
-      getMkrBalance(hotAddress, 3),
-      getMkrBalance(coldAddress, 3)
+      ethToken.balanceOf(hotAddress),
+      ethToken.balanceOf(coldAddress),
+      mkrToken.balanceOf(hotAddress),
+      mkrToken.balanceOf(coldAddress)
     ]);
     this.setState({
-      ethHot: formatRound(ethHot, 3),
-      ethCold: formatRound(ethCold, 3),
-      mkrHot: formatRound(mkrHot, 3),
-      mkrCold: formatRound(mkrCold, 3)
+      ethHot: formatRound(ethHot.toNumber(), 3),
+      ethCold: formatRound(ethCold.toNumber(), 3),
+      mkrHot: formatRound(mkrHot.toNumber(), 3),
+      mkrCold: formatRound(mkrCold.toNumber(), 3)
     });
   }
 

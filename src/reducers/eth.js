@@ -1,6 +1,5 @@
 import { createReducer } from '../utils/redux';
-import { getEthPrice } from '../chain/read';
-import { getGasPriceEstimate } from '../chain/web3';
+import { weiToEther } from '../utils/ethereum';
 
 // Constants ----------------------------------------------
 
@@ -13,9 +12,17 @@ const ETH_INFO_FAILURE = 'eth/ETH_INFO_FAILURE';
 export const ethInit = () => async dispatch => {
   try {
     dispatch({ type: ETH_INFO_REQUEST });
-    const price = await getEthPrice();
-    const gasCost = await getGasPriceEstimate();
-    dispatch({ type: ETH_INFO_SUCCESS, payload: { price, gasCost } });
+    const ethPrice = await window.maker.service('price').getEthPrice();
+    window.maker.service('web3')._web3.eth.getGasPrice((error, gasPrice) => {
+      if (error) throw new Error('unable to fetch current gas price');
+      dispatch({
+        type: ETH_INFO_SUCCESS,
+        payload: {
+          price: ethPrice.toNumber(),
+          gasCost: weiToEther(gasPrice)
+        }
+      });
+    });
   } catch (err) {
     dispatch({ type: ETH_INFO_FAILURE });
   }

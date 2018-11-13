@@ -4,28 +4,16 @@ import pipe from 'ramda/src/pipe';
 import differenceWith from 'ramda/src/differenceWith';
 
 import { createReducer } from '../utils/redux';
-import {
-  getMkrBalance,
-  getProxyStatus,
-  getLinkedAddress,
-  getVotedSlate,
-  getSlateAddresses,
-  getNumDeposits,
-  hasInfMkrApproval as _hasInfMkrApproval
-} from '../chain/read';
 import { AccountTypes } from '../utils/constants';
-import { add, eq, subtract, promisedProperties } from '../utils/misc';
+import { add, eq, subtract, toNum, promisedProperties } from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
   WITHDRAW_ALL_MKR_SUCCESS,
   INITIATE_LINK_REQUEST
-  // BREAK_LINK_SUCCESS
 } from './proxy';
-import { createSubProvider } from '../chain/hw-wallet';
-import { netNameToId } from '../utils/ethereum';
-import { toChecksum } from '../chain/web3';
-import values from 'ramda/src/values';
+import { MAX_UINT_ETH_BN } from '../utils/ethereum';
+import { MKR } from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -35,8 +23,6 @@ const FETCHING_ACCOUNT_DATA = 'accounts/FETCHING_ACCOUNT_DATA';
 export const UPDATE_ACCOUNT = 'accounts/UPDATE_ACCOUNT';
 const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
 const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
-const FIND_HARDWARE_ACCOUNT = 'accounts/FIND_HARDWARE_ACCOUNT';
-const FIND_HARDWARE_ACCOUNT_FAILURE = 'accounts/FIND_HARDWARE_ACCOUNT_FAILURE';
 export const NO_METAMASK_ACCOUNTS = 'accounts/NO_METAMASK_ACCOUNTS';
 const SET_INF_MKR_APPROVAL = 'accounts/SET_INF_MKR_APPROVAL';
 
@@ -72,18 +58,15 @@ export function activeCanVote(state) {
 
 // Actions ------------------------------------------------
 
-export const addAccounts = accounts => async (dispatch, getState) => {
-  dispatch({
-    type: FETCHING_ACCOUNT_DATA,
-    payload: true
-  });
-  const network = getState().metamask.network;
+export const addAccounts = accounts => async dispatch => {
+  dispatch({ type: FETCHING_ACCOUNT_DATA, payload: true });
+
   for (let account of accounts) {
-    const {
-      hasProxy,
-      type: proxyRole,
-      address: proxyAddress
-    } = await getProxyStatus(account.address, network);
+    const mkrToken = window.maker.getToken(MKR);
+    const { hasProxy, voteProxy } = await window.maker
+      .service('voteProxy')
+      .getVoteProxy(account.address);
+
     let currProposal = Promise.resolve('');
     if (hasProxy) {
       currProposal = currProposal.then(() =>
@@ -91,39 +74,37 @@ export const addAccounts = accounts => async (dispatch, getState) => {
         // assuming that they're only voting for one in the frontend. This
         // should be changed if that changes
         (async () => {
-          const slate = await getVotedSlate(proxyAddress, network);
-          const addresses = await getSlateAddresses(slate, network);
+          const addresses = await voteProxy.getVotedProposalAddresses();
           return addresses[0] || '';
         })()
       );
     }
     const _payload = {
       ...account,
-      address: toChecksum(account.address),
-      mkrBalance: getMkrBalance(account.address),
+      address: account.address,
+      mkrBalance: toNum(mkrToken.balanceOf(account.address)),
       hasProxy,
-      proxyRole,
+      proxyRole: hasProxy ? voteProxy.getRole() : '',
       votingFor: currProposal,
-      proxy: promisedProperties({
-        address: hasProxy ? toChecksum(proxyAddress) : '',
-        votingPower: hasProxy ? getNumDeposits(proxyAddress, network) : 0,
-        hasInfMkrApproval: hasProxy
-          ? _hasInfMkrApproval(account.address, proxyAddress, network)
-          : false
-      })
+      proxy: hasProxy
+        ? promisedProperties({
+            address: voteProxy.getAddress(),
+            votingPower: toNum(voteProxy.getNumDeposits()),
+            hasInfMkrApproval: mkrToken
+              .allowance(account.address, voteProxy.getAddress())
+              .then(val => val.eq(MAX_UINT_ETH_BN))
+          })
+        : { address: '', votingPower: 0, hasInfMkrApproval: false }
     };
+
     const fetchLinkedAccountData = async () => {
       if (hasProxy) {
-        const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
-        const linkedAddress = await getLinkedAddress(
-          proxyAddress,
-          otherRole,
-          network
-        );
+        const otherRole = voteProxy.getRole() === 'hot' ? 'cold' : 'hot';
+        const linkedAddress = await voteProxy.getLinkedAddress();
         return {
           address: linkedAddress,
           proxyRole: otherRole,
-          mkrBalance: await getMkrBalance(linkedAddress)
+          mkrBalance: await toNum(mkrToken.balanceOf(linkedAddress))
         };
       } else return {};
     };
@@ -131,10 +112,11 @@ export const addAccounts = accounts => async (dispatch, getState) => {
       promisedProperties(_payload),
       fetchLinkedAccountData()
     ]);
-    payload.proxy.linkedAccount = { ...linkedAccount };
-    await dispatch({ type: ADD_ACCOUNT, payload });
+    payload.proxy.linkedAccount = linkedAccount;
+    dispatch({ type: ADD_ACCOUNT, payload });
   }
-  return dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
+
+  dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
 };
 
 export const addAccount = account => async dispatch => {
@@ -151,43 +133,30 @@ export const updateAccount = account => ({
   payload: account
 });
 
-// After the initial load, this will generally be called when an account
-// is selected in the account box dropdown
-export const setActiveAccount = address => ({
-  type: SET_ACTIVE_ACCOUNT,
-  payload: address
-});
-
-export const getHardwareAccount = (type, options = {}) => async (
+// This is called when an account is selected in the account box dropdown, or
+// when Metamask is switched to a different account
+export const setActiveAccount = (address, isMetamask) => async (
   dispatch,
   getState
 ) => {
-  dispatch({ type: FIND_HARDWARE_ACCOUNT });
-  const combinedOptions = {
-    ...options,
-    networkId: netNameToId(getState().metamask.network),
-    promisify: true
-  };
-  const subprovider = createSubProvider(type, combinedOptions);
-  try {
-    const addressesMap = await subprovider.getAccounts();
-    console.log(
-      `${type} returned derivation paths:`,
-      Object.keys(addressesMap)
-    );
-    let address = values(addressesMap)[0];
-    dispatch(addAccount({ address, type, subprovider }));
-  } catch (err) {
-    console.error(err);
-    dispatch({ type: FIND_HARDWARE_ACCOUNT_FAILURE, payload: err });
+  // if we haven't seen this account before, fetch its data and add it to the
+  // Maker instance
+  if (
+    isMetamask &&
+    !getState().accounts.allAccounts.find(
+      a => a.address.toLowerCase() === address.toLowerCase()
+    )
+  ) {
+    await window.maker.addAccount({ type: AccountTypes.METAMASK });
+    window.maker.useAccountWithAddress(address);
+    await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
   }
+  return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
 };
 
-export const setInfMkrApproval = () => dispatch => {
-  return dispatch({
-    type: SET_INF_MKR_APPROVAL
-  });
-};
+export function setInfMkrApproval() {
+  return { type: SET_INF_MKR_APPROVAL };
+}
 
 // Reducer ------------------------------------------------
 
@@ -212,6 +181,7 @@ const withUpdatedAccount = (accounts, updatedAccount) => {
 };
 
 export const fakeAccount = {
+  id: '_',
   address: '0xbeefed1bedded2dabbed3defaced4decade5dead',
   type: 'fake',
   hasProxy: true,
@@ -344,13 +314,14 @@ const accounts = createReducer(initialState, {
     allAccounts: withUpdatedAccount(state.allAccounts, updatedAccount)
   }),
   [ADD_ACCOUNT]: (state, { payload: account }) => {
-    if (!Object.keys(AccountTypes).includes(account.type)) {
+    if (!Object.values(AccountTypes).includes(account.type)) {
       throw new Error(`Unrecognized account type: "${account.type}"`);
     }
 
     return {
       ...state,
-      allAccounts: uniqConcat([account], state.allAccounts)
+      allAccounts: uniqConcat([account], state.allAccounts),
+      activeAccount: account.address
     };
   },
   [SET_ACTIVE_ACCOUNT]: (state, { payload: address }) => ({
@@ -371,16 +342,17 @@ const accounts = createReducer(initialState, {
     fetching: false
   }),
   [SET_INF_MKR_APPROVAL]: state => {
-    const _updatedAccount = {
-      ...getActiveAccount({ accounts: state }),
-      proxy: {
-        ...getActiveAccount({ accounts: state }).proxy,
-        hasInfMkrApproval: true
-      }
+    const account = getAccount(
+      { accounts: state },
+      window.maker.currentAddress()
+    );
+    const updatedAccount = {
+      ...account,
+      proxy: { ...account.proxy, hasInfMkrApproval: true }
     };
     return {
       ...state,
-      allAccounts: withUpdatedAccount(state.allAccounts, _updatedAccount)
+      allAccounts: withUpdatedAccount(state.allAccounts, updatedAccount)
     };
   },
   [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),

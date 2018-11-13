@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
 
+import { AccountTypes } from '../../../utils/constants';
 import { ethScanLink } from '../../../utils/ethereum';
 import { StyledTitle, StyledTop, TxInfo, TxHash } from './styles';
 import Button from '../../Button';
@@ -8,7 +9,11 @@ import metamask from '../../../imgs/metamask.svg';
 import ledger from '../../../imgs/ledger.svg';
 import trezor from '../../../imgs/trezor.png';
 
-const logoImages = { metamask, ledger, trezor };
+const logoImages = {
+  [AccountTypes.METAMASK]: metamask,
+  [AccountTypes.LEDGER]: ledger,
+  [AccountTypes.TREZOR]: trezor
+};
 
 const Logo = styled.div`
   background: url(${({ name }) => logoImages[name]}) center no-repeat;

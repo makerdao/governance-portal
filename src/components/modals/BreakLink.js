@@ -10,8 +10,8 @@ import { modalClose } from '../../reducers/modal';
 import Withdraw from './Withdraw';
 import { modalOpen } from '../../reducers/modal';
 import HotColdTable from './shared/HotColdTable';
-import { getBalance } from '../../chain/web3';
 import { formatRound } from '../../utils/misc';
+import { ETH } from '../../chain/maker';
 
 class BreakLink extends Component {
   constructor(props) {
@@ -26,14 +26,14 @@ class BreakLink extends Component {
     const isColdWallet = account.proxyRole === 'cold';
     const coldAddress = isColdWallet ? account.address : linkedAccount.address;
     const hotAddress = isColdWallet ? linkedAccount.address : account.address;
-
+    const ethToken = window.maker.getToken(ETH);
     const [ethHot, ethCold] = await Promise.all([
-      getBalance(hotAddress, 3),
-      getBalance(coldAddress, 3)
+      ethToken.balanceOf(hotAddress),
+      ethToken.balanceOf(coldAddress)
     ]);
     this.setState({
-      ethHot: formatRound(ethHot, 3),
-      ethCold: formatRound(ethCold, 3)
+      ethHot: formatRound(ethHot.toNumber(), 3),
+      ethCold: formatRound(ethCold.toNumber(), 3)
     });
   }
 

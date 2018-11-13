@@ -6,12 +6,8 @@ import { StyledTitle, StyledBlurb, StyledTop } from './shared/styles';
 import Button from '../Button';
 import { modalClose } from '../../reducers/modal';
 import { addAccount, setActiveAccount } from '../../reducers/accounts';
-import { LEDGER, TREZOR } from '../../chain/hw-wallet';
-import { createSubProvider } from '../../chain/hw-wallet';
-import { getMkrBalance } from '../../chain/read';
-import { getBalance } from '../../chain/web3';
-import { netNameToId } from '../../utils/ethereum';
-import { cutMiddle, copyToClipboard } from '../../utils/misc';
+import { AccountTypes } from '../../utils/constants';
+import { cutMiddle, toNum, copyToClipboard } from '../../utils/misc';
 import {
   AddressContainer,
   Table,
@@ -21,8 +17,7 @@ import {
 } from './shared/HotColdTable';
 import { Wrapper, Blurb } from './LedgerType';
 import Loader from '../Loader';
-
-const TREZOR_PATH = "44'/60'/0'/0/0";
+import { ETH, MKR } from '../../chain/maker';
 
 const CircleNumber = styled.div`
   width: 32px;
@@ -71,15 +66,23 @@ class AddressSelection extends Component {
   }
 
   componentDidMount() {
-    if (this.props.trezor) {
-      this.getAddresses(TREZOR, TREZOR_PATH);
-    } else {
-      this.getAddresses(LEDGER, this.props.path);
-    }
+    window.maker
+      .addAccount({
+        type: this.props.trezor ? 'trezor' : 'ledger',
+        path: this.props.path,
+        accountsLength: 5,
+        choose: async (addresses, callback) => {
+          this.setState({
+            accounts: await this.getInfo(addresses),
+            pickAccount: callback
+          });
+        }
+      })
+      .then(account => setActiveAccount(account.address));
   }
 
   render() {
-    const { accounts, selectedPath } = this.state;
+    const { accounts, selectedIndex } = this.state;
     if (accounts.length === 0) {
       return <Loading type={this.props.trezor ? 'trezor' : 'ledger'} />;
     }
@@ -103,7 +106,7 @@ class AddressSelection extends Component {
               </tr>
             </thead>
             <tbody>
-              {accounts.map(({ address, eth, mkr, path }) => (
+              {accounts.map(({ address, eth, mkr, index }) => (
                 <tr key={address}>
                   <InlineTd title={address}>
                     {cutMiddle(address, 7, 5)}
@@ -117,9 +120,9 @@ class AddressSelection extends Component {
                     <input
                       type="radio"
                       name="address"
-                      value={path}
-                      checked={path === selectedPath}
-                      onChange={() => this.setState({ selectedPath: path })}
+                      value={index}
+                      checked={index === selectedIndex}
+                      onChange={() => this.setState({ selectedIndex: index })}
                     />
                   </td>
                 </tr>
@@ -136,7 +139,7 @@ class AddressSelection extends Component {
         >
           <Button
             slim
-            disabled={!selectedPath}
+            disabled={!selectedIndex}
             onClick={this.useSelectedAccount}
           >
             Unlock Wallet
@@ -148,42 +151,32 @@ class AddressSelection extends Component {
 
   useSelectedAccount = () => {
     const { addAccount, setActiveAccount, modalClose, trezor } = this.props;
-    const { accounts, selectedPath, subprovider } = this.state;
-    const address = accounts.find(a => a.path === selectedPath).address;
+    const { accounts, selectedIndex } = this.state;
+    const address = accounts.find(a => a.index === selectedIndex).address;
 
     addAccount({
       address,
-      type: trezor ? TREZOR : LEDGER,
-      subprovider
+      type: trezor ? AccountTypes.TREZOR : AccountTypes.LEDGER
     }).then(() => setActiveAccount(address));
-
+    this.state.pickAccount(null, address); //add the account to the maker object
     modalClose();
   };
 
-  async getAddresses(type, path) {
-    const { network } = this.props;
-    const combinedOptions = {
-      path,
-      networkId: netNameToId(network),
-      promisify: true,
-      accountsLength: 5
-    };
-    const subprovider = createSubProvider(type, combinedOptions);
-    try {
-      const accountsObj = await subprovider.getAccounts();
-      const accounts = await Promise.all(
-        Object.keys(accountsObj).map(async path => ({
-          path,
-          address: accountsObj[path],
-          eth: round(await getBalance(accountsObj[path]), 3),
-          mkr: round(await getMkrBalance(accountsObj[path]), 3)
-        }))
-      );
-      console.log(accounts);
-      this.setState({ accounts, subprovider });
-    } catch (err) {
-      console.error(err);
-    }
+  getInfo(addresses) {
+    return Promise.all(
+      Object.keys(addresses).map(async index => ({
+        index: index,
+        address: addresses[index],
+        eth: round(
+          await toNum(window.maker.getToken(ETH).balanceOf(addresses[index])),
+          3
+        ),
+        mkr: round(
+          await toNum(window.maker.getToken(MKR).balanceOf(addresses[index])),
+          3
+        )
+      }))
+    );
   }
 }
 

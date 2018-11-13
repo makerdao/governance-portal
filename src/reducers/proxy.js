@@ -1,18 +1,7 @@
 import ReactGA from 'react-ga';
 
 import { createReducer } from '../utils/redux';
-import {
-  initiateLink as _initiateLink,
-  approveLink as _approveLink,
-  proxyLock as _proxyLock,
-  proxyFree as _proxyFree,
-  proxyFreeAll as _proxyFreeAll,
-  breakLink as _breakLink,
-  mkrApprove as _mkrApprove
-} from '../chain/write';
 import { parseError } from '../utils/misc';
-import { awaitTx } from '../chain/web3';
-import { getLinkGas } from '../chain/read';
 import {
   getActiveAccount,
   getAccount,
@@ -22,58 +11,47 @@ import {
 import { AccountTypes } from '../utils/constants';
 import { modalClose } from './modal';
 import { addToastWithTimeout, ToastTypes } from './toasts';
+import { MKR } from '../chain/maker';
 
 // Constants ----------------------------------------------
 
 export const INITIATE_LINK_REQUEST = 'proxy/INITIATE_LINK_REQUEST';
-const INITIATE_LINK_SENT = 'proxy/INITIATE_LINK_SENT';
-const INITIATE_LINK_SUCCESS = 'proxy/INITIATE_LINK_SUCCESS';
-const INITIATE_LINK_FAILURE = 'proxy/INITIATE_LINK_FAILURE';
+export const INITIATE_LINK_SENT = 'proxy/INITIATE_LINK_SENT';
+export const INITIATE_LINK_SUCCESS = 'proxy/INITIATE_LINK_SUCCESS';
+export const INITIATE_LINK_FAILURE = 'proxy/INITIATE_LINK_FAILURE';
 
-const APPROVE_LINK_REQUEST = 'proxy/APPROVE_LINK_REQUEST';
-const APPROVE_LINK_SENT = 'proxy/APPROVE_LINK_SENT';
+export const APPROVE_LINK_REQUEST = 'proxy/APPROVE_LINK_REQUEST';
+export const APPROVE_LINK_SENT = 'proxy/APPROVE_LINK_SENT';
 export const APPROVE_LINK_SUCCESS = 'proxy/APPROVE_LINK_SUCCESS';
-const APPROVE_LINK_FAILURE = 'proxy/APPROVE_LINK_FAILURE';
+export const APPROVE_LINK_FAILURE = 'proxy/APPROVE_LINK_FAILURE';
 
-const SEND_MKR_TO_PROXY_REQUEST = 'proxy/SEND_MKR_TO_PROXY_REQUEST';
-const SEND_MKR_TO_PROXY_SENT = 'proxy/SEND_MKR_TO_PROXY_SENT';
+export const SEND_MKR_TO_PROXY_REQUEST = 'proxy/SEND_MKR_TO_PROXY_REQUEST';
+export const SEND_MKR_TO_PROXY_SENT = 'proxy/SEND_MKR_TO_PROXY_SENT';
 export const SEND_MKR_TO_PROXY_SUCCESS = 'proxy/SEND_MKR_TO_PROXY_SUCCESS';
-const SEND_MKR_TO_PROXY_FAILURE = 'proxy/SEND_MKR_TO_PROXY_FAILURE';
+export const SEND_MKR_TO_PROXY_FAILURE = 'proxy/SEND_MKR_TO_PROXY_FAILURE';
 
-const WITHDRAW_MKR_REQUEST = 'proxy/WITHDRAW_MKR_REQUEST';
-const WITHDRAW_MKR_SENT = 'proxy/WITHDRAW_MKR_SENT';
+export const WITHDRAW_MKR_REQUEST = 'proxy/WITHDRAW_MKR_REQUEST';
+export const WITHDRAW_MKR_SENT = 'proxy/WITHDRAW_MKR_SENT';
 export const WITHDRAW_MKR_SUCCESS = 'proxy/WITHDRAW_MKR_SUCCESS';
-const WITHDRAW_MKR_FAILURE = 'proxy/WITHDRAW_MKR_FAILURE';
+export const WITHDRAW_MKR_FAILURE = 'proxy/WITHDRAW_MKR_FAILURE';
 
-const WITHDRAW_ALL_MKR_REQUEST = 'proxy/WITHDRAW_ALL_MKR_REQUEST';
-const WITHDRAW_ALL_MKR_SENT = 'proxy/WITHDRAW_ALL_MKR_SENT';
+export const WITHDRAW_ALL_MKR_REQUEST = 'proxy/WITHDRAW_ALL_MKR_REQUEST';
+export const WITHDRAW_ALL_MKR_SENT = 'proxy/WITHDRAW_ALL_MKR_SENT';
 export const WITHDRAW_ALL_MKR_SUCCESS = 'proxy/WITHDRAW_ALL_MKR_SUCCESS';
-const WITHDRAW_ALL_MKR_FAILURE = 'proxy/WITHDRAW_ALL_MKR_FAILURE';
+export const WITHDRAW_ALL_MKR_FAILURE = 'proxy/WITHDRAW_ALL_MKR_FAILURE';
 
-const BREAK_LINK_REQUEST = 'proxy/BREAK_LINK_REQUEST';
-const BREAK_LINK_SENT = 'proxy/BREAK_LINK_SENT';
+export const BREAK_LINK_REQUEST = 'proxy/BREAK_LINK_REQUEST';
+export const BREAK_LINK_SENT = 'proxy/BREAK_LINK_SENT';
 export const BREAK_LINK_SUCCESS = 'proxy/BREAK_LINK_SUCCESS';
-const BREAK_LINK_FAILURE = 'proxy/BREAK_LINK_FAILURE';
+export const BREAK_LINK_FAILURE = 'proxy/BREAK_LINK_FAILURE';
 
-const MKR_APPROVE_REQUEST = 'proxy/MKR_APPROVE_REQUEST';
-const MKR_APPROVE_SENT = 'proxy/MKR_APPROVE_SENT';
+export const MKR_APPROVE_REQUEST = 'proxy/MKR_APPROVE_REQUEST';
+export const MKR_APPROVE_SENT = 'proxy/MKR_APPROVE_SENT';
 export const MKR_APPROVE_SUCCESS = 'proxy/MKR_APPROVE_SUCCESS';
-const MKR_APPROVE_FAILURE = 'proxy/MKR_APPROVE_FAILURE';
+export const MKR_APPROVE_FAILURE = 'proxy/MKR_APPROVE_FAILURE';
 
-const CLEAR = 'proxy/CLEAR';
-const GO_TO_STEP = 'proxy/GO_TO_STEP';
-
-// Selectors ----------------------------------------------
-
-export function linkResumable(state) {
-  return (
-    state.proxy.setupProgress === 'midLink' ||
-    ((state.proxy.setupProgress === 'initiate' ||
-      state.proxy.setupProgress === 'midLink') &&
-      (state.proxy.initiateLinkTxHash.length > 0 &&
-        !state.proxy.confirmingInitiate))
-  );
-}
+export const CLEAR = 'proxy/CLEAR';
+export const GO_TO_STEP = 'proxy/GO_TO_STEP';
 
 // Actions ------------------------------------------------
 
@@ -81,63 +59,88 @@ export const clear = () => ({ type: CLEAR });
 
 export const goToStep = step => ({ type: GO_TO_STEP, payload: step });
 
-// FIXME sometimes this causes an exception because of a null receipt; something
-// wrong with awaitTx logic?
 const handleTx = async ({
   prefix,
   dispatch,
-  action,
+  txObject,
   successPayload = '',
   acctType
 }) => {
-  try {
-    const txHash = await action;
-    dispatch({ type: `proxy/${prefix}_SENT`, payload: { txHash } });
-    const receipt = await awaitTx(txHash, { confirmations: 1 });
-    dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
-    ReactGA.event({
-      category: 'Link TX Success',
-      action: prefix,
-      label: `wallet type ${acctType || 'unknown'}`
-    });
-    console.log('mined:', receipt);
-  } catch (err) {
-    console.error(err);
-    dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
-    dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
-    ReactGA.event({
-      category: 'User notification error',
-      action: 'proxy',
-      label: parseError(err)
-    });
-    // TODO display this error to the user; it could require user intervention,
-    // e.g. it could be due to insufficient funds
-  }
+  const txMgr = window.maker.service('transactionManager');
+  txMgr.listen(txObject, {
+    pending: tx => {
+      dispatch({
+        type: `proxy/${prefix}_SENT`,
+        payload: { txHash: tx.hash }
+      });
+    },
+    mined: tx => {
+      dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
+      ReactGA.event({
+        category: `${prefix} success`,
+        action: prefix,
+        label: `wallet type ${acctType || 'unknown'}`
+      });
+      // console.log('mined:', tx);
+    },
+    // TODO: error handle and get descriptive failure messages
+    error: (tx, err) => {
+      // console.error(err.message);
+      dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
+      dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+      ReactGA.event({
+        category: 'User notification error',
+        action: 'proxy',
+        label: parseError(err)
+      });
+    }
+  });
 };
 
-function requireCorrectAccount(state, requiredAccount, typeNeeded) {
-  if (!requiredAccount) {
-    window.alert(
-      `Please activate your ${typeNeeded || 'other'} wallet before continuing.`
-    );
+function useCorrectAccount(requiredAccount, dispatch, options = {}) {
+  const { address, type, proxyRole } = requiredAccount;
+
+  if (
+    type === AccountTypes.METAMASK &&
+    window.web3.eth.defaultAccount !== address
+  ) {
+    const label = proxyRole || options.label || 'other';
+    window.alert(`Please switch to your ${label} wallet with Metamask.`);
     return false;
   }
-  const { address, type, proxyRole } = requiredAccount;
-  if (type !== AccountTypes.METAMASK) return true;
-  const activeAccount = getActiveAccount(state);
-  if (activeAccount.address === address) return true;
 
-  window.alert(
-    `Please switch to your ${proxyRole || 'other'} wallet before continuing.`
-  );
-  return false;
+  if (window.maker.currentAddress().toLowerCase() !== address.toLowerCase()) {
+    if (
+      type === AccountTypes.METAMASK &&
+      window.maker.currentAccount().type === AccountTypes.METAMASK
+    ) {
+      console.warn('Should have auto-switched to this account...');
+    }
+    window.maker.useAccountWithAddress(address);
+  }
+
+  // this is just so that we can see the change in the UI
+  dispatch(setActiveAccount(address));
+
+  return true;
+}
+
+function useColdAccount(dispatch, getState) {
+  const state = getState();
+  const account = getAccount(state, window.maker.currentAddress());
+  if (account.proxyRole !== 'cold') {
+    const cold = state.accounts.allAccounts.find(a => a.proxyRole === 'cold');
+    return useCorrectAccount(cold, dispatch);
+  }
+  return true;
 }
 
 export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
-  if (!!getAccount(getState(), cold.address)) {
-    dispatch(setActiveAccount(cold.address));
-  } else if (!requireCorrectAccount(getState(), cold, 'cold')) return;
-  const network = getState().metamask.network;
+  if (!useCorrectAccount(cold, dispatch, { label: 'cold' })) return;
+  const initiateLink = window.maker
+    .service('voteProxyFactory')
+    .initiateLink(hot.address);
+
   dispatch({
     type: INITIATE_LINK_REQUEST,
     payload: { hotAddress: hot.address, coldAddress: cold.address }
@@ -145,85 +148,93 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
   await handleTx({
     prefix: 'INITIATE_LINK',
     dispatch,
-    action: _initiateLink({
-      coldAccount: cold,
-      hotAddress: hot.address,
-      network
-    }),
+    txObject: initiateLink,
     acctType: cold.type
   });
-  if (!!getAccount(getState(), getState().proxy.hotAddress)) {
+  if (getAccount(getState(), getState().proxy.hotAddress)) {
     dispatch(setActiveAccount(getState().proxy.hotAddress));
   }
 };
 
 export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
-  if (!requireCorrectAccount(getState(), hotAccount, 'hot')) return;
-  const network = getState().metamask.network;
-  dispatch({ type: APPROVE_LINK_REQUEST });
+  if (!useCorrectAccount(hotAccount, dispatch, { label: 'hot' })) return;
   const { coldAddress } = getState().proxy;
+  const approveLink = window.maker
+    .service('voteProxyFactory')
+    .approveLink(coldAddress);
+
+  dispatch({ type: APPROVE_LINK_REQUEST });
+
   handleTx({
     prefix: 'APPROVE_LINK',
     dispatch,
-    action: _approveLink({ hotAccount, coldAddress, network }),
+    txObject: approveLink,
     successPayload: { coldAddress, hotAddress: hotAccount.address },
     acctType: hotAccount.type
   });
 };
 
-export const lock = value => (dispatch, getState) => {
+export const lock = value => async (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
-
-  const account = getActiveAccount(getState());
-  if (!account || account.proxyRole !== 'cold') {
-    return window.alert(`Switch to your cold wallet before continuing.`);
-  }
+  if (!useColdAccount(dispatch, getState)) return;
+  const account = getAccount(getState(), window.maker.currentAddress());
+  const lock = window.maker
+    .service('voteProxy')
+    .lock(account.proxy.address, value);
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
   handleTx({
     prefix: 'SEND_MKR_TO_PROXY',
     dispatch,
-    action: _proxyLock({ account, value }),
+    txObject: lock,
     successPayload: value,
     acctType: account.type
   });
 };
 
-export const free = value => (dispatch, getState) => {
+export const free = value => dispatch => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
+  const account = window.maker.currentAccount();
+  const free = window.maker
+    .service('voteProxy')
+    .free(account.proxy.address, value);
 
-  const account = getActiveAccount(getState());
   dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
   handleTx({
     prefix: 'WITHDRAW_MKR',
     dispatch,
-    action: _proxyFree({ account, value }),
+    txObject: free,
     successPayload: value,
     acctType: account.type
   });
 };
 
-export const freeAll = value => (dispatch, getState) => {
+export const freeAll = value => dispatch => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
+  const account = window.maker.currentAccount();
+  const freeAll = window.maker
+    .service('voteProxy')
+    .freeAll(account.proxy.address);
 
-  const account = getActiveAccount(getState());
   dispatch({ type: WITHDRAW_ALL_MKR_REQUEST, payload: value });
   handleTx({
     prefix: 'WITHDRAW_ALL_MKR',
     dispatch,
-    action: _proxyFreeAll({ account, value }),
-    successPayload: value,
+    txObject: freeAll,
     acctType: account.type
   });
 };
 
-export const breakLink = () => async (dispatch, getState) => {
+export const breakLink = () => async dispatch => {
   dispatch({ type: BREAK_LINK_REQUEST });
-  const account = getActiveAccount(getState());
+  const account = window.maker.currentAccount();
+  window.maker.useAccountWithAddress(account.address);
+  const breakLink = window.maker.service('voteProxyFactory').breakLink();
+
   await handleTx({
     prefix: 'BREAK_LINK',
     dispatch,
-    action: _breakLink(account),
+    txObject: breakLink,
     acctType: account.type
   });
   dispatch(refreshAccountData());
@@ -239,20 +250,19 @@ export const refreshAccountDataLink = () => (dispatch, getState) => {
   const hotAccount = getAccount(getState(), getState().proxy.hotAddress);
   const coldAccount = getAccount(getState(), getState().proxy.coldAddress);
   if (hotAccount === undefined) return window.location.reload();
-  const accounts = !!coldAccount ? [hotAccount, coldAccount] : [hotAccount];
-  if (!!coldAccount) dispatch(setActiveAccount(coldAccount.address));
+  const accounts = coldAccount ? [hotAccount, coldAccount] : [hotAccount];
+  if (coldAccount) dispatch(setActiveAccount(coldAccount.address));
   // this will replace duplicate accounts in the store
   dispatch(addAccounts(accounts));
 };
 
 export const refreshAccountData = () => (dispatch, getState) => {
-  const activeAccount = getActiveAccount(getState());
-  if (activeAccount.hasProxy) {
-    const otherAccount = getAccount(
-      getState(),
-      activeAccount.proxy.linkedAccount.address
-    );
-    const accounts = !!otherAccount
+  const state = getState();
+  const activeAccount = getActiveAccount(state);
+  const { hasProxy, proxy } = activeAccount;
+  if (hasProxy) {
+    const otherAccount = getAccount(state, proxy.linkedAccount.address);
+    const accounts = otherAccount
       ? [activeAccount, otherAccount]
       : [activeAccount];
     dispatch(addAccounts(accounts));
@@ -262,14 +272,18 @@ export const refreshAccountData = () => (dispatch, getState) => {
 };
 
 export const mkrApproveProxy = () => (dispatch, getState) => {
-  const account = getActiveAccount(getState());
-  if (!requireCorrectAccount(getState(), account, 'cold')) return;
+  if (!useColdAccount(dispatch, getState)) return;
+  const account = getAccount(getState(), window.maker.currentAddress());
+
+  const giveProxyAllowance = window.maker
+    .getToken(MKR)
+    .approveUnlimited(account.proxy.address);
+
   dispatch({ type: MKR_APPROVE_REQUEST });
-  const proxyAddress = account.proxy.address;
   handleTx({
     prefix: 'MKR_APPROVE',
     dispatch,
-    action: _mkrApprove(account, proxyAddress),
+    txObject: giveProxyAllowance,
     acctType: account.type
   });
 };
@@ -294,7 +308,7 @@ const initialState = {
   coldAddress: '',
   sendMkrAmount: 0,
   withdrawMkrAmount: 0,
-  linkGas: getLinkGas() || 0
+  linkGas: 0
 };
 
 // const withExisting = { ...initialState, ...existingState };
@@ -417,13 +431,7 @@ const proxy = createReducer(initialState, {
     withdrawMkrAmount: 0
   }),
   // Reset ------------------------------------------
-  [CLEAR]: state =>
-    linkResumable({ proxy: state })
-      ? {
-          ...initialState,
-          ...JSON.parse(localStorage.getItem('linkInitiatedState'))
-        }
-      : { ...initialState },
+  [CLEAR]: () => ({ ...initialState }),
   [GO_TO_STEP]: (state, { payload }) => ({
     ...state,
     setupProgress: payload

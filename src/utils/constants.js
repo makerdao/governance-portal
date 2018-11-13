@@ -1,8 +1,7 @@
 export const AccountTypes = {
-  LEDGER: 'LEDGER',
-  TREZOR: 'TREZOR',
-  METAMASK: 'METAMASK',
-  GANACHE: 'GANACHE'
+  LEDGER: 'ledger',
+  TREZOR: 'trezor',
+  METAMASK: 'provider'
 };
 
 export const Toasts = {
