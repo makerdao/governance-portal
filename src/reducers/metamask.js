@@ -39,7 +39,6 @@ const pollForMetamaskChanges = maker => async (dispatch, getState) => {
     if (address && address !== activeAddress) {
       dispatch(updateAddress(address));
       await dispatch(setActiveAccount(address, true));
-      maker.useAccountWithAddress(address);
     } else if (fetching && !activeAddress) {
       dispatch({ type: NO_METAMASK_ACCOUNTS }); // accounts reducer
     }
