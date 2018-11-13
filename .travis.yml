@@ -11,8 +11,11 @@ cache:
   timeout: 9000
 install:
   - yarn install
+before_script:
+  - npm install codecov --no-save
 script:
   - yarn cover
+  - codecov
 before_deploy:
   - yarn build
   - npm install now --no-save
