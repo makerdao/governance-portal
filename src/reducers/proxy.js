@@ -192,7 +192,7 @@ export const lock = value => async (dispatch, getState) => {
   });
 };
 
-export const free = value => dispatch => {
+export const free = value => (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
   const account = getAccount(getState(), window.maker.currentAddress());
 
@@ -210,7 +210,7 @@ export const free = value => dispatch => {
   });
 };
 
-export const freeAll = value => dispatch => {
+export const freeAll = value => (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
   const account = getAccount(getState(), window.maker.currentAddress());
 
