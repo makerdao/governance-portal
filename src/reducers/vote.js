@@ -2,7 +2,8 @@ import ReactGA from 'react-ga';
 
 import { createReducer } from '../utils/redux';
 import { parseError } from '../utils/misc';
-import { getAccount, UPDATE_ACCOUNT } from './accounts';
+import { getAccount } from './accounts/actions';
+import { UPDATE_ACCOUNT } from './accounts/constants';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { voteTallyInit } from './tally';
 import { initApprovalsFetch } from './approvals';

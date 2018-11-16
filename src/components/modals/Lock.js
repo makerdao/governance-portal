@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getActiveAccount } from '../../reducers/accounts';
+import { getActiveAccount } from '../../reducers/accounts/actions';
 import {
   lock as proxyLock,
   smartStepSkip,

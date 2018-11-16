@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { StyledTitle, StyledBlurb, StyledTop } from './shared/styles';
 import Button from '../Button';
 import { modalClose } from '../../reducers/modal';
-import { addAccount, setActiveAccount } from '../../reducers/accounts';
+import { addAccount, setActiveAccount } from '../../reducers/accounts/actions';
 import { AccountTypes } from '../../utils/constants';
 import { cutMiddle, toNum, copyToClipboard } from '../../utils/misc';
 import {

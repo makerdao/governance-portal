@@ -14,7 +14,10 @@ import Vote from '../components/modals/Vote';
 import Timer from '../components/Timer';
 import ClosedStatus from '../components/ClosedStatus';
 import { modalOpen } from '../reducers/modal';
-import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
+import {
+  activeCanVote,
+  getActiveVotingFor
+} from '../reducers/accounts/actions';
 import { toSlug, eq } from '../utils/misc';
 import theme, { colors, fonts } from '../theme';
 

@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { getActiveAccount } from '../../reducers/accounts';
+import { getActiveAccount } from '../../reducers/accounts/actions';
 import { modalOpen, modalClose } from '../../reducers/modal';
 import { cutMiddle, formatRound } from '../../utils/misc';
 import { ethScanLink } from '../../utils/ethereum';

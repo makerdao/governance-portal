@@ -2,7 +2,10 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import { mkrApproveProxy, goToStep, smartStepSkip } from '../../reducers/proxy';
-import { getActiveAccount } from '../../reducers/accounts';
+import {
+  getActiveAccount,
+  setInfMkrApproval
+} from '../../reducers/accounts/actions';
 import Transaction from './shared/Transaction';
 import Lock from './Lock';
 import {
@@ -13,7 +16,6 @@ import {
   Skip
 } from './shared/styles';
 import Button from '../Button';
-import { setInfMkrApproval } from '../../reducers/accounts';
 
 class MKRApprove extends Component {
   state = {

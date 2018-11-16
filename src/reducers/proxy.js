@@ -7,7 +7,7 @@ import {
   getAccount,
   addAccounts,
   setActiveAccount
-} from './accounts';
+} from './accounts/actions';
 import { AccountTypes } from '../utils/constants';
 import { modalClose } from './modal';
 import { addToastWithTimeout, ToastTypes } from './toasts';

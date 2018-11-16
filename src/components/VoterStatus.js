@@ -3,7 +3,7 @@ import React, { Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { modalOpen } from '../reducers/modal';
-import { getActiveAccount } from '../reducers/accounts';
+import { getActiveAccount } from '../reducers/accounts/actions';
 import theme from '../theme';
 import DotSpacer from './DotSpacer';
 import WithVote from './hocs/WithVote';

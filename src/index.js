@@ -9,7 +9,7 @@ import createStore from './store';
 import Router from './Routes';
 import createMaker from './chain/maker';
 import { updateAddress, init } from './reducers/metamask';
-import { addAccount } from './reducers/accounts';
+import { addAccount } from './reducers/accounts/actions';
 import { AccountTypes } from './utils/constants';
 
 import './global.css.js';

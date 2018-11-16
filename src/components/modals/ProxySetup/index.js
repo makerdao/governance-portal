@@ -7,7 +7,10 @@ import TOS from './TOS';
 import Link from './Link';
 import Transaction from '../shared/Transaction';
 import Stepper, { progressMap } from './Stepper';
-import { getActiveAccount, getAccount } from '../../../reducers/accounts';
+import {
+  getActiveAccount,
+  getAccount
+} from '../../../reducers/accounts/actions';
 import {
   initiateLink,
   approveLink,

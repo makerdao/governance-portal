@@ -15,7 +15,10 @@ import Loader from '../components/Loader';
 import Timer from '../components/Timer';
 import ClosedStatus from '../components/ClosedStatus';
 import WithTally from '../components/hocs/WithTally';
-import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
+import {
+  activeCanVote,
+  getActiveVotingFor
+} from '../reducers/accounts/actions';
 import NotFound from './NotFound';
 import theme, { colors } from '../theme';
 import {

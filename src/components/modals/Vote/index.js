@@ -6,7 +6,7 @@ import ReactGA from 'react-ga';
 import { add, eq, subtract, formatRound } from '../../../utils/misc';
 import Button from '../../Button';
 import WithTally from '../../hocs/WithTally';
-import { getActiveAccount } from '../../../reducers/accounts';
+import { getActiveAccount } from '../../../reducers/accounts/actions';
 import { modalClose } from '../../../reducers/modal';
 import {
   sendVote,

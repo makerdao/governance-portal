@@ -13,7 +13,10 @@ import ClosedStatus from '../components/ClosedStatus';
 import { toSlug, eq } from '../utils/misc';
 import theme, { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
-import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
+import {
+  activeCanVote,
+  getActiveVotingFor
+} from '../reducers/accounts/actions';
 import Vote from '../components/modals/Vote';
 
 const riseUp = keyframes`

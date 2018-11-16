@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import { getActiveAccount } from '../../reducers/accounts';
+import { getActiveAccount } from '../../reducers/accounts/actions';
 import {
   free as proxyFree,
   smartStepSkip,

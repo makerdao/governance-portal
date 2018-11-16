@@ -5,7 +5,7 @@ import topics from './topics';
 import tally from './tally';
 import approvals from './approvals';
 import proxy from './proxy';
-import accounts from './accounts';
+import accounts from './accounts/reducer';
 import vote from './vote';
 import hat from './hat';
 import toasts from './toasts';

@@ -1,7 +1,7 @@
 import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 
-import { getActiveAccount } from '../../reducers/accounts';
+import { getActiveAccount } from '../../reducers/accounts/actions';
 import { StyledTitle, StyledBlurb, StyledTop } from './shared/styles';
 import Button from '../Button';
 import { breakLink } from '../../reducers/proxy';
