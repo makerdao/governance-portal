@@ -55,9 +55,9 @@ export const onboardingSetColdWallet = address => ({
 // Reducer ------------------------------------------------
 
 const initialState = {
-  step: 2,
+  step: 0,
   open: true,
-  flow: 'linked',
+  flow: null,
   hotWalletAddress: null,
   coldWalletAddress: null
 };

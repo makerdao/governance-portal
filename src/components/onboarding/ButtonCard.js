@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Grid, Box, Text, Button } from '@makerdao/ui-components';
 
-const ButtonCard = ({ imgSrc, title, subtitle, onNext }) => {
+const ButtonCard = ({ icon, title, subtitle, onNext }) => {
   return (
     <Card py="s" px="m">
       <Grid
@@ -11,7 +11,7 @@ const ButtonCard = ({ imgSrc, title, subtitle, onNext }) => {
         gridColumnGap="s"
       >
         <Box pl="s" pr="m">
-          <img alt="" src={imgSrc} style={{ maxWidth: '30px' }} />
+          {icon}
         </Box>
         <Box flexGrow="1">
           <h3>

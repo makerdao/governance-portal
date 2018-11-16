@@ -12,17 +12,16 @@ import {
   Checkbox
 } from '@makerdao/ui-components';
 
-import LedgerStep from './LedgerStep';
-import Sidebar from './Sidebar';
-
 import faqs from './faqs';
 
+import LedgerStep from './LedgerStep';
+import Sidebar from './Sidebar';
+import WalletIcon from './WalletIcon';
 import H2 from './H2';
 import Step from './Step';
 import ButtonCard from './ButtonCard';
+import ChooseMKRBalanceStep from './ChooseMKRBalanceStep';
 
-import trezorImg from '../../imgs/onboarding/trezor-logomark.svg';
-import ledgerImg from '../../imgs/onboarding/ledger-logomark.svg';
 import linkImg from '../../imgs/onboarding/link.svg';
 
 const SelectAWalletStep = ({ active, onTrezorSelected, onLedgerSelected }) => {
@@ -42,109 +41,17 @@ const SelectAWalletStep = ({ active, onTrezorSelected, onLedgerSelected }) => {
           </Text>
         </Box>
         <ButtonCard
-          imgSrc={trezorImg}
+          icon={<WalletIcon provider="trezor" />}
           title="Trezor"
           subtitle="Connect via USB and unlock."
           onNext={onTrezorSelected}
         />
         <ButtonCard
-          imgSrc={ledgerImg}
+          icon={<WalletIcon provider="ledger" />}
           title="Ledger"
           subtitle="Open and unlock wallet."
           onNext={onLedgerSelected}
         />
-      </Grid>
-    </Step>
-  );
-};
-
-const ChooseMKRBalance = ({ active, onAddressSelected, onCancel }) => {
-  return (
-    <Step active={active}>
-      <Grid gridRowGap="m">
-        <Box textAlign="center" mt={[0, 0, 0, 'l']}>
-          <Box mb="s">
-            <H2>Select MKR Balance</H2>
-          </Box>
-          <Text t="p2">
-            <p>
-              Select the MKR balance that you would like to vote with, and its
-              corresponding Ethereum address.
-            </p>
-          </Text>
-        </Box>
-        <Card py="m" px="l">
-          <Table variant="cozy" width="100%">
-            <thead>
-              <tr>
-                <th />
-                <th>Address</th>
-                <th>MKR</th>
-                <th>ETH</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <Box pr="s" fontSize="1.8rem">
-                    <Checkbox />
-                  </Box>
-                </td>
-                <td>
-                  <Link>
-                    <Address
-                      full="0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2"
-                      shorten
-                    />
-                  </Link>
-                </td>
-                <td>161.37 MKR</td>
-                <td>201.37 ETH</td>
-              </tr>
-              <tr>
-                <td>
-                  <Checkbox />
-                </td>
-                <td>
-                  <Link>
-                    <Address
-                      full="0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2"
-                      shorten
-                    />
-                  </Link>
-                </td>
-                <td>161.37 MKR</td>
-                <td>201.37 ETH</td>
-              </tr>
-              <tr>
-                <td>
-                  <Checkbox />
-                </td>
-                <td>
-                  <Link>
-                    <Address
-                      full="0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2"
-                      shorten
-                    />
-                  </Link>
-                </td>
-                <td>161.37 MKR</td>
-                <td>201.37 ETH</td>
-              </tr>
-            </tbody>
-          </Table>
-        </Card>
-        <Grid
-          gridRowGap="xs"
-          gridColumnGap="s"
-          gridTemplateColumns={['1fr', 'auto auto']}
-          justifySelf={['stretch', 'center']}
-        >
-          <Button variant="secondary-outline" onClick={onCancel}>
-            Change wallet
-          </Button>
-          <Button onClick={onAddressSelected}>Confirm wallet</Button>
-        </Grid>
       </Grid>
     </Step>
   );
@@ -171,7 +78,7 @@ const ConfirmWalletStep = ({ active, onConfirm, onCancel }) => {
               gridColumnGap="s"
             >
               <Box>
-                <img width="20px" alt="" src={trezorImg} />
+                <WalletIcon provider="trezor" />
               </Box>
               <Box>
                 <Link fontWeight="semibold">
@@ -215,7 +122,7 @@ const ConfirmWalletStep = ({ active, onConfirm, onCancel }) => {
               gridColumnGap="s"
             >
               <Box>
-                <img width="20px" alt="" src={trezorImg} />
+                <WalletIcon provider="trezor" />
               </Box>
               <Box>
                 <Link fontWeight="semibold">
@@ -328,8 +235,9 @@ class ChooseColdWallet extends React.Component {
               onLedgerLegacy={this.confirmWallet}
               onCancel={this.selectAWallet}
             />
-            <ChooseMKRBalance
+            <ChooseMKRBalanceStep
               active={this.state.step === this.steps.SELECT_MKR_BALANCE}
+              accounts={[]}
               onAddressSelected={this.confirmWallet}
               onCancel={this.selectAWallet}
             />
@@ -339,7 +247,10 @@ class ChooseColdWallet extends React.Component {
               onCancel={this.selectAWallet}
             />
           </div>
-          <Sidebar faqs={this.state.faqs} />
+          <Sidebar
+            faqs={this.state.faqs}
+            hotWalletAddress={this.props.hotWalletAddress}
+          />
         </Grid>
       </Box>
     );

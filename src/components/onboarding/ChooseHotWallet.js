@@ -6,21 +6,36 @@ import {
   Text,
   Button,
   Link,
-  Address
+  Address,
+  Table,
+  Flex,
+  Checkbox
 } from '@makerdao/ui-components';
-
-import LedgerStep from './LedgerStep';
-import Sidebar from './Sidebar';
+import round from 'lodash.round';
 
 import faqs from './faqs';
 
+import LedgerStep from './LedgerStep';
+import ChooseMKRBalanceStep from './ChooseMKRBalanceStep';
+import Sidebar from './Sidebar';
 import H2 from './H2';
 import Step from './Step';
 import ButtonCard from './ButtonCard';
+import WalletIcon from './WalletIcon';
 
-import metamaskImg from '../../imgs/metamask.svg';
-import trezorImg from '../../imgs/onboarding/trezor-logomark.svg';
-import ledgerImg from '../../imgs/onboarding/ledger-logomark.svg';
+import Loader from '../Loader';
+
+import { toNum } from '../../utils/misc';
+import { ETH, MKR } from '../../chain/maker';
+
+import { addAccount } from '../../reducers/accounts';
+
+// the Ledger subprovider interprets these paths to mean that the last digit is
+// the one that should be incremented.
+// i.e. the second path for Live is "44'/60'/1'/0/0"
+// and the second path for Legacy is "44'/60'/0'/0/1"
+const LEDGER_LIVE_PATH = "44'/60'/0'";
+const LEDGER_LEGACY_PATH = "44'/60'/0'/0";
 
 const SelectAWalletStep = ({
   active,
@@ -44,19 +59,19 @@ const SelectAWalletStep = ({
           </Text>
         </Box>
         <ButtonCard
-          imgSrc={metamaskImg}
+          icon={<WalletIcon provider="metamask" style={{ maxWidth: '30px' }} />}
           title="MetaMask"
           subtitle="Connect and unlock wallet."
           onNext={onMetamaskSelected}
         />
         <ButtonCard
-          imgSrc={trezorImg}
+          icon={<WalletIcon provider="trezor" style={{ maxWidth: '30px' }} />}
           title="Trezor"
           subtitle="Connect via USB and unlock."
           onNext={onTrezorSelected}
         />
         <ButtonCard
-          imgSrc={ledgerImg}
+          icon={<WalletIcon provider="ledger" style={{ maxWidth: '30px' }} />}
           title="Ledger"
           subtitle="Open and unlock wallet."
           onNext={onLedgerSelected}
@@ -66,7 +81,13 @@ const SelectAWalletStep = ({
   );
 };
 
-const ConfirmWalletStep = ({ active, onConfirm, onCancel }) => {
+const ConfirmWalletStep = ({
+  active,
+  account,
+  walletProvider,
+  onConfirm,
+  onCancel
+}) => {
   return (
     <Step active={active}>
       <Grid gridRowGap="m" alignContent="start">
@@ -86,19 +107,22 @@ const ConfirmWalletStep = ({ active, onConfirm, onCancel }) => {
             gridColumnGap="s"
           >
             <Box>
-              <img width="20px" alt="" src={metamaskImg} />
+              <WalletIcon
+                provider={walletProvider}
+                style={{ maxWidth: '20px' }}
+              />
             </Box>
             <Box>
               <Link fontWeight="semibold">
                 <Address
                   show={active}
-                  full="0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2"
+                  full={account && account.address}
                   shorten
                 />
               </Link>
             </Box>
             <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
-              94.2 ETH, 142.4 MKR
+              {account && account.mkrBalance} MKR
             </Box>
             <Box
               borderRadius="4px"
@@ -134,7 +158,11 @@ class ChooseHotWallet extends React.Component {
 
     this.state = {
       step: 'select',
-      faqs: faqs.hotWallet
+      faqs: faqs.hotWallet,
+      account: undefined,
+      walletProvider: undefined,
+      onAccountChosen: () => {},
+      accountsAvailable: []
     };
 
     this.steps = {
@@ -143,30 +171,134 @@ class ChooseHotWallet extends React.Component {
       CONFIRM_WALLET: 'confirm'
     };
 
-    this.confirmWallet = this.confirmWallet.bind(this);
-    this.selectAWallet = this.selectAWallet.bind(this);
-    this.selectLedgerWallet = this.selectLedgerWallet.bind(this);
+    this.getInfoFromAddresses = this.getInfoFromAddresses.bind(this);
+
+    this.toSelectAWallet = this.toSelectAWallet.bind(this);
+    this.onMetamaskSelected = this.onMetamaskSelected.bind(this);
+    this.onTrezorSelected = this.onTrezorSelected.bind(this);
+    this.onLedgerSelected = this.onLedgerSelected.bind(this);
+    this.onLedgerLiveSelected = this.onLedgerLiveSelected.bind(this);
+    this.onLedgerLegacySelected = this.onLedgerLegacySelected.bind(this);
+    this.toSelectMKRBalance = this.toSelectMKRBalance.bind(this);
+    this.toConfirmWallet = this.toConfirmWallet.bind(this);
+    this.onAddressSelected = this.onAddressSelected.bind(this);
   }
 
-  selectAWallet() {
+  componentDidUpdate(prevProps, prevState) {
+    const currentMetamaskAccount = this.props.accounts.find(
+      acct => acct.type === 'provider' || acct.type === 'browser'
+    );
+    if (
+      this.state.walletProvider === 'metamask' &&
+      !prevState.account &&
+      currentMetamaskAccount
+    ) {
+      this.setState({
+        account: currentMetamaskAccount
+      });
+    }
+  }
+
+  toSelectAWallet() {
     this.setState({
       step: this.steps.SELECT_WALLET,
-      faqs: faqs.hotWallet
+      faqs: faqs.hotWallet,
+      account: undefined,
+      address: ''
     });
   }
 
-  selectLedgerWallet() {
+  onMetamaskSelected() {
+    const metamaskAccount = this.props.accounts.find(
+      acct => acct.type === 'provider' || acct.type === 'browser'
+    );
+    this.setState({
+      walletProvider: 'metamask',
+      account: metamaskAccount
+    });
+    this.toConfirmWallet();
+  }
+
+  onTrezorSelected() {
+    this.setState({
+      walletProvider: 'trezor'
+    });
+
+    this.addAccount('trezor');
+    this.toSelectMKRBalance();
+  }
+
+  onLedgerSelected() {
     this.setState({
       step: this.steps.SELECT_LEDGER_WALLET,
-      faqs: faqs.ledger
+      faqs: faqs.ledger,
+      walletProvider: 'ledger'
     });
   }
 
-  confirmWallet() {
+  onLedgerLiveSelected() {
+    this.addAccount('ledger', LEDGER_LIVE_PATH);
+    this.toSelectMKRBalance();
+  }
+
+  onLedgerLegacySelected() {
+    this.addAccount('ledger', LEDGER_LEGACY_PATH);
+    this.toSelectMKRBalance();
+  }
+
+  toSelectMKRBalance() {
+    this.setState({
+      step: this.steps.SELECT_MKR_BALANCE,
+      faqs: faqs.selectMKRBalance
+    });
+  }
+
+  toConfirmWallet() {
     this.setState({
       step: this.steps.CONFIRM_WALLET,
       faqs: faqs.hotWallet
     });
+  }
+
+  onAddressSelected(address) {
+    this.setState({
+      account: {
+        address
+      }
+    });
+    this.state.onAccountChosen();
+  }
+
+  addAccount(accountType, path) {
+    window.maker.addAccount({
+      type: accountType,
+      path: path,
+      accountsLength: 5,
+      choose: async (addresses, callback) => {
+        const accounts = await this.getInfoFromAddresses(addresses || []);
+        this.setState({
+          accountsAvailable: accounts,
+          onAccountChosen: callback
+        });
+      }
+    });
+  }
+
+  getInfoFromAddresses(addresses) {
+    return Promise.all(
+      addresses.map(async (address, index) => ({
+        index: index,
+        address: address,
+        eth: round(
+          await toNum(window.maker.getToken(ETH).balanceOf(address)),
+          3
+        ),
+        mkr: round(
+          await toNum(window.maker.getToken(MKR).balanceOf(address)),
+          3
+        )
+      }))
+    );
   }
 
   render() {
@@ -180,20 +312,30 @@ class ChooseHotWallet extends React.Component {
           <div>
             <SelectAWalletStep
               active={this.state.step === this.steps.SELECT_WALLET}
-              onMetamaskSelected={this.confirmWallet}
-              onTrezorSelected={this.confirmWallet}
-              onLedgerSelected={this.selectLedgerWallet}
+              onMetamaskSelected={this.onMetamaskSelected}
+              onTrezorSelected={this.onTrezorSelected}
+              onLedgerSelected={this.onLedgerSelected}
             />
             <LedgerStep
               active={this.state.step === this.steps.SELECT_LEDGER_WALLET}
-              onLedgerLive={this.confirmWallet}
-              onLedgerLegacy={this.confirmWallet}
-              onCancel={this.selectAWallet}
+              onLedgerLive={this.onLedgerLiveSelected}
+              onLedgerLegacy={this.onLedgerLegacySelected}
+              onCancel={this.toSelectAWallet}
+            />
+            <ChooseMKRBalanceStep
+              active={this.state.step === this.steps.SELECT_MKR_BALANCE}
+              accounts={this.state.accountsAvailable}
+              onAddressSelected={this.onAddressSelected}
+              onCancel={this.toSelectAWallet}
             />
             <ConfirmWalletStep
+              account={this.state.account}
+              walletProvider={this.state.walletProvider}
               active={this.state.step === this.steps.CONFIRM_WALLET}
-              onConfirm={this.props.onComplete}
-              onCancel={this.selectAWallet}
+              onConfirm={() =>
+                this.props.onComplete(this.state.account.address)
+              }
+              onCancel={this.toSelectAWallet}
             />
           </div>
           <Sidebar faqs={this.state.faqs} />

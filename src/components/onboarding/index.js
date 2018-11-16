@@ -7,12 +7,14 @@ import {
   onboardingNextStep,
   onboardingPrevStep,
   onboardingStartLinkedFlow,
-  onboardingChooseWalletType
-} from '../reducers/onboarding';
-import Terms from './onboarding/Terms';
-import ChooseHotWallet from './onboarding/ChooseHotWallet';
-import ChooseColdWallet from './onboarding/ChooseColdWallet';
-import Introduction from './onboarding/Introduction';
+  onboardingChooseWalletType,
+  onboardingSetHotWallet
+} from '../../reducers/onboarding';
+import accounts from '../../reducers/accounts';
+import Terms from './Terms';
+import ChooseHotWallet from './ChooseHotWallet';
+import ChooseColdWallet from './ChooseColdWallet';
+import Introduction from './Introduction';
 
 import { OnboardingFullScreen, Box } from '@makerdao/ui-components';
 
@@ -35,10 +37,13 @@ const Onboarding = ({
   open,
   step,
   flow,
+  hotWalletAddress,
+  accounts,
   onboardingClose,
   onboardingNextStep,
   onboardingPrevStep,
   onboardingStartLinkedFlow,
+  onboardingSetHotWallet,
   onboardingChooseWalletType
 }) => {
   return (
@@ -73,20 +78,33 @@ const Onboarding = ({
           onComplete={onboardingNextStep}
         />
 
-        <ChooseHotWallet onComplete={onboardingNextStep} />
-        <ChooseColdWallet onComplete={onboardingNextStep} />
+        <ChooseHotWallet
+          accounts={accounts}
+          onComplete={address => {
+            onboardingSetHotWallet(address);
+            onboardingNextStep();
+          }}
+        />
+        <ChooseColdWallet
+          onComplete={onboardingNextStep}
+          hotWalletAddress={hotWalletAddress}
+        />
       </OnboardingFullScreen>
     </Background>
   );
 };
 
 export default connect(
-  state => state.onboarding,
+  state => ({
+    ...state.onboarding,
+    accounts: state.accounts.allAccounts
+  }),
   {
     onboardingChooseWalletType,
     onboardingStartLinkedFlow,
     onboardingClose,
     onboardingNextStep,
-    onboardingPrevStep
+    onboardingPrevStep,
+    onboardingSetHotWallet
   }
 )(Onboarding);

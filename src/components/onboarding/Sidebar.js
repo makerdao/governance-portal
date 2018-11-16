@@ -27,9 +27,18 @@ const ExternalLink = styled(Link)`
   }
 `;
 
-const Sidebar = ({ show, faqs }) => {
+const Sidebar = ({ show, faqs, hotWalletAddress }) => {
   return (
     <Card p="m" gridColumn={['1', '1', '2']} gridRow="span -1">
+      {hotWalletAddress && (
+        <Box pb="m">
+          <Link>
+            <Text t="p2">
+              <Address shorten full={hotWalletAddress} />
+            </Text>
+          </Link>
+        </Box>
+      )}
       <Grid gridRowGap="s">
         <div>
           <Text fontWeight="bold">Ethereum Mainnet</Text>

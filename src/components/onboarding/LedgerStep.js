@@ -4,8 +4,7 @@ import { Grid, Box, Text, Button } from '@makerdao/ui-components';
 import H2 from './H2';
 import Step from './Step';
 import ButtonCard from './ButtonCard';
-
-import ledgerImg from '../../imgs/onboarding/ledger-logomark.svg';
+import WalletIcon from './WalletIcon';
 
 const LedgerStep = ({ active, onLedgerLive, onLedgerLegacy, onCancel }) => {
   return (
@@ -23,7 +22,7 @@ const LedgerStep = ({ active, onLedgerLive, onLedgerLegacy, onCancel }) => {
           </Text>
         </Box>
         <ButtonCard
-          imgSrc={ledgerImg}
+          icon={<WalletIcon provider="ledger" />}
           onNext={onLedgerLive}
           title="Ledger live"
           subtitle={
@@ -35,7 +34,7 @@ const LedgerStep = ({ active, onLedgerLive, onLedgerLegacy, onCancel }) => {
           }
         />
         <ButtonCard
-          imgSrc={ledgerImg}
+          icon={<WalletIcon provider="ledger" />}
           onNext={onLedgerLegacy}
           title="Ledger legacy"
           subtitle={
