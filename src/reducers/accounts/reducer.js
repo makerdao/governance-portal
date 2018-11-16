@@ -76,20 +76,11 @@ const initialState = {
 };
 
 const updateProxyBalance = adding => (state, { payload: amount }) => {
-  console.log('in update proxy balance');
   let account = getActiveAccount({ accounts: state });
   if (!adding) {
     if (typeof amount === 'number') amount = -1 * amount;
     if (typeof amount === 'string') amount = '-' + amount;
   }
-  console.log(
-    'subtract(account.mkrBalance, amount)',
-    subtract(account.mkrBalance, amount)
-  );
-  console.log(
-    'add(account.proxy.votingPower, amount)',
-    add(account.proxy.votingPower, amount)
-  );
 
   account = {
     ...account,
