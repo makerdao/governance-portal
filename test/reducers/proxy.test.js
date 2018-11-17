@@ -437,7 +437,7 @@ describe('Proxy Reducer', () => {
       });
       expect(store.getActions()[2]).toEqual({
         type: reducer.WITHDRAW_ALL_MKR_SUCCESS,
-        payload: ''
+        payload: mockValue
       });
     });
 

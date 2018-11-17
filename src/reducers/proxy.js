@@ -223,6 +223,7 @@ export const freeAll = value => (dispatch, getState) => {
     prefix: 'WITHDRAW_ALL_MKR',
     dispatch,
     txObject: freeAll,
+    successPayload: value,
     acctType: account.type
   });
 };
