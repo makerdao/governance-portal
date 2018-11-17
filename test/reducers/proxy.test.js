@@ -1,6 +1,6 @@
 import { MKR } from '../../src/chain/maker';
 import * as reducer from '../../src/reducers/proxy';
-import * as accounts from '../../src/reducers/accounts';
+import * as accounts from '../../src/reducers/accounts/actions';
 import { AccountTypes } from '../../src/utils/constants';
 
 import configureMockStore from 'redux-mock-store';
@@ -437,7 +437,7 @@ describe('Proxy Reducer', () => {
       });
       expect(store.getActions()[2]).toEqual({
         type: reducer.WITHDRAW_ALL_MKR_SUCCESS,
-        payload: ''
+        payload: mockValue
       });
     });
 

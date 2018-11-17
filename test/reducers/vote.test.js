@@ -1,5 +1,6 @@
 import * as reducer from '../../src/reducers/vote';
-import * as accounts from '../../src/reducers/accounts';
+import * as accountsActions from '../../src/reducers/accounts/actions';
+import * as accountsConstants from '../../src/reducers/accounts/constants';
 import * as approvals from '../../src/reducers/approvals';
 import * as tally from '../../src/reducers/tally';
 
@@ -112,7 +113,7 @@ describe('Vote Reducer', () => {
       const noProxyAccount = { hasProxy: false };
 
       // Get account returns an invalid account:
-      accounts.getAccount = jest.fn(() => noProxyAccount);
+      accountsActions.getAccount = jest.fn(() => noProxyAccount);
       expect.assertions(2);
 
       try {
@@ -128,7 +129,7 @@ describe('Vote Reducer', () => {
 
     test('send vote should dispatch SENT & SUCCESS actions with successful transaction, then UPDATE both accounts.', async () => {
       const getAccount = jest.fn(() => activeAccount);
-      accounts.getAccount = getAccount;
+      accountsActions.getAccount = getAccount;
 
       const initApprovalsFetch = jest.fn(() => mockAction);
       approvals.initApprovalsFetch = initApprovalsFetch;
@@ -157,14 +158,14 @@ describe('Vote Reducer', () => {
         type: reducer.VOTE_SUCCESS
       });
       expect(store.getActions()[5]).toEqual({
-        type: accounts.UPDATE_ACCOUNT,
+        type: accountsConstants.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
           votingFor: mockProposalAddress
         }
       });
       expect(store.getActions()[6]).toEqual({
-        type: accounts.UPDATE_ACCOUNT,
+        type: accountsConstants.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
           votingFor: mockProposalAddress
@@ -216,7 +217,7 @@ describe('Vote Reducer', () => {
     test('withdraw vote should throw an error if active account has no proxy', async () => {
       const noProxyAccount = { hasProxy: false };
 
-      accounts.getAccount = jest.fn(() => noProxyAccount);
+      accountsActions.getAccount = jest.fn(() => noProxyAccount);
       expect.assertions(2);
 
       try {
@@ -229,7 +230,7 @@ describe('Vote Reducer', () => {
 
     test('withdraw vote should dispatch SENT & SUCCESS actions with successful transaction, then UPDATE both accounts.', async () => {
       const getAccount = jest.fn(() => activeAccount);
-      accounts.getAccount = getAccount;
+      accountsActions.getAccount = getAccount;
 
       const initApprovalsFetch = jest.fn(() => mockAction);
       approvals.initApprovalsFetch = initApprovalsFetch;
@@ -251,14 +252,14 @@ describe('Vote Reducer', () => {
         type: reducer.WITHDRAW_SUCCESS
       });
       expect(store.getActions()[5]).toEqual({
-        type: accounts.UPDATE_ACCOUNT,
+        type: accountsConstants.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
           votingFor: ''
         }
       });
       expect(store.getActions()[6]).toEqual({
-        type: accounts.UPDATE_ACCOUNT,
+        type: accountsConstants.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
           votingFor: ''

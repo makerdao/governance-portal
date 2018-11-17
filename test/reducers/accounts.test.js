@@ -1,4 +1,5 @@
-import reducer, { updateAccount } from '../../src/reducers/accounts';
+import { updateAccount } from '../../src/reducers/accounts/actions';
+import reducer from '../../src/reducers/accounts/reducer';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS
