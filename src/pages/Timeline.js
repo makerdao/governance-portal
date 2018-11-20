@@ -68,81 +68,69 @@ const StyledCard = styled(Card)`
   margin-bottom: 30px;
 `;
 
-const Timeline = ({ modalOpen, topics, canVote, fetching, votingFor }) => (
+const Timeline = ({ modalOpen, proposals, canVote, fetching, votingFor }) => (
   <Fragment>
     <VoterStatus />
-    {topics.map(topic => (
-      <RiseUp key={topic.topic}>
-        {topic.active ? <Timer endTimestamp={topic.end_timestamp} /> : null}
-        <StyledCard key={topic.topic}>
-          <Card.Top
-            govVote={topic.govVote}
-            active={topic.active}
-            topicTitle={topic.topic}
-            collapsable={true}
-            startCollapsed={false}
-          />
-          {topic.proposals.map(proposal => (
-            <Card.Element key={proposal.title} height={151}>
-              <ProposalDetails>
-                <Link to={`/${toSlug(topic.topic)}/${toSlug(proposal.title)}`}>
-                  <SubHeading mt="-10">{proposal.title}</SubHeading>
-                </Link>
-                <Body
-                  dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
+    <RiseUp>
+      {proposals.map(proposal => (
+        <StyledCard key={proposal.key}>
+          <Card.Element key={proposal.title} height={151}>
+            <ProposalDetails>
+              <Link to={`/${toSlug(proposal.title)}`}>
+                <SubHeading mt="-10">{proposal.title}</SubHeading>
+              </Link>
+              <Body
+                dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
+              />
+              {proposal.active ? (
+                <Timer endTimestamp={proposal.end_timestamp} small mb="-6" />
+              ) : null}
+            </ProposalDetails>
+            <div>
+              {proposal.active ? (
+                <Fragment>
+                  <WithTally candidate={proposal.source}>
+                    {({ loadingApprovals, percentage }) => (
+                      <VotePercentage
+                        loadingApprovals={loadingApprovals}
+                        percentage={percentage}
+                      />
+                    )}
+                  </WithTally>
+                  <Button
+                    disabled={!canVote || !proposal.active}
+                    loading={fetching}
+                    onClick={() =>
+                      modalOpen(Vote, {
+                        proposal: {
+                          address: proposal.source,
+                          title: proposal.title
+                        }
+                      })
+                    }
+                  >
+                    {eq(votingFor, proposal.source)
+                      ? 'Withdraw vote'
+                      : 'Vote for this Proposal'}
+                  </Button>
+                </Fragment>
+              ) : (
+                <ClosedStatus
+                  topicKey={proposal.topicKey}
+                  proposalAddress={proposal.source}
                 />
-                {topic.active ? (
-                  <Timer endTimestamp={proposal.end_timestamp} small mb="-6" />
-                ) : null}
-              </ProposalDetails>
-              <div>
-                {topic.active ? (
-                  <Fragment>
-                    <WithTally candidate={proposal.source}>
-                      {({ loadingApprovals, percentage }) => (
-                        <VotePercentage
-                          loadingApprovals={loadingApprovals}
-                          percentage={percentage}
-                        />
-                      )}
-                    </WithTally>
-                    <Button
-                      disabled={!canVote || !topic.active}
-                      loading={fetching}
-                      onClick={() =>
-                        modalOpen(Vote, {
-                          proposal: {
-                            address: proposal.source,
-                            title: proposal.title
-                          }
-                        })
-                      }
-                    >
-                      {eq(votingFor, proposal.source)
-                        ? 'Withdraw vote'
-                        : 'Vote for this Proposal'}
-                    </Button>
-                  </Fragment>
-                ) : (
-                  <ClosedStatus
-                    topicKey={topic.key}
-                    proposalAddress={proposal.source}
-                  />
-                )}
-              </div>
-            </Card.Element>
-          ))}
+              )}
+            </div>
+          </Card.Element>
         </StyledCard>
-      </RiseUp>
-    ))}
+      ))}
+    </RiseUp>
   </Fragment>
 );
 
-const reduxProps = ({ topics, accounts, hat }, { signaling }) => {
-  topics = topics.filter(t => !!t.govVote === !!signaling);
-
+const reduxProps = ({ proposals, accounts, hat }, { signaling }) => {
   return {
-    topics,
+    proposals: proposals.filter(p => !!p.govVote === !!signaling),
     canVote: activeCanVote({ accounts }),
     fetching: accounts.fetching,
     hatAddress: hat.hatAddress,

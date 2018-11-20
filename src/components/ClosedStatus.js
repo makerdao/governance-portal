@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import Loader from './Loader';
 import { eq, formatDate, formatRound } from '../utils/misc';
-import { getWinningProp } from '../reducers/topics';
+import { getWinningProp } from '../reducers/proposals';
 
 const fadeIn = keyframes`
 0% {
@@ -98,9 +98,9 @@ const ClosedProposal = ({
   );
 };
 
-const mapStateToProps = ({ topics, approvals }, props) => ({
+const mapStateToProps = ({ proposals, approvals }, props) => ({
   approvalFetching: approvals.fetching,
-  winningProposal: getWinningProp({ approvals, topics }, props.topicKey)
+  winningProposal: getWinningProp({ approvals, proposals }, props.topicKey)
 });
 
 export default connect(

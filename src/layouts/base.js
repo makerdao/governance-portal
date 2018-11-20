@@ -134,12 +134,12 @@ const BaseLayout = ({
   network,
   modalOpen,
   metamaskFetching,
-  topicsAvailable,
+  proposalsAvailable,
   accountsFetching,
   wrongNetwork
 }) => {
   const childrenShouldMount =
-    !metamaskFetching && topicsAvailable && !wrongNetwork;
+    !metamaskFetching && proposalsAvailable && !wrongNetwork;
   const noContentMsg = wrongNetwork ? (
     'Please switch network to Kovan or Mainnet'
   ) : (
@@ -220,12 +220,12 @@ BaseLayout.propTypes = {
   children: PropTypes.node.isRequired
 };
 
-const reduxProps = ({ metamask, topics, accounts }) => ({
+const reduxProps = ({ metamask, proposals, accounts }) => ({
   metamaskFetching: metamask.fetching,
   wrongNetwork: metamask.wrongNetwork,
   network: metamask.network,
   accountsFetching: accounts.fetching,
-  topicsAvailable: topics.length > 0
+  proposalsAvailable: proposals.length > 0
 });
 
 export default withRouter(
