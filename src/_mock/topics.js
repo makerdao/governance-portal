@@ -53,5 +53,31 @@ export default [
     verified: true,
     govVote: true,
     active: false
+  },
+  {
+    key: 'example-executive-vote',
+    date: '2018-09-07T00:00:00.000Z',
+    topic_blurb:
+      'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    topic: 'Example Executive Vote',
+    verified: true,
+    govVote: false,
+    active: true,
+    end_timestamp: 1543674555000,
+    proposals: [
+      {
+        key: 'do-an-executive-thing',
+        date: '2018-12-12T00:00:00.000Z',
+        source:
+          '{"mainnet":"0x305505C8C9D51602f3Ebe0CE984aB2AEb0df3172","kovan":"0x0c0fC0952790A96D60CD82cA865C7bb1233477C3"}',
+        end_timestamp: 1543674555000,
+        proposal_blurb: 'A thing will be done if this gets enough votes.',
+        title: 'Vote YES to do a thing!',
+        documents: [],
+        submitted_by: { link: 'https://makerdao.com/', name: 'Dai Foundation' },
+        verified: true,
+        about: 'Nothing to see here folks'
+      }
+    ]
   }
 ];
