@@ -99,7 +99,7 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
     throw new Error('must have account active');
   dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
 
-  const voteExec = window.maker.voteExec({
+  const voteExec = window.maker.service('voteProxy').voteExec({
     account: activeAccount,
     proposalAddress
   });
