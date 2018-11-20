@@ -138,13 +138,17 @@ const Timeline = ({ modalOpen, topics, canVote, fetching, votingFor }) => (
   </Fragment>
 );
 
-const reduxProps = ({ topics, accounts, hat }) => ({
-  topics,
-  canVote: activeCanVote({ accounts }),
-  fetching: accounts.fetching,
-  hatAddress: hat.hatAddress,
-  votingFor: getActiveVotingFor({ accounts })
-});
+const reduxProps = ({ topics, accounts, hat }, { signaling }) => {
+  topics = topics.filter(t => !!t.govVote === !!signaling);
+
+  return {
+    topics,
+    canVote: activeCanVote({ accounts }),
+    fetching: accounts.fetching,
+    hatAddress: hat.hatAddress,
+    votingFor: getActiveVotingFor({ accounts })
+  };
+};
 
 export default connect(
   reduxProps,

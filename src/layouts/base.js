@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import { Header, Footer } from '@makerdao/ui-components';
 import { colors, fonts } from '../theme';
@@ -43,24 +43,15 @@ const StyledHeader = styled.div`
 
 const HeaderBottom = styled.div`
   width: 100%;
-  padding: 16px 16px;
-  min-height: 66px;
 `;
 
 const HeaderBottomContent = styled.div`
   display: flex;
   justify-content: space-between;
-  height: 100%;
-  width: 100%;
   max-width: 1140px;
+  padding: 16px 0;
   align-items: center;
-  margin: 0px auto;
-`;
-
-const HeaderBottomLeft = styled.div`
-  color: rgb(${colors.white});
-  font-size: ${fonts.size.medium};
-  font-weight: ${fonts.weight.medium};
+  margin: 0 auto;
 `;
 
 const StyledContent = styled.div`
@@ -88,9 +79,13 @@ const DimHeaderLink = styled.a`
   margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
 `;
 
-const StyledLink = styled(Link)`
-  display: flex;
-  align-items: center;
+const StyledLink = styled(NavLink).attrs({
+  exact: true,
+  activeStyle: { fontWeight: 'bold' }
+})`
+  color: rgb(${colors.white});
+  font-size: ${fonts.size.medium};
+  font-weight: ${fonts.weight.medium};
 `;
 
 const Padding = styled.div`
@@ -164,8 +159,9 @@ const BaseLayout = ({
         <HeaderBottom>
           <HeaderBottomContent>
             <div style={{ display: 'flex' }}>
-              <StyledLink to="/">
-                <HeaderBottomLeft>Governance</HeaderBottomLeft>
+              <StyledLink to="/">Executive</StyledLink>
+              <StyledLink to="/signaling" style={{ marginLeft: '16px' }}>
+                Signaling
               </StyledLink>
               <NetworkNotification style={{ marginLeft: '16px' }}>
                 {childrenShouldMount && (
