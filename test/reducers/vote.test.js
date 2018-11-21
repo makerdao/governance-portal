@@ -47,19 +47,13 @@ const listenError = jest.fn((txObject, txState) => {
 });
 
 const mockService = name => {
-  if (name === 'transactionManager') {
-    return {
-      listen: listenSuccess
-    };
-  }
+  if (name === 'transactionManager') return { listen: listenSuccess };
+  if (name === 'voteProxy') return { voteExec };
 };
 
 const mockServiceError = name => {
-  if (name === 'transactionManager') {
-    return {
-      listen: listenError
-    };
-  }
+  if (name === 'transactionManager') return { listen: listenError };
+  if (name === 'voteProxy') return { voteExec };
 };
 
 const defaultFunctions = {
