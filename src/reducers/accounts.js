@@ -11,7 +11,7 @@ import {
   WITHDRAW_MKR_SUCCESS,
   WITHDRAW_ALL_MKR_SUCCESS,
   INITIATE_LINK_REQUEST
-} from './proxy';
+} from './sharedProxyConstants';
 import { MAX_UINT_ETH_BN } from '../utils/ethereum';
 import { MKR } from '../chain/maker';
 
