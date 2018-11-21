@@ -20,11 +20,7 @@ export function getWinningProp(state, topicKey) {
   const proposals = state.proposals.filter(p => p.topicKey === topicKey);
   // all child proposals of a topic must have the snapshot for this to work
   const hasEndSnapshot = proposals =>
-    proposals.every(
-      proposal =>
-        proposal.end_approvals !== undefined &&
-        proposal.end_percentage !== undefined
-    );
+    proposals.every(proposal => proposal.end_approvals !== undefined);
   if (hasEndSnapshot(proposals)) {
     return proposals.sort(
       (a, b) => Number(b.end_approvals) - Number(a.end_approvals)
@@ -49,7 +45,11 @@ export function getWinningProp(state, topicKey) {
       approvals > 0
         ? round(div(mul(approvals, 100), state.approvals.total), 2)
         : 0;
-    return { ...winner, end_approvals: approvals, end_percentage: percentage };
+    return {
+      ...winner,
+      end_approvals: approvals,
+      end_percentage: percentage
+    };
   }
 }
 

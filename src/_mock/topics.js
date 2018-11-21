@@ -62,17 +62,19 @@ export default [
     topic: 'Example Executive Vote',
     verified: true,
     govVote: false,
-    active: true,
-    end_timestamp: 1543674555000,
+    active: false,
+    end_timestamp: 1535606394000,
     proposals: [
       {
-        key: 'do-an-executive-thing',
+        key: 'governance-fee-raise',
         date: '2018-12-12T00:00:00.000Z',
+        end_approvals: 72402.7,
         source:
-          '{"mainnet":"0x305505C8C9D51602f3Ebe0CE984aB2AEb0df3172","kovan":"0x0c0fC0952790A96D60CD82cA865C7bb1233477C3"}',
-        end_timestamp: 1543674555000,
-        proposal_blurb: 'A thing will be done if this gets enough votes.',
-        title: 'Vote YES to do a thing!',
+          '{"mainnet":"0x6091295974c12c4305b8bf6d2062bf48f37a3b36","kovan":"0x0c0fC0952790A96D60CD82cA865C7bb1233477C3"}',
+        end_timestamp: 1535606394000,
+        proposal_blurb:
+          'Vote for this proposal to approve an increase in the governance fee to 2.5% per year',
+        title: 'Raise the governace fee to 2.5% / year',
         documents: [],
         submitted_by: { link: 'https://makerdao.com/', name: 'Dai Foundation' },
         verified: true,
