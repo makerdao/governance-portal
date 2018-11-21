@@ -32,47 +32,47 @@ const ExternalLink = styled(Link)`
 const Sidebar = ({ show, faqs, hotWallet }) => {
   return (
     <Card p="m" gridColumn={['1', '1', '2']} gridRow="span -1">
-      {hotWallet && (
-        <Grid pb="m" gridTemplateColumns="auto 1fr" gridColumnGap="s">
-          <Flex
-            alignItems="center"
-            justifyContent="center"
-            gridRow="1/3"
-            gridColumn="1"
-          >
-            <Box
-              borderRadius="50%"
-              bg="#C4C4C4"
-              opacity="0.2"
-              style={{ width: '34px', height: '34px' }}
-            />
-          </Flex>
-          <Flex
-            gridRow="1/3"
-            gridColumn="1"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <WalletIcon
-              provider={hotWallet.accountType}
-              style={{ maxWidth: '23px', maxHeight: '23px' }}
-            />
-          </Flex>
-          <Box gridColumn="2">
-            <Text color="#868997" fontSize="1rem" fontWeight="bold">
-              YOUR HOT WALLET
-            </Text>
-          </Box>
-          <Box gridColumn="2">
-            <Link>
-              <Text t="p2" fontWeight="medium">
-                <Address shorten full={hotWallet.address} />
+      <Grid gridRowGap="m">
+        {hotWallet && (
+          <Grid gridTemplateColumns="auto 1fr" gridColumnGap="s">
+            <Flex
+              alignItems="center"
+              justifyContent="center"
+              gridRow="1/3"
+              gridColumn="1"
+            >
+              <Box
+                borderRadius="50%"
+                bg="#C4C4C4"
+                opacity="0.2"
+                style={{ width: '34px', height: '34px' }}
+              />
+            </Flex>
+            <Flex
+              gridRow="1/3"
+              gridColumn="1"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <WalletIcon
+                provider={hotWallet.accountType}
+                style={{ maxWidth: '23px', maxHeight: '23px' }}
+              />
+            </Flex>
+            <Box gridColumn="2">
+              <Text color="#868997" fontSize="1rem" fontWeight="bold">
+                YOUR HOT WALLET
               </Text>
-            </Link>
-          </Box>
-        </Grid>
-      )}
-      <Grid gridRowGap="s">
+            </Box>
+            <Box gridColumn="2">
+              <Link>
+                <Text t="p2" fontWeight="medium">
+                  <Address shorten full={hotWallet.address} />
+                </Text>
+              </Link>
+            </Box>
+          </Grid>
+        )}
         <div>
           <Text fontWeight="bold">Ethereum Mainnet</Text>
           <Box fontSize="1.5rem" color="#868997">
@@ -138,7 +138,9 @@ const Sidebar = ({ show, faqs, hotWallet }) => {
         {(faqs || []).map(faq => {
           return (
             <div key={faq.title}>
-              <Text fontWeight="bold">{faq.title}</Text>
+              <Box mb="xs">
+                <Text fontWeight="bold">{faq.title}</Text>
+              </Box>
               <p>{faq.body}</p>
             </div>
           );

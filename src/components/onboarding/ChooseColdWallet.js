@@ -138,7 +138,7 @@ const ConfirmWalletStep = ({
                 <Box>
                   <WalletIcon
                     provider={hotWallet.accountType}
-                    style={{ maxWidth: '32px', maxHeight: '32px' }}
+                    style={{ maxWidth: '27px', maxHeight: '27px' }}
                   />
                 </Box>
                 <Box>
