@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {
   Grid,
   Card,
@@ -7,13 +8,11 @@ import {
   Button,
   Link,
   Address,
-  Table,
-  Flex,
-  Checkbox
+  Flex
 } from '@makerdao/ui-components';
-import round from 'lodash.round';
 
 import faqs from './faqs';
+import { AccountTypes } from '../../utils/constants';
 
 import LedgerStep from './LedgerStep';
 import ChooseMKRBalanceStep from './ChooseMKRBalanceStep';
@@ -25,20 +24,16 @@ import WalletIcon from './WalletIcon';
 
 import Loader from '../Loader';
 
-import { toNum } from '../../utils/misc';
-import { ETH, MKR } from '../../chain/maker';
-
-import { addAccount } from '../../reducers/accounts';
-
-// the Ledger subprovider interprets these paths to mean that the last digit is
-// the one that should be incremented.
-// i.e. the second path for Live is "44'/60'/1'/0/0"
-// and the second path for Legacy is "44'/60'/0'/0/1"
-const LEDGER_LIVE_PATH = "44'/60'/0'";
-const LEDGER_LEGACY_PATH = "44'/60'/0'/0";
+import {
+  useHardwareAccount,
+  useMetamaskAccount,
+  connectHardwareWallet,
+  resetHotWallet
+} from '../../reducers/onboarding';
 
 const SelectAWalletStep = ({
   active,
+  resetHotWallet,
   onMetamaskSelected,
   onTrezorSelected,
   onLedgerSelected
@@ -84,7 +79,7 @@ const SelectAWalletStep = ({
 const ConfirmWalletStep = ({
   active,
   account,
-  walletProvider,
+  connecting,
   onConfirm,
   onCancel
 }) => {
@@ -101,40 +96,68 @@ const ConfirmWalletStep = ({
           </p>
         </Text>
         <Card p="m">
-          <Grid
-            alignItems="center"
-            gridTemplateColumns={['auto 1fr auto', 'auto 1fr 1fr auto']}
-            gridColumnGap="s"
-          >
-            <Box>
-              <WalletIcon
-                provider={walletProvider}
-                style={{ maxWidth: '20px' }}
-              />
-            </Box>
-            <Box>
-              <Link fontWeight="semibold">
-                <Address
-                  show={active}
-                  full={account && account.address}
-                  shorten
-                />
-              </Link>
-            </Box>
-            <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
-              {account && account.mkrBalance} MKR
-            </Box>
-            <Box
-              borderRadius="4px"
-              color="#E45432"
-              bg="#FFE2D9"
-              fontSize="1.2rem"
-              fontWeight="bold"
-              px="xs"
+          {!account &&
+            connecting && (
+              <Flex justifyContent="center" alignItems="center">
+                <Box style={{ opacity: '0.6' }}>
+                  <Loader />
+                </Box>
+                <Box ml="s" color="#868997">
+                  Waiting for approval to access your account
+                </Box>
+              </Flex>
+            )}
+          {!account &&
+            !connecting && (
+              <Flex
+                justifyContent="center"
+                alignItems="center"
+                opacity="0.6"
+                textAlign="center"
+              >
+                There was an error connecting your wallet. Please ensure that
+                your wallet is connected and try again.
+              </Flex>
+            )}
+          {account && (
+            <Grid
+              alignItems="center"
+              gridTemplateColumns={['auto 1fr auto', 'auto 1fr 1fr 1fr auto']}
+              gridColumnGap="s"
             >
-              HOT WALLET
-            </Box>
-          </Grid>
+              <Box>
+                <WalletIcon
+                  provider={account.accountType}
+                  style={{ maxWidth: '20px' }}
+                />
+              </Box>
+              <Box>
+                <Link fontWeight="semibold">
+                  <Address
+                    show={active}
+                    full={account && account.address}
+                    shorten
+                  />
+                </Link>
+              </Box>
+              <Box gridRow={['2', '1']} gridColumn={['1/2', '3']}>
+                {(account && account.mkr) || '0'} MKR
+              </Box>
+              <Box gridRow={['2', '1']} gridColumn={['2/4', '4']}>
+                {(account && account.eth) || '0'} ETH
+              </Box>
+              <Box
+                borderRadius="4px"
+                color="#E45432"
+                bg="#FFE2D9"
+                fontSize="1.2rem"
+                fontWeight="bold"
+                px="xs"
+              >
+                HOT WALLET
+              </Box>
+            </Grid>
+          )}
         </Card>
         <Grid
           gridRowGap="xs"
@@ -145,7 +168,9 @@ const ConfirmWalletStep = ({
           <Button variant="secondary-outline" onClick={onCancel}>
             Change Address
           </Button>
-          <Button onClick={onConfirm}>Confirm Voting Wallet</Button>
+          <Button disabled={!account} onClick={onConfirm}>
+            Confirm Voting Wallet
+          </Button>
         </Grid>
       </Grid>
     </Step>
@@ -159,10 +184,7 @@ class ChooseHotWallet extends React.Component {
     this.state = {
       step: 'select',
       faqs: faqs.hotWallet,
-      account: undefined,
-      walletProvider: undefined,
-      onAccountChosen: () => {},
-      accountsAvailable: []
+      account: undefined
     };
 
     this.steps = {
@@ -170,8 +192,6 @@ class ChooseHotWallet extends React.Component {
       SELECT_LEDGER_WALLET: 'ledger',
       CONFIRM_WALLET: 'confirm'
     };
-
-    this.getInfoFromAddresses = this.getInfoFromAddresses.bind(this);
 
     this.toSelectAWallet = this.toSelectAWallet.bind(this);
     this.onMetamaskSelected = this.onMetamaskSelected.bind(this);
@@ -181,68 +201,52 @@ class ChooseHotWallet extends React.Component {
     this.onLedgerLegacySelected = this.onLedgerLegacySelected.bind(this);
     this.toSelectMKRBalance = this.toSelectMKRBalance.bind(this);
     this.toConfirmWallet = this.toConfirmWallet.bind(this);
-    this.onAddressSelected = this.onAddressSelected.bind(this);
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const currentMetamaskAccount = this.props.accounts.find(
-      acct => acct.type === 'provider' || acct.type === 'browser'
-    );
-    if (
-      this.state.walletProvider === 'metamask' &&
-      !prevState.account &&
-      currentMetamaskAccount
-    ) {
-      this.setState({
-        account: currentMetamaskAccount
-      });
-    }
+    this.onAccountSelected = this.onAccountSelected.bind(this);
   }
 
   toSelectAWallet() {
+    this.props.resetHotWallet();
     this.setState({
       step: this.steps.SELECT_WALLET,
-      faqs: faqs.hotWallet,
-      account: undefined,
-      address: ''
+      faqs: faqs.hotWallet
     });
   }
 
   onMetamaskSelected() {
-    const metamaskAccount = this.props.accounts.find(
-      acct => acct.type === 'provider' || acct.type === 'browser'
-    );
-    this.setState({
-      walletProvider: 'metamask',
-      account: metamaskAccount
-    });
+    this.props.useMetamaskAccount();
+    const checkMetamaskWallet = () => {
+      if (
+        !this.props.hotWallet &&
+        this.props.connecting &&
+        this.state.step === this.steps.CONFIRM_WALLET
+      ) {
+        this.props.useMetamaskAccount();
+        setTimeout(checkMetamaskWallet, 500);
+      }
+    };
+    setTimeout(checkMetamaskWallet, 500);
     this.toConfirmWallet();
   }
 
   onTrezorSelected() {
-    this.setState({
-      walletProvider: 'trezor'
-    });
-
-    this.addAccount('trezor');
+    this.props.connectHardwareWallet(AccountTypes.TREZOR);
     this.toSelectMKRBalance();
   }
 
   onLedgerSelected() {
     this.setState({
       step: this.steps.SELECT_LEDGER_WALLET,
-      faqs: faqs.ledger,
-      walletProvider: 'ledger'
+      faqs: faqs.ledger
     });
   }
 
   onLedgerLiveSelected() {
-    this.addAccount('ledger', LEDGER_LIVE_PATH);
+    this.props.connectHardwareWallet(AccountTypes.LEDGER, { live: true });
     this.toSelectMKRBalance();
   }
 
   onLedgerLegacySelected() {
-    this.addAccount('ledger', LEDGER_LEGACY_PATH);
+    this.props.connectHardwareWallet(AccountTypes.LEDGER, { live: false });
     this.toSelectMKRBalance();
   }
 
@@ -253,52 +257,16 @@ class ChooseHotWallet extends React.Component {
     });
   }
 
+  onAccountSelected(account) {
+    this.props.useHardwareAccount(account, 'hot');
+    this.toConfirmWallet();
+  }
+
   toConfirmWallet() {
     this.setState({
       step: this.steps.CONFIRM_WALLET,
       faqs: faqs.hotWallet
     });
-  }
-
-  onAddressSelected(address) {
-    this.setState({
-      account: {
-        address
-      }
-    });
-    this.state.onAccountChosen();
-  }
-
-  addAccount(accountType, path) {
-    window.maker.addAccount({
-      type: accountType,
-      path: path,
-      accountsLength: 5,
-      choose: async (addresses, callback) => {
-        const accounts = await this.getInfoFromAddresses(addresses || []);
-        this.setState({
-          accountsAvailable: accounts,
-          onAccountChosen: callback
-        });
-      }
-    });
-  }
-
-  getInfoFromAddresses(addresses) {
-    return Promise.all(
-      addresses.map(async (address, index) => ({
-        index: index,
-        address: address,
-        eth: round(
-          await toNum(window.maker.getToken(ETH).balanceOf(address)),
-          3
-        ),
-        mkr: round(
-          await toNum(window.maker.getToken(MKR).balanceOf(address)),
-          3
-        )
-      }))
-    );
   }
 
   render() {
@@ -324,17 +292,16 @@ class ChooseHotWallet extends React.Component {
             />
             <ChooseMKRBalanceStep
               active={this.state.step === this.steps.SELECT_MKR_BALANCE}
-              accounts={this.state.accountsAvailable}
-              onAddressSelected={this.onAddressSelected}
+              accounts={this.props.availableAccounts}
+              connecting={this.props.connecting}
+              onAccountSelected={this.onAccountSelected}
               onCancel={this.toSelectAWallet}
             />
             <ConfirmWalletStep
-              account={this.state.account}
-              walletProvider={this.state.walletProvider}
               active={this.state.step === this.steps.CONFIRM_WALLET}
-              onConfirm={() =>
-                this.props.onComplete(this.state.account.address)
-              }
+              account={this.props.hotWallet}
+              connecting={this.props.connecting}
+              onConfirm={this.props.onComplete}
               onCancel={this.toSelectAWallet}
             />
           </div>
@@ -345,4 +312,14 @@ class ChooseHotWallet extends React.Component {
   }
 }
 
-export default ChooseHotWallet;
+export default connect(
+  state => ({
+    ...state.onboarding
+  }),
+  {
+    useHardwareAccount,
+    useMetamaskAccount,
+    connectHardwareWallet,
+    resetHotWallet
+  }
+)(ChooseHotWallet);

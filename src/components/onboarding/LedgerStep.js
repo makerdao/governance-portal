@@ -29,7 +29,12 @@ const LedgerStep = ({ active, onLedgerLive, onLedgerLegacy, onCancel }) => {
             <span>
               Derivation Path:
               <br />
-              <Text color="rgba(255, 0, 0, 0.5)">{"44'/60'/0'/${x}"}</Text>
+              <Text color="rgba(255, 0, 0, 0.5)">
+                {
+                  // eslint-disable-next-line
+                  "44'/60'/0'/${x}"
+                }
+              </Text>
             </span>
           }
         />
@@ -45,7 +50,10 @@ const LedgerStep = ({ active, onLedgerLive, onLedgerLegacy, onCancel }) => {
                 color="rgba(255, 0, 0, 0.5)"
                 style={{ overflowWrap: 'break-word', wordBreak: 'break-word' }}
               >
-                {"${purpose}'/${coinType}'/${x}'/0/0"}
+                {
+                  // eslint-disable-next-line
+                  "${purpose}'/${coinType}'/${x}'/0/0"
+                }
               </Text>
             </span>
           }

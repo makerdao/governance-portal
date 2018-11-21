@@ -25,12 +25,20 @@ class ChooseMKRBalance extends React.Component {
     };
 
     this.selectAddress = this.selectAddress.bind(this);
+    this.onConfirm = this.onConfirm.bind(this);
   }
 
   selectAddress(address) {
     this.setState({
       selectedAddress: address
     });
+  }
+
+  onConfirm() {
+    const account = this.props.accounts.find(
+      account => account.address === this.state.selectedAddress
+    );
+    this.props.onAccountSelected(account);
   }
 
   render() {
@@ -49,16 +57,29 @@ class ChooseMKRBalance extends React.Component {
             </Text>
           </Box>
           <Card py="m" px="l">
-            {this.props.accounts.length <= 0 && (
-              <Flex justifyContent="center" alignItems="center">
-                <Box style={{ opacity: '0.6' }}>
-                  <Loader />
-                </Box>
-                <Box ml="s" color="#868997">
-                  Waiting for approval to access your account
-                </Box>
-              </Flex>
-            )}
+            {this.props.accounts.length <= 0 &&
+              !this.props.connecting && (
+                <Flex
+                  justifyContent="center"
+                  alignItems="center"
+                  opacity="0.6"
+                  textAlign="center"
+                >
+                  There was an error connecting your wallet. Please ensure that
+                  your wallet is connected and try again.
+                </Flex>
+              )}
+            {this.props.accounts.length <= 0 &&
+              this.props.connecting && (
+                <Flex justifyContent="center" alignItems="center">
+                  <Box style={{ opacity: '0.6' }}>
+                    <Loader />
+                  </Box>
+                  <Box ml="s" color="#868997">
+                    Waiting for approval to access your account
+                  </Box>
+                </Flex>
+              )}
             {this.props.accounts.length > 0 && (
               <Table variant="cozy" width="100%">
                 <thead>
@@ -76,8 +97,9 @@ class ChooseMKRBalance extends React.Component {
                         <td>
                           <Box pr="s" fontSize="1.8rem">
                             <Checkbox
+                              value={account.address}
                               checked={
-                                this.state.chosenAddress === account.address
+                                this.state.selectedAddress === account.address
                               }
                               onChange={() =>
                                 this.selectAddress(account.address)
@@ -110,9 +132,7 @@ class ChooseMKRBalance extends React.Component {
             </Button>
             <Button
               disabled={!this.state.selectedAddress}
-              onClick={() =>
-                this.props.onAddressSelected(this.state.selectedAddress)
-              }
+              onClick={this.onConfirm}
             >
               Confirm wallet
             </Button>

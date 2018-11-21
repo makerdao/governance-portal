@@ -7,10 +7,8 @@ import {
   onboardingNextStep,
   onboardingPrevStep,
   onboardingStartLinkedFlow,
-  onboardingChooseWalletType,
-  onboardingSetHotWallet
+  onboardingChooseWalletType
 } from '../../reducers/onboarding';
-import accounts from '../../reducers/accounts';
 import Terms from './Terms';
 import ChooseHotWallet from './ChooseHotWallet';
 import ChooseColdWallet from './ChooseColdWallet';
@@ -38,12 +36,11 @@ const Onboarding = ({
   step,
   flow,
   hotWalletAddress,
-  accounts,
   onboardingClose,
   onboardingNextStep,
   onboardingPrevStep,
   onboardingStartLinkedFlow,
-  onboardingSetHotWallet,
+  setHotWallet,
   onboardingChooseWalletType
 }) => {
   return (
@@ -78,17 +75,8 @@ const Onboarding = ({
           onComplete={onboardingNextStep}
         />
 
-        <ChooseHotWallet
-          accounts={accounts}
-          onComplete={address => {
-            onboardingSetHotWallet(address);
-            onboardingNextStep();
-          }}
-        />
-        <ChooseColdWallet
-          onComplete={onboardingNextStep}
-          hotWalletAddress={hotWalletAddress}
-        />
+        <ChooseHotWallet onComplete={onboardingNextStep} />
+        <ChooseColdWallet onComplete={onboardingNextStep} />
       </OnboardingFullScreen>
     </Background>
   );
@@ -96,15 +84,13 @@ const Onboarding = ({
 
 export default connect(
   state => ({
-    ...state.onboarding,
-    accounts: state.accounts.allAccounts
+    ...state.onboarding
   }),
   {
     onboardingChooseWalletType,
     onboardingStartLinkedFlow,
     onboardingClose,
     onboardingNextStep,
-    onboardingPrevStep,
-    onboardingSetHotWallet
+    onboardingPrevStep
   }
 )(Onboarding);

@@ -6,13 +6,12 @@ import {
   Text,
   Button,
   Link,
-  Address,
-  Flex,
-  Table,
-  Checkbox
+  Address
 } from '@makerdao/ui-components';
+import { connect } from 'react-redux';
 
 import faqs from './faqs';
+import { AccountTypes } from '../../utils/constants';
 
 import LedgerStep from './LedgerStep';
 import Sidebar from './Sidebar';
@@ -23,6 +22,13 @@ import ButtonCard from './ButtonCard';
 import ChooseMKRBalanceStep from './ChooseMKRBalanceStep';
 
 import linkImg from '../../imgs/onboarding/link.svg';
+
+import {
+  useHardwareAccount,
+  useMetamaskAccount,
+  connectHardwareWallet,
+  resetColdWallet
+} from '../../reducers/onboarding';
 
 const SelectAWalletStep = ({ active, onTrezorSelected, onLedgerSelected }) => {
   return (
@@ -57,7 +63,13 @@ const SelectAWalletStep = ({ active, onTrezorSelected, onLedgerSelected }) => {
   );
 };
 
-const ConfirmWalletStep = ({ active, onConfirm, onCancel }) => {
+const ConfirmWalletStep = ({
+  active,
+  hotWallet,
+  coldWallet,
+  onConfirm,
+  onCancel
+}) => {
   return (
     <Step active={active}>
       <Grid gridRowGap="m" alignContent="start">
@@ -71,39 +83,40 @@ const ConfirmWalletStep = ({ active, onConfirm, onCancel }) => {
           </p>
         </Text>
         <Grid>
-          <Card p="m" gridColumn="1/3">
-            <Grid
-              alignItems="center"
-              gridTemplateColumns={['auto 1fr auto', 'auto 1fr 1fr auto']}
-              gridColumnGap="s"
-            >
-              <Box>
-                <WalletIcon provider="trezor" />
-              </Box>
-              <Box>
-                <Link fontWeight="semibold">
-                  <Address
-                    show={active}
-                    full="0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2"
-                    shorten
-                  />
-                </Link>
-              </Box>
-              <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
-                94.2 ETH, 142.4 MKR
-              </Box>
-              <Box
-                borderRadius="4px"
-                color="#447AFB"
-                bg="#EAF0FF"
-                fontSize="1.2rem"
-                fontWeight="bold"
-                px="xs"
+          {coldWallet && (
+            <Card p="m" gridColumn="1/3">
+              <Grid
+                alignItems="center"
+                gridTemplateColumns={['auto 1fr auto', 'auto 1fr 1fr auto']}
+                gridColumnGap="s"
               >
-                COLD WALLET
-              </Box>
-            </Grid>
-          </Card>
+                <Box>
+                  <WalletIcon
+                    provider={coldWallet.accountType}
+                    style={{ maxWidth: '32px', maxHeight: '32px' }}
+                  />
+                </Box>
+                <Box>
+                  <Link fontWeight="semibold">
+                    <Address show={active} full={coldWallet.address} shorten />
+                  </Link>
+                </Box>
+                <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
+                  {coldWallet.eth || '0'} ETH, {coldWallet.mkr || '0'} MKR
+                </Box>
+                <Box
+                  borderRadius="4px"
+                  color="#447AFB"
+                  bg="#EAF0FF"
+                  fontSize="1.2rem"
+                  fontWeight="bold"
+                  px="xs"
+                >
+                  COLD WALLET
+                </Box>
+              </Grid>
+            </Card>
+          )}
           <Box gridColumn="1" mb="-7px" justifySelf="center">
             <img src={linkImg} alt="" />
           </Box>
@@ -115,39 +128,40 @@ const ConfirmWalletStep = ({ active, onConfirm, onCancel }) => {
           >
             <p>You are linking the above cold wallet to the below hot wallet</p>
           </Box>
-          <Card p="m" gridColumn="1/3">
-            <Grid
-              alignItems="center"
-              gridTemplateColumns={['auto 1fr auto', 'auto 1fr 1fr auto']}
-              gridColumnGap="s"
-            >
-              <Box>
-                <WalletIcon provider="trezor" />
-              </Box>
-              <Box>
-                <Link fontWeight="semibold">
-                  <Address
-                    show={active}
-                    full="0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2"
-                    shorten
-                  />
-                </Link>
-              </Box>
-              <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
-                94.2 ETH, 142.4 MKR
-              </Box>
-              <Box
-                borderRadius="4px"
-                color="#E45432"
-                bg="#FFE2D9"
-                fontSize="1.2rem"
-                fontWeight="bold"
-                px="xs"
+          {hotWallet && (
+            <Card p="m" gridColumn="1/3">
+              <Grid
+                alignItems="center"
+                gridTemplateColumns={['auto 1fr auto', 'auto 1fr 1fr auto']}
+                gridColumnGap="s"
               >
-                HOT WALLET
-              </Box>
-            </Grid>
-          </Card>
+                <Box>
+                  <WalletIcon
+                    provider={hotWallet.accountType}
+                    style={{ maxWidth: '32px', maxHeight: '32px' }}
+                  />
+                </Box>
+                <Box>
+                  <Link fontWeight="semibold">
+                    <Address show={active} full={hotWallet.address} shorten />
+                  </Link>
+                </Box>
+                <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
+                  {hotWallet.eth || 0} ETH, {hotWallet.mkr || 0} MKR
+                </Box>
+                <Box
+                  borderRadius="4px"
+                  color="#E45432"
+                  bg="#FFE2D9"
+                  fontSize="1.2rem"
+                  fontWeight="bold"
+                  px="xs"
+                >
+                  HOT WALLET
+                </Box>
+              </Grid>
+            </Card>
+          )}
         </Grid>
         <Grid
           gridRowGap="xs"
@@ -181,34 +195,59 @@ class ChooseColdWallet extends React.Component {
       faqs: faqs.coldWallet
     };
 
-    this.confirmWallet = this.confirmWallet.bind(this);
-    this.selectAWallet = this.selectAWallet.bind(this);
-    this.selectLedgerWallet = this.selectLedgerWallet.bind(this);
-    this.selectMKRBalance = this.selectMKRBalance.bind(this);
+    this.toConfirmWallet = this.toConfirmWallet.bind(this);
+    this.toSelectAWallet = this.toSelectAWallet.bind(this);
+    this.onTrezorSelected = this.onTrezorSelected.bind(this);
+    this.onLedgerLiveSelected = this.onLedgerLiveSelected.bind(this);
+    this.onLedgerLegacySelected = this.onLedgerLegacySelected.bind(this);
+    this.onLedgerSelected = this.onLedgerSelected.bind(this);
+    this.toSelectMKRBalance = this.toSelectMKRBalance.bind(this);
+    this.onAccountSelected = this.onAccountSelected.bind(this);
   }
 
-  selectAWallet() {
+  toSelectAWallet() {
+    this.props.resetColdWallet();
     this.setState({
       step: this.steps.SELECT_WALLET,
       faqs: faqs.coldWallet
     });
   }
 
-  selectLedgerWallet() {
+  onTrezorSelected() {
+    this.props.connectHardwareWallet(AccountTypes.TREZOR);
+    this.toSelectMKRBalance();
+  }
+
+  onLedgerSelected() {
     this.setState({
       step: this.steps.SELECT_LEDGER_WALLET,
       faqs: faqs.ledger
     });
   }
 
-  selectMKRBalance() {
+  onLedgerLiveSelected() {
+    this.props.connectHardwareWallet(AccountTypes.LEDGER, { live: true });
+    this.toSelectMKRBalance();
+  }
+
+  onLedgerLegacySelected() {
+    this.props.connectHardwareWallet(AccountTypes.LEDGER, { live: false });
+    this.toSelectMKRBalance();
+  }
+
+  toSelectMKRBalance() {
     this.setState({
       step: this.steps.SELECT_MKR_BALANCE,
       faqs: faqs.selectMKRBalance
     });
   }
 
-  confirmWallet() {
+  onAccountSelected(account) {
+    this.props.useHardwareAccount(account, 'cold');
+    this.toConfirmWallet();
+  }
+
+  toConfirmWallet() {
     this.setState({
       step: this.steps.CONFIRM_WALLET,
       faqs: faqs.selectMKRBalance
@@ -226,35 +265,46 @@ class ChooseColdWallet extends React.Component {
           <div>
             <SelectAWalletStep
               active={this.state.step === this.steps.SELECT_WALLET}
-              onTrezorSelected={this.selectMKRBalance}
-              onLedgerSelected={this.selectLedgerWallet}
+              onTrezorSelected={this.onTrezorSelected}
+              onLedgerSelected={this.onLedgerSelected}
             />
             <LedgerStep
               active={this.state.step === this.steps.SELECT_LEDGER_WALLET}
-              onLedgerLive={this.selectMKRBalance}
-              onLedgerLegacy={this.confirmWallet}
-              onCancel={this.selectAWallet}
+              onLedgerLive={this.onLedgerLiveSelected}
+              onLedgerLegacy={this.onLedgerLegacySelected}
+              onCancel={this.toSelectAWallet}
             />
             <ChooseMKRBalanceStep
               active={this.state.step === this.steps.SELECT_MKR_BALANCE}
-              accounts={[]}
-              onAddressSelected={this.confirmWallet}
-              onCancel={this.selectAWallet}
+              accounts={this.props.availableAccounts}
+              connecting={this.props.connecting}
+              onAccountSelected={this.onAccountSelected}
+              onCancel={this.toSelectAWallet}
             />
             <ConfirmWalletStep
               active={this.state.step === this.steps.CONFIRM_WALLET}
+              hotWallet={this.props.hotWallet}
+              coldWallet={this.props.coldWallet}
+              connecting={this.props.connecting}
               onConfirm={this.props.onComplete}
-              onCancel={this.selectAWallet}
+              onCancel={this.toSelectAWallet}
             />
           </div>
-          <Sidebar
-            faqs={this.state.faqs}
-            hotWalletAddress={this.props.hotWalletAddress}
-          />
+          <Sidebar faqs={this.state.faqs} hotWallet={this.props.hotWallet} />
         </Grid>
       </Box>
     );
   }
 }
 
-export default ChooseColdWallet;
+export default connect(
+  state => ({
+    ...state.onboarding
+  }),
+  {
+    useHardwareAccount,
+    useMetamaskAccount,
+    connectHardwareWallet,
+    resetColdWallet
+  }
+)(ChooseColdWallet);

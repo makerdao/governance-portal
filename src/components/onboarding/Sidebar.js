@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {
   Box,
+  Flex,
   Grid,
   Text,
   Card,
@@ -10,6 +11,7 @@ import {
   Address
 } from '@makerdao/ui-components';
 
+import WalletIcon from './WalletIcon';
 import newTab from '../../imgs/onboarding/newtab.svg';
 
 const ExternalLink = styled(Link)`
@@ -27,17 +29,48 @@ const ExternalLink = styled(Link)`
   }
 `;
 
-const Sidebar = ({ show, faqs, hotWalletAddress }) => {
+const Sidebar = ({ show, faqs, hotWallet }) => {
   return (
     <Card p="m" gridColumn={['1', '1', '2']} gridRow="span -1">
-      {hotWalletAddress && (
-        <Box pb="m">
-          <Link>
-            <Text t="p2">
-              <Address shorten full={hotWalletAddress} />
+      {hotWallet && (
+        <Grid pb="m" gridTemplateColumns="auto 1fr" gridColumnGap="s">
+          <Flex
+            alignItems="center"
+            justifyContent="center"
+            gridRow="1/3"
+            gridColumn="1"
+          >
+            <Box
+              borderRadius="50%"
+              bg="#C4C4C4"
+              opacity="0.2"
+              style={{ width: '34px', height: '34px' }}
+            />
+          </Flex>
+          <Flex
+            gridRow="1/3"
+            gridColumn="1"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <WalletIcon
+              provider={hotWallet.accountType}
+              style={{ maxWidth: '23px', maxHeight: '23px' }}
+            />
+          </Flex>
+          <Box gridColumn="2">
+            <Text color="#868997" fontSize="1rem" fontWeight="bold">
+              YOUR HOT WALLET
             </Text>
-          </Link>
-        </Box>
+          </Box>
+          <Box gridColumn="2">
+            <Link>
+              <Text t="p2" fontWeight="medium">
+                <Address shorten full={hotWallet.address} />
+              </Text>
+            </Link>
+          </Box>
+        </Grid>
       )}
       <Grid gridRowGap="s">
         <div>
