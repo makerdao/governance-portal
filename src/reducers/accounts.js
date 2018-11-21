@@ -216,7 +216,7 @@ const realInitialState = {
   allAccounts: []
 };
 
-const initialState = fakeInitialState;
+const initialState = realInitialState;
 
 const updateProxyBalance = adding => (state, { payload: amount }) => {
   let account = getActiveAccount({ accounts: state });
