@@ -2,7 +2,7 @@ import reducer, { updateAccount } from '../../src/reducers/accounts';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS
-} from '../../src/reducers/proxy';
+} from '../../src/reducers/sharedProxyConstants';
 
 test('UPDATE_ACCOUNT preserves unchanged values', () => {
   const state = {

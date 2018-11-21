@@ -13,9 +13,15 @@ import { modalClose } from './modal';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { MKR } from '../chain/maker';
 
+import {
+  SEND_MKR_TO_PROXY_SUCCESS,
+  WITHDRAW_MKR_SUCCESS,
+  WITHDRAW_ALL_MKR_SUCCESS,
+  INITIATE_LINK_REQUEST
+} from './sharedProxyConstants';
+
 // Constants ----------------------------------------------
 
-export const INITIATE_LINK_REQUEST = 'proxy/INITIATE_LINK_REQUEST';
 export const INITIATE_LINK_SENT = 'proxy/INITIATE_LINK_SENT';
 export const INITIATE_LINK_SUCCESS = 'proxy/INITIATE_LINK_SUCCESS';
 export const INITIATE_LINK_FAILURE = 'proxy/INITIATE_LINK_FAILURE';
@@ -27,17 +33,17 @@ export const APPROVE_LINK_FAILURE = 'proxy/APPROVE_LINK_FAILURE';
 
 export const SEND_MKR_TO_PROXY_REQUEST = 'proxy/SEND_MKR_TO_PROXY_REQUEST';
 export const SEND_MKR_TO_PROXY_SENT = 'proxy/SEND_MKR_TO_PROXY_SENT';
-export const SEND_MKR_TO_PROXY_SUCCESS = 'proxy/SEND_MKR_TO_PROXY_SUCCESS';
+
 export const SEND_MKR_TO_PROXY_FAILURE = 'proxy/SEND_MKR_TO_PROXY_FAILURE';
 
 export const WITHDRAW_MKR_REQUEST = 'proxy/WITHDRAW_MKR_REQUEST';
 export const WITHDRAW_MKR_SENT = 'proxy/WITHDRAW_MKR_SENT';
-export const WITHDRAW_MKR_SUCCESS = 'proxy/WITHDRAW_MKR_SUCCESS';
+
 export const WITHDRAW_MKR_FAILURE = 'proxy/WITHDRAW_MKR_FAILURE';
 
 export const WITHDRAW_ALL_MKR_REQUEST = 'proxy/WITHDRAW_ALL_MKR_REQUEST';
 export const WITHDRAW_ALL_MKR_SENT = 'proxy/WITHDRAW_ALL_MKR_SENT';
-export const WITHDRAW_ALL_MKR_SUCCESS = 'proxy/WITHDRAW_ALL_MKR_SUCCESS';
+
 export const WITHDRAW_ALL_MKR_FAILURE = 'proxy/WITHDRAW_ALL_MKR_FAILURE';
 
 export const BREAK_LINK_REQUEST = 'proxy/BREAK_LINK_REQUEST';
