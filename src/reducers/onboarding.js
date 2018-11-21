@@ -205,9 +205,9 @@ const getInfoFromAddress = async address => {
 // Reducer ------------------------------------------------
 
 const initialState = {
-  step: 1,
-  open: true,
-  flow: 'linked',
+  step: 0,
+  open: false,
+  flow: null,
   hotWallet: null,
   coldWallet: null,
   availableAccounts: [],
