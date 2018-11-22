@@ -1,5 +1,5 @@
 import { createReducer } from '../utils/redux';
-// import { promiseRetry } from '../utils/misc';
+import { promiseRetry } from '../utils/misc';
 
 // Constants ----------------------------------------------
 
@@ -11,9 +11,9 @@ export const TALLY_UPDATE = 'voteTally/TALLY_UPDATE';
 // Actions ------------------------------------------------
 
 export const voteTallyInit = () => dispatch => {
-  const getVoteTally = window.maker.service('chief').getVoteTally();
+  const service = window.maker.service('chief');
   dispatch({ type: TALLY_REQUEST });
-  promiseRetry({ times: 3, fn: getVoteTally, delay: 500 })
+  promiseRetry({ times: 3, fn: service.getVoteTally.bind(service), delay: 500 })
     .then(tally => {
       dispatch({ type: TALLY_SUCCESS, payload: { tally } });
     })

@@ -79,19 +79,27 @@ export const addAccounts = accounts => async dispatch => {
         })()
       );
     }
+
+    const role =
+      account.address === voteProxy.getColdAddress()
+        ? 'cold'
+        : account.address === voteProxy.getHotAddress()
+          ? 'hot'
+          : '';
+
     const _payload = {
       ...account,
       address: account.address,
       mkrBalance: toNum(mkrToken.balanceOf(account.address)),
       hasProxy,
-      proxyRole: hasProxy ? voteProxy.getRole() : '',
+      proxyRole: hasProxy ? role : '',
       votingFor: currProposal,
       proxy: hasProxy
         ? promisedProperties({
-            address: voteProxy.getAddress(),
+            address: voteProxy.getProxyAddress(),
             votingPower: toNum(voteProxy.getNumDeposits()),
             hasInfMkrApproval: mkrToken
-              .allowance(account.address, voteProxy.getAddress())
+              .allowance(account.address, voteProxy.getProxyAddress())
               .then(val => val.eq(MAX_UINT_ETH_BN))
           })
         : { address: '', votingPower: 0, hasInfMkrApproval: false }
@@ -99,8 +107,11 @@ export const addAccounts = accounts => async dispatch => {
 
     const fetchLinkedAccountData = async () => {
       if (hasProxy) {
-        const otherRole = voteProxy.getRole() === 'hot' ? 'cold' : 'hot';
-        const linkedAddress = await voteProxy.getLinkedAddress();
+        const otherRole = role === 'hot' ? 'cold' : 'hot';
+        const linkedAddress =
+          otherRole === 'hot'
+            ? await voteProxy.getHotAddress()
+            : await voteProxy.getColdAddress();
         return {
           address: linkedAddress,
           proxyRole: otherRole,
