@@ -2,6 +2,7 @@ import uniqWith from 'ramda/src/uniqWith';
 import concat from 'ramda/src/concat';
 import pipe from 'ramda/src/pipe';
 import differenceWith from 'ramda/src/differenceWith';
+import round from 'lodash.round';
 
 import { createReducer } from '../utils/redux';
 import { AccountTypes } from '../utils/constants';
@@ -13,9 +14,16 @@ import {
   INITIATE_LINK_REQUEST
 } from './sharedProxyConstants';
 import { MAX_UINT_ETH_BN } from '../utils/ethereum';
-import { MKR } from '../chain/maker';
+import { ETH, MKR } from '../chain/maker';
 
 // Constants ----------------------------------------------
+
+// the Ledger subprovider interprets these paths to mean that the last digit is
+// the one that should be incremented.
+// i.e. the second path for Live is "44'/60'/1'/0/0"
+// and the second path for Legacy is "44'/60'/0'/0/1"
+const LEDGER_LIVE_PATH = "44'/60'/0'";
+const LEDGER_LEGACY_PATH = "44'/60'/0'/0";
 
 const REMOVE_ACCOUNTS = 'accounts/REMOVE_ACCOUNTS';
 const SET_ACTIVE_ACCOUNT = 'accounts/SET_ACTIVE_ACCOUNT';
@@ -25,6 +33,12 @@ const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
 const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
 export const NO_METAMASK_ACCOUNTS = 'accounts/NO_METAMASK_ACCOUNTS';
 const SET_INF_MKR_APPROVAL = 'accounts/SET_INF_MKR_APPROVAL';
+
+const HARDWARE_ACCOUNTS_CONNECTING = 'accounts/HARDWARE_ACCOUNTS_CONNECTING';
+const HARDWARE_ACCOUNTS_CONNECTED = 'accounts/HARDWARE_ACCOUNTS_CONNECTED';
+const HARDWARE_ACCOUNTS_ERROR = 'accounts/HARDWARE_ACCOUNTS_ERROR';
+
+const HARDWARE_ACCOUNT_CONNECTED = 'accounts/HARDWARE_ACCOUNT_CONNECTED';
 
 // Selectors ----------------------------------------------
 
@@ -57,6 +71,16 @@ export function activeCanVote(state) {
 }
 
 // Actions ------------------------------------------------
+
+// Action helpers
+
+const getInfoFromAddress = async address => {
+  return {
+    address,
+    eth: round(await toNum(window.maker.getToken(ETH).balanceOf(address)), 3),
+    mkr: round(await toNum(window.maker.getToken(MKR).balanceOf(address)), 3)
+  };
+};
 
 export const addAccounts = accounts => async dispatch => {
   dispatch({ type: FETCHING_ACCOUNT_DATA, payload: true });
@@ -158,6 +182,94 @@ export function setInfMkrApproval() {
   return { type: SET_INF_MKR_APPROVAL };
 }
 
+export const connectHardwareAccounts = (
+  accountType,
+  options = {}
+) => dispatch => {
+  dispatch({
+    type: HARDWARE_ACCOUNTS_CONNECTING
+  });
+
+  let path;
+  if (accountType === AccountTypes.LEDGER && options.live) {
+    path = LEDGER_LIVE_PATH;
+  } else if (accountType === AccountTypes.LEDGER && !options.live) {
+    path = LEDGER_LEGACY_PATH;
+  }
+
+  return new Promise((resolve, reject) => {
+    const onChoose = async (addresses, callback) => {
+      try {
+        const accounts = await Promise.all(
+          (addresses || []).map(getInfoFromAddress)
+        );
+
+        const accountsWithType = accounts.map(account => ({
+          ...account,
+          type: accountType
+        }));
+
+        dispatch({
+          type: HARDWARE_ACCOUNTS_CONNECTED,
+          payload: {
+            accountType,
+            accountsWithType,
+            onAccountChosen: callback
+          }
+        });
+
+        resolve(accountsWithType);
+      } catch (err) {
+        console.error(err);
+        dispatch({
+          type: HARDWARE_ACCOUNTS_ERROR
+        });
+        reject(err);
+      }
+    };
+
+    window.maker
+      .addAccount({
+        type: accountType,
+        path: path,
+        accountsLength: 5,
+        choose: onChoose
+      })
+      .catch(err => {
+        console.error(err);
+        dispatch({
+          type: HARDWARE_ACCOUNTS_ERROR
+        });
+        reject(err);
+      });
+  });
+};
+
+export const addHardwareAccount = (address, accountType) => (
+  dispatch,
+  getState
+) => {
+  dispatch(
+    addAccount({
+      address,
+      type: accountType
+    })
+  );
+
+  const {
+    accounts: { hardwareAccountsAvailable }
+  } = getState();
+
+  hardwareAccountsAvailable[accountType].onChosen();
+
+  dispatch({
+    type: HARDWARE_ACCOUNT_CONNECTED,
+    payload: {
+      accountType
+    }
+  });
+};
+
 // Reducer ------------------------------------------------
 
 // Reducer helpers
@@ -213,7 +325,17 @@ const fakeInitialState = {
 const realInitialState = {
   activeAccount: '',
   fetching: true,
-  allAccounts: []
+  allAccounts: [],
+  hardwareAccountsAvailable: {
+    [AccountTypes.TREZOR]: {
+      accounts: [],
+      onChosen: () => {}
+    },
+    [AccountTypes.TREZOR]: {
+      accounts: [],
+      onChosen: () => {}
+    }
+  }
 };
 
 const initialState = realInitialState;
@@ -385,6 +507,34 @@ const accounts = createReducer(initialState, {
         withUpdatedAccount(state.allAccounts, hotAccount),
         coldAccount
       )
+    };
+  },
+  [HARDWARE_ACCOUNTS_CONNECTING]: state => {
+    return state;
+  },
+  [HARDWARE_ACCOUNTS_CONNECTED]: (state, { payload }) => {
+    return {
+      ...state,
+      hardwareAccountsAvailable: {
+        [payload.accountType]: {
+          accounts: payload.accounts,
+          onChosen: payload.onAccountChosen
+        }
+      }
+    };
+  },
+  [HARDWARE_ACCOUNTS_ERROR]: state => {
+    return state;
+  },
+  [HARDWARE_ACCOUNT_CONNECTED]: (state, { payload }) => {
+    return {
+      ...state,
+      hardwareAccountsAvailable: {
+        [payload.accountType]: {
+          accounts: [],
+          onChosen: () => {}
+        }
+      }
     };
   }
   // TODO: right now we're updating account data by refetching via 'postLinkUpdate'

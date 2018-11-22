@@ -24,12 +24,12 @@ import WalletIcon from './WalletIcon';
 
 import Loader from '../Loader';
 
+import { resetHotWallet, setHotWallet } from '../../reducers/onboarding';
+
 import {
-  useHardwareAccount,
-  useMetamaskAccount,
-  connectHardwareWallet,
-  resetHotWallet
-} from '../../reducers/onboarding';
+  connectHardwareAccounts,
+  addHardwareAccount
+} from '../../reducers/accounts';
 
 const SelectAWalletStep = ({
   active,
@@ -127,7 +127,7 @@ const ConfirmWalletStep = ({
             >
               <Box>
                 <WalletIcon
-                  provider={account.accountType}
+                  provider={account.type}
                   style={{ maxWidth: '20px' }}
                 />
               </Box>
@@ -184,7 +184,9 @@ class ChooseHotWallet extends React.Component {
     this.state = {
       step: 'select',
       faqs: faqs.hotWallet,
-      account: undefined
+      availableAccounts: [],
+      connecting: false,
+      error: false
     };
 
     this.steps = {
@@ -203,24 +205,52 @@ class ChooseHotWallet extends React.Component {
   };
 
   onMetamaskSelected = () => {
-    this.props.useMetamaskAccount();
+    this.setState({
+      connecting: true
+    });
+
     const checkMetamaskWallet = () => {
-      if (
-        !this.props.hotWallet &&
-        this.props.connecting &&
-        this.state.step === this.steps.CONFIRM_WALLET
-      ) {
-        this.props.useMetamaskAccount();
+      const metamaskAccount = this.props.allAccounts.find(
+        acct => acct.type === 'provider' || acct.type === 'browser'
+      );
+      if (!metamaskAccount) {
         setTimeout(checkMetamaskWallet, 500);
+      } else {
+        this.setState({
+          connecting: false
+        });
+        this.props.setHotWallet(metamaskAccount);
       }
     };
-    setTimeout(checkMetamaskWallet, 500);
+    setTimeout(checkMetamaskWallet, 0);
     this.toConfirmWallet();
   };
 
-  onTrezorSelected = () => {
-    this.props.connectHardwareWallet(AccountTypes.TREZOR);
+  connectWallet = async (accountType, options = {}) => {
+    this.setState({
+      connecting: true,
+      error: false
+    });
     this.toSelectMKRBalance();
+    try {
+      const accounts = await this.props.connectHardwareAccounts(
+        accountType,
+        options
+      );
+      this.setState({
+        availableAccounts: accounts,
+        connecting: false
+      });
+    } catch (err) {
+      this.setState({
+        error: true,
+        connecting: false
+      });
+    }
+  };
+
+  onTrezorSelected = () => {
+    this.connectWallet(AccountTypes.TREZOR);
   };
 
   onLedgerSelected = () => {
@@ -231,13 +261,11 @@ class ChooseHotWallet extends React.Component {
   };
 
   onLedgerLiveSelected = () => {
-    this.props.connectHardwareWallet(AccountTypes.LEDGER, { live: true });
-    this.toSelectMKRBalance();
+    this.connectWallet(AccountTypes.LEDGER, { live: true });
   };
 
   onLedgerLegacySelected = () => {
-    this.props.connectHardwareWallet(AccountTypes.LEDGER, { live: false });
-    this.toSelectMKRBalance();
+    this.connectWallet(AccountTypes.LEDGER, { live: false });
   };
 
   toSelectMKRBalance = () => {
@@ -248,7 +276,8 @@ class ChooseHotWallet extends React.Component {
   };
 
   onAccountSelected = account => {
-    this.props.useHardwareAccount(account, 'hot');
+    this.props.addHardwareAccount(account.address, account.type);
+    this.props.setHotWallet(account);
     this.toConfirmWallet();
   };
 
@@ -282,15 +311,16 @@ class ChooseHotWallet extends React.Component {
             />
             <ChooseMKRBalanceStep
               active={this.state.step === this.steps.SELECT_MKR_BALANCE}
-              accounts={this.props.availableAccounts}
-              connecting={this.props.connecting}
+              accounts={this.state.availableAccounts}
+              connecting={this.state.connecting}
+              error={this.state.error}
               onAccountSelected={this.onAccountSelected}
               onCancel={this.toSelectAWallet}
             />
             <ConfirmWalletStep
               active={this.state.step === this.steps.CONFIRM_WALLET}
               account={this.props.hotWallet}
-              connecting={this.props.connecting}
+              connecting={this.state.connecting}
               onConfirm={this.props.onComplete}
               onCancel={this.toSelectAWallet}
             />
@@ -304,12 +334,14 @@ class ChooseHotWallet extends React.Component {
 
 export default connect(
   state => ({
+    allAccounts: state.accounts.allAccounts,
+    hardwareAccountsAvailable: state.accounts.hardwareAccountsAvailable,
     ...state.onboarding
   }),
   {
-    useHardwareAccount,
-    useMetamaskAccount,
-    connectHardwareWallet,
+    addHardwareAccount,
+    connectHardwareAccounts,
+    setHotWallet,
     resetHotWallet
   }
 )(ChooseHotWallet);

@@ -55,7 +55,7 @@ const Sidebar = ({ show, faqs, hotWallet }) => {
               justifyContent="center"
             >
               <WalletIcon
-                provider={hotWallet.accountType}
+                provider={hotWallet.type}
                 style={{ maxWidth: '23px', maxHeight: '23px' }}
               />
             </Flex>

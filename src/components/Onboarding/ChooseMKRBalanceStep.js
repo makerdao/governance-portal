@@ -54,20 +54,19 @@ class ChooseMKRBalance extends React.Component {
             </Text>
           </Box>
           <Card py="m" px="l">
-            {this.props.accounts.length <= 0 &&
-              !this.props.connecting && (
-                <Flex
-                  justifyContent="center"
-                  alignItems="center"
-                  opacity="0.6"
-                  textAlign="center"
-                >
-                  There was an error connecting your wallet. Please ensure that
-                  your wallet is connected and try again.
-                </Flex>
-              )}
-            {this.props.accounts.length <= 0 &&
-              this.props.connecting && (
+            {this.props.error && (
+              <Flex
+                justifyContent="center"
+                alignItems="center"
+                opacity="0.6"
+                textAlign="center"
+              >
+                There was an error connecting your wallet. Please ensure that
+                your wallet is connected and try again.
+              </Flex>
+            )}
+            {this.props.connecting &&
+              !this.props.error && (
                 <Flex justifyContent="center" alignItems="center">
                   <Box style={{ opacity: '0.6' }}>
                     <Loader />
@@ -77,46 +76,48 @@ class ChooseMKRBalance extends React.Component {
                   </Box>
                 </Flex>
               )}
-            {this.props.accounts.length > 0 && (
-              <Table variant="cozy" width="100%">
-                <thead>
-                  <tr>
-                    <th />
-                    <th>Address</th>
-                    <th>MKR</th>
-                    <th>ETH</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {this.props.accounts.map(account => {
-                    return (
-                      <tr key={account.address}>
-                        <td>
-                          <Box pr="s" fontSize="1.8rem">
-                            <Checkbox
-                              value={account.address}
-                              checked={
-                                this.state.selectedAddress === account.address
-                              }
-                              onChange={() =>
-                                this.selectAddress(account.address)
-                              }
-                            />
-                          </Box>
-                        </td>
-                        <td>
-                          <Link>
-                            <Address full={account.address} shorten />
-                          </Link>
-                        </td>
-                        <td>{account.mkr} MKR</td>
-                        <td>{account.eth} ETH</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>
-            )}
+            {!this.props.connecting &&
+              !this.props.error &&
+              this.props.accounts.length > 0 && (
+                <Table variant="cozy" width="100%">
+                  <thead>
+                    <tr>
+                      <th />
+                      <th>Address</th>
+                      <th>MKR</th>
+                      <th>ETH</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.props.accounts.map(account => {
+                      return (
+                        <tr key={account.address}>
+                          <td>
+                            <Box pr="s" fontSize="1.8rem">
+                              <Checkbox
+                                value={account.address}
+                                checked={
+                                  this.state.selectedAddress === account.address
+                                }
+                                onChange={() =>
+                                  this.selectAddress(account.address)
+                                }
+                              />
+                            </Box>
+                          </td>
+                          <td>
+                            <Link>
+                              <Address full={account.address} shorten />
+                            </Link>
+                          </td>
+                          <td>{account.mkr} MKR</td>
+                          <td>{account.eth} ETH</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              )}
           </Card>
           <Grid
             gridRowGap="xs"
