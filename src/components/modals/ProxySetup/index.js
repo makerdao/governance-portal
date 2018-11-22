@@ -35,7 +35,7 @@ class ProxySetup extends Component {
         <Stepper progress={progressMap[this.props.setupProgress]} />
         {this.renderContent()}
         {this.props.mockGoToStep && (
-          <a
+          <button
             style={{
               position: 'absolute',
               top: '1px',
@@ -45,7 +45,7 @@ class ProxySetup extends Component {
             onClick={this.props.mockGoToStep}
           >
             Next step
-          </a>
+          </button>
         )}
       </Fragment>
     );
