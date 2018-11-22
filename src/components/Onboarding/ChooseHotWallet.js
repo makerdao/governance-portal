@@ -335,7 +335,6 @@ class ChooseHotWallet extends React.Component {
 export default connect(
   state => ({
     allAccounts: state.accounts.allAccounts,
-    hardwareAccountsAvailable: state.accounts.hardwareAccountsAvailable,
     ...state.onboarding
   }),
   {

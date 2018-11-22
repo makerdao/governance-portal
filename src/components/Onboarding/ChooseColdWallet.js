@@ -319,8 +319,7 @@ class ChooseColdWallet extends React.Component {
 
 export default connect(
   state => ({
-    ...state.onboarding,
-    hardwareAccountsAvailable: state.accounts.hardwareAccountsAvailable
+    ...state.onboarding
   }),
   {
     connectHardwareAccounts,
