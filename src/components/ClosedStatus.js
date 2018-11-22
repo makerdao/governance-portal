@@ -89,8 +89,13 @@ const ClosedProposal = ({
         <Row>
           <Key mr={36}>Votes</Key>{' '}
           <Value>
-            {formatRound(winningProposal.end_approvals)} MKR <Slash>/</Slash>{' '}
-            {winningProposal.end_percentage}%
+            {formatRound(winningProposal.end_approvals)} MKR
+            {!!winningProposal.end_percentage && (
+              <React.Fragment>
+                <Slash>/</Slash>
+                {winningProposal.end_percentage}%
+              </React.Fragment>
+            )}
           </Value>
         </Row>
       </GreyBox>

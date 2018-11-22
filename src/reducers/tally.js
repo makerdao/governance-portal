@@ -3,16 +3,17 @@ import { createReducer } from '../utils/redux';
 
 // Constants ----------------------------------------------
 
-const TALLY_REQUEST = 'voteTally/TALLY_REQUEST';
-const TALLY_SUCCESS = 'voteTally/TALLY_SUCCESS';
-const TALLY_FAILURE = 'voteTally/TALLY_FAILURE';
+export const TALLY_REQUEST = 'voteTally/TALLY_REQUEST';
+export const TALLY_SUCCESS = 'voteTally/TALLY_SUCCESS';
+export const TALLY_FAILURE = 'voteTally/TALLY_FAILURE';
 export const TALLY_UPDATE = 'voteTally/TALLY_UPDATE';
 
 // Actions ------------------------------------------------
 
 export const voteTallyInit = () => dispatch => {
+  //   const getVoteTally = window.maker.service('chief').getVoteTally();
   dispatch({ type: TALLY_REQUEST });
-  // promiseRetry({ times: 3, fn: fakeCb, delay: 500 })
+  // promiseRetry({ times: 3, fn: getVoteTally, delay: 500 })
   const tally = 5;
   dispatch({ type: TALLY_SUCCESS, payload: { tally } });
 

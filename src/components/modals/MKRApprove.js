@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { mkrApproveProxy, goToStep, smartStepSkip } from '../../reducers/proxy';
 import { getActiveAccount } from '../../reducers/accounts';
 import Transaction from './shared/Transaction';
-import Lock from './Lock';
 import {
   StyledTitle,
   StyledBlurb,
@@ -16,12 +15,7 @@ import Button from '../Button';
 import { setInfMkrApproval } from '../../reducers/accounts';
 
 class MKRApprove extends Component {
-  state = {
-    lock: false
-  };
-
   render() {
-    if (this.state.lock) return <Lock {...this.props} />;
     const {
       mkrApproveInitiated: initiated,
       confirmingMkrApproveProxy: confirming,

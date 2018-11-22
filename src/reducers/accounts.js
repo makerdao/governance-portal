@@ -11,7 +11,7 @@ import {
   WITHDRAW_MKR_SUCCESS,
   WITHDRAW_ALL_MKR_SUCCESS,
   INITIATE_LINK_REQUEST
-} from './proxy';
+} from './sharedProxyConstants';
 import { MAX_UINT_ETH_BN } from '../utils/ethereum';
 import { MKR } from '../chain/maker';
 
@@ -180,7 +180,13 @@ const withUpdatedAccount = (accounts, updatedAccount) => {
   );
 };
 
-export const fakeAccount = {
+const fakeColdAccount = {
+  address: '0xbeefed1bedded2dabbed3defaced4decade5feed',
+  proxyRole: 'cold',
+  mkrBalance: 222
+};
+
+const fakeHotAccount = {
   id: '_',
   address: '0xbeefed1bedded2dabbed3defaced4decade5dead',
   type: 'fake',
@@ -192,22 +198,25 @@ export const fakeAccount = {
     address: '0xproxyfake',
     votingPower: 111,
     hasInfMkrApproval: false,
-    linkedAccount: {
-      address: '0xbeefed1bedded2dabbed3defaced4decade5feed',
-      proxyRole: 'cold',
-      mkrBalance: 222
-    }
+    linkedAccount: fakeColdAccount
   }
 };
 
-const initialState = {
+// eslint-disable-next-line no-unused-vars
+const fakeInitialState = {
+  activeAccount: fakeHotAccount.address,
+  allAccounts: [fakeHotAccount, fakeColdAccount],
+  fetching: false
+};
+
+// eslint-disable-next-line no-unused-vars
+const realInitialState = {
   activeAccount: '',
   fetching: true,
-  // activeAccount: '0xbeefed1bedded2dabbed3defaced4decade5dead', // just for dev
-  allAccounts: [
-    // fakeAccount
-  ]
+  allAccounts: []
 };
+
+const initialState = realInitialState;
 
 const updateProxyBalance = adding => (state, { payload: amount }) => {
   let account = getActiveAccount({ accounts: state });

@@ -1,5 +1,6 @@
 import { MKR } from '../../src/chain/maker';
 import * as reducer from '../../src/reducers/proxy';
+import * as sharedConstants from '../../src/reducers/sharedProxyConstants';
 import * as accounts from '../../src/reducers/accounts';
 import { AccountTypes } from '../../src/utils/constants';
 
@@ -178,7 +179,7 @@ describe('Proxy Reducer', () => {
             payload: expect.any(String)
           });
           expect(store.getActions()[1]).toEqual({
-            type: reducer.INITIATE_LINK_REQUEST,
+            type: sharedConstants.INITIATE_LINK_REQUEST,
             payload: {
               hotAddress: expect.any(String),
               coldAddress: expect.any(String)
@@ -218,7 +219,7 @@ describe('Proxy Reducer', () => {
         payload: expect.any(String)
       });
       expect(store.getActions()[1]).toEqual({
-        type: reducer.INITIATE_LINK_REQUEST,
+        type: sharedConstants.INITIATE_LINK_REQUEST,
         payload: {
           hotAddress: expect.any(String),
           coldAddress: expect.any(String)
@@ -328,7 +329,7 @@ describe('Proxy Reducer', () => {
         payload: { txHash: testPendingHash }
       });
       expect(store.getActions()[2]).toEqual({
-        type: reducer.SEND_MKR_TO_PROXY_SUCCESS,
+        type: sharedConstants.SEND_MKR_TO_PROXY_SUCCESS,
         payload: mockValue
       });
     });
@@ -382,7 +383,7 @@ describe('Proxy Reducer', () => {
         payload: { txHash: testPendingHash }
       });
       expect(store.getActions()[2]).toEqual({
-        type: reducer.WITHDRAW_MKR_SUCCESS,
+        type: sharedConstants.WITHDRAW_MKR_SUCCESS,
         payload: mockValue
       });
     });
@@ -436,7 +437,7 @@ describe('Proxy Reducer', () => {
         payload: { txHash: testPendingHash }
       });
       expect(store.getActions()[2]).toEqual({
-        type: reducer.WITHDRAW_ALL_MKR_SUCCESS,
+        type: sharedConstants.WITHDRAW_ALL_MKR_SUCCESS,
         payload: mockValue
       });
     });
