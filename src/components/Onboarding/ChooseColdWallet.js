@@ -194,65 +194,56 @@ class ChooseColdWallet extends React.Component {
       step: this.steps.SELECT_WALLET,
       faqs: faqs.coldWallet
     };
-
-    this.toConfirmWallet = this.toConfirmWallet.bind(this);
-    this.toSelectAWallet = this.toSelectAWallet.bind(this);
-    this.onTrezorSelected = this.onTrezorSelected.bind(this);
-    this.onLedgerLiveSelected = this.onLedgerLiveSelected.bind(this);
-    this.onLedgerLegacySelected = this.onLedgerLegacySelected.bind(this);
-    this.onLedgerSelected = this.onLedgerSelected.bind(this);
-    this.toSelectMKRBalance = this.toSelectMKRBalance.bind(this);
-    this.onAccountSelected = this.onAccountSelected.bind(this);
   }
 
-  toSelectAWallet() {
+  toSelectAWallet = () => {
     this.props.resetColdWallet();
     this.setState({
       step: this.steps.SELECT_WALLET,
       faqs: faqs.coldWallet
     });
-  }
+  };
 
-  onTrezorSelected() {
+  onTrezorSelected = () => {
     this.props.connectHardwareWallet(AccountTypes.TREZOR);
     this.toSelectMKRBalance();
-  }
+  };
 
-  onLedgerSelected() {
+  onLedgerSelected = () => {
     this.setState({
       step: this.steps.SELECT_LEDGER_WALLET,
       faqs: faqs.ledger
     });
-  }
+  };
 
-  onLedgerLiveSelected() {
+  onLedgerLiveSelected = () => {
     this.props.connectHardwareWallet(AccountTypes.LEDGER, { live: true });
     this.toSelectMKRBalance();
-  }
+  };
 
-  onLedgerLegacySelected() {
+  onLedgerLegacySelected = () => {
     this.props.connectHardwareWallet(AccountTypes.LEDGER, { live: false });
     this.toSelectMKRBalance();
-  }
+  };
 
-  toSelectMKRBalance() {
+  toSelectMKRBalance = () => {
     this.setState({
       step: this.steps.SELECT_MKR_BALANCE,
       faqs: faqs.selectMKRBalance
     });
-  }
+  };
 
-  onAccountSelected(account) {
+  onAccountSelected = account => {
     this.props.useHardwareAccount(account, 'cold');
     this.toConfirmWallet();
-  }
+  };
 
-  toConfirmWallet() {
+  toConfirmWallet = () => {
     this.setState({
       step: this.steps.CONFIRM_WALLET,
       faqs: faqs.selectMKRBalance
     });
-  }
+  };
 
   render() {
     return (

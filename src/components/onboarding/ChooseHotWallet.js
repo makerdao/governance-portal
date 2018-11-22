@@ -192,27 +192,17 @@ class ChooseHotWallet extends React.Component {
       SELECT_LEDGER_WALLET: 'ledger',
       CONFIRM_WALLET: 'confirm'
     };
-
-    this.toSelectAWallet = this.toSelectAWallet.bind(this);
-    this.onMetamaskSelected = this.onMetamaskSelected.bind(this);
-    this.onTrezorSelected = this.onTrezorSelected.bind(this);
-    this.onLedgerSelected = this.onLedgerSelected.bind(this);
-    this.onLedgerLiveSelected = this.onLedgerLiveSelected.bind(this);
-    this.onLedgerLegacySelected = this.onLedgerLegacySelected.bind(this);
-    this.toSelectMKRBalance = this.toSelectMKRBalance.bind(this);
-    this.toConfirmWallet = this.toConfirmWallet.bind(this);
-    this.onAccountSelected = this.onAccountSelected.bind(this);
   }
 
-  toSelectAWallet() {
+  toSelectAWallet = () => {
     this.props.resetHotWallet();
     this.setState({
       step: this.steps.SELECT_WALLET,
       faqs: faqs.hotWallet
     });
-  }
+  };
 
-  onMetamaskSelected() {
+  onMetamaskSelected = () => {
     this.props.useMetamaskAccount();
     const checkMetamaskWallet = () => {
       if (
@@ -226,48 +216,48 @@ class ChooseHotWallet extends React.Component {
     };
     setTimeout(checkMetamaskWallet, 500);
     this.toConfirmWallet();
-  }
+  };
 
-  onTrezorSelected() {
+  onTrezorSelected = () => {
     this.props.connectHardwareWallet(AccountTypes.TREZOR);
     this.toSelectMKRBalance();
-  }
+  };
 
-  onLedgerSelected() {
+  onLedgerSelected = () => {
     this.setState({
       step: this.steps.SELECT_LEDGER_WALLET,
       faqs: faqs.ledger
     });
-  }
+  };
 
-  onLedgerLiveSelected() {
+  onLedgerLiveSelected = () => {
     this.props.connectHardwareWallet(AccountTypes.LEDGER, { live: true });
     this.toSelectMKRBalance();
-  }
+  };
 
-  onLedgerLegacySelected() {
+  onLedgerLegacySelected = () => {
     this.props.connectHardwareWallet(AccountTypes.LEDGER, { live: false });
     this.toSelectMKRBalance();
-  }
+  };
 
-  toSelectMKRBalance() {
+  toSelectMKRBalance = () => {
     this.setState({
       step: this.steps.SELECT_MKR_BALANCE,
       faqs: faqs.selectMKRBalance
     });
-  }
+  };
 
-  onAccountSelected(account) {
+  onAccountSelected = account => {
     this.props.useHardwareAccount(account, 'hot');
     this.toConfirmWallet();
-  }
+  };
 
-  toConfirmWallet() {
+  toConfirmWallet = () => {
     this.setState({
       step: this.steps.CONFIRM_WALLET,
       faqs: faqs.hotWallet
     });
-  }
+  };
 
   render() {
     return (

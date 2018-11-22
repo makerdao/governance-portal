@@ -23,23 +23,20 @@ class ChooseMKRBalance extends React.Component {
     this.state = {
       selectedAddress: null
     };
-
-    this.selectAddress = this.selectAddress.bind(this);
-    this.onConfirm = this.onConfirm.bind(this);
   }
 
-  selectAddress(address) {
+  selectAddress = address => {
     this.setState({
       selectedAddress: address
     });
-  }
+  };
 
-  onConfirm() {
+  onConfirm = () => {
     const account = this.props.accounts.find(
       account => account.address === this.state.selectedAddress
     );
     this.props.onAccountSelected(account);
-  }
+  };
 
   render() {
     return (
