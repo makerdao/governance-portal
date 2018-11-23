@@ -13,7 +13,6 @@ import SecureVoting from '../components/modals/SecureVoting';
 import Loader from '../components/Loader';
 import AccountBox from '../components/AccountBox';
 import Toasts from '../components/Toasts';
-import play from '../imgs/play.svg';
 
 const StyledLayout = styled.div`
   position: relative;
@@ -23,6 +22,7 @@ const StyledLayout = styled.div`
   min-width: 1000px;
 `;
 const AppWrapper = styled.div`
+  min-height: 400px;
   padding: 0px 16px;
 `;
 
@@ -69,23 +69,21 @@ const DimHeaderElement = styled.div`
   font-weight: 500;
   font-size: ${fonts.size.medium};
   margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
-`;
-
-const DimHeaderLink = styled.a`
-  cursor: pointer;
-  color: ${({ theme }) => theme.text.header_dim};
-  font-weight: 500;
-  font-size: ${fonts.size.medium};
-  margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
+  margin-left: ${({ ml }) => (ml ? `${ml}px` : '')};
 `;
 
 const StyledLink = styled(NavLink).attrs({
   exact: true,
   activeStyle: { fontWeight: 'bold' }
 })`
+  opacity: 0.9;
+  padding: 5px 14px;
   color: rgb(${colors.white});
   font-size: ${fonts.size.medium};
-  font-weight: ${fonts.weight.medium};
+  font-weight: ${fonts.weight.normal};
+  &:hover {
+    background-color: #4a4b584d;
+  }
 `;
 
 const Padding = styled.div`
@@ -99,6 +97,7 @@ const BorderLine = styled.div`
 
 const NetworkNotification = styled.div`
   color: ${({ theme }) => theme.text.header_dim};
+  align-self: center;
   font-weight: 500;
 `;
 
@@ -110,13 +109,6 @@ const NoContent = styled.div`
   justify-content: center;
   margin-bottom: 350px;
   font-style: oblique;
-`;
-
-const PlayBtn = styled.div`
-  background: url(${play}) no-repeat;
-  width: 19px;
-  height: 19px;
-  margin-right: 6px;
 `;
 
 const Circle = styled.div`
@@ -158,11 +150,10 @@ const BaseLayout = ({
         <BorderLine />
         <HeaderBottom>
           <HeaderBottomContent>
-            <div style={{ display: 'flex' }}>
-              <StyledLink to="/">Executive</StyledLink>
-              <StyledLink to="/signaling" style={{ marginLeft: '16px' }}>
-                Signaling
-              </StyledLink>
+            <div style={{ display: 'flex', paddingLeft: '2.5rem' }}>
+              <NavLink style={{ color: 'white' }} to="/">
+                Governance
+              </NavLink>
               <NetworkNotification style={{ marginLeft: '16px' }}>
                 {childrenShouldMount && (
                   <React.Fragment>
@@ -172,25 +163,19 @@ const BaseLayout = ({
                 )}
               </NetworkNotification>
             </div>
-            {/* cheap network notification, probably to be replaced */}
             <Flex style={{ zIndex: '100' }}>
-              <DimHeaderLink
-                href="https://www.youtube.com/watch?v=wP7DedWcEmg"
-                target="_blank"
-                rel="noopener noreferrer"
-                mr={50}
-                style={{ display: 'flex', alignItems: 'center' }}
-              >
-                <PlayBtn />
-                Watch intro video
-              </DimHeaderLink>
+              <StyledLink to="/">Executive</StyledLink>
+              <StyledLink to="/signaling" style={{ marginLeft: '28px' }}>
+                Signaling
+              </StyledLink>
               <DimHeaderElement
                 onClick={() => {
                   if (!accountsFetching) modalOpen(SecureVoting);
                 }}
                 mr={50}
+                ml={50}
               >
-                Personal Voting Contract
+                Voting Contract
               </DimHeaderElement>
               <AccountBox fetching={!wrongNetwork && metamaskFetching} />
             </Flex>
