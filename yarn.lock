@@ -1025,33 +1025,6 @@
     web3 "^1.0.0-beta.36"
     web3-provider-engine makerdao/provider-engine#remove-provider-dist
 
-"@makerdao/dai@^0.9.7":
-  version "0.9.7"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.9.7.tgz#220ba78701c415b6dc68b89cc166fa14205e3dc0"
-  integrity sha512-FuYDSEBeQEObmgpueLwF7dqfoDc3pvMxO8iYx8w3sgy41xkbx7Hrc1BWDjOipc4nRJFkHHIuUs6F9MTU2CB2lw==
-  dependencies:
-    babel-plugin-transform-decorators-legacy "^1.3.5"
-    babel-runtime "^6.26.0"
-    bignumber.js "^7.2.1"
-    bunyan "^1.8.12"
-    chalk "^2.4.1"
-    debug "^3.1.0"
-    ethers "^3.0.15"
-    ethers-web3-bridge "0.0.1"
-    eventemitter2 "^5.0.1"
-    invariant "^2.2.2"
-    lodash "^4.17.10"
-    lodash.intersection "^4.4.0"
-    lodash.isequal "^4.5.0"
-    lodash.merge "^4.6.1"
-    lodash.times "^4.3.2"
-    lodash.uniq "^4.5.0"
-    lodash.values "^4.3.0"
-    promise-props "^1.0.0"
-    toposort "^2.0.2"
-    web3 "^1.0.0-beta.36"
-    web3-provider-engine makerdao/provider-engine#remove-provider-dist
-
 "@makerdao/ui-components@1.0.0-alpha.8":
   version "1.0.0-alpha.8"
   resolved "https://registry.yarnpkg.com/@makerdao/ui-components/-/ui-components-1.0.0-alpha.8.tgz#fa4a557b779a392d8d4989d7bff730535f57e629"
@@ -14058,7 +14031,7 @@ web3-net@1.0.0-beta.36:
     web3-core-method "1.0.0-beta.36"
     web3-utils "1.0.0-beta.36"
 
-web3-provider-engine@14.0.4, web3-provider-engine@makerdao/provider-engine#remove-provider-dist:
+web3-provider-engine@14.0.4, "web3-provider-engine@github:makerdao/provider-engine#remove-provider-dist", web3-provider-engine@makerdao/provider-engine#remove-provider-dist:
   version "14.0.4"
   resolved "https://codeload.github.com/makerdao/provider-engine/tar.gz/df251328c54b45982e5fd67fe8d74664b2243944"
   dependencies:
