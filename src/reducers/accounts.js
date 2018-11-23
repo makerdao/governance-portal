@@ -68,7 +68,14 @@ export const addAccounts = accounts => async dispatch => {
       .getVoteProxy(account.address);
 
     let currProposal = Promise.resolve('');
+    let role = '';
     if (hasProxy) {
+      role =
+        account.address === voteProxy.getColdAddress()
+          ? 'cold'
+          : account.address === voteProxy.getHotAddress()
+          ? 'hot'
+          : '';
       currProposal = currProposal.then(() =>
         // NOTE for now we just take the first address in the slate since we're
         // assuming that they're only voting for one in the frontend. This
@@ -80,19 +87,19 @@ export const addAccounts = accounts => async dispatch => {
       );
     }
 
-    const role =
-      account.address === voteProxy.getColdAddress()
-        ? 'cold'
-        : account.address === voteProxy.getHotAddress()
-          ? 'hot'
-          : '';
+    // const role =
+    //   account.address === voteProxy.getColdAddress()
+    //     ? 'cold'
+    //     : account.address === voteProxy.getHotAddress()
+    //       ? 'hot'
+    //       : '';
 
     const _payload = {
       ...account,
       address: account.address,
       mkrBalance: toNum(mkrToken.balanceOf(account.address)),
       hasProxy,
-      proxyRole: hasProxy ? role : '',
+      proxyRole: role,
       votingFor: currProposal,
       proxy: hasProxy
         ? promisedProperties({
@@ -179,15 +186,14 @@ const uniqConcat = pipe(
 );
 const addressCmp = (x, y) => x.address === y.address;
 const withUpdatedAccount = (accounts, updatedAccount) => {
-  return accounts.map(
-    account =>
-      account.address === updatedAccount.address &&
-      account.type === updatedAccount.type
-        ? {
-            ...account,
-            ...updatedAccount
-          }
-        : account
+  return accounts.map(account =>
+    account.address === updatedAccount.address &&
+    account.type === updatedAccount.type
+      ? {
+          ...account,
+          ...updatedAccount
+        }
+      : account
   );
 };
 

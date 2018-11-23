@@ -181,6 +181,10 @@ function Proposal({
   //TODO: find better way to handle case matching
   // const supporters = voteState[proposal.source.toLowerCase()] || null;
   const supporters = voteState[proposal.source] || null;
+  console.log('voteState', voteState);
+  console.log('proposal', proposal);
+  console.log('supporters', supporters);
+
   return (
     <RiseUp>
       <WhiteBackground>

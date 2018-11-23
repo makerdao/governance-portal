@@ -15,6 +15,7 @@ export const voteTallyInit = () => dispatch => {
   dispatch({ type: TALLY_REQUEST });
   promiseRetry({ times: 3, fn: service.getVoteTally.bind(service), delay: 500 })
     .then(tally => {
+      console.log('tally success', tally);
       dispatch({ type: TALLY_SUCCESS, payload: { tally } });
     })
     // sometimes this fails when we're reading event logs
