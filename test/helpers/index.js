@@ -1,5 +1,3 @@
-import fetch from 'node-fetch';
-
 function ganacheAddress() {
   const port = process.env.GOV_TESTNET_PORT || 2000;
   return `http://localhost:${port}`;

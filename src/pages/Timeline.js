@@ -28,7 +28,7 @@ const riseUp = keyframes`
 `;
 
 const RiseUp = styled.div`
-  animation: ${riseUp} 0.75s forwards;
+  animation: ${riseUp} 0.75s ease-in-out;
 `;
 
 const SubHeading = styled.p`
@@ -71,7 +71,7 @@ const StyledCard = styled(Card)`
 const Timeline = ({ modalOpen, proposals, canVote, fetching, votingFor }) => (
   <Fragment>
     <VoterStatus />
-    <RiseUp>
+    <RiseUp key={proposals.toString()}>
       {proposals.map(proposal => (
         <StyledCard key={proposal.key}>
           <Card.Element key={proposal.title} height={151}>

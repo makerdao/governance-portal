@@ -6,10 +6,11 @@ Maker Governance Dashboard
 The Primary Interface for Dai Credit System Governance
 </h3>
 
+[![GitHub License][license]][license-url]
+[![Build Status][build]][build-url]
+[![Coverage Status][cover]][cover-url]
 
-
-
-Live demo: https://dai-gov.now.sh/
+[Internal governance resources](https://makerdao.atlassian.net/wiki/spaces/MGV/pages/776667137/MCD+Governance+Resources)
 
 ### Getting started
 
@@ -35,9 +36,9 @@ yarn build
 
 ## Running Tests
 
-1.  Install [dapptools](https://dapp.tools/)
-1.  `yarn testnet`
-1.  `yarn test`
+```
+yarn test
+```
 
 ## Configuring the Backend
 
@@ -47,12 +48,21 @@ By default the production backend ([`content.makerfoundation.com`](https://conte
 - `staging`: uses the staging backend (`elb.content.makerfoundation.com:444`)
 - `mock`: uses the mocked backend (see [`/src/_mock/topics.js`](/src/_mock/topics.js))
 
-## Codebase
+## Dogfooding
 
-All calls to the [Ethereum](https://www.ethereum.org/) blockchain can be found in the `chain/` folder, split into "writes", "reads" and "web3 utils". These calls are generated from [redux thunks](https://github.com/reduxjs/redux-thunk) (where the results are used to update app-wide state) and sent via [infura](https://infura.io/) nodes (regardless of what provider is injected into the page). 
-
-As for styling, we have css-in-js, & wherever possible, use official [maker ui components](https://github.com/makerdao/ui-components)
+This project takes advantage of several other maker projects, including [maker ui components](https://github.com/makerdao/ui-components), [dai.js](https://github.com/makerdao/dai.js), & [the dai governance pulgin](https://github.com/makerdao/dai-plugin-governance).
 
 ## Code Style
 
 We run Prettier on-commit, which means you can write code in whatever style you want and it will be automatically formatted according to the common style when you run `git commit`.
+
+**The Maker Governance Dashboard** is available under the MIT license included with the code.
+
+[license]: https://img.shields.io/badge/license-MIT-blue.svg
+[license-url]: https://github.com/makerdao/governance-dashboard.js/blob/master/LICENSE
+
+[build]: https://travis-ci.com/makerdao/governance-dashboard.svg?token=7qKLu97qQDDMKfaxt318&branch=master
+[build-url]: https://travis-ci.com/makerdao/governance-dashboard
+
+[cover]: https://codecov.io/gh/makerdao/governance-dashboard/branch/master/graph/badge.svg?token=dYGCyaCdNA
+[cover-url]: https://codecov.io/gh/makerdao/governance-dashboard
