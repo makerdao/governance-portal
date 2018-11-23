@@ -101,7 +101,7 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
 
   const voteExec = window.maker
     .service('voteProxy')
-    .voteExec(activeAccount.proxy.address, proposalAddress);
+    .voteExec(activeAccount.proxy.address, [proposalAddress]);
 
   await handleTx({
     prefix: 'VOTE',
