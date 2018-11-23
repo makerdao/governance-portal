@@ -5,6 +5,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "@craco/craco": "^3.1.0",
     "@makerdao/dai": "^0.9.7",
     "@makerdao/dai-plugin-governance": "^0.1.0",
     "@makerdao/dai-plugin-ledger-web": "^0.9.3",
@@ -29,8 +30,8 @@
     "styled-components": "^3.4.2"
   },
   "scripts": {
-    "start": "HTTPS=true NODE_ENV=development react-scripts start",
-    "build": "node ./bundle",
+    "start": "HTTPS=true NODE_ENV=development craco start",
+    "build": "craco build",
     "deploy": "now ./build -A ../now.json",
     "test": "jest",
     "cover": "jest --coverage",
@@ -55,6 +56,7 @@
     "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "babel-plugin-dynamic-import-node": "^2.2.0",
+    "babel-plugin-styled-components": "^1.8.0",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.7.0",
     "ganache-cli": "^6.2.3",
