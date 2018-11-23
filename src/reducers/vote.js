@@ -112,13 +112,6 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
     activeAccount,
     proposalAddress
   });
-
-  /** TODO: This doesn't match exactly txManager, may need to double check this: */
-  // ReactGA.event({
-  //   category: 'Vote TX Success',
-  //   action: 'Cast',
-  //   label: `wallet type ${activeAccount.type || 'unknown'}`
-  // });
 };
 
 export const withdrawVote = () => async (dispatch, getState) => {
@@ -128,9 +121,9 @@ export const withdrawVote = () => async (dispatch, getState) => {
 
   dispatch({ type: WITHDRAW_REQUEST });
 
-  const voteExecNone = await window.maker.voteExecNone({
-    account: activeAccount
-  });
+  const voteExecNone = window.maker
+    .service('voteProxy')
+    .voteExec(activeAccount.proxy.address, []);
 
   await handleTx({
     prefix: 'WITHDRAW',
@@ -140,13 +133,6 @@ export const withdrawVote = () => async (dispatch, getState) => {
     acctType: activeAccount.type,
     activeAccount
   });
-
-  // TODO: double check this:
-  // ReactGA.event({
-  //   category: 'Vote TX Success',
-  //   action: 'Withdraw',
-  //   label: `wallet type ${activeAccount.type || 'unknown'}`
-  // });
 };
 
 // Reducer ------------------------------------------------

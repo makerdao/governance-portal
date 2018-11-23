@@ -178,9 +178,8 @@ function Proposal({
 }) {
   const { active, topicKey } = proposal;
   if (Object.keys(proposal).length === 0) return <NotFound />;
-  //TODO: find better way to handle case matching
-  // const supporters = voteState[proposal.source.toLowerCase()] || null;
-  const supporters = voteState[proposal.source] || null;
+
+  const supporters = voteState[proposal.source.toLowerCase()] || null;
   console.log('voteState', voteState);
   console.log('proposal', proposal);
   console.log('supporters', supporters);
