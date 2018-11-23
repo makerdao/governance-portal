@@ -1,0 +1,4 @@
+coverage:
+  status:
+    default:
+      threshold: 0.1%
