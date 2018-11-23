@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { AccountTypes } from '../../utils/constants';
+import { AccountTypes } from '../../../utils/constants';
 
-import metamaskImg from '../../imgs/metamask.svg';
-import trezorImg from '../../imgs/onboarding/trezor-logomark.svg';
-import ledgerImg from '../../imgs/onboarding/ledger-logomark.svg';
+import metamaskImg from '../../../imgs/metamask.svg';
+import trezorImg from '../../../imgs/onboarding/trezor-logomark.svg';
+import ledgerImg from '../../../imgs/onboarding/ledger-logomark.svg';
 
 const WalletIcon = ({ provider, ...props }) => {
   let imgSrc = '';

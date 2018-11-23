@@ -73,14 +73,19 @@ const handleTx = async ({
   acctType
 }) => {
   const txMgr = window.maker.service('transactionManager');
+  console.log('handling transaction');
   txMgr.listen(txObject, {
     pending: tx => {
+      console.log('pending');
+      console.log(tx);
       dispatch({
         type: `proxy/${prefix}_SENT`,
         payload: { txHash: tx.hash }
       });
     },
     mined: tx => {
+      console.log('mined');
+      console.log(tx);
       dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
       ReactGA.event({
         category: `${prefix} success`,
@@ -91,6 +96,8 @@ const handleTx = async ({
     },
     // TODO: error handle and get descriptive failure messages
     error: (tx, err) => {
+      console.log('err');
+      console.log(err);
       // console.error(err.message);
       dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
       dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
@@ -142,7 +149,8 @@ function useColdAccount(dispatch, getState) {
 }
 
 export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
-  if (!useCorrectAccount(cold, dispatch, { label: 'cold' })) return;
+  // if (!useCorrectAccount(cold, dispatch, { label: 'cold' })) return;
+  console.log('intiating link');
   const initiateLink = window.maker
     .service('voteProxyFactory')
     .initiateLink(hot.address);

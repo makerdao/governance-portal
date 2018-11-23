@@ -65,11 +65,17 @@ export const resetColdWallet = () => ({
 // Reducer ------------------------------------------------
 
 const initialState = {
-  step: 1,
+  step: 3,
   open: true,
   flow: 'linked',
-  hotWallet: null,
-  coldWallet: null,
+  hotWallet: {
+    address: '0xd90b1122376F44e3d00a62C409F1b105950869b5',
+    type: 'metamask'
+  },
+  coldWallet: {
+    address: '0x1b2bc31a10d8e20f111d9a00aeb5ee96de75a418',
+    type: 'trezor'
+  },
   connecting: false
 };
 
