@@ -246,6 +246,7 @@ export const breakLink = () => async dispatch => {
     txObject: breakLink,
     acctType: account.type
   });
+  await breakLink; //wait for tx to complete before refreshing
   dispatch(refreshAccountData());
 };
 
