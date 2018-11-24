@@ -154,9 +154,9 @@ export const setActiveAccount = (address, isMetamask) => async (
     )
   ) {
     await window.maker.addAccount({ type: AccountTypes.METAMASK });
-    window.maker.useAccountWithAddress(address);
     await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
   }
+  window.maker.useAccountWithAddress(address);
   return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
 };
 
