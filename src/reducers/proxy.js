@@ -114,7 +114,6 @@ function useCorrectAccount(requiredAccount, dispatch, options = {}) {
     window.alert(`Please switch to your ${label} wallet with Metamask.`);
     return false;
   }
-
   if (window.maker.currentAddress().toLowerCase() !== address.toLowerCase()) {
     if (
       type === AccountTypes.METAMASK &&
@@ -157,6 +156,7 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
     txObject: initiateLink,
     acctType: cold.type
   });
+  await initiateLink; //wait for tx to mine before changing account
   if (getAccount(getState(), getState().proxy.hotAddress)) {
     dispatch(setActiveAccount(getState().proxy.hotAddress));
   }
