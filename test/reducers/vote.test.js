@@ -36,7 +36,6 @@ const testErrorMessage = 'testErrorMessage';
 
 // Mock service methods
 const voteExec = jest.fn();
-const voteExecNone = jest.fn();
 
 const listenSuccess = jest.fn((txObject, txState) => {
   txState.pending({ hash: testPendingHash });
@@ -58,9 +57,7 @@ const mockServiceError = name => {
 
 const defaultFunctions = {
   service: jest.fn(mockService),
-  currentAddress: jest.fn(() => mockCurrentAddress),
-  voteExec: voteExec,
-  voteExecNone: voteExecNone
+  currentAddress: jest.fn(() => mockCurrentAddress)
 };
 
 describe('Vote Reducer', () => {
@@ -87,6 +84,7 @@ describe('Vote Reducer', () => {
   });
 
   beforeEach(() => {
+    jest.clearAllMocks();
     store = mockStore(initialState);
   });
 
@@ -233,7 +231,7 @@ describe('Vote Reducer', () => {
 
       await reducer.withdrawVote()(store.dispatch, store.getState);
 
-      expect(voteExecNone).toBeCalledTimes(1);
+      expect(voteExec).toBeCalledTimes(1);
       expect(store.getActions()[0]).toEqual({
         type: reducer.WITHDRAW_REQUEST
       });
