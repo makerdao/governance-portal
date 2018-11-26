@@ -68,14 +68,8 @@ export const addAccounts = accounts => async dispatch => {
       .getVoteProxy(account.address);
 
     let currProposal = Promise.resolve('');
-    let role = '';
+    let proxyRole = '';
     if (hasProxy) {
-      role =
-        account.address === voteProxy.getColdAddress()
-          ? 'cold'
-          : account.address === voteProxy.getHotAddress()
-          ? 'hot'
-          : '';
       currProposal = currProposal.then(() =>
         // NOTE for now we just take the first address in the slate since we're
         // assuming that they're only voting for one in the frontend. This
@@ -85,21 +79,15 @@ export const addAccounts = accounts => async dispatch => {
           return addresses[0] || '';
         })()
       );
+      proxyRole =
+        voteProxy.getColdAddress() === account.address ? 'cold' : 'hot';
     }
-
-    // const role =
-    //   account.address === voteProxy.getColdAddress()
-    //     ? 'cold'
-    //     : account.address === voteProxy.getHotAddress()
-    //       ? 'hot'
-    //       : '';
-
     const _payload = {
       ...account,
       address: account.address,
       mkrBalance: toNum(mkrToken.balanceOf(account.address)),
       hasProxy,
-      proxyRole: role,
+      proxyRole: proxyRole,
       votingFor: currProposal,
       proxy: hasProxy
         ? promisedProperties({
@@ -114,11 +102,11 @@ export const addAccounts = accounts => async dispatch => {
 
     const fetchLinkedAccountData = async () => {
       if (hasProxy) {
-        const otherRole = role === 'hot' ? 'cold' : 'hot';
+        const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
         const linkedAddress =
           otherRole === 'hot'
-            ? await voteProxy.getHotAddress()
-            : await voteProxy.getColdAddress();
+            ? voteProxy.getHotAddress()
+            : voteProxy.getColdAddress();
         return {
           address: linkedAddress,
           proxyRole: otherRole,
@@ -166,9 +154,9 @@ export const setActiveAccount = (address, isMetamask) => async (
     )
   ) {
     await window.maker.addAccount({ type: AccountTypes.METAMASK });
-    window.maker.useAccountWithAddress(address);
     await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
   }
+  window.maker.useAccountWithAddress(address);
   return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
 };
 

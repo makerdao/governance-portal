@@ -916,9 +916,9 @@
     to-fast-properties "^2.0.0"
 
 "@craco/craco@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@craco/craco/-/craco-3.1.0.tgz#498b538a183a5543a5072dcf4eb24961eb4d3bc2"
-  integrity sha512-Rj8KDqcJqyggf6EZC57zHXGN7oWKDJo1Yc1PSN7i6mQE7Ne3P2KdX0J5q50qHtKlfgScfxbVj3Km79jqLd6HGw==
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@craco/craco/-/craco-3.1.1.tgz#6a63f73995cf261fa830cd7146797138b225063e"
+  integrity sha512-xStoWXLZ3m9YCBrqzRsQ/3dgCn/T0Mkv1HK95Ws5fPnPSYpLZtezUvTAxXwJoDDigaMFMVqARULKimFKSQ2Szw==
   dependencies:
     cross-spawn "6.0.5"
     lodash.mergewith "4.6.1"
@@ -965,14 +965,15 @@
   dependencies:
     events "^3.0.0"
 
-"@makerdao/dai-plugin-governance@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.1.0.tgz#5bcd41da58c56a198d683de2d0c55450ccbcc0c0"
-  integrity sha512-/JdRIK+dra3lQ7HHRvAkyrM0/R4Nsvx8yh1zC9lKlYdOijAHnNSnPcYlecWuKCDxnsS2/a8bDgwRac0hAb/9yg==
+"@makerdao/dai-plugin-governance@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.3.0.tgz#ab4ec119e3f7f8d1fbd144fa2e15a658bb43f6cb"
+  integrity sha512-i9Moc5/3noi/Njq8y034jBvOxIRI4T6T+YEx+zuTeIDGwTAQgqE0Er4MQKlxkIUgdjBxQ3ehmK2DnGAlQrQngg==
   dependencies:
-    "@makerdao/dai" "^0.9.6"
+    "@makerdao/dai" "^0.9.8"
     babel-runtime "^6.26.0"
     ramda "^0.25.0"
+    web3-utils "^1.0.0-beta.36"
 
 "@makerdao/dai-plugin-ledger-web@^0.9.3":
   version "0.9.3"
@@ -998,10 +999,10 @@
     hdkey "^1.0.0"
     web3-provider-engine "14.0.4"
 
-"@makerdao/dai@^0.9.6", "@makerdao/dai@^0.9.7":
-  version "0.9.7"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.9.7.tgz#220ba78701c415b6dc68b89cc166fa14205e3dc0"
-  integrity sha512-FuYDSEBeQEObmgpueLwF7dqfoDc3pvMxO8iYx8w3sgy41xkbx7Hrc1BWDjOipc4nRJFkHHIuUs6F9MTU2CB2lw==
+"@makerdao/dai@^0.9.8":
+  version "0.9.8"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.9.8.tgz#58668a5b587ce0e36b29bc66a1d003d1c6137ee3"
+  integrity sha512-KcN2FKFE9OyuH93NxWoYh3/3yAMn3Rw2Ebd1tGhsQR9+BMXhB2LxmIOivPZin/hXW+lLl0GCNTSfIdvSSFH8HA==
   dependencies:
     babel-plugin-transform-decorators-legacy "^1.3.5"
     babel-runtime "^6.26.0"
@@ -11179,7 +11180,7 @@ react-error-overlay@^5.1.0:
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-5.1.0.tgz#c516995a5652e7bfbed8b497910d5280df74a7e8"
   integrity sha512-akMy/BQT5m1J3iJIHkSb4qycq2wzllWsmmolaaFVnb+LPV9cIJ/nTud40ZsiiT0H3P+/wXIdbjx2fzF61OaeOQ==
 
-react-ga@^2.5.3:
+react-ga@2.5.3:
   version "2.5.3"
   resolved "https://registry.yarnpkg.com/react-ga/-/react-ga-2.5.3.tgz#0f447c73664c069a5fc341f6f431262e3d4c23c4"
   integrity sha512-25wvPv1PVLDLhw1gEYP33h0V2sJHahKMfUCAxhq8JPYmNQwx1fcjJAkJk+WmSqGN93lHLhExDkxy3SQizQnx3A==
@@ -14193,7 +14194,7 @@ web3-utils@1.0.0-beta.35:
     underscore "1.8.3"
     utf8 "2.1.1"
 
-web3-utils@1.0.0-beta.36:
+web3-utils@1.0.0-beta.36, web3-utils@^1.0.0-beta.36:
   version "1.0.0-beta.36"
   resolved "https://registry.yarnpkg.com/web3-utils/-/web3-utils-1.0.0-beta.36.tgz#dc19c9aeec009b1816cc91ef64d7fe9f8ee344c9"
   integrity sha512-7ri74lG5fS2Th0fhYvTtiEHMB1Pmf2p7dQx1COQ3OHNI/CHNEMjzoNMEbBU6FAENrywfoFur40K4m0AOmEUq5A==
