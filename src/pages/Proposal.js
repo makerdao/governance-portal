@@ -178,12 +178,7 @@ function Proposal({
 }) {
   const { active, topicKey } = proposal;
   if (Object.keys(proposal).length === 0) return <NotFound />;
-
   const supporters = voteState[proposal.source.toLowerCase()] || null;
-  console.log('voteState', voteState);
-  console.log('proposal', proposal);
-  console.log('supporters', supporters);
-
   return (
     <RiseUp>
       <WhiteBackground>
