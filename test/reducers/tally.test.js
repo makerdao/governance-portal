@@ -99,7 +99,7 @@ describe('Tally Reducer', () => {
       });
     });
 
-    test.skip('voteTallyInit should dispatch FAILURE action with error message.', async () => {
+    test('voteTallyInit should dispatch FAILURE action with error message.', async () => {
       const promiseRetry = jest.fn(() => Promise.reject('my error'));
       utils.promiseRetry = promiseRetry;
 

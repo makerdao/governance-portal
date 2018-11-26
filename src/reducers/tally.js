@@ -13,16 +13,22 @@ export const TALLY_UPDATE = 'voteTally/TALLY_UPDATE';
 export const voteTallyInit = () => dispatch => {
   const service = window.maker.service('chief');
   dispatch({ type: TALLY_REQUEST });
-  promiseRetry({ times: 3, fn: service.getVoteTally.bind(service), delay: 500 })
-    .then(tally => {
-      dispatch({ type: TALLY_SUCCESS, payload: { tally } });
+  return (
+    promiseRetry({
+      times: 3,
+      fn: service.getVoteTally.bind(service),
+      delay: 500
     })
-    // sometimes this fails when we're reading event logs
-    .catch(error => {
-      // TODO: notify user or throw to a fallback component
-      console.error(error);
-      dispatch({ type: TALLY_FAILURE });
-    });
+      .then(tally => {
+        dispatch({ type: TALLY_SUCCESS, payload: { tally } });
+      })
+      // sometimes this fails when we're reading event logs
+      .catch(error => {
+        // TODO: notify user or throw to a fallback component
+        console.error(error);
+        dispatch({ type: TALLY_FAILURE });
+      })
+  );
 };
 
 // Reducer ------------------------------------------------
