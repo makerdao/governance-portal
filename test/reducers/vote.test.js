@@ -228,10 +228,12 @@ describe('Vote Reducer', () => {
 
       const voteTallyInit = jest.fn(() => mockAction);
       tally.voteTallyInit = voteTallyInit;
+      voteExec.mockClear();
 
       await reducer.withdrawVote()(store.dispatch, store.getState);
 
       expect(voteExec).toBeCalledTimes(1);
+      expect(voteExec).toBeCalledWith(undefined, []);
       expect(store.getActions()[0]).toEqual({
         type: reducer.WITHDRAW_REQUEST
       });

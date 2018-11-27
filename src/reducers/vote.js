@@ -112,6 +112,12 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
     activeAccount,
     proposalAddress
   });
+
+  ReactGA.event({
+    category: 'Vote TX Success',
+    action: 'Cast',
+    label: `wallet type ${activeAccount.type || 'unknown'}`
+  });
 };
 
 export const withdrawVote = () => async (dispatch, getState) => {
@@ -132,6 +138,12 @@ export const withdrawVote = () => async (dispatch, getState) => {
     txObject: voteExecNone,
     acctType: activeAccount.type,
     activeAccount
+  });
+
+  ReactGA.event({
+    category: 'Vote TX Success',
+    action: 'Withdraw',
+    label: `wallet type ${activeAccount.type || 'unknown'}`
   });
 };
 

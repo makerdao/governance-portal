@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
 import ReactMarkdown from 'react-markdown';
+import { isNil, isEmpty } from 'ramda';
 
 import { toSlug, eq } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
@@ -16,10 +17,7 @@ import WithTally from '../components/hocs/WithTally';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import NotFound from './NotFound';
 import theme, { colors } from '../theme';
-import {
-  // formatDate,
-  cutMiddle
-} from '../utils/misc';
+import { cutMiddle } from '../utils/misc';
 import { modalOpen } from '../reducers/modal';
 
 const riseUp = keyframes`
@@ -176,8 +174,8 @@ function Proposal({
   canVote,
   votingFor
 }) {
+  if (isNil(proposal) || isEmpty(proposal)) return <NotFound />;
   const { active, topicKey } = proposal;
-  if (Object.keys(proposal).length === 0) return <NotFound />;
   const supporters = voteState[proposal.source.toLowerCase()] || null;
   return (
     <RiseUp>
