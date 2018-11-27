@@ -277,51 +277,6 @@ const updateProxyBalance = adding => (state, { payload: amount }) => {
   return { ...state, allAccounts };
 };
 
-// temporarily commented out until more debugging
-// const breakProxyLink = () => state => {
-//   let account = getActiveAccount({ accounts: state });
-//   let linkedAccountVar = getAccount(
-//     { accounts: state },
-//     account.proxy.linkedAccount.address
-//   );
-//   const linkedAccount = account.proxy.linkedAccount;
-//   account = {
-//     ...account,
-//     hasProxy: false,
-//     proxyRole: '',
-//     proxy: {
-//       ...account.proxy,
-//       address: '',
-//       linkedAccount: {
-//         ...account.proxy.linkedAccount,
-//         address: '',
-//         proxyRole: '',
-//         mkrBalance: ''
-//       }
-//     }
-//   };
-//   let allAccounts = withUpdatedAccount(state.allAccounts, account);
-//   if (linkedAccountVar) {
-//     linkedAccountVar = {
-//       ...linkedAccountVar,
-//       hasProxy: false,
-//       proxyRole: '',
-//       proxy: {
-//         ...linkedAccount.proxy,
-//         address: '',
-//         linkedAccount: {
-//           ...linkedAccountVar.proxy.linkedAccount,
-//           address: '',
-//           proxyRole: '',
-//           mkrBalance: ''
-//         }
-//       }
-//     };
-//     allAccounts = withUpdatedAccount(allAccounts, linkedAccountVar);
-//   }
-//   return { ...state, allAccounts };
-// };
-
 const accounts = createReducer(initialState, {
   [REMOVE_ACCOUNTS]: (state, { payload: accounts }) => ({
     ...state,
@@ -374,7 +329,6 @@ const accounts = createReducer(initialState, {
     };
   },
   [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),
-  // [BREAK_LINK_SUCCESS]: breakProxyLink(),
   [WITHDRAW_MKR_SUCCESS]: updateProxyBalance(false),
   [WITHDRAW_ALL_MKR_SUCCESS]: updateProxyBalance(false),
   [INITIATE_LINK_REQUEST]: (state, { payload }) => {
@@ -396,36 +350,6 @@ const accounts = createReducer(initialState, {
       )
     };
   }
-  // TODO: right now we're updating account data by refetching via 'postLinkUpdate'
-  // but this would be quicker
-  // [APPROVE_LINK_SUCCESS]: (state, { payload }) => {
-  //   let hotAccount = getAccount({ accounts: state }, payload.hotAddress);
-  //   let coldAccount = getAccount({ accounts: state }, payload.coldAddress);
-
-  //   hotAccount = {
-  //     ...hotAccount,
-  //     proxy: {
-  //       ...hotAccount.proxy,
-  //       linkedAccount: pick(['address', 'mkrBalance', 'type'], coldAccount)
-  //     }
-  //   };
-
-  //   coldAccount = {
-  //     ...coldAccount,
-  //     proxy: {
-  //       ...coldAccount.proxy,
-  //       linkedAccount: pick(['address', 'mkrBalance', 'type'], hotAccount)
-  //     }
-  //   };
-
-  //   return {
-  //     ...state,
-  //     allAccounts: withUpdatedAccount(
-  //       withUpdatedAccount(state.allAccounts, hotAccount),
-  //       coldAccount
-  //     )
-  //   };
-  // }
 });
 
 export default accounts;

@@ -6,6 +6,7 @@ import { getAccount, UPDATE_ACCOUNT } from './accounts';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { voteTallyInit } from './tally';
 import { initApprovalsFetch } from './approvals';
+import { hatInit } from './hat';
 
 // Constants ----------------------------------------------
 
@@ -27,7 +28,7 @@ export const clear = () => ({
   type: CLEAR
 });
 
-const handleTx = async ({
+const handleTx = ({
   prefix,
   dispatch,
   getState,
@@ -35,39 +36,41 @@ const handleTx = async ({
   acctType,
   activeAccount,
   proposalAddress = ''
-}) => {
-  const txMgr = window.maker.service('transactionManager');
-  txMgr.listen(txObject, {
-    pending: tx => {
-      dispatch({
-        type: `vote/${prefix}_SENT`,
-        payload: { txHash: tx.hash }
-      });
-    },
-    mined: tx => {
-      dispatch({ type: `vote/${prefix}_SUCCESS` });
-      ReactGA.event({
-        category: `${prefix} success`,
-        action: prefix,
-        label: `wallet type ${acctType || 'unknown'}`
-      });
-      // console.log('mined:', tx);
-      dispatch(voteTallyInit());
-      dispatch(initApprovalsFetch());
-      updateVotingFor(dispatch, getState, activeAccount, proposalAddress);
-    },
-    error: (tx, err) => {
-      // console.error(err.message);
-      dispatch({ type: `vote/${prefix}_FAILURE`, payload: err });
-      dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
-      ReactGA.event({
-        category: 'User notification error',
-        action: 'vote',
-        label: parseError(err)
-      });
-    }
+}) =>
+  new Promise((resolve, reject) => {
+    const txMgr = window.maker.service('transactionManager');
+    txMgr.listen(txObject, {
+      pending: tx => {
+        dispatch({
+          type: `vote/${prefix}_SENT`,
+          payload: { txHash: tx.hash }
+        });
+      },
+      mined: _ => {
+        dispatch({ type: `vote/${prefix}_SUCCESS` });
+        ReactGA.event({
+          category: `${prefix} success`,
+          action: prefix,
+          label: `wallet type ${acctType || 'unknown'}`
+        });
+        dispatch(voteTallyInit());
+        dispatch(hatInit());
+        dispatch(initApprovalsFetch());
+        updateVotingFor(dispatch, getState, activeAccount, proposalAddress);
+        resolve();
+      },
+      error: (_, err) => {
+        dispatch({ type: `vote/${prefix}_FAILURE`, payload: err });
+        dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+        ReactGA.event({
+          category: 'User notification error',
+          action: 'vote',
+          label: parseError(err)
+        });
+        reject();
+      }
+    });
   });
-};
 
 const updateVotingFor = (
   dispatch,
