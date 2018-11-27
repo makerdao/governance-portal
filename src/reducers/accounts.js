@@ -114,12 +114,16 @@ export const addAccounts = accounts => async dispatch => {
         };
       } else return {};
     };
-    const [payload, linkedAccount] = await Promise.all([
-      promisedProperties(_payload),
-      fetchLinkedAccountData()
-    ]);
-    payload.proxy.linkedAccount = linkedAccount;
-    dispatch({ type: ADD_ACCOUNT, payload });
+    try {
+      const [payload, linkedAccount] = await Promise.all([
+        promisedProperties(_payload),
+        fetchLinkedAccountData()
+      ]);
+      payload.proxy.linkedAccount = linkedAccount;
+      dispatch({ type: ADD_ACCOUNT, payload });
+    } catch (e) {
+      console.log('failed to add account', e);
+    }
   }
 
   dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });

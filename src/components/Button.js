@@ -11,9 +11,10 @@ const StyledButton = styled.button`
   border: none;
   border-style: none;
   box-sizing: border-box;
-  background-color: ${({ color }) => `rgb(${colors[color]})`};
-  color: ${({ theme }) => theme.generic.white};
+  background-color: ${({ theme }) => theme.generic.white};
+  color: ${({ color }) => `rgb(${colors[color]})`};
   border-radius: 4px;
+  border: 2px solid ${({ color }) => `rgb(${colors[color]})`};
   font-size: ${({ theme }) => theme.fonts.size.large};
   font-weight: ${fonts.weight.semibold};
   padding: 0 15px;
@@ -25,24 +26,9 @@ const StyledButton = styled.button`
   }
   @media (hover: hover) {
     &:hover {
-      box-shadow: ${({ disabled }) =>
-        disabled ? '' : 'rgba(5, 45, 73, 0.1) 0px 0.25rem 0.75rem'};
-      background-color: ${({ disabled, hoverColor, color }) =>
-        !disabled
-          ? hoverColor
-            ? `rgb(${colors[hoverColor]})`
-            : `rgb(${colors[color]})`
-          : `rgb(${colors[color]})`};
+      color: ${({ hoverColor }) => `rgb(${colors[hoverColor]})`};
+      border-color: ${({ hoverColor }) => `rgb(${colors[hoverColor]})`};
     }
-  }
-  &:active {
-    background-color: ${({ disabled, activeColor, color }) =>
-      !disabled
-        ? activeColor
-          ? `rgb(${colors[activeColor]})`
-          : `rgb(${colors[color]})`
-        : `rgb(${colors[color]})`};
-    color: rgba(${colors.whiteTransparent});
   }
 `;
 
@@ -86,8 +72,7 @@ Button.propTypes = {
 Button.defaultProps = {
   loading: false,
   color: 'green',
-  hoverColor: 'darkGrey',
-  activeColor: 'green',
+  hoverColor: 'dark_green',
   disabled: false,
   wide: false,
   slim: false
