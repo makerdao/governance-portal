@@ -72,10 +72,19 @@ const DimHeaderElement = styled.div`
   margin-left: ${({ ml }) => (ml ? `${ml}px` : '')};
 `;
 
+const StyledLinkWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  right: -18px;
+`;
+
 const StyledLink = styled(NavLink).attrs({
   exact: true,
   activeStyle: { fontWeight: 'bold' }
 })`
+  position: absolute;
+  right: ${({ r }) => (!isNaN(r) ? `${r}px` : '')};
   opacity: 0.9;
   padding: 5px 14px;
   color: rgb(${colors.white});
@@ -164,10 +173,14 @@ const BaseLayout = ({
               </NetworkNotification>
             </div>
             <Flex style={{ zIndex: '100' }}>
-              <StyledLink to="/">Executive</StyledLink>
-              <StyledLink to="/signaling" style={{ marginLeft: '28px' }}>
-                Signaling
-              </StyledLink>
+              <StyledLinkWrapper>
+                <StyledLink to="/" r={115}>
+                  Executive
+                </StyledLink>
+                <StyledLink to="/signaling" r={0}>
+                  Signaling
+                </StyledLink>
+              </StyledLinkWrapper>
               <DimHeaderElement
                 onClick={() => {
                   if (!accountsFetching) modalOpen(SecureVoting);
