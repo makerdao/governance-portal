@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import VoterStatus from '../components/VoterStatus';
-import WithTally from '../components/hocs/WithTally';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Timer from '../components/Timer';
@@ -14,7 +13,7 @@ import theme, { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import Vote from '../components/modals/Vote';
-import Loader from '../components/Loader';
+import TillHat from '../components/TillHatMeta';
 
 const riseUp = keyframes`
 0% {
@@ -68,22 +67,6 @@ const StyledCard = styled(Card)`
   margin-bottom: 30px;
 `;
 
-const NeededToPass = styled.p`
-  color: #989fa3;
-  display: inline;
-  margin-left: 6px;
-  &::after {
-    content: 'needed to pass';
-  }
-`;
-
-const Standings = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 12px;
-  margin-bottom: -12px;
-`;
-
 const Timeline = ({
   modalOpen,
   proposals,
@@ -101,8 +84,8 @@ const Timeline = ({
           <Card.Element height={80}>
             <ProposalDetails>
               <SubHeading mt="-10">
-                Hat: {hat.approvals ? hat.approvals : '----'} MKR is currently
-                voting for the hat
+                Hat: {hat.approvals ? hat.approvals.toLocaleString() : '----'}{' '}
+                MKR in support
               </SubHeading>
             </ProposalDetails>
             <Button
@@ -158,24 +141,7 @@ const Timeline = ({
                       : 'Vote for this Proposal'}
                   </Button>
                   <br />
-                  <WithTally candidate={proposal.source}>
-                    {({ loadingApprovals, approvals }) => (
-                      <Standings>
-                        {' '}
-                        {loadingApprovals || !hat.approvals ? (
-                          <Loader
-                            size={18}
-                            color="light_grey"
-                            background="white"
-                          />
-                        ) : (
-                          hat.approvals - approvals
-                        )}{' '}
-                        MKR
-                        <NeededToPass />
-                      </Standings>
-                    )}
-                  </WithTally>
+                  <TillHat candidate={proposal.source} />
                 </Fragment>
               ) : (
                 <ClosedStatus
