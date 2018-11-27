@@ -3,7 +3,6 @@ import {
   Grid,
   Card,
   Box,
-  Text,
   Button,
   Link,
   Address
@@ -158,7 +157,7 @@ const ConfirmWalletStep = ({
         gridRowGap="xs"
         gridColumnGap="s"
         gridTemplateColumns={['1fr', 'auto auto']}
-        justifySelf={['stretch', 'center']}
+        justifySelf={['stretch', 'end']}
       >
         <Button variant="secondary-outline" onClick={onCancel}>
           Change wallet

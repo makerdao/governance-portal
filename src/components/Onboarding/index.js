@@ -14,6 +14,7 @@ import ChooseHotWallet from './ChooseHotWallet';
 import ChooseColdWallet from './ChooseColdWallet';
 import Introduction from './Introduction';
 import InitiateLink from './InitiateLink';
+import LockMKR from './LockMKR';
 
 import { OnboardingFullScreen, Box } from '@makerdao/ui-components';
 
@@ -79,6 +80,7 @@ const Onboarding = ({
         <ChooseHotWallet onComplete={onboardingNextStep} />
         <ChooseColdWallet onComplete={onboardingNextStep} />
         <InitiateLink onComplete={onboardingNextStep} />
+        <LockMKR onComplete={onboardingNextStep} />
       </OnboardingFullScreen>
     </Background>
   );

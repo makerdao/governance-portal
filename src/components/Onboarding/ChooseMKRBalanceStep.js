@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Grid,
   Box,
-  Text,
   Card,
   Table,
   Link,
@@ -58,17 +57,16 @@ class ChooseMKRBalance extends React.Component {
               wallet is connected and try again.
             </Flex>
           )}
-          {this.props.connecting &&
-            !this.props.error && (
-              <Flex justifyContent="center" alignItems="center">
-                <Box style={{ opacity: '0.6' }}>
-                  <Loader />
-                </Box>
-                <Box ml="s" color="#868997">
-                  Waiting for approval to access your account
-                </Box>
-              </Flex>
-            )}
+          {this.props.connecting && !this.props.error && (
+            <Flex justifyContent="center" alignItems="center">
+              <Box style={{ opacity: '0.6' }}>
+                <Loader />
+              </Box>
+              <Box ml="s" color="#868997">
+                Waiting for approval to access your account
+              </Box>
+            </Flex>
+          )}
           {!this.props.connecting &&
             !this.props.error &&
             this.props.accounts.length > 0 && (

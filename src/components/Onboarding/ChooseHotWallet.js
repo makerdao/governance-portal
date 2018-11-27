@@ -4,7 +4,6 @@ import {
   Grid,
   Card,
   Box,
-  Text,
   Button,
   Link,
   Address,
@@ -93,29 +92,27 @@ const ConfirmWalletStep = ({
     wallet address below. It will only be able to vote with your MKR."
       />
       <Card p="m">
-        {!account &&
-          connecting && (
-            <Flex justifyContent="center" alignItems="center">
-              <Box style={{ opacity: '0.6' }}>
-                <Loader />
-              </Box>
-              <Box ml="s" color="#868997">
-                Waiting for approval to access your account
-              </Box>
-            </Flex>
-          )}
-        {!account &&
-          !connecting && (
-            <Flex
-              justifyContent="center"
-              alignItems="center"
-              opacity="0.6"
-              textAlign="center"
-            >
-              There was an error connecting your wallet. Please ensure that your
-              wallet is connected and try again.
-            </Flex>
-          )}
+        {!account && connecting && (
+          <Flex justifyContent="center" alignItems="center">
+            <Box style={{ opacity: '0.6' }}>
+              <Loader />
+            </Box>
+            <Box ml="s" color="#868997">
+              Waiting for approval to access your account
+            </Box>
+          </Flex>
+        )}
+        {!account && !connecting && (
+          <Flex
+            justifyContent="center"
+            alignItems="center"
+            opacity="0.6"
+            textAlign="center"
+          >
+            There was an error connecting your wallet. Please ensure that your
+            wallet is connected and try again.
+          </Flex>
+        )}
         {account && (
           <Grid
             alignItems="center"

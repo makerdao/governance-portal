@@ -1,13 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Box, Grid, Text } from '@makerdao/ui-components';
+import { Box, Grid, Button, Flex } from '@makerdao/ui-components';
 
 import Sidebar from './shared/Sidebar';
 import Stepper from './shared/Stepper';
 import ButtonCard from './shared/ButtonCard';
 import Header from './shared/Header';
+import TransactionStatusIndicator from './shared/TransactionStatusIndicator';
 
-import { initiateLink } from '../../reducers/proxy';
+import { AccountTypes, TransactionStatus } from '../../utils/constants';
+import {
+  initiateLink,
+  approveLink,
+  mkrApproveProxy
+} from '../../reducers/proxy';
 
 const ChooseTransactionPriority = ({ onChoose }) => {
   return (
@@ -46,15 +52,54 @@ const ChooseTransactionPriority = ({ onChoose }) => {
   );
 };
 
-const SignHotWallet = () => {
+const nicelyFormatWalletProvider = provider => {
+  switch (provider) {
+    case 'provider':
+    case 'browser':
+    case 'metamask':
+    case AccountTypes.METAMASK:
+      return 'MetaMask';
+    case AccountTypes.TREZOR:
+      return 'Trezor';
+    case AccountTypes.LEDGER:
+      return 'Ledger';
+    default:
+      return 'your wallet';
+  }
+};
+
+const SignTransaction = ({
+  walletProvider,
+  title,
+  subtitle,
+  status,
+  tx,
+  onNext,
+  onCancel
+}) => {
   return (
-    <div>
-      <Header
-        title="Sign MetaMask transaction"
-        subtitle="To proceed with setting up your voting contract, 
-please sign the transaction in MetaMask."
+    <Grid gridRowGap="l" justifyItems="center">
+      <Header title={title} subtitle={subtitle} />
+      <TransactionStatusIndicator
+        provider={walletProvider}
+        status={status}
+        tx={tx}
       />
-    </div>
+      <Flex justifyContent="center">
+        <Button variant="secondary-outline" onClick={onCancel} mr="s">
+          Cancel
+        </Button>
+        <Button
+          disabled={
+            status !== TransactionStatus.MINED &&
+            status !== TransactionStatus.CONFIRMED
+          }
+          onClick={onNext}
+        >
+          Next
+        </Button>
+      </Flex>
+    </Grid>
   );
 };
 
@@ -63,20 +108,40 @@ class InitiateLink extends React.Component {
     super(props);
 
     this.state = {
-      step: 0
+      step: 3
     };
   }
 
-  initiateLink = () => {
+  toChooseTransactionPriority = () => {
+    this.setState({
+      step: 0
+    });
+  };
+
+  toInitiateLink = priority => {
     this.props.initiateLink({
       hot: this.props.hotWallet,
       cold: this.props.coldWallet
     });
-  };
-
-  onTransactionPriorityChosen = priority => {
     this.setState({
       step: 1
+    });
+  };
+
+  toApproveLink = priority => {
+    this.props.approveLink({
+      hot: this.props.hotWallet,
+      cold: this.props.coldWallet
+    });
+    this.setState({
+      step: 2
+    });
+  };
+
+  toGrantPermissions = () => {
+    this.props.mkrApproveProxy();
+    this.setState({
+      step: 3
     });
   };
 
@@ -90,10 +155,44 @@ class InitiateLink extends React.Component {
         >
           <div>
             <Stepper step={this.state.step}>
-              <ChooseTransactionPriority
-                onChoose={this.onTransactionPriorityChosen}
+              <ChooseTransactionPriority onChoose={this.toInitiateLink} />
+              <SignTransaction
+                title={`Sign ${nicelyFormatWalletProvider(
+                  this.props.coldWallet.type
+                )} transaction`}
+                subtitle={`To proceed with setting up your voting contract,
+      please sign the transaction in ${nicelyFormatWalletProvider(
+        this.props.coldWallet.type
+      )}.`}
+                walletProvider={this.props.coldWallet.type}
+                status={this.props.initiateLinkTxStatus}
+                tx={this.props.initiateLinkTxHash}
+                onNext={this.toApproveLink}
+                onCancel={this.toChooseTransactionPriority}
               />
-              <SignHotWallet />
+              <SignTransaction
+                title={`Sign ${nicelyFormatWalletProvider(
+                  this.props.hotWallet.type
+                )} transaction`}
+                subtitle={`To proceed with setting up your voting contract,
+      please sign the transaction in ${nicelyFormatWalletProvider(
+        this.props.hotWallet.type
+      )}.`}
+                walletProvider={this.props.hotWallet.type}
+                status={this.props.approveLinkTxStatus}
+                tx={this.props.approveLinkTxHash}
+                onNext={this.toGrantPermissions}
+                onCancel={this.toChooseTransactionPriority}
+              />
+              <SignTransaction
+                title="Grant hot wallet permissions"
+                subtitle="Give your voting contract permission so that your hot wallet can vote with your MKR"
+                walletProvider={this.props.coldWallet.type}
+                status={this.props.mkrApproveProxyTxStatus}
+                tx={this.props.mkrApproveProxyTxHash}
+                onNext={this.props.onComplete}
+                onCancel={this.toChooseTransactionPriority}
+              />
             </Stepper>
           </div>
           <Sidebar
@@ -108,10 +207,13 @@ class InitiateLink extends React.Component {
 }
 
 export default connect(
-  ({ onboarding }) => ({
-    ...onboarding
+  ({ onboarding, proxy }) => ({
+    ...onboarding,
+    ...proxy
   }),
   {
-    initiateLink
+    initiateLink,
+    approveLink,
+    mkrApproveProxy
   }
 )(InitiateLink);

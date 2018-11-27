@@ -32,9 +32,9 @@ export const localLinkProgress = store => next => action => {
 };
 
 export const updateAccountsAfterLink = store => next => action => {
-  if (action.type === 'proxy/APPROVE_LINK_SUCCESS') {
-    store.dispatch(refreshAccountDataLink());
-  }
+  // if (action.type === 'proxy/APPROVE_LINK_SUCCESS') {
+  //   store.dispatch(refreshAccountDataLink());
+  // }
   return next(action);
 };
 

@@ -65,7 +65,7 @@ export const resetColdWallet = () => ({
 // Reducer ------------------------------------------------
 
 const initialState = {
-  step: 3,
+  step: 2,
   open: true,
   flow: 'linked',
   hotWallet: {

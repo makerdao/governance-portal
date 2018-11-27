@@ -213,7 +213,7 @@ export const connectHardwareAccounts = (
           type: HARDWARE_ACCOUNTS_CONNECTED,
           payload: {
             accountType,
-            accountsWithType,
+            accounts: accountsWithType,
             onAccountChosen: callback
           }
         });
@@ -234,6 +234,10 @@ export const connectHardwareAccounts = (
         path: path,
         accountsLength: 5,
         choose: onChoose
+      })
+      .then(account => {
+        setActiveAccount(account.address);
+        window.maker.useAccountWithAddress(account.address);
       })
       .catch(err => {
         console.error(err);
@@ -260,7 +264,8 @@ export const addHardwareAccount = (address, accountType) => (
     accounts: { hardwareAccountsAvailable }
   } = getState();
 
-  hardwareAccountsAvailable[accountType].onChosen();
+  // add hardware account to maker object
+  hardwareAccountsAvailable[accountType].onChosen(null, address);
 
   dispatch({
     type: HARDWARE_ACCOUNT_CONNECTED,
@@ -280,15 +285,14 @@ const uniqConcat = pipe(
 );
 const addressCmp = (x, y) => x.address === y.address;
 const withUpdatedAccount = (accounts, updatedAccount) => {
-  return accounts.map(
-    account =>
-      account.address === updatedAccount.address &&
-      account.type === updatedAccount.type
-        ? {
-            ...account,
-            ...updatedAccount
-          }
-        : account
+  return accounts.map(account =>
+    account.address === updatedAccount.address &&
+    account.type === updatedAccount.type
+      ? {
+          ...account,
+          ...updatedAccount
+        }
+      : account
   );
 };
 

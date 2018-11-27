@@ -8,7 +8,7 @@ import {
   addAccounts,
   setActiveAccount
 } from './accounts';
-import { AccountTypes } from '../utils/constants';
+import { AccountTypes, TransactionStatus } from '../utils/constants';
 import { modalClose } from './modal';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { MKR } from '../chain/maker';
@@ -23,18 +23,29 @@ import {
 // Constants ----------------------------------------------
 
 export const INITIATE_LINK_SENT = 'proxy/INITIATE_LINK_SENT';
+export const INITIATE_LINK_TX_STATUS_UPDATE =
+  'proxy/INITIATE_LINK_TX_STATUS_UPDATE';
 export const INITIATE_LINK_SUCCESS = 'proxy/INITIATE_LINK_SUCCESS';
 export const INITIATE_LINK_FAILURE = 'proxy/INITIATE_LINK_FAILURE';
 
 export const APPROVE_LINK_REQUEST = 'proxy/APPROVE_LINK_REQUEST';
 export const APPROVE_LINK_SENT = 'proxy/APPROVE_LINK_SENT';
+export const APPROVE_LINK_STATUS_UPDATE =
+  'proxy/INITIATE_LINK_TX_STATUS_UPDATE';
 export const APPROVE_LINK_SUCCESS = 'proxy/APPROVE_LINK_SUCCESS';
 export const APPROVE_LINK_FAILURE = 'proxy/APPROVE_LINK_FAILURE';
 
 export const SEND_MKR_TO_PROXY_REQUEST = 'proxy/SEND_MKR_TO_PROXY_REQUEST';
+export const SEND_MKR_TO_PROXY_STATUS_UPDATE =
+  'proxy/INITIATE_LINK_TX_STATUS_UPDATE';
 export const SEND_MKR_TO_PROXY_SENT = 'proxy/SEND_MKR_TO_PROXY_SENT';
-
 export const SEND_MKR_TO_PROXY_FAILURE = 'proxy/SEND_MKR_TO_PROXY_FAILURE';
+
+export const MKR_APPROVE_REQUEST = 'proxy/MKR_APPROVE_REQUEST';
+export const MKR_APPROVE_STATUS_UPDATE = 'proxy/MKR_APPROVE_STATUS_UPDATE';
+export const MKR_APPROVE_SENT = 'proxy/MKR_APPROVE_SENT';
+export const MKR_APPROVE_SUCCESS = 'proxy/MKR_APPROVE_SUCCESS';
+export const MKR_APPROVE_FAILURE = 'proxy/MKR_APPROVE_FAILURE';
 
 export const WITHDRAW_MKR_REQUEST = 'proxy/WITHDRAW_MKR_REQUEST';
 export const WITHDRAW_MKR_SENT = 'proxy/WITHDRAW_MKR_SENT';
@@ -50,11 +61,6 @@ export const BREAK_LINK_REQUEST = 'proxy/BREAK_LINK_REQUEST';
 export const BREAK_LINK_SENT = 'proxy/BREAK_LINK_SENT';
 export const BREAK_LINK_SUCCESS = 'proxy/BREAK_LINK_SUCCESS';
 export const BREAK_LINK_FAILURE = 'proxy/BREAK_LINK_FAILURE';
-
-export const MKR_APPROVE_REQUEST = 'proxy/MKR_APPROVE_REQUEST';
-export const MKR_APPROVE_SENT = 'proxy/MKR_APPROVE_SENT';
-export const MKR_APPROVE_SUCCESS = 'proxy/MKR_APPROVE_SUCCESS';
-export const MKR_APPROVE_FAILURE = 'proxy/MKR_APPROVE_FAILURE';
 
 export const CLEAR = 'proxy/CLEAR';
 export const GO_TO_STEP = 'proxy/GO_TO_STEP';
@@ -149,7 +155,7 @@ function useColdAccount(dispatch, getState) {
 }
 
 export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
-  // if (!useCorrectAccount(cold, dispatch, { label: 'cold' })) return;
+  if (!useCorrectAccount(cold, dispatch, { label: 'cold' })) return;
   console.log('intiating link');
   const initiateLink = window.maker
     .service('voteProxyFactory')
@@ -157,25 +163,25 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
 
   dispatch({
     type: INITIATE_LINK_REQUEST,
-    payload: { hotAddress: hot.address, coldAddress: cold.address }
+    payload: {
+      hotAddress: hot.address,
+      coldAddress: cold.address
+    }
   });
+
   await handleTx({
     prefix: 'INITIATE_LINK',
     dispatch,
     txObject: initiateLink,
     acctType: cold.type
   });
-  if (getAccount(getState(), getState().proxy.hotAddress)) {
-    dispatch(setActiveAccount(getState().proxy.hotAddress));
-  }
 };
 
-export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
-  if (!useCorrectAccount(hotAccount, dispatch, { label: 'hot' })) return;
-  const { coldAddress } = getState().proxy;
+export const approveLink = ({ hot, cold }) => (dispatch, getState) => {
+  if (!useCorrectAccount(hot, dispatch, { label: 'hot' })) return;
   const approveLink = window.maker
     .service('voteProxyFactory')
-    .approveLink(coldAddress);
+    .approveLink(cold.address);
 
   dispatch({ type: APPROVE_LINK_REQUEST });
 
@@ -183,8 +189,11 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
     prefix: 'APPROVE_LINK',
     dispatch,
     txObject: approveLink,
-    successPayload: { coldAddress, hotAddress: hotAccount.address },
-    acctType: hotAccount.type
+    successPayload: {
+      hotAddress: hot.address,
+      coldAddress: cold.address
+    },
+    acctType: hot.type
   });
 };
 
@@ -316,16 +325,20 @@ const initialState = {
   initiateLinkTxHash: '',
   approveLinkTxHash: '',
   mkrApproveProxyTxHash: '',
+  initiateLinkTxStatus: TransactionStatus.NOT_STARTED,
+  approveLinkTxStatus: TransactionStatus.NOT_STARTED,
+  mkrApproveProxyTxStatus: TransactionStatus.NOT_STARTED,
+  sendMkrTxStatus: TransactionStatus.NOT_STARTED,
   confirmingInitiate: false,
   confirmingApprove: false,
   confirmingSendMkr: false,
   confirmingMkrApproveProxy: false,
   setupProgress: 'intro',
-  hotAddress: '',
-  coldAddress: '',
   sendMkrAmount: 0,
   withdrawMkrAmount: 0,
-  linkGas: 0
+  linkGas: 0,
+  hotAddress: '',
+  coldAddress: ''
 };
 
 // const withExisting = { ...initialState, ...existingState };
@@ -334,35 +347,47 @@ const proxy = createReducer(initialState, {
   // Initiate ---------------------------------------
   [INITIATE_LINK_REQUEST]: (state, { payload }) => ({
     ...state,
-    setupProgress: 'initiate',
-    hotAddress: payload.hotAddress,
-    coldAddress: payload.coldAddress
+    setupProgress: 'initiate'
   }),
   [INITIATE_LINK_SENT]: (state, { payload }) => ({
     ...state,
     confirmingInitiate: true,
-    initiateLinkTxHash: payload.txHash
+    initiateLinkTxHash: payload.txHash,
+    initiateLinkTxStatus: TransactionStatus.PENDING
   }),
-  [INITIATE_LINK_SUCCESS]: state => ({ ...state, confirmingInitiate: false }),
+  [INITIATE_LINK_SUCCESS]: state => ({
+    ...state,
+    confirmingInitiate: false,
+    initiateLinkTxStatus: TransactionStatus.MINED
+  }),
   [INITIATE_LINK_FAILURE]: state => ({
     ...state,
     setupProgress: 'link',
+    initiateLinkTxStatus: TransactionStatus.ERROR,
     confirmingInitiate: false
   }),
   // Approve ----------------------------------------
-  [APPROVE_LINK_REQUEST]: state => ({
+  [APPROVE_LINK_REQUEST]: (state, { payload }) => ({
     ...state,
     setupProgress: 'approve'
   }),
   [APPROVE_LINK_SENT]: (state, { payload }) => ({
     ...state,
     confirmingApprove: true,
-    approveLinkTxHash: payload.txHash
+    approveLinkTxHash: payload.txHash,
+    approveLinkTxStatus: TransactionStatus.PENDING
   }),
-  [APPROVE_LINK_SUCCESS]: state => ({ ...state, confirmingApprove: false }),
+  [APPROVE_LINK_SUCCESS]: (state, { payload }) => ({
+    ...state,
+    confirmingApprove: false,
+    approveLinkTxStatus: TransactionStatus.MINED,
+    hotAddress: payload.hotAddress,
+    coldAddress: payload.coldAddress
+  }),
   [APPROVE_LINK_FAILURE]: state => ({
     ...state,
     setupProgress: 'midLink',
+    approveLinkTxStatus: TransactionStatus.ERROR,
     confirmingApprove: false
   }),
   // Send -------------------------------------------
@@ -376,6 +401,7 @@ const proxy = createReducer(initialState, {
   [SEND_MKR_TO_PROXY_SENT]: (state, { payload }) => ({
     ...state,
     confirmingSendMkr: true,
+    sendMkrTxStatus: TransactionStatus.PENDING,
     sendMkrTxHash: payload.txHash
   }),
   [SEND_MKR_TO_PROXY_SUCCESS]: state => {
@@ -383,11 +409,16 @@ const proxy = createReducer(initialState, {
       return { ...state, setupProgress: 'summary', confirmingSendMkr: false };
     }
 
-    return { ...state, confirmingSendMkr: false };
+    return {
+      ...state,
+      sendMkrTxStatus: TransactionStatus.MINED,
+      confirmingSendMkr: false
+    };
   },
   [SEND_MKR_TO_PROXY_FAILURE]: state => ({
     ...state,
     sendMkrAmount: 0,
+    sendMkrTxStatus: TransactionStatus.ERROR,
     confirmingSendMkr: false
   }),
   // MKR Approve Proxy ------------------------------
@@ -398,15 +429,18 @@ const proxy = createReducer(initialState, {
   [MKR_APPROVE_SENT]: (state, { payload }) => ({
     ...state,
     confirmingMkrApproveProxy: true,
+    mkrApproveProxyTxStatus: TransactionStatus.PENDING,
     mkrApproveProxyTxHash: payload.txHash
   }),
   [MKR_APPROVE_SUCCESS]: state => ({
     ...state,
-    confirmingMkrApproveProxy: false
+    confirmingMkrApproveProxy: false,
+    mkrApproveProxyTxStatus: TransactionStatus.MINED
   }),
   [MKR_APPROVE_FAILURE]: state => ({
     ...state,
     confirmingMkrApproveProxy: false,
+    mkrApproveProxyTxStatus: TransactionStatus.ERROR,
     mkrApproveInitiated: false
   }),
   // Withdraw ---------------------------------------
@@ -474,65 +508,65 @@ const proxy = createReducer(initialState, {
   }),
   // Dev --------------------------------------------
   MOCK_NEXT_STEP: state => {
-    const { setupProgress } = state;
-    const step = name => ({ ...state, setupProgress: name });
-
-    if (setupProgress === 'intro') return step('link');
-
-    if (setupProgress === 'link') return step('initiate');
-
-    if (setupProgress === 'initiate') {
-      if (!state.initiateLinkTxHash && !state.confirmingInitiate) {
-        return {
-          ...state,
-          confirmingInitiate: true,
-          initiateLinkTxHash: '0xbeefed1bedded2dabbed3defaced4decade5cafe',
-          coldAddress: '0xbeefed1bedded2dabbed3defaced4decade5cafe',
-          hotAddress: '0xbeefed1bedded2dabbed3defaced4decade5cafe'
-        };
-      }
-
-      if (state.confirmingInitiate)
-        return { ...state, confirmingInitiate: false };
-
-      return step('midLink');
-    }
-
-    if (setupProgress === 'midLink') return step('approve');
-
-    if (setupProgress === 'approve') {
-      if (!state.approveLinkTxHash && !state.confirmingApprove) {
-        return {
-          ...state,
-          confirmingApprove: true,
-          approveLinkTxHash: '0xbeefed1bedded2dabbed3defaced4decade5fade'
-        };
-      }
-
-      if (state.confirmingApprove)
-        return { ...state, confirmingApprove: false };
-
-      return step('lockInput');
-    }
-
-    if (setupProgress === 'lockInput') return step('lock');
-
-    if (setupProgress === 'lock') {
-      if (!state.sendMkrTxHash && !state.confirmingSendMkr) {
-        return {
-          ...state,
-          confirmingSendMkr: true,
-          sendMkrTxHash: '0xbeefed1bedded2dabbed3defaced4decade5fade'
-        };
-      }
-
-      if (state.confirmingSendMkr)
-        return { ...state, confirmingSendMkr: false };
-
-      return step('summary');
-    }
-
-    if (setupProgress === 'summary') return step(null);
+    // const { setupProgress } = state;
+    // const step = name => ({ ...state, setupProgress: name });
+    //
+    // if (setupProgress === 'intro') return step('link');
+    //
+    // if (setupProgress === 'link') return step('initiate');
+    //
+    // if (setupProgress === 'initiate') {
+    //   if (!state.initiateLinkTxHash && !state.confirmingInitiate) {
+    //     return {
+    //       ...state,
+    //       confirmingInitiate: true,
+    //       initiateLinkTxHash: '0xbeefed1bedded2dabbed3defaced4decade5cafe',
+    //       coldAddress: '0xbeefed1bedded2dabbed3defaced4decade5cafe',
+    //       hotAddress: '0xbeefed1bedded2dabbed3defaced4decade5cafe'
+    //     };
+    //   }
+    //
+    //   if (state.confirmingInitiate)
+    //     return { ...state, confirmingInitiate: false };
+    //
+    //   return step('midLink');
+    // }
+    //
+    // if (setupProgress === 'midLink') return step('approve');
+    //
+    // if (setupProgress === 'approve') {
+    //   if (!state.approveLinkTxHash && !state.confirmingApprove) {
+    //     return {
+    //       ...state,
+    //       confirmingApprove: true,
+    //       approveLinkTxHash: '0xbeefed1bedded2dabbed3defaced4decade5fade'
+    //     };
+    //   }
+    //
+    //   if (state.confirmingApprove)
+    //     return { ...state, confirmingApprove: false };
+    //
+    //   return step('lockInput');
+    // }
+    //
+    // if (setupProgress === 'lockInput') return step('lock');
+    //
+    // if (setupProgress === 'lock') {
+    //   if (!state.sendMkrTxHash && !state.confirmingSendMkr) {
+    //     return {
+    //       ...state,
+    //       confirmingSendMkr: true,
+    //       sendMkrTxHash: '0xbeefed1bedded2dabbed3defaced4decade5fade'
+    //     };
+    //   }
+    //
+    //   if (state.confirmingSendMkr)
+    //     return { ...state, confirmingSendMkr: false };
+    //
+    //   return step('summary');
+    // }
+    //
+    // if (setupProgress === 'summary') return step(null);
   }
 });
 

@@ -13,6 +13,7 @@ import {
 
 import WalletIcon from './WalletIcon';
 import newTab from '../../../imgs/onboarding/newtab.svg';
+import linkImg from '../../../imgs/onboarding/link.svg';
 
 const ExternalLink = styled(Link)`
   position: relative;
@@ -32,87 +33,96 @@ const ExternalLink = styled(Link)`
 const Sidebar = ({ show, faqs, hotWallet, coldWallet }) => {
   return (
     <Card p="m" gridColumn={['1', '1', '2']} gridRow="span -1">
-      <Grid gridRowGap="m">
-        {hotWallet && (
-          <Grid gridTemplateColumns="auto 1fr" gridColumnGap="s">
-            <Flex
-              alignItems="center"
-              justifyContent="center"
-              gridRow="1/3"
-              gridColumn="1"
-            >
-              <Box
-                borderRadius="50%"
-                bg="#C4C4C4"
-                opacity="0.2"
-                style={{ width: '34px', height: '34px' }}
-              />
-            </Flex>
-            <Flex
-              gridRow="1/3"
-              gridColumn="1"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <WalletIcon
-                provider={hotWallet.type}
-                style={{ maxWidth: '23px', maxHeight: '23px' }}
-              />
-            </Flex>
-            <Box gridColumn="2">
-              <Text color="#868997" fontSize="1rem" fontWeight="bold">
-                YOUR HOT WALLET
-              </Text>
-            </Box>
-            <Box gridColumn="2">
-              <Link>
-                <Text t="p2" fontWeight="medium">
-                  <Address shorten full={hotWallet.address} />
+      <Grid gridRowGap="l">
+        <Grid>
+          {hotWallet && (
+            <Grid gridTemplateColumns="auto 1fr" gridColumnGap="s">
+              <Flex
+                alignItems="center"
+                justifyContent="center"
+                gridRow="1/3"
+                gridColumn="1"
+              >
+                <Box
+                  borderRadius="50%"
+                  bg="#C4C4C4"
+                  opacity="0.2"
+                  style={{ width: '34px', height: '34px' }}
+                />
+              </Flex>
+              <Flex
+                gridRow="1/3"
+                gridColumn="1"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <WalletIcon
+                  provider={hotWallet.type}
+                  style={{ maxWidth: '23px', maxHeight: '23px' }}
+                />
+              </Flex>
+              <Box gridColumn="2">
+                <Text color="#868997" fontSize="1rem" fontWeight="bold">
+                  YOUR HOT WALLET
                 </Text>
-              </Link>
-            </Box>
-          </Grid>
-        )}
-        {coldWallet && (
-          <Grid gridTemplateColumns="auto 1fr" gridColumnGap="s">
-            <Flex
-              alignItems="center"
-              justifyContent="center"
-              gridRow="1/3"
-              gridColumn="1"
-            >
-              <Box
-                borderRadius="50%"
-                bg="#C4C4C4"
-                opacity="0.2"
-                style={{ width: '34px', height: '34px' }}
-              />
-            </Flex>
-            <Flex
-              gridRow="1/3"
-              gridColumn="1"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <WalletIcon
-                provider={coldWallet.type}
-                style={{ maxWidth: '23px', maxHeight: '23px' }}
-              />
-            </Flex>
-            <Box gridColumn="2">
-              <Text color="#868997" fontSize="1rem" fontWeight="bold">
-                YOUR COLD WALLET
-              </Text>
-            </Box>
-            <Box gridColumn="2">
-              <Link>
-                <Text t="p2" fontWeight="medium">
-                  <Address shorten full={coldWallet.address} />
+              </Box>
+              <Box gridColumn="2">
+                <Link>
+                  <Text t="p2" fontWeight="medium">
+                    <Address shorten full={hotWallet.address} />
+                  </Text>
+                </Link>
+              </Box>
+            </Grid>
+          )}
+          {coldWallet && (
+            <img
+              src={linkImg}
+              alt=""
+              style={{ paddingLeft: '5px', margin: '-8px 0' }}
+            />
+          )}
+          {coldWallet && (
+            <Grid gridTemplateColumns="auto 1fr" gridColumnGap="s">
+              <Flex
+                alignItems="center"
+                justifyContent="center"
+                gridRow="1/3"
+                gridColumn="1"
+              >
+                <Box
+                  borderRadius="50%"
+                  bg="#C4C4C4"
+                  opacity="0.2"
+                  style={{ width: '34px', height: '34px' }}
+                />
+              </Flex>
+              <Flex
+                gridRow="1/3"
+                gridColumn="1"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <WalletIcon
+                  provider={coldWallet.type}
+                  style={{ maxWidth: '23px', maxHeight: '23px' }}
+                />
+              </Flex>
+              <Box gridColumn="2">
+                <Text color="#868997" fontSize="1rem" fontWeight="bold">
+                  YOUR COLD WALLET
                 </Text>
-              </Link>
-            </Box>
-          </Grid>
-        )}
+              </Box>
+              <Box gridColumn="2">
+                <Link>
+                  <Text t="p2" fontWeight="medium">
+                    <Address shorten full={coldWallet.address} />
+                  </Text>
+                </Link>
+              </Box>
+            </Grid>
+          )}
+        </Grid>
         <div>
           <Text fontWeight="bold">Ethereum Mainnet</Text>
           <Box fontSize="1.5rem" color="#868997">
