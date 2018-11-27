@@ -14,6 +14,7 @@ import theme, { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import Vote from '../components/modals/Vote';
+import Loader from '../components/Loader';
 
 const riseUp = keyframes`
 0% {
@@ -71,6 +72,9 @@ const NeededToPass = styled.p`
   color: #989fa3;
   display: inline;
   margin-left: 6px;
+  &::after {
+    content: 'needed to pass';
+  }
 `;
 
 const Standings = styled.div`
@@ -86,11 +90,40 @@ const Timeline = ({
   canVote,
   fetching,
   votingFor,
+  signaling,
   hat
 }) => (
   <Fragment>
     <VoterStatus />
     <RiseUp key={proposals.toString()}>
+      {signaling ? null : (
+        <StyledCard>
+          <Card.Element height={80}>
+            <ProposalDetails>
+              <SubHeading mt="-10">
+                Hat: {hat.approvals ? hat.approvals : '----'} MKR is currently
+                voting for the hat
+              </SubHeading>
+            </ProposalDetails>
+            <Button
+              disabled={!canVote}
+              loading={fetching}
+              onClick={() =>
+                modalOpen(Vote, {
+                  proposal: {
+                    address: hat.address,
+                    title: 'Hat'
+                  }
+                })
+              }
+            >
+              {eq(votingFor, hat.address)
+                ? 'Withdraw from the hat'
+                : 'Vote for the hat'}
+            </Button>
+          </Card.Element>
+        </StyledCard>
+      )}
       {proposals.map(proposal => (
         <StyledCard key={proposal.key}>
           <Card.Element key={proposal.title} height={164}>
@@ -126,17 +159,22 @@ const Timeline = ({
                   </Button>
                   <br />
                   <WithTally candidate={proposal.source}>
-                    {({ loadingApprovals, approvals }) =>
-                      loadingApprovals ? (
-                        '---'
-                      ) : (
-                        <Standings>
-                          {' '}
-                          {hat.approvals - approvals} MKR
-                          <NeededToPass> needed to pass</NeededToPass>
-                        </Standings>
-                      )
-                    }
+                    {({ loadingApprovals, approvals }) => (
+                      <Standings>
+                        {' '}
+                        {loadingApprovals || !hat.approvals ? (
+                          <Loader
+                            size={18}
+                            color="light_grey"
+                            background="white"
+                          />
+                        ) : (
+                          hat.approvals - approvals
+                        )}{' '}
+                        MKR
+                        <NeededToPass />
+                      </Standings>
+                    )}
                   </WithTally>
                 </Fragment>
               ) : (

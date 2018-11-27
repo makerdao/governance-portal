@@ -52,7 +52,7 @@ const Button = ({
     {...props}
   >
     {loading ? (
-      <Loader alt size={12} color="white" background={color} />
+      <Loader alt size={12} color="green" background={color} />
     ) : (
       children
     )}
@@ -72,7 +72,7 @@ Button.propTypes = {
 Button.defaultProps = {
   loading: false,
   color: 'green',
-  hoverColor: 'dark_green',
+  hoverColor: 'green',
   disabled: false,
   wide: false,
   slim: false
