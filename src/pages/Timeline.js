@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import VoterStatus from '../components/VoterStatus';
-import { VotePercentage } from '../components/VoteTally';
 import WithTally from '../components/hocs/WithTally';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -68,13 +67,33 @@ const StyledCard = styled(Card)`
   margin-bottom: 30px;
 `;
 
-const Timeline = ({ modalOpen, proposals, canVote, fetching, votingFor }) => (
+const NeededToPass = styled.p`
+  color: #989fa3;
+  display: inline;
+  margin-left: 6px;
+`;
+
+const Standings = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+  margin-bottom: -12px;
+`;
+
+const Timeline = ({
+  modalOpen,
+  proposals,
+  canVote,
+  fetching,
+  votingFor,
+  hat
+}) => (
   <Fragment>
     <VoterStatus />
     <RiseUp key={proposals.toString()}>
       {proposals.map(proposal => (
         <StyledCard key={proposal.key}>
-          <Card.Element key={proposal.title} height={151}>
+          <Card.Element key={proposal.title} height={164}>
             <ProposalDetails>
               <Link to={`/${toSlug(proposal.title)}`}>
                 <SubHeading mt="-10">{proposal.title}</SubHeading>
@@ -89,14 +108,6 @@ const Timeline = ({ modalOpen, proposals, canVote, fetching, votingFor }) => (
             <div>
               {proposal.active ? (
                 <Fragment>
-                  <WithTally candidate={proposal.source}>
-                    {({ loadingApprovals, percentage }) => (
-                      <VotePercentage
-                        loadingApprovals={loadingApprovals}
-                        percentage={percentage}
-                      />
-                    )}
-                  </WithTally>
                   <Button
                     disabled={!canVote || !proposal.active}
                     loading={fetching}
@@ -113,9 +124,24 @@ const Timeline = ({ modalOpen, proposals, canVote, fetching, votingFor }) => (
                       ? 'Withdraw vote'
                       : 'Vote for this Proposal'}
                   </Button>
+                  <br />
+                  <WithTally candidate={proposal.source}>
+                    {({ loadingApprovals, approvals }) =>
+                      loadingApprovals ? (
+                        '---'
+                      ) : (
+                        <Standings>
+                          {' '}
+                          {hat.approvals - approvals} MKR
+                          <NeededToPass> needed to pass</NeededToPass>
+                        </Standings>
+                      )
+                    }
+                  </WithTally>
                 </Fragment>
               ) : (
                 <ClosedStatus
+                  signalVote={proposal.govVote}
                   topicKey={proposal.topicKey}
                   proposalAddress={proposal.source}
                 />
@@ -130,10 +156,10 @@ const Timeline = ({ modalOpen, proposals, canVote, fetching, votingFor }) => (
 
 const reduxProps = ({ proposals, accounts, hat }, { signaling }) => {
   return {
+    hat,
     proposals: proposals.filter(p => !!p.govVote === !!signaling),
     canVote: activeCanVote({ accounts }),
     fetching: accounts.fetching,
-    hatAddress: hat.hatAddress,
     votingFor: getActiveVotingFor({ accounts })
   };
 };
