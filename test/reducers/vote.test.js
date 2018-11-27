@@ -57,8 +57,7 @@ const mockServiceError = name => {
 
 const defaultFunctions = {
   service: jest.fn(mockService),
-  currentAddress: jest.fn(() => mockCurrentAddress),
-  voteExec: voteExec
+  currentAddress: jest.fn(() => mockCurrentAddress)
 };
 
 describe('Vote Reducer', () => {
@@ -85,6 +84,7 @@ describe('Vote Reducer', () => {
   });
 
   beforeEach(() => {
+    jest.clearAllMocks();
     store = mockStore(initialState);
   });
 
