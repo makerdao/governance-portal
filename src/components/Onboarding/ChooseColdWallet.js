@@ -18,6 +18,7 @@ import Stepper from './shared/Stepper';
 import ButtonCard from './shared/ButtonCard';
 import WalletIcon from './shared/WalletIcon';
 import faqs from './data/faqs';
+import { addMkrAndEthBalance } from './utils';
 
 import ChooseMKRBalanceStep from './ChooseMKRBalanceStep';
 
@@ -92,7 +93,8 @@ const ConfirmWalletStep = ({
                 </Link>
               </Box>
               <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
-                {coldWallet.eth || '0'} ETH, {coldWallet.mkr || '0'} MKR
+                {coldWallet.ethBalance || '0'} ETH,{' '}
+                {coldWallet.mkrBalance || '0'} MKR
               </Box>
               <Box
                 borderRadius="4px"
@@ -137,7 +139,7 @@ const ConfirmWalletStep = ({
                 </Link>
               </Box>
               <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
-                {hotWallet.eth || 0} ETH, {hotWallet.mkr || 0} MKR
+                {hotWallet.ethBalance || 0} ETH, {hotWallet.mkrBalance || 0} MKR
               </Box>
               <Box
                 borderRadius="4px"
@@ -200,8 +202,13 @@ class ChooseColdWallet extends React.Component {
         accountType,
         options
       );
+      const accountsWithBalances = await Promise.all(
+        accounts.map(async account => {
+          return await addMkrAndEthBalance(account);
+        })
+      );
       this.setState({
-        availableAccounts: accounts,
+        availableAccounts: accountsWithBalances,
         connecting: false
       });
     } catch (err) {

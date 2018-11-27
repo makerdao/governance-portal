@@ -11,6 +11,7 @@ import {
 } from '@makerdao/ui-components';
 
 import faqs from './data/faqs';
+import { addMkrAndEthBalance } from './utils';
 import { AccountTypes } from '../../utils/constants';
 
 import LedgerStep from './LedgerStep';
@@ -92,7 +93,7 @@ const ConfirmWalletStep = ({
     wallet address below. It will only be able to vote with your MKR."
       />
       <Card p="m">
-        {!account && connecting && (
+        {connecting && (
           <Flex justifyContent="center" alignItems="center">
             <Box style={{ opacity: '0.6' }}>
               <Loader />
@@ -113,7 +114,7 @@ const ConfirmWalletStep = ({
             wallet is connected and try again.
           </Flex>
         )}
-        {account && (
+        {!connecting && account && (
           <Grid
             alignItems="center"
             gridTemplateColumns={['auto 1fr auto', 'auto 1fr 1fr 1fr auto']}
@@ -135,10 +136,10 @@ const ConfirmWalletStep = ({
               </Link>
             </Box>
             <Box gridRow={['2', '1']} gridColumn={['1/2', '3']}>
-              {(account && account.mkr) || '0'} MKR
+              {(account && account.mkrBalance) || '0'} MKR
             </Box>
             <Box gridRow={['2', '1']} gridColumn={['2/4', '4']}>
-              {(account && account.eth) || '0'} ETH
+              {(account && account.ethBalance) || '0'} ETH
             </Box>
             <Box
               borderRadius="4px"
@@ -196,17 +197,17 @@ class ChooseHotWallet extends React.Component {
       connecting: true
     });
 
-    const checkMetamaskWallet = () => {
+    const checkMetamaskWallet = async () => {
       const metamaskAccount = this.props.allAccounts.find(
         acct => acct.type === 'provider' || acct.type === 'browser'
       );
       if (!metamaskAccount) {
         setTimeout(checkMetamaskWallet, 500);
       } else {
+        this.props.setHotWallet(await addMkrAndEthBalance(metamaskAccount));
         this.setState({
           connecting: false
         });
-        this.props.setHotWallet(metamaskAccount);
       }
     };
     setTimeout(checkMetamaskWallet, 0);
@@ -224,11 +225,18 @@ class ChooseHotWallet extends React.Component {
         accountType,
         options
       );
+      const accountsWithBalances = await Promise.all(
+        accounts.map(async account => {
+          return await addMkrAndEthBalance(account);
+        })
+      );
+
       this.setState({
-        availableAccounts: accounts,
+        availableAccounts: accountsWithBalances,
         connecting: false
       });
     } catch (err) {
+      console.error(err);
       this.setState({
         error: true,
         connecting: false

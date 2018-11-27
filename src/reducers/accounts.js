@@ -72,16 +72,6 @@ export function activeCanVote(state) {
 
 // Actions ------------------------------------------------
 
-// Action helpers
-
-const getInfoFromAddress = async address => {
-  return {
-    address,
-    eth: round(await toNum(window.maker.getToken(ETH).balanceOf(address)), 3),
-    mkr: round(await toNum(window.maker.getToken(MKR).balanceOf(address)), 3)
-  };
-};
-
 export const addAccounts = accounts => async dispatch => {
   dispatch({ type: FETCHING_ACCOUNT_DATA, payload: true });
 
@@ -200,12 +190,8 @@ export const connectHardwareAccounts = (
   return new Promise((resolve, reject) => {
     const onChoose = async (addresses, callback) => {
       try {
-        const accounts = await Promise.all(
-          (addresses || []).map(getInfoFromAddress)
-        );
-
-        const accountsWithType = accounts.map(account => ({
-          ...account,
+        const accountsWithType = addresses.map(address => ({
+          address,
           type: accountType
         }));
 

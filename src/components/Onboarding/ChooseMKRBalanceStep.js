@@ -101,8 +101,8 @@ class ChooseMKRBalance extends React.Component {
                             <Address full={account.address} shorten />
                           </Link>
                         </td>
-                        <td>{account.mkr} MKR</td>
-                        <td>{account.eth} ETH</td>
+                        <td>{account.mkrBalance || '0'} MKR</td>
+                        <td>{account.ethBalance || '0'} ETH</td>
                       </tr>
                     );
                   })}
