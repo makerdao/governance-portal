@@ -45,6 +45,7 @@ export function getWinningProp(state, topicKey) {
       approvals > 0
         ? round(div(mul(approvals, 100), state.approvals.total), 2)
         : 0;
+    console.log('proposal reducer percentage', percentage);
     return {
       ...winner,
       end_approvals: approvals,
@@ -105,7 +106,7 @@ const fetchTopics = async network => {
 // Actions ------------------------------------------------
 
 function extractProposals(topics, network) {
-  return topics.reduce((acc, topic) => {
+  const extractedProposals = topics.reduce((acc, topic) => {
     const proposals = topic.proposals.map(({ source, ...otherProps }) => ({
       ...otherProps,
       source: source.startsWith('{') ? JSON.parse(source)[network] : source,
@@ -115,6 +116,8 @@ function extractProposals(topics, network) {
     }));
     return acc.concat(proposals);
   }, []);
+  console.log('extractedProposals', extractedProposals);
+  return extractedProposals;
 }
 
 export const proposalsInit = network => async dispatch => {
@@ -126,6 +129,8 @@ export const proposalsInit = network => async dispatch => {
       times: 4,
       delay: 1
     });
+
+    console.log(topics);
 
     dispatch({
       type: PROPOSALS_SUCCESS,

@@ -63,9 +63,14 @@ export const addAccounts = accounts => async dispatch => {
 
   for (let account of accounts) {
     const mkrToken = window.maker.getToken(MKR);
+    console.log(
+      'about to call getVoteProxy with this address:',
+      account.address
+    );
     const { hasProxy, voteProxy } = await window.maker
       .service('voteProxy')
       .getVoteProxy(account.address);
+    console.log(hasProxy);
 
     let currProposal = Promise.resolve('');
     let proxyRole = '';
@@ -153,9 +158,11 @@ export const setActiveAccount = (address, isMetamask) => async (
       a => a.address.toLowerCase() === address.toLowerCase()
     )
   ) {
+    console.log('adding a new account because we havent seen it');
     await window.maker.addAccount({ type: AccountTypes.METAMASK });
     await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
   }
+  console.log('should run useAccountWithAddress()', address);
   window.maker.useAccountWithAddress(address);
   return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
 };

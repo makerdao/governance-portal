@@ -26,6 +26,7 @@ export const initApprovalsFetch = () => (dispatch, getState) => {
     )
   )
     .then(approvals => {
+      console.log('FETCHED APPROVALS', approvals);
       let total = 0;
       const approvalsObj = {};
       for (let approval of approvals) {

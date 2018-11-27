@@ -177,6 +177,7 @@ function Proposal({
   if (isNil(proposal) || isEmpty(proposal)) return <NotFound />;
   const { active, topicKey } = proposal;
   const supporters = voteState[proposal.source.toLowerCase()] || null;
+  console.log(supporters);
   return (
     <RiseUp>
       <WhiteBackground>
@@ -221,8 +222,8 @@ function Proposal({
                 }
               >
                 {eq(votingFor, proposal.source)
-                  ? 'Withdraw vote'
-                  : 'Vote for this Proposal'}
+                  ? 'Withdraw vote P'
+                  : 'Vote for this Proposal P'}
               </Button>
             </div>
           ) : (

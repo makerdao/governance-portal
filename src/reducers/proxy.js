@@ -8,6 +8,7 @@ import {
   addAccounts,
   setActiveAccount
 } from './accounts';
+import { initApprovalsFetch } from './approvals';
 import { AccountTypes } from '../utils/constants';
 import { modalClose } from './modal';
 import { addToastWithTimeout, ToastTypes } from './toasts';
@@ -196,9 +197,11 @@ export const lock = value => async (dispatch, getState) => {
     successPayload: value,
     acctType: account.type
   });
+  await lock;
+  dispatch(initApprovalsFetch());
 };
 
-export const free = value => (dispatch, getState) => {
+export const free = value => async (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
   const account = getAccount(getState(), window.maker.currentAddress());
 
@@ -214,9 +217,11 @@ export const free = value => (dispatch, getState) => {
     successPayload: value,
     acctType: account.type
   });
+  await free;
+  dispatch(initApprovalsFetch());
 };
 
-export const freeAll = value => (dispatch, getState) => {
+export const freeAll = value => async (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
   const account = getAccount(getState(), window.maker.currentAddress());
 
@@ -232,6 +237,8 @@ export const freeAll = value => (dispatch, getState) => {
     successPayload: value,
     acctType: account.type
   });
+  await freeAll; //TODO: why is freeAll not working though free and lock are?
+  dispatch(initApprovalsFetch());
 };
 
 export const breakLink = () => async dispatch => {
@@ -275,6 +282,7 @@ export const refreshAccountData = () => (dispatch, getState) => {
     const accounts = otherAccount
       ? [activeAccount, otherAccount]
       : [activeAccount];
+    console.log('refreshAccountData has proxy, add accounts', accounts);
     dispatch(addAccounts(accounts));
   } else {
     return window.location.reload();
