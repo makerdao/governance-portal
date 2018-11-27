@@ -237,7 +237,7 @@ export const freeAll = value => async (dispatch, getState) => {
     successPayload: value,
     acctType: account.type
   });
-  await freeAll; //TODO: why is freeAll not working though free and lock are?
+  await freeAll;
   dispatch(initApprovalsFetch());
 };
 
@@ -282,7 +282,6 @@ export const refreshAccountData = () => (dispatch, getState) => {
     const accounts = otherAccount
       ? [activeAccount, otherAccount]
       : [activeAccount];
-    console.log('refreshAccountData has proxy, add accounts', accounts);
     dispatch(addAccounts(accounts));
   } else {
     return window.location.reload();

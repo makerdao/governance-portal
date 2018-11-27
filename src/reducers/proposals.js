@@ -45,7 +45,6 @@ export function getWinningProp(state, topicKey) {
       approvals > 0
         ? round(div(mul(approvals, 100), state.approvals.total), 2)
         : 0;
-    console.log('proposal reducer percentage', percentage);
     return {
       ...winner,
       end_approvals: approvals,
@@ -116,7 +115,6 @@ function extractProposals(topics, network) {
     }));
     return acc.concat(proposals);
   }, []);
-  console.log('extractedProposals', extractedProposals);
   return extractedProposals;
 }
 
@@ -129,8 +127,6 @@ export const proposalsInit = network => async dispatch => {
       times: 4,
       delay: 1
     });
-
-    console.log(topics);
 
     dispatch({
       type: PROPOSALS_SUCCESS,

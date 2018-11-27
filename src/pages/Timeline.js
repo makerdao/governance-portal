@@ -110,8 +110,8 @@ const Timeline = ({ modalOpen, proposals, canVote, fetching, votingFor }) => (
                     }
                   >
                     {eq(votingFor, proposal.source)
-                      ? 'Withdraw vote T'
-                      : 'Vote for this Proposal T'}
+                      ? 'Withdraw vote'
+                      : 'Vote for this Proposal'}
                   </Button>
                 </Fragment>
               ) : (

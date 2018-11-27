@@ -32,7 +32,6 @@ class Vote extends Component {
   // HANDLE ALL THE WAYS USERS COULD BE SILLY eg validate inputs
   render() {
     const { proposal } = this.props;
-    console.log('proposal in vote index', proposal);
     const { proxy, votingFor } = this.props.activeAccount;
     const alreadyVotingFor = eq(votingFor, proposal.address);
     switch (this.props.voteProgress) {
