@@ -8,9 +8,7 @@ import { ThemeProvider } from 'styled-components';
 import createStore from './store';
 import Router from './Routes';
 import createMaker from './chain/maker';
-import { updateAddress, init } from './reducers/metamask';
-import { addAccount } from './reducers/accounts';
-import { AccountTypes } from './utils/constants';
+import { init } from './reducers/metamask';
 
 import './global.css.js';
 import theme from './theme';
@@ -37,15 +35,6 @@ const maker = (window.maker = createMaker());
 // Metamask access or there's a network problem. in order to still show
 // read-only data, we will have to re-run Maker.create with an Infura preset.
 maker.authenticate().then(async () => {
-  // initialize the store with the Metamask account that the Maker instance
-  // has already added
-  store.dispatch(updateAddress(maker.currentAddress()));
-  await store.dispatch(
-    addAccount({
-      address: maker.currentAddress(),
-      type: AccountTypes.METAMASK
-    })
-  );
   store.dispatch(init(maker));
 });
 
