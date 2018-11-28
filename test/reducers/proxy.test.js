@@ -2,6 +2,7 @@ import { MKR } from '../../src/chain/maker';
 import * as reducer from '../../src/reducers/proxy';
 import * as sharedConstants from '../../src/reducers/sharedProxyConstants';
 import * as accounts from '../../src/reducers/accounts';
+import * as approvals from '../../src/reducers/approvals';
 import { AccountTypes } from '../../src/utils/constants';
 
 import configureMockStore from 'redux-mock-store';
@@ -17,6 +18,7 @@ const origWindow = {};
 const SET_ACTIVE_ACCOUNT = 'accounts/SET_ACTIVE_ACCOUNT';
 const FETCHING_ACCOUNT_DATA = 'accounts/FETCHING_ACCOUNT_DATA';
 const ADD_TOAST = 'toast/ADD_TOAST';
+const mockSuccessAction = { type: 'MOCK_SUCCESS_ACTION', payload: true };
 
 // Mock state setup
 const coldAddress = '0xf00bae';
@@ -57,6 +59,7 @@ const free = jest.fn();
 const freeAll = jest.fn();
 const breakLink = jest.fn();
 const approveUnlimited = jest.fn();
+approvals.initApprovalsFetch = jest.fn(() => mockSuccessAction);
 
 const listenSuccess = jest.fn((txObject, txState) => {
   txState.pending({ hash: testPendingHash });
@@ -145,6 +148,7 @@ describe('Proxy Reducer', () => {
   });
 
   beforeEach(() => {
+    jest.clearAllMocks();
     store = mockStore(initialState);
   });
 
@@ -317,7 +321,8 @@ describe('Proxy Reducer', () => {
       await reducer.lock(mockValue)(store.dispatch, store.getState);
 
       expect(lock).toBeCalledTimes(1);
-      expect(store.getActions().length).toBe(3);
+      expect(approvals.initApprovalsFetch).toBeCalledTimes(1);
+      expect(store.getActions().length).toBe(4);
       expect(store.getActions()[0]).toEqual({
         type: reducer.SEND_MKR_TO_PROXY_REQUEST,
         payload: mockValue
@@ -330,6 +335,7 @@ describe('Proxy Reducer', () => {
         type: sharedConstants.SEND_MKR_TO_PROXY_SUCCESS,
         payload: mockValue
       });
+      expect(store.getActions()[3]).toEqual(mockSuccessAction);
     });
 
     test('Lock should dispatch FAILURE action when TxMgr calls error', async () => {
@@ -371,7 +377,8 @@ describe('Proxy Reducer', () => {
       reducer.free(mockValue)(store.dispatch, store.getState);
 
       expect(free).toBeCalledTimes(1);
-      expect(store.getActions().length).toBe(3);
+      expect(approvals.initApprovalsFetch).toBeCalledTimes(1);
+      expect(store.getActions().length).toBe(4);
       expect(store.getActions()[0]).toEqual({
         type: reducer.WITHDRAW_MKR_REQUEST,
         payload: mockValue
@@ -384,6 +391,7 @@ describe('Proxy Reducer', () => {
         type: sharedConstants.WITHDRAW_MKR_SUCCESS,
         payload: mockValue
       });
+      expect(store.getActions()[3]).toEqual(mockSuccessAction);
     });
 
     test('Free should dispatch FAILURE action when TxMgr calls error', () => {
@@ -425,7 +433,8 @@ describe('Proxy Reducer', () => {
       reducer.freeAll(mockValue)(store.dispatch, store.getState);
 
       expect(freeAll).toBeCalledTimes(1);
-      expect(store.getActions().length).toBe(3);
+      expect(approvals.initApprovalsFetch).toBeCalledTimes(1);
+      expect(store.getActions().length).toBe(4);
       expect(store.getActions()[0]).toEqual({
         type: reducer.WITHDRAW_ALL_MKR_REQUEST,
         payload: mockValue
@@ -438,6 +447,7 @@ describe('Proxy Reducer', () => {
         type: sharedConstants.WITHDRAW_ALL_MKR_SUCCESS,
         payload: mockValue
       });
+      expect(store.getActions()[3]).toEqual(mockSuccessAction);
     });
 
     test('Free All should dispatch FAILURE action when TxMgr calls error', () => {

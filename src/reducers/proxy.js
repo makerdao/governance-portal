@@ -8,6 +8,7 @@ import {
   addAccounts,
   setActiveAccount
 } from './accounts';
+import { initApprovalsFetch } from './approvals';
 import { AccountTypes } from '../utils/constants';
 import { modalClose } from './modal';
 import { addToastWithTimeout, ToastTypes } from './toasts';
@@ -197,7 +198,8 @@ export const lock = value => async (dispatch, getState) => {
     dispatch,
     txObject: lock,
     successPayload: value,
-    acctType: account.type
+    acctType: account.type,
+    successAction: () => dispatch(initApprovalsFetch())
   });
 };
 
@@ -215,7 +217,8 @@ export const free = value => (dispatch, getState) => {
     dispatch,
     txObject: free,
     successPayload: value,
-    acctType: account.type
+    acctType: account.type,
+    successAction: () => dispatch(initApprovalsFetch())
   });
 };
 
@@ -233,7 +236,8 @@ export const freeAll = value => (dispatch, getState) => {
     dispatch,
     txObject: freeAll,
     successPayload: value,
-    acctType: account.type
+    acctType: account.type,
+    successAction: () => dispatch(initApprovalsFetch())
   });
 };
 
