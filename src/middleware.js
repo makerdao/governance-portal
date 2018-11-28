@@ -1,6 +1,6 @@
 import Raven from 'raven-js';
 
-import { goToStep, refreshAccountDataLink } from './reducers/proxy';
+import { goToStep } from './reducers/proxy';
 
 export const localLinkProgress = store => next => action => {
   if (action.type === 'proxy/INITIATE_LINK_SUCCESS') {
@@ -28,13 +28,6 @@ export const localLinkProgress = store => next => action => {
   ) {
     store.dispatch(goToStep('midLink'));
   }
-  return next(action);
-};
-
-export const updateAccountsAfterLink = store => next => action => {
-  // if (action.type === 'proxy/APPROVE_LINK_SUCCESS') {
-  //   store.dispatch(refreshAccountDataLink());
-  // }
   return next(action);
 };
 

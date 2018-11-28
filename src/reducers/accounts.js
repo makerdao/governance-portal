@@ -2,7 +2,6 @@ import uniqWith from 'ramda/src/uniqWith';
 import concat from 'ramda/src/concat';
 import pipe from 'ramda/src/pipe';
 import differenceWith from 'ramda/src/differenceWith';
-import round from 'lodash.round';
 
 import { createReducer } from '../utils/redux';
 import { AccountTypes } from '../utils/constants';
@@ -13,8 +12,9 @@ import {
   WITHDRAW_ALL_MKR_SUCCESS,
   INITIATE_LINK_REQUEST
 } from './sharedProxyConstants';
+import { setupOnboardingForAccount } from './onboarding';
 import { MAX_UINT_ETH_BN } from '../utils/ethereum';
-import { ETH, MKR } from '../chain/maker';
+import { MKR } from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -165,6 +165,11 @@ export const setActiveAccount = (address, isMetamask) => async (
     window.maker.useAccountWithAddress(address);
     await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
   }
+  const a = getState().accounts.allAccounts.find(
+    a => a.address.toLowerCase() === address.toLowerCase()
+  );
+  console.log(a);
+  dispatch(setupOnboardingForAccount(a));
   return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
 };
 
@@ -222,7 +227,6 @@ export const connectHardwareAccounts = (
         choose: onChoose
       })
       .then(account => {
-        setActiveAccount(account.address);
         window.maker.useAccountWithAddress(account.address);
       })
       .catch(err => {
@@ -441,8 +445,7 @@ const accounts = createReducer(initialState, {
 
     return {
       ...state,
-      allAccounts: uniqConcat([account], state.allAccounts),
-      activeAccount: account.address
+      allAccounts: uniqConcat([account], state.allAccounts)
     };
   },
   [SET_ACTIVE_ACCOUNT]: (state, { payload: address }) => ({

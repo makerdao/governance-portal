@@ -1,14 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  Grid,
-  Card,
-  Box,
-  Button,
-  Link,
-  Address,
-  Flex
-} from '@makerdao/ui-components';
+import { Grid, Card, Box, Button, Flex } from '@makerdao/ui-components';
 
 import faqs from './data/faqs';
 import { addMkrAndEthBalance } from './utils';
@@ -21,6 +13,8 @@ import Stepper from './shared/Stepper';
 import ButtonCard from './shared/ButtonCard';
 import WalletIcon from './shared/WalletIcon';
 import Header from './shared/Header';
+import AccountInfo from './shared/AccountInfo';
+import { HotWalletTag } from './shared/Tags';
 
 import Loader from '../Loader';
 
@@ -85,75 +79,43 @@ const ConfirmWalletStep = ({
   onCancel
 }) => {
   return (
-    <Grid gridRowGap="m" alignContent="start">
+    <Grid gridRowGap="l" alignContent="start">
       <Header
         mt={[0, 0, 0, 'l']}
         title="Confirm voting wallet"
         subtitle="By confirming your voting wallet, you will be selecting the hot
     wallet address below. It will only be able to vote with your MKR."
       />
-      <Card p="m">
+      <div>
         {connecting && (
-          <Flex justifyContent="center" alignItems="center">
-            <Box style={{ opacity: '0.6' }}>
-              <Loader />
-            </Box>
-            <Box ml="s" color="#868997">
-              Waiting for approval to access your account
-            </Box>
-          </Flex>
+          <Card p="m">
+            <Flex justifyContent="center" alignItems="center">
+              <Box style={{ opacity: '0.6' }}>
+                <Loader />
+              </Box>
+              <Box ml="s" color="#868997">
+                Waiting for approval to access your account
+              </Box>
+            </Flex>
+          </Card>
         )}
         {!account && !connecting && (
-          <Flex
-            justifyContent="center"
-            alignItems="center"
-            opacity="0.6"
-            textAlign="center"
-          >
-            There was an error connecting your wallet. Please ensure that your
-            wallet is connected and try again.
-          </Flex>
+          <Card p="m">
+            <Flex
+              justifyContent="center"
+              alignItems="center"
+              opacity="0.6"
+              textAlign="center"
+            >
+              There was an error connecting your wallet. Please ensure that your
+              wallet is connected and try again.
+            </Flex>
+          </Card>
         )}
         {!connecting && account && (
-          <Grid
-            alignItems="center"
-            gridTemplateColumns={['auto 1fr auto', 'auto 1fr 1fr 1fr auto']}
-            gridColumnGap="s"
-          >
-            <Box>
-              <WalletIcon
-                provider={account.type}
-                style={{ maxWidth: '20px' }}
-              />
-            </Box>
-            <Box>
-              <Link fontWeight="semibold">
-                <Address
-                  show={active}
-                  full={account && account.address}
-                  shorten
-                />
-              </Link>
-            </Box>
-            <Box gridRow={['2', '1']} gridColumn={['1/2', '3']}>
-              {(account && account.mkrBalance) || '0'} MKR
-            </Box>
-            <Box gridRow={['2', '1']} gridColumn={['2/4', '4']}>
-              {(account && account.ethBalance) || '0'} ETH
-            </Box>
-            <Box
-              borderRadius="4px"
-              color="#E45432"
-              bg="#FFE2D9"
-              fontSize="1.2rem"
-              fontWeight="bold"
-              px="xs"
-            >
-              HOT WALLET
-            </Box>
-          </Grid>
+          <AccountInfo account={account} tag={<HotWalletTag />} py="m" />
         )}
-      </Card>
+      </div>
       <Grid
         gridRowGap="xs"
         gridColumnGap="s"
@@ -161,10 +123,10 @@ const ConfirmWalletStep = ({
         justifySelf={['stretch', 'center']}
       >
         <Button variant="secondary-outline" onClick={onCancel}>
-          Change Address
+          Change wallet
         </Button>
-        <Button disabled={!account} onClick={onConfirm}>
-          Confirm Voting Wallet
+        <Button disabled={!account || connecting} onClick={onConfirm}>
+          Confirm voting wallet
         </Button>
       </Grid>
     </Grid>

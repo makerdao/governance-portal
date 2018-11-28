@@ -2,12 +2,7 @@ import ReactGA from 'react-ga';
 
 import { createReducer } from '../utils/redux';
 import { parseError } from '../utils/misc';
-import {
-  getActiveAccount,
-  getAccount,
-  addAccounts,
-  setActiveAccount
-} from './accounts';
+import { getActiveAccount, getAccount, addAccounts } from './accounts';
 import { AccountTypes, TransactionStatus } from '../utils/constants';
 import { modalClose } from './modal';
 import { addToastWithTimeout, ToastTypes } from './toasts';
@@ -71,7 +66,7 @@ export const clear = () => ({ type: CLEAR });
 
 export const goToStep = step => ({ type: GO_TO_STEP, payload: step });
 
-const handleTx = async ({
+const handleTx = ({
   prefix,
   dispatch,
   txObject,
@@ -80,39 +75,44 @@ const handleTx = async ({
 }) => {
   const txMgr = window.maker.service('transactionManager');
   console.log('handling transaction');
-  txMgr.listen(txObject, {
-    pending: tx => {
-      console.log('pending');
-      console.log(tx);
-      dispatch({
-        type: `proxy/${prefix}_SENT`,
-        payload: { txHash: tx.hash }
-      });
-    },
-    mined: tx => {
-      console.log('mined');
-      console.log(tx);
-      dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
-      ReactGA.event({
-        category: `${prefix} success`,
-        action: prefix,
-        label: `wallet type ${acctType || 'unknown'}`
-      });
-      // console.log('mined:', tx);
-    },
-    // TODO: error handle and get descriptive failure messages
-    error: (tx, err) => {
-      console.log('err');
-      console.log(err);
-      // console.error(err.message);
-      dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
-      dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
-      ReactGA.event({
-        category: 'User notification error',
-        action: 'proxy',
-        label: parseError(err)
-      });
-    }
+
+  return new Promise((resolve, reject) => {
+    txMgr.listen(txObject, {
+      pending: tx => {
+        console.log('pending');
+        console.log(tx);
+        dispatch({
+          type: `proxy/${prefix}_SENT`,
+          payload: { txHash: tx.hash }
+        });
+      },
+      mined: tx => {
+        console.log('mined');
+        console.log(tx);
+        dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
+        ReactGA.event({
+          category: `${prefix} success`,
+          action: prefix,
+          label: `wallet type ${acctType || 'unknown'}`
+        });
+        resolve(successPayload);
+        // console.log('mined:', tx);
+      },
+      // TODO: error handle and get descriptive failure messages
+      error: (tx, err) => {
+        console.log('err');
+        console.log(err);
+        // console.error(err.message);
+        dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
+        dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+        ReactGA.event({
+          category: 'User notification error',
+          action: 'proxy',
+          label: parseError(err)
+        });
+        reject(err);
+      }
+    });
   });
 };
 
@@ -137,9 +137,6 @@ function useCorrectAccount(requiredAccount, dispatch, options = {}) {
     }
     window.maker.useAccountWithAddress(address);
   }
-
-  // this is just so that we can see the change in the UI
-  dispatch(setActiveAccount(address));
 
   return true;
 }
@@ -177,7 +174,7 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
   });
 };
 
-export const approveLink = ({ hot, cold }) => (dispatch, getState) => {
+export const approveLink = ({ hot, cold }) => async (dispatch, getState) => {
   if (!useCorrectAccount(hot, dispatch, { label: 'hot' })) return;
   const approveLink = window.maker
     .service('voteProxyFactory')
@@ -185,16 +182,14 @@ export const approveLink = ({ hot, cold }) => (dispatch, getState) => {
 
   dispatch({ type: APPROVE_LINK_REQUEST });
 
-  handleTx({
+  await handleTx({
     prefix: 'APPROVE_LINK',
     dispatch,
     txObject: approveLink,
-    successPayload: {
-      hotAddress: hot.address,
-      coldAddress: cold.address
-    },
     acctType: hot.type
   });
+
+  dispatch(addAccounts([hot, cold]));
 };
 
 export const lock = value => async (dispatch, getState) => {
@@ -272,17 +267,7 @@ export const smartStepSkip = () => (dispatch, getState) => {
   return dispatch(modalClose());
 };
 
-export const refreshAccountDataLink = () => (dispatch, getState) => {
-  const hotAccount = getAccount(getState(), getState().proxy.hotAddress);
-  const coldAccount = getAccount(getState(), getState().proxy.coldAddress);
-  if (hotAccount === undefined) return window.location.reload();
-  const accounts = coldAccount ? [hotAccount, coldAccount] : [hotAccount];
-  if (coldAccount) dispatch(setActiveAccount(coldAccount.address));
-  // this will replace duplicate accounts in the store
-  dispatch(addAccounts(accounts));
-};
-
-export const refreshAccountData = () => (dispatch, getState) => {
+const refreshAccountData = () => (dispatch, getState) => {
   const state = getState();
   const activeAccount = getActiveAccount(state);
   const { hasProxy, proxy } = activeAccount;
@@ -336,9 +321,7 @@ const initialState = {
   setupProgress: 'intro',
   sendMkrAmount: 0,
   withdrawMkrAmount: 0,
-  linkGas: 0,
-  hotAddress: '',
-  coldAddress: ''
+  linkGas: 0
 };
 
 // const withExisting = { ...initialState, ...existingState };
@@ -347,7 +330,8 @@ const proxy = createReducer(initialState, {
   // Initiate ---------------------------------------
   [INITIATE_LINK_REQUEST]: (state, { payload }) => ({
     ...state,
-    setupProgress: 'initiate'
+    setupProgress: 'initiate',
+    initiateLinkTxStatus: TransactionStatus.NOT_STARTED
   }),
   [INITIATE_LINK_SENT]: (state, { payload }) => ({
     ...state,
@@ -369,7 +353,8 @@ const proxy = createReducer(initialState, {
   // Approve ----------------------------------------
   [APPROVE_LINK_REQUEST]: (state, { payload }) => ({
     ...state,
-    setupProgress: 'approve'
+    setupProgress: 'approve',
+    approveLinkTxStatus: TransactionStatus.NOT_STARTED
   }),
   [APPROVE_LINK_SENT]: (state, { payload }) => ({
     ...state,
@@ -396,7 +381,11 @@ const proxy = createReducer(initialState, {
       return { ...state, setupProgress: 'lock', sendMkrAmount: value };
     }
 
-    return { ...state, sendMkrAmount: value };
+    return {
+      ...state,
+      sendMkrTxStatus: TransactionStatus.NOT_STARTED,
+      sendMkrAmount: value
+    };
   },
   [SEND_MKR_TO_PROXY_SENT]: (state, { payload }) => ({
     ...state,
@@ -424,7 +413,8 @@ const proxy = createReducer(initialState, {
   // MKR Approve Proxy ------------------------------
   [MKR_APPROVE_REQUEST]: state => ({
     ...state,
-    mkrApproveInitiated: true
+    mkrApproveInitiated: true,
+    mkrApproveProxyTxStatus: TransactionStatus.NOT_STARTED
   }),
   [MKR_APPROVE_SENT]: (state, { payload }) => ({
     ...state,

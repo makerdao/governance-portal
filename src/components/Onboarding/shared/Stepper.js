@@ -20,7 +20,7 @@ const Stepper = ({ step, children }) => {
   return (
     <React.Fragment>
       {React.Children.map(children, (child, index) => {
-        return <Step active={step === index}>{child}</Step>;
+        return <Step active={step === index}>{step === index && child}</Step>;
       })}
     </React.Fragment>
   );

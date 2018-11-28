@@ -31,5 +31,37 @@ export default {
       body:
         'No. You can only link one cold wallet address and its corresponding MKR balance. Choose the address with the highest MKR balance to have the most impact.'
     }
+  ],
+  approveLink: [
+    {
+      title: 'Why do I have to sign this transaction?',
+      body:
+        'By signing this transaction you will be proving that you control your cold wallet.'
+    }
+  ],
+  grantHotWalletPermissions: [
+    {
+      title: 'What am I granting permission to?',
+      body:
+        'By granting permissions in this transaction, you are approving that you will be able to Lock MKR in your secure voting contract. You are not relinquishing control of your MKR and can withdraw it at anytime.'
+    }
+  ],
+  confirmLockMKR: [
+    {
+      title: 'Why is my voting contract address hidden?',
+      body: 'Lorem ipsum dolor sit amet, consect'
+    }
+  ],
+  lockMKR: [
+    {
+      title: 'Who controls my MKR when it is Locked?',
+      body:
+        'You do. Locking MKR deposits your MKR to your secure voting contract but you still control it and can withdraw at anytime.'
+    },
+    {
+      title: 'How long does it take to withdraw my MKR?',
+      body:
+        'Depending on the network speed. Withdrawing your MKR usually takes less than 5 minutes. '
+    }
   ]
 };

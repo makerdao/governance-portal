@@ -78,8 +78,14 @@ const Onboarding = ({
         />
 
         <ChooseHotWallet onComplete={onboardingNextStep} />
-        <ChooseColdWallet onComplete={onboardingNextStep} />
-        <InitiateLink onComplete={onboardingNextStep} />
+        <ChooseColdWallet
+          onComplete={onboardingNextStep}
+          onCancel={onboardingPrevStep}
+        />
+        <InitiateLink
+          onComplete={onboardingNextStep}
+          onCancel={onboardingPrevStep}
+        />
         <LockMKR onComplete={onboardingNextStep} />
       </OnboardingFullScreen>
     </Background>

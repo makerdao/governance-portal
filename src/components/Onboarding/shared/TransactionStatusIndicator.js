@@ -20,64 +20,63 @@ const Spinner = styled.div`
   width: 100%;
 `;
 
-const a = (
-  <Box height="50%" width="100%" style={{ overflow: 'hidden' }}>
-    <Box
-      borderRadius="100% 100% 0 0"
-      height="200%"
-      width="100%"
-      alignSelf="start"
-      justifySelf="start"
-      bg="pink"
-    />
-  </Box>
-);
+const SpinnerBar = styled(Box)`
+  border: 3px solid white;
+  opacity: 0;
+  transition: opacity 0.2s;
+
+  ${props =>
+    props.show &&
+    `
+    opacity: 1;
+  `}
+`;
 
 const TransactionStatusIndicator = ({ provider, status, tx, ...props }) => {
   return (
     <Grid alignItems="center" justifyItems="center" {...props}>
       <Flex gridArea="1 / 2 / 1 / 2" height="155px" width="155px" zIndex="1">
         {status === TransactionStatus.NOT_STARTED && (
-          <Box
+          <SpinnerBar
             borderRadius="50%"
             height="100%"
             width="100%"
             bg="white"
-            style={{ border: '3px solid white ' }}
+            show={status === TransactionStatus.NOT_STARTED}
           />
         )}
 
         {status === TransactionStatus.PENDING && (
           <Spinner>
-            <Box
+            <SpinnerBar
               borderRadius="100% 0 0 0"
               height="50%"
               width="50%"
               alignSelf="start"
               justifySelf="start"
               bg="makerTeal"
-              style={{ border: '3px solid white ' }}
+              show={status === TransactionStatus.PENDING}
             />
           </Spinner>
         )}
 
         {status === TransactionStatus.MINED && (
-          <Box
+          <SpinnerBar
             borderRadius="50%"
             height="100%"
             width="100%"
             bg="makerTeal"
-            style={{ border: '3px solid white ' }}
+            show={status === TransactionStatus.MINED}
           />
         )}
 
         {status === TransactionStatus.ERROR && (
-          <Box
+          <SpinnerBar
             borderRadius="50%"
             height="100%"
             width="100%"
             bg="#F35833"
-            style={{ border: '3px solid white ' }}
+            show={status === TransactionStatus.ERROR}
           />
         )}
       </Flex>

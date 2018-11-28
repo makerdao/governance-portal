@@ -1,21 +1,25 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Box, Grid, Button, Flex } from '@makerdao/ui-components';
+import { Box, Grid, Flex, Button } from '@makerdao/ui-components';
 
 import Sidebar from './shared/Sidebar';
 import Stepper from './shared/Stepper';
 import ButtonCard from './shared/ButtonCard';
 import Header from './shared/Header';
-import TransactionStatusIndicator from './shared/TransactionStatusIndicator';
+import SignTransactionStep from './shared/SignTransactionStep';
+import faqs from './data/faqs';
 
-import { AccountTypes, TransactionStatus } from '../../utils/constants';
+import { AccountTypes } from '../../utils/constants';
 import {
+  breakLink,
   initiateLink,
   approveLink,
   mkrApproveProxy
 } from '../../reducers/proxy';
 
-const ChooseTransactionPriority = ({ onChoose }) => {
+import { getAccount } from '../../reducers/accounts';
+
+const ChooseTransactionPriority = ({ onChoose, onCancel }) => {
   return (
     <div>
       <Grid gridRowGap="m" alignContent="start">
@@ -47,6 +51,11 @@ const ChooseTransactionPriority = ({ onChoose }) => {
           buttonText="Select"
           onNext={onChoose}
         />
+        <Flex justifyContent="flex-start">
+          <Button variant="secondary-outline" onClick={onCancel}>
+            Change cold wallet
+          </Button>
+        </Flex>
       </Grid>
     </div>
   );
@@ -68,54 +77,36 @@ const nicelyFormatWalletProvider = provider => {
   }
 };
 
-const SignTransaction = ({
-  walletProvider,
-  title,
-  subtitle,
-  status,
-  tx,
-  onNext,
-  onCancel
-}) => {
-  return (
-    <Grid gridRowGap="l" justifyItems="center">
-      <Header title={title} subtitle={subtitle} />
-      <TransactionStatusIndicator
-        provider={walletProvider}
-        status={status}
-        tx={tx}
-      />
-      <Flex justifyContent="center">
-        <Button variant="secondary-outline" onClick={onCancel} mr="s">
-          Cancel
-        </Button>
-        <Button
-          disabled={
-            status !== TransactionStatus.MINED &&
-            status !== TransactionStatus.CONFIRMED
-          }
-          onClick={onNext}
-        >
-          Next
-        </Button>
-      </Flex>
-    </Grid>
-  );
-};
-
 class InitiateLink extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      step: 3
+      step: 0,
+      faqs: []
     };
   }
 
   toChooseTransactionPriority = () => {
     this.setState({
-      step: 0
+      step: 0,
+      faqs: []
     });
+  };
+
+  onTransactionPriorityChosen = () => {
+    if (
+      this.props.coldWallet.hasProxy &&
+      this.props.coldWallet.proxy.hasInfMkrApproval
+    ) {
+      this.props.onComplete();
+    } else if (
+      this.props.coldWallet.hasProxy &&
+      !this.props.coldWallet.proxy.hasInfMkrApproval
+    ) {
+      this.toGrantPermissions();
+    }
+    this.toInitiateLink();
   };
 
   toInitiateLink = priority => {
@@ -124,7 +115,8 @@ class InitiateLink extends React.Component {
       cold: this.props.coldWallet
     });
     this.setState({
-      step: 1
+      step: 1,
+      faqs: []
     });
   };
 
@@ -134,14 +126,16 @@ class InitiateLink extends React.Component {
       cold: this.props.coldWallet
     });
     this.setState({
-      step: 2
+      step: 2,
+      faqs: faqs.approveLink
     });
   };
 
   toGrantPermissions = () => {
     this.props.mkrApproveProxy();
     this.setState({
-      step: 3
+      step: 3,
+      faqs: faqs.grantHotWalletPermissions
     });
   };
 
@@ -155,8 +149,11 @@ class InitiateLink extends React.Component {
         >
           <div>
             <Stepper step={this.state.step}>
-              <ChooseTransactionPriority onChoose={this.toInitiateLink} />
-              <SignTransaction
+              <ChooseTransactionPriority
+                onChoose={this.toInitiateLink}
+                onCancel={this.props.onCancel}
+              />
+              <SignTransactionStep
                 title={`Sign ${nicelyFormatWalletProvider(
                   this.props.coldWallet.type
                 )} transaction`}
@@ -167,10 +164,11 @@ class InitiateLink extends React.Component {
                 walletProvider={this.props.coldWallet.type}
                 status={this.props.initiateLinkTxStatus}
                 tx={this.props.initiateLinkTxHash}
-                onNext={this.toApproveLink}
+                onNext={this.onTransactionPriorityChosen}
+                onRetry={this.toInitiateLink}
                 onCancel={this.toChooseTransactionPriority}
               />
-              <SignTransaction
+              <SignTransactionStep
                 title={`Sign ${nicelyFormatWalletProvider(
                   this.props.hotWallet.type
                 )} transaction`}
@@ -181,17 +179,17 @@ class InitiateLink extends React.Component {
                 walletProvider={this.props.hotWallet.type}
                 status={this.props.approveLinkTxStatus}
                 tx={this.props.approveLinkTxHash}
+                onRetry={this.onTransactionPriorityChosen}
                 onNext={this.toGrantPermissions}
-                onCancel={this.toChooseTransactionPriority}
               />
-              <SignTransaction
+              <SignTransactionStep
                 title="Grant hot wallet permissions"
                 subtitle="Give your voting contract permission so that your hot wallet can vote with your MKR"
                 walletProvider={this.props.coldWallet.type}
                 status={this.props.mkrApproveProxyTxStatus}
                 tx={this.props.mkrApproveProxyTxHash}
+                onRetry={this.toGrantPermissions}
                 onNext={this.props.onComplete}
-                onCancel={this.toChooseTransactionPriority}
               />
             </Stepper>
           </div>
@@ -207,11 +205,13 @@ class InitiateLink extends React.Component {
 }
 
 export default connect(
-  ({ onboarding, proxy }) => ({
-    ...onboarding,
+  ({ proxy, onboarding, ...state }) => ({
+    hotWallet: getAccount(state, onboarding.hotWallet.address),
+    coldWallet: getAccount(state, onboarding.coldWallet.address),
     ...proxy
   }),
   {
+    breakLink,
     initiateLink,
     approveLink,
     mkrApproveProxy

@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Grid,
-  Card,
-  Box,
-  Button,
-  Link,
-  Address
-} from '@makerdao/ui-components';
+import { Grid, Box, Button, Flex } from '@makerdao/ui-components';
 import { connect } from 'react-redux';
 
 import { AccountTypes } from '../../utils/constants';
@@ -17,8 +10,10 @@ import Header from './shared/Header';
 import Stepper from './shared/Stepper';
 import ButtonCard from './shared/ButtonCard';
 import WalletIcon from './shared/WalletIcon';
+import AccountInfo from './shared/AccountInfo';
 import faqs from './data/faqs';
 import { addMkrAndEthBalance } from './utils';
+import { HotWalletTag, ColdWalletTag } from './shared/Tags';
 
 import ChooseMKRBalanceStep from './ChooseMKRBalanceStep';
 
@@ -31,7 +26,12 @@ import {
   addHardwareAccount
 } from '../../reducers/accounts';
 
-const SelectAWalletStep = ({ active, onTrezorSelected, onLedgerSelected }) => {
+const SelectAWalletStep = ({
+  active,
+  onTrezorSelected,
+  onLedgerSelected,
+  onCancel
+}) => {
   return (
     <Grid gridRowGap="m" alignContent="start">
       <Header
@@ -55,6 +55,11 @@ const SelectAWalletStep = ({ active, onTrezorSelected, onLedgerSelected }) => {
         buttonText="Connect"
         onNext={onLedgerSelected}
       />
+      <Flex justifyContent="right">
+        <Button variant="secondary-outline" onClick={onCancel}>
+          Change hot wallet
+        </Button>
+      </Flex>
     </Grid>
   );
 };
@@ -67,48 +72,14 @@ const ConfirmWalletStep = ({
   onCancel
 }) => {
   return (
-    <Grid gridRowGap="m" alignContent="start">
+    <Grid gridRowGap="l" alignContent="start">
       <Header
         mt={[0, 0, 0, 'l']}
         title="Link hot and cold wallet"
         subtitle="Linking your hot and cold wallet will enable you to vote while your MKR is still stored in your cold wallet."
       />
       <Grid>
-        {coldWallet && (
-          <Card p="m" gridColumn="1/3">
-            <Grid
-              alignItems="center"
-              gridTemplateColumns={['auto 1fr auto', 'auto 1fr 1fr auto']}
-              gridColumnGap="s"
-            >
-              <Box>
-                <WalletIcon
-                  provider={coldWallet.type}
-                  style={{ maxWidth: '32px', maxHeight: '32px' }}
-                />
-              </Box>
-              <Box>
-                <Link fontWeight="semibold">
-                  <Address show={active} full={coldWallet.address} shorten />
-                </Link>
-              </Box>
-              <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
-                {coldWallet.ethBalance || '0'} ETH,{' '}
-                {coldWallet.mkrBalance || '0'} MKR
-              </Box>
-              <Box
-                borderRadius="4px"
-                color="#447AFB"
-                bg="#EAF0FF"
-                fontSize="1.2rem"
-                fontWeight="bold"
-                px="xs"
-              >
-                COLD WALLET
-              </Box>
-            </Grid>
-          </Card>
-        )}
+        <AccountInfo account={coldWallet} tag={<ColdWalletTag />} />
         <Box gridColumn="1" mb="-7px" justifySelf="center">
           <img src={linkImg} alt="" />
         </Box>
@@ -120,40 +91,7 @@ const ConfirmWalletStep = ({
         >
           <p>You are linking the above cold wallet to the below hot wallet</p>
         </Box>
-        {hotWallet && (
-          <Card p="m" gridColumn="1/3">
-            <Grid
-              alignItems="center"
-              gridTemplateColumns={['auto 1fr auto', 'auto 1fr 1fr auto']}
-              gridColumnGap="s"
-            >
-              <Box>
-                <WalletIcon
-                  provider={hotWallet.type}
-                  style={{ maxWidth: '27px', maxHeight: '27px' }}
-                />
-              </Box>
-              <Box>
-                <Link fontWeight="semibold">
-                  <Address show={active} full={hotWallet.address} shorten />
-                </Link>
-              </Box>
-              <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
-                {hotWallet.ethBalance || 0} ETH, {hotWallet.mkrBalance || 0} MKR
-              </Box>
-              <Box
-                borderRadius="4px"
-                color="#E45432"
-                bg="#FFE2D9"
-                fontSize="1.2rem"
-                fontWeight="bold"
-                px="xs"
-              >
-                HOT WALLET
-              </Box>
-            </Grid>
-          </Card>
-        )}
+        <AccountInfo account={hotWallet} tag={<HotWalletTag />} />
       </Grid>
       <Grid
         gridRowGap="xs"
@@ -271,6 +209,7 @@ class ChooseColdWallet extends React.Component {
               <SelectAWalletStep
                 onTrezorSelected={this.onTrezorSelected}
                 onLedgerSelected={this.onLedgerSelected}
+                onCancel={this.props.onCancel}
               />
               <LedgerStep
                 onLedgerLive={this.onLedgerLiveSelected}
