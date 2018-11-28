@@ -105,7 +105,7 @@ const fetchTopics = async network => {
 // Actions ------------------------------------------------
 
 function extractProposals(topics, network) {
-  const extractedProposals = topics.reduce((acc, topic) => {
+  return topics.reduce((acc, topic) => {
     const proposals = topic.proposals.map(({ source, ...otherProps }) => ({
       ...otherProps,
       source: source.startsWith('{') ? JSON.parse(source)[network] : source,
@@ -115,7 +115,6 @@ function extractProposals(topics, network) {
     }));
     return acc.concat(proposals);
   }, []);
-  return extractedProposals;
 }
 
 export const proposalsInit = network => async dispatch => {

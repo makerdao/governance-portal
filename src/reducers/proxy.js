@@ -198,13 +198,12 @@ export const lock = value => async (dispatch, getState) => {
     dispatch,
     txObject: lock,
     successPayload: value,
-    acctType: account.type
+    acctType: account.type,
+    successAction: () => dispatch(initApprovalsFetch())
   });
-  await lock;
-  dispatch(initApprovalsFetch());
 };
 
-export const free = value => async (dispatch, getState) => {
+export const free = value => (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
   const account = getAccount(getState(), window.maker.currentAddress());
 
@@ -218,13 +217,12 @@ export const free = value => async (dispatch, getState) => {
     dispatch,
     txObject: free,
     successPayload: value,
-    acctType: account.type
+    acctType: account.type,
+    successAction: () => dispatch(initApprovalsFetch())
   });
-  await free;
-  dispatch(initApprovalsFetch());
 };
 
-export const freeAll = value => async (dispatch, getState) => {
+export const freeAll = value => (dispatch, getState) => {
   if (Number(value) === 0) return dispatch(smartStepSkip());
   const account = getAccount(getState(), window.maker.currentAddress());
 
@@ -238,10 +236,9 @@ export const freeAll = value => async (dispatch, getState) => {
     dispatch,
     txObject: freeAll,
     successPayload: value,
-    acctType: account.type
+    acctType: account.type,
+    successAction: () => dispatch(initApprovalsFetch())
   });
-  await freeAll;
-  dispatch(initApprovalsFetch());
 };
 
 export const breakLink = () => dispatch => {

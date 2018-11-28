@@ -19,12 +19,9 @@ const WithTally = ({
   let approvals = 0;
   candidate = candidate.toLowerCase();
   if (approvalObj[candidate] !== undefined) {
-    // these doesn't update after Tx:
     approvals = approvalObj[candidate];
     percentage =
       approvals > 0 ? round(div(mul(approvals, 100), totalApprovals), 2) : 0;
-    console.log('approvals', approvals, 'totalApprovals', totalApprovals);
-    console.log('new percentage', percentage);
   }
   return children({
     loadingPercentage,
