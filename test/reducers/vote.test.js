@@ -134,7 +134,6 @@ describe('Vote Reducer', () => {
       );
 
       expect(voteExec).toBeCalledTimes(1);
-
       expect(store.getActions()[0]).toEqual({
         type: reducer.VOTE_REQUEST,
         payload: {
@@ -148,14 +147,14 @@ describe('Vote Reducer', () => {
       expect(store.getActions()[2]).toEqual({
         type: reducer.VOTE_SUCCESS
       });
-      expect(store.getActions()[5]).toEqual({
+      expect(store.getActions()[7]).toEqual({
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
           votingFor: mockProposalAddress
         }
       });
-      expect(store.getActions()[6]).toEqual({
+      expect(store.getActions()[8]).toEqual({
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
@@ -244,14 +243,14 @@ describe('Vote Reducer', () => {
       expect(store.getActions()[2]).toEqual({
         type: reducer.WITHDRAW_SUCCESS
       });
-      expect(store.getActions()[5]).toEqual({
+      expect(store.getActions()[7]).toEqual({
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
           votingFor: ''
         }
       });
-      expect(store.getActions()[6]).toEqual({
+      expect(store.getActions()[8]).toEqual({
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,

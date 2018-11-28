@@ -11,9 +11,6 @@ import {
 import { AccountTypes } from '../utils/constants';
 import { modalClose } from './modal';
 import { addToastWithTimeout, ToastTypes } from './toasts';
-import { voteTallyInit } from './tally';
-import { initApprovalsFetch } from './approvals';
-import { hatInit } from './hat';
 import { MKR } from '../chain/maker';
 
 import {
@@ -73,9 +70,10 @@ const handleTx = ({
   dispatch,
   txObject,
   successPayload = '',
+  successAction = () => {},
   acctType
 }) =>
-  new Promise((resolve, reject) => {
+  new Promise(resolve => {
     const txMgr = window.maker.service('transactionManager');
     txMgr.listen(txObject, {
       pending: tx => {
@@ -84,16 +82,14 @@ const handleTx = ({
           payload: { txHash: tx.hash }
         });
       },
-      mined: _ => {
+      mined: async _ => {
         dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
         ReactGA.event({
           category: `${prefix} success`,
           action: prefix,
           label: `wallet type ${acctType || 'unknown'}`
         });
-        dispatch(voteTallyInit());
-        dispatch(hatInit());
-        dispatch(initApprovalsFetch());
+        await successAction();
         resolve();
       },
       error: (_, err) => {
@@ -104,7 +100,7 @@ const handleTx = ({
           action: 'proxy',
           label: parseError(err)
         });
-        reject();
+        resolve();
       }
     });
   });
@@ -146,7 +142,7 @@ function useColdAccount(dispatch, getState) {
   return true;
 }
 
-export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
+export const initiateLink = ({ cold, hot }) => (dispatch, getState) => {
   if (!useCorrectAccount(cold, dispatch, { label: 'cold' })) return;
   const initiateLink = window.maker
     .service('voteProxyFactory')
@@ -156,15 +152,17 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
     type: INITIATE_LINK_REQUEST,
     payload: { hotAddress: hot.address, coldAddress: cold.address }
   });
-  await handleTx({
+  return handleTx({
     prefix: 'INITIATE_LINK',
     dispatch,
     txObject: initiateLink,
-    acctType: cold.type
+    acctType: cold.type,
+    successAction: () => {
+      if (getAccount(getState(), getState().proxy.hotAddress)) {
+        dispatch(setActiveAccount(getState().proxy.hotAddress));
+      }
+    }
   });
-  if (getAccount(getState(), getState().proxy.hotAddress)) {
-    dispatch(setActiveAccount(getState().proxy.hotAddress));
-  }
 };
 
 export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
@@ -239,19 +237,19 @@ export const freeAll = value => (dispatch, getState) => {
   });
 };
 
-export const breakLink = () => async dispatch => {
+export const breakLink = () => dispatch => {
   dispatch({ type: BREAK_LINK_REQUEST });
   const account = window.maker.currentAccount();
   window.maker.useAccountWithAddress(account.address);
   const breakLink = window.maker.service('voteProxyFactory').breakLink();
 
-  await handleTx({
+  return handleTx({
     prefix: 'BREAK_LINK',
     dispatch,
     txObject: breakLink,
-    acctType: account.type
+    acctType: account.type,
+    successAction: () => dispatch(refreshAccountData())
   });
-  dispatch(refreshAccountData());
 };
 
 export const smartStepSkip = () => (dispatch, getState) => {

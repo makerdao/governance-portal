@@ -37,7 +37,7 @@ const handleTx = ({
   activeAccount,
   proposalAddress = ''
 }) =>
-  new Promise((resolve, reject) => {
+  new Promise(resolve => {
     const txMgr = window.maker.service('transactionManager');
     txMgr.listen(txObject, {
       pending: tx => {
@@ -67,7 +67,7 @@ const handleTx = ({
           action: 'vote',
           label: parseError(err)
         });
-        reject();
+        resolve();
       }
     });
   });
@@ -96,7 +96,7 @@ const updateVotingFor = (
   dispatch({ type: UPDATE_ACCOUNT, payload: updatedLinkedAcc });
 };
 
-export const sendVote = proposalAddress => async (dispatch, getState) => {
+export const sendVote = proposalAddress => (dispatch, getState) => {
   const activeAccount = getAccount(getState(), window.maker.currentAddress());
   if (!activeAccount || !activeAccount.hasProxy)
     throw new Error('must have account active');
@@ -106,7 +106,7 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
     .service('voteProxy')
     .voteExec(activeAccount.proxy.address, [proposalAddress]);
 
-  await handleTx({
+  return handleTx({
     prefix: 'VOTE',
     dispatch,
     getState,
@@ -115,15 +115,9 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
     activeAccount,
     proposalAddress
   });
-
-  ReactGA.event({
-    category: 'Vote TX Success',
-    action: 'Cast',
-    label: `wallet type ${activeAccount.type || 'unknown'}`
-  });
 };
 
-export const withdrawVote = () => async (dispatch, getState) => {
+export const withdrawVote = () => (dispatch, getState) => {
   const activeAccount = getAccount(getState(), window.maker.currentAddress());
   if (!activeAccount || !activeAccount.hasProxy)
     throw new Error('must have account active');
@@ -134,19 +128,13 @@ export const withdrawVote = () => async (dispatch, getState) => {
     .service('voteProxy')
     .voteExec(activeAccount.proxy.address, []);
 
-  await handleTx({
+  return handleTx({
     prefix: 'WITHDRAW',
     dispatch,
     getState,
     txObject: voteExecNone,
     acctType: activeAccount.type,
     activeAccount
-  });
-
-  ReactGA.event({
-    category: 'Vote TX Success',
-    action: 'Withdraw',
-    label: `wallet type ${activeAccount.type || 'unknown'}`
   });
 };
 
