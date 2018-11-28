@@ -1,5 +1,5 @@
 import { createReducer } from '../utils/redux';
-import { setActiveAccount, NO_METAMASK_ACCOUNTS } from './accounts';
+import { setActiveAccount, addAccount, NO_METAMASK_ACCOUNTS } from './accounts';
 import { netIdToName, netToUri } from '../utils/ethereum';
 import { ethInit } from './eth';
 import { voteTallyInit } from './tally';
@@ -23,6 +23,17 @@ export const updateAddress = address => ({
   payload: address
 });
 
+const updateNetwork = network => async dispatch => {
+  const web3Service = window.maker.service('web3');
+  console.log('network in update network', network);
+  if (network !== 'mainnet' && network !== 'kovan') {
+    dispatch({ type: NO_METAMASK_ACCOUNTS });
+    return dispatch({ type: WRONG_NETWORK });
+  }
+  dispatch({ type: CONNECT_SUCCESS, payload: { network } });
+  await web3Service._web3.setProvider(netToUri(network));
+};
+
 const pollForMetamaskChanges = maker => async (dispatch, getState) => {
   const {
     metamask: { network, activeAddress },
@@ -30,18 +41,47 @@ const pollForMetamaskChanges = maker => async (dispatch, getState) => {
   } = getState();
   try {
     const newNetwork = netIdToName(maker.service('web3').networkId());
+
+    console.log('new', newNetwork, 'orig', network);
+
     // all the data in the store could be wrong now. in later versions we could
     // clear out any network-specific data from the store carefully, but for now
     // the simplest thing is to start over from scratch.
     if (newNetwork !== network) return window.location.reload();
 
-    const address = window.web3.eth.defaultAccount;
-    if (address && address !== activeAddress) {
-      dispatch(updateAddress(address));
-      await dispatch(setActiveAccount(address, true));
-    } else if (fetching && !activeAddress) {
-      dispatch({ type: NO_METAMASK_ACCOUNTS }); // accounts reducer
+    // check account again
+    if (window.web3 && window.web3.eth.defaultAccount) {
+      let mmNet;
+      await window.web3.version.getNetwork(async (err, netId) => {
+        console.log('netId', netId);
+        mmNet = netId;
+        console.log('mmNet', mmNet);
+
+        const mmNetName = netIdToName(mmNet);
+        console.log('mmNetName', mmNetName);
+
+        await dispatch(updateNetwork(mmNetName));
+      });
+
+      const address = window.web3.eth.defaultAccount;
+      console.log('address in polling', address);
+      console.log('are we fetching?', fetching);
+
+      if (address && address !== activeAddress) {
+        console.log('you shouldnt see this unless this has a value:', address);
+        await maker
+          .service('accounts')
+          .addAccount(address, { type: 'browser' });
+        await dispatch(updateAddress(address));
+        await dispatch(setActiveAccount(address, true));
+      } else if (fetching && !activeAddress) {
+        console.log('dispatch no MM accounts');
+        dispatch({ type: NO_METAMASK_ACCOUNTS });
+        dispatch({ type: NOT_AVAILABLE });
+      }
     }
+    // end check
+
     setTimeout(() => dispatch(pollForMetamaskChanges(maker)), 1000);
   } catch (err) {
     console.error(err);
@@ -58,25 +98,30 @@ export const init = maker => async dispatch => {
   let networkIsSet = false;
 
   const web3Service = maker.service('web3');
-
-  try {
-    network = netIdToName(web3Service.networkId());
-    if (network !== 'mainnet' && network !== 'kovan') {
-      dispatch({ type: NO_METAMASK_ACCOUNTS });
-      return dispatch({ type: WRONG_NETWORK });
-    }
-    dispatch({ type: CONNECT_SUCCESS, payload: { network } });
-    web3Service._web3.setProvider(netToUri(network));
-    networkIsSet = true;
-
-    // don't await this, so that account lookup and voting data can occur in
-    // parallel
+  // window.web3.eth.accounts causes exception?
+  // this checks if MM is connected:
+  if (!window.web3 || !window.web3.eth.defaultAccount) {
+    console.log('no default account');
+    // should probably dispatch no metamask accounts
+    dispatch({ type: NO_METAMASK_ACCOUNTS });
+    dispatch({ type: NOT_AVAILABLE });
     dispatch(pollForMetamaskChanges(maker));
-  } catch (error) {
-    // TODO: notify user or throw to a fallback component
-    console.error(error);
-    dispatch({ type: CONNECT_FAILURE });
-    dispatch({ type: NO_METAMASK_ACCOUNTS }); // accounts reducer
+    // also skip down to bottom
+  } else {
+    try {
+      const web3Service = window.maker.service('web3');
+      network = netIdToName(web3Service.networkId());
+      dispatch(updateNetwork(network));
+      networkIsSet = true;
+
+      // don't await this, so that account lookup and voting data can occur in
+      // parallel
+      dispatch(pollForMetamaskChanges(maker));
+    } catch (error) {
+      // TODO: notify user or throw to a fallback component
+      dispatch({ type: CONNECT_FAILURE });
+      dispatch({ type: NO_METAMASK_ACCOUNTS }); // accounts reducer
+    }
   }
 
   // TODO handle failure

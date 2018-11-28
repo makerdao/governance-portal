@@ -28,15 +28,29 @@ const currTheme = {
   }
 };
 
+console.log('window reload, privateKey', process.env.REACT_APP_PRIVATE_KEY);
 const store = createStore();
-const maker = (window.maker = createMaker());
+const network = 'mainnet';
+const makerOptions = {
+  provider: {
+    url: `https://${network}.infura.io/`,
+    type: 'HTTP'
+    // network: 'kovan',
+  },
+  // overrideMetamask: true
+  privateKey: process.env.REACT_APP_PRIVATE_KEY
+};
+const maker = (window.maker = createMaker('http', makerOptions));
 
 // TODO fail gracefully if authentication fails, e.g. if the user denies
 // Metamask access or there's a network problem. in order to still show
 // read-only data, we will have to re-run Maker.create with an Infura preset.
-maker.authenticate().then(async () => {
-  store.dispatch(init(maker));
-});
+maker
+  .authenticate()
+  .then(async () => {
+    store.dispatch(init(maker));
+  })
+  .catch(err => console.log('authenticate err is:', err));
 
 function render() {
   ReactDOM.render(
