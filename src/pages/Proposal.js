@@ -17,7 +17,7 @@ import WithTally from '../components/hocs/WithTally';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import NotFound from './NotFound';
 import theme, { colors } from '../theme';
-import { cutMiddle } from '../utils/misc';
+import { formatDate, cutMiddle } from '../utils/misc';
 import { modalOpen } from '../reducers/modal';
 
 const riseUp = keyframes`
@@ -246,13 +246,7 @@ function Proposal({
             <CardTitle>Details</CardTitle>
             <Supporter>
               <Detail>Started</Detail>
-              <Detail>
-                {
-                  // FIXME
-                  'Sep 12, 2018'
-                  // formatDate(proposal.date)
-                }
-              </Detail>
+              <Detail>{formatDate(proposal.date)}</Detail>
             </Supporter>
             <Supporter>
               <Detail>Source</Detail>

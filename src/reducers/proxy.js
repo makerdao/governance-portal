@@ -66,43 +66,45 @@ export const clear = () => ({ type: CLEAR });
 
 export const goToStep = step => ({ type: GO_TO_STEP, payload: step });
 
-const handleTx = async ({
+const handleTx = ({
   prefix,
   dispatch,
   txObject,
   successPayload = '',
+  successAction = () => {},
   acctType
-}) => {
-  const txMgr = window.maker.service('transactionManager');
-  txMgr.listen(txObject, {
-    pending: tx => {
-      dispatch({
-        type: `proxy/${prefix}_SENT`,
-        payload: { txHash: tx.hash }
-      });
-    },
-    mined: tx => {
-      dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
-      ReactGA.event({
-        category: `${prefix} success`,
-        action: prefix,
-        label: `wallet type ${acctType || 'unknown'}`
-      });
-      // console.log('mined:', tx);
-    },
-    // TODO: error handle and get descriptive failure messages
-    error: (tx, err) => {
-      // console.error(err.message);
-      dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
-      dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
-      ReactGA.event({
-        category: 'User notification error',
-        action: 'proxy',
-        label: parseError(err)
-      });
-    }
+}) =>
+  new Promise(resolve => {
+    const txMgr = window.maker.service('transactionManager');
+    txMgr.listen(txObject, {
+      pending: tx => {
+        dispatch({
+          type: `proxy/${prefix}_SENT`,
+          payload: { txHash: tx.hash }
+        });
+      },
+      mined: async _ => {
+        dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
+        ReactGA.event({
+          category: `${prefix} success`,
+          action: prefix,
+          label: `wallet type ${acctType || 'unknown'}`
+        });
+        await successAction();
+        resolve();
+      },
+      error: (_, err) => {
+        dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
+        dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+        ReactGA.event({
+          category: 'User notification error',
+          action: 'proxy',
+          label: parseError(err)
+        });
+        resolve();
+      }
+    });
   });
-};
 
 function useCorrectAccount(requiredAccount, dispatch, options = {}) {
   const { address, type, proxyRole } = requiredAccount;
@@ -141,7 +143,7 @@ function useColdAccount(dispatch, getState) {
   return true;
 }
 
-export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
+export const initiateLink = ({ cold, hot }) => (dispatch, getState) => {
   if (!useCorrectAccount(cold, dispatch, { label: 'cold' })) return;
   const initiateLink = window.maker
     .service('voteProxyFactory')
@@ -151,16 +153,17 @@ export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
     type: INITIATE_LINK_REQUEST,
     payload: { hotAddress: hot.address, coldAddress: cold.address }
   });
-  await handleTx({
+  return handleTx({
     prefix: 'INITIATE_LINK',
     dispatch,
     txObject: initiateLink,
-    acctType: cold.type
+    acctType: cold.type,
+    successAction: () => {
+      if (getAccount(getState(), getState().proxy.hotAddress)) {
+        dispatch(setActiveAccount(getState().proxy.hotAddress));
+      }
+    }
   });
-  await initiateLink; //wait for tx to mine before changing account
-  if (getAccount(getState(), getState().proxy.hotAddress)) {
-    dispatch(setActiveAccount(getState().proxy.hotAddress));
-  }
 };
 
 export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
@@ -172,7 +175,7 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
 
   dispatch({ type: APPROVE_LINK_REQUEST });
 
-  handleTx({
+  return handleTx({
     prefix: 'APPROVE_LINK',
     dispatch,
     txObject: approveLink,
@@ -190,7 +193,7 @@ export const lock = value => async (dispatch, getState) => {
     .lock(account.proxy.address, value);
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
-  handleTx({
+  return handleTx({
     prefix: 'SEND_MKR_TO_PROXY',
     dispatch,
     txObject: lock,
@@ -210,7 +213,7 @@ export const free = value => async (dispatch, getState) => {
     .free(account.proxy.address, value);
 
   dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
-  handleTx({
+  return handleTx({
     prefix: 'WITHDRAW_MKR',
     dispatch,
     txObject: free,
@@ -230,7 +233,7 @@ export const freeAll = value => async (dispatch, getState) => {
     .freeAll(account.proxy.address);
 
   dispatch({ type: WITHDRAW_ALL_MKR_REQUEST, payload: value });
-  handleTx({
+  return handleTx({
     prefix: 'WITHDRAW_ALL_MKR',
     dispatch,
     txObject: freeAll,
@@ -241,20 +244,19 @@ export const freeAll = value => async (dispatch, getState) => {
   dispatch(initApprovalsFetch());
 };
 
-export const breakLink = () => async dispatch => {
+export const breakLink = () => dispatch => {
   dispatch({ type: BREAK_LINK_REQUEST });
   const account = window.maker.currentAccount();
   window.maker.useAccountWithAddress(account.address);
   const breakLink = window.maker.service('voteProxyFactory').breakLink();
 
-  await handleTx({
+  return handleTx({
     prefix: 'BREAK_LINK',
     dispatch,
     txObject: breakLink,
-    acctType: account.type
+    acctType: account.type,
+    successAction: () => dispatch(refreshAccountData())
   });
-  await breakLink; //wait for tx to complete before refreshing
-  dispatch(refreshAccountData());
 };
 
 export const smartStepSkip = () => (dispatch, getState) => {
@@ -274,17 +276,16 @@ export const refreshAccountDataLink = () => (dispatch, getState) => {
 };
 
 export const refreshAccountData = () => (dispatch, getState) => {
-  const state = getState();
-  const activeAccount = getActiveAccount(state);
+  const activeAccount = getActiveAccount(getState());
   const { hasProxy, proxy } = activeAccount;
   if (hasProxy) {
-    const otherAccount = getAccount(state, proxy.linkedAccount.address);
+    const otherAccount = getAccount(getState(), proxy.linkedAccount.address);
     const accounts = otherAccount
       ? [activeAccount, otherAccount]
       : [activeAccount];
     dispatch(addAccounts(accounts));
   } else {
-    return window.location.reload();
+    window.location.reload();
   }
 };
 
@@ -297,7 +298,7 @@ export const mkrApproveProxy = () => (dispatch, getState) => {
     .approveUnlimited(account.proxy.address);
 
   dispatch({ type: MKR_APPROVE_REQUEST });
-  handleTx({
+  return handleTx({
     prefix: 'MKR_APPROVE',
     dispatch,
     txObject: giveProxyAllowance,
@@ -306,10 +307,6 @@ export const mkrApproveProxy = () => (dispatch, getState) => {
 };
 
 // Reducer ------------------------------------------------
-
-// const existingState = localStorage.getItem('linkInitiatedState')
-//   ? JSON.parse(localStorage.getItem('linkInitiatedState'))
-//   : {};
 
 const initialState = {
   sendMkrTxHash: '',
