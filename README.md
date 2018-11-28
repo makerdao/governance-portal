@@ -50,7 +50,7 @@ By default the production backend ([`content.makerfoundation.com`](https://conte
 
 ## Dogfooding
 
-This project takes advantage of several other maker projects, including [maker ui components](https://github.com/makerdao/ui-components), [dai.js](https://github.com/makerdao/dai.js), & [the dai governance pulgin](https://github.com/makerdao/dai-plugin-governance).
+This project takes advantage of several other maker projects, including [maker ui components](https://github.com/makerdao/ui-components), [dai.js](https://github.com/makerdao/dai.js), & [the dai governance plugin](https://github.com/makerdao/dai-plugin-governance).
 
 ## Code Style
 
