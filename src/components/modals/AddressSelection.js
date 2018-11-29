@@ -59,33 +59,39 @@ const Connecting = styled.div`
   margin-top: 7px;
 `;
 
+const PER_PAGE = 5;
 class AddressSelection extends Component {
   constructor(props) {
     super(props);
-    this.state = { accounts: [] };
+
+    this.state = {
+      pickAccount: () => {},
+      accounts: [],
+      paginationEnabled: true,
+      currentPage: 0,
+      selectedIndex: null
+    };
   }
 
   componentDidMount() {
-    window.maker
-      .addAccount({
-        type: this.props.trezor ? 'trezor' : 'ledger',
-        path: this.props.path,
-        accountsLength: 5,
-        choose: async (addresses, callback) => {
-          this.setState({
-            accounts: await this.getInfo(addresses),
-            pickAccount: callback
-          });
-        }
-      })
-      .then(account => setActiveAccount(account.address));
+    this.loadAddresses();
   }
 
   render() {
-    const { accounts, selectedIndex } = this.state;
+    const {
+      accounts,
+      selectedIndex,
+      currentPage,
+      paginationEnabled
+    } = this.state;
+
     if (accounts.length === 0) {
       return <Loading type={this.props.trezor ? 'trezor' : 'ledger'} />;
     }
+
+    const firstIndex = currentPage * PER_PAGE;
+    const lastIndex = currentPage * PER_PAGE + PER_PAGE;
+    const slicedAccounts = accounts.slice(firstIndex, lastIndex);
 
     return (
       <Fragment>
@@ -99,6 +105,8 @@ class AddressSelection extends Component {
           <Table>
             <thead>
               <tr>
+                <th>#</th>
+
                 <th>Address</th>
                 <th>ETH</th>
                 <th>MKR</th>
@@ -106,8 +114,10 @@ class AddressSelection extends Component {
               </tr>
             </thead>
             <tbody>
-              {accounts.map(({ address, eth, mkr, index }) => (
+              {slicedAccounts.map(({ address, eth, mkr, index }) => (
                 <tr key={address}>
+                  <td>{index}</td>
+
                   <InlineTd title={address}>
                     {cutMiddle(address, 7, 5)}
                     <CopyBtn onClick={() => copyToClipboard(address)}>
@@ -133,14 +143,38 @@ class AddressSelection extends Component {
         <div
           style={{
             display: 'flex',
+            justifyContent: 'center',
+            marginTop: 10,
+            marginBottom: 20
+          }}
+        >
+          <Button
+            disabled={currentPage < 1 || !paginationEnabled}
+            onClick={e => this.handleAddressPagination(e, -1)}
+            style={{ margin: '0 auto' }}
+          >
+            Back
+          </Button>
+
+          <Button
+            disabled={!paginationEnabled}
+            onClick={e => this.handleAddressPagination(e, 1)}
+            style={{ margin: '0 auto' }}
+          >
+            More
+          </Button>
+        </div>
+        <div
+          style={{
+            display: 'flex',
             marginTop: '20px',
             justifyContent: 'flex-end'
           }}
         >
           <Button
             slim
-            disabled={!selectedIndex}
-            onClick={this.useSelectedAccount}
+            disabled={selectedIndex === null}
+            onClick={this.handleAddressConfirmation}
           >
             Unlock Wallet
           </Button>
@@ -149,23 +183,86 @@ class AddressSelection extends Component {
     );
   }
 
-  useSelectedAccount = () => {
-    const { addAccount, setActiveAccount, modalClose, trezor } = this.props;
-    const { accounts, selectedIndex } = this.state;
-    const address = accounts.find(a => a.index === selectedIndex).address;
+  loadAddresses(page = this.state.currentPage) {
+    const { accounts } = this.state;
+    const offset = page * PER_PAGE;
 
+    return new Promise(resolve => {
+      window.maker
+        .addAccount({
+          type: this.props.trezor ? 'trezor' : 'ledger',
+          path: this.props.path,
+          accountsLength: PER_PAGE,
+          accountsOffset: offset,
+          choose: async (addresses, callback) => {
+            const addressesWithInfo = await this.getInfo(addresses, offset);
+
+            this.setState(
+              {
+                accounts: accounts.concat(addressesWithInfo),
+                pickAccount: callback
+              },
+              resolve
+            );
+          }
+        })
+        .then(account => {
+          this.handleAddressConfirmationCallback(account);
+          // row selection callback
+        });
+    });
+  }
+
+  handleAddressPagination = (e, offset) => {
+    const { currentPage } = this.state;
+    e.preventDefault();
+    const newPage = currentPage + offset;
+
+    Promise.resolve()
+      .then(() => {
+        this.setState({
+          paginationEnabled: false
+        });
+        if (offset > 0) {
+          return this.loadAddresses(newPage);
+        }
+        return true;
+      })
+      .then(() => {
+        this.setState({
+          currentPage: newPage,
+          paginationEnabled: true
+        });
+      })
+      .catch(() => {
+        this.setState({
+          paginationEnabled: true
+        });
+      });
+  };
+
+  handleAddressConfirmation = () => {
+    const { accounts, selectedIndex, pickAccount } = this.state;
+    const address = accounts.find(a => a.index === selectedIndex).address;
+    // update maker object
+    pickAccount(null, address);
+  };
+
+  handleAddressConfirmationCallback({ address }) {
+    const { addAccount, setActiveAccount, modalClose, trezor } = this.props;
+    // update UI
     addAccount({
       address,
       type: trezor ? AccountTypes.TREZOR : AccountTypes.LEDGER
     }).then(() => setActiveAccount(address));
-    this.state.pickAccount(null, address); //add the account to the maker object
-    modalClose();
-  };
 
-  getInfo(addresses) {
+    modalClose();
+  }
+
+  getInfo(addresses, indexOffset) {
     return Promise.all(
       Object.keys(addresses).map(async index => ({
-        index: index,
+        index: parseInt(indexOffset, 10) + parseInt(index, 10),
         address: addresses[index],
         eth: round(
           await toNum(window.maker.getToken(ETH).balanceOf(addresses[index])),
