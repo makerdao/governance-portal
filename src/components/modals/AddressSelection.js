@@ -208,7 +208,6 @@ class AddressSelection extends Component {
         })
         .then(account => {
           this.handleAddressConfirmationCallback(account);
-          // row selection callback
         });
     });
   }
