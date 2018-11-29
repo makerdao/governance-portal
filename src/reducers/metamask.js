@@ -25,6 +25,7 @@ export const updateAddress = address => ({
 
 const updateNetwork = network => async dispatch => {
   const web3Service = window.maker.service('web3');
+  // last console (kovan) before AccountsService and crash
   console.log('network in update network', network);
   if (network !== 'mainnet' && network !== 'kovan') {
     dispatch({ type: NO_METAMASK_ACCOUNTS });
@@ -39,15 +40,17 @@ const pollForMetamaskChanges = maker => async (dispatch, getState) => {
     metamask: { network, activeAddress },
     accounts: { fetching }
   } = getState();
+  console.log('state on latest MM poll', getState());
   try {
     const newNetwork = netIdToName(maker.service('web3').networkId());
-
-    console.log('new', newNetwork, 'orig', network);
 
     // all the data in the store could be wrong now. in later versions we could
     // clear out any network-specific data from the store carefully, but for now
     // the simplest thing is to start over from scratch.
-    if (newNetwork !== network) return window.location.reload();
+    if (newNetwork !== network) {
+      console.log('new', newNetwork, 'orig', network);
+      return window.location.reload();
+    }
 
     // check account again
     if (window.web3 && window.web3.eth.defaultAccount) {
@@ -60,19 +63,23 @@ const pollForMetamaskChanges = maker => async (dispatch, getState) => {
         const mmNetName = netIdToName(mmNet);
         console.log('mmNetName', mmNetName);
 
-        await dispatch(updateNetwork(mmNetName));
+        if (mmNetName !== network) await dispatch(updateNetwork(mmNetName));
+        // await dispatch(updateNetwork(mmNetName));
       });
 
+      // first thing after logging into MM
       const address = window.web3.eth.defaultAccount;
       console.log('address in polling', address);
       console.log('are we fetching?', fetching);
 
       if (address && address !== activeAddress) {
         console.log('you shouldnt see this unless this has a value:', address);
-        await maker
-          .service('accounts')
-          .addAccount(address, { type: 'browser' });
-        await dispatch(updateAddress(address));
+        // const addAcctResult = await maker
+        //   .service('accounts')
+        //   .addAccount(address, { type: 'browser' });
+
+        // console.log('addAcctResult', addAcctResult);
+        dispatch(updateAddress(address));
         await dispatch(setActiveAccount(address, true));
       } else if (fetching && !activeAddress) {
         console.log('dispatch no MM accounts');
@@ -94,7 +101,7 @@ export const init = maker => async dispatch => {
 
   // we default to mainnet so that if Metamask is unavailable, the user can at
   // least read the list of proposals
-  let network = 'mainnet';
+  let network = 'mainnet'; // this is now already set by create
   let networkIsSet = false;
 
   const web3Service = maker.service('web3');
@@ -109,7 +116,6 @@ export const init = maker => async dispatch => {
     // also skip down to bottom
   } else {
     try {
-      const web3Service = window.maker.service('web3');
       network = netIdToName(web3Service.networkId());
       dispatch(updateNetwork(network));
       networkIsSet = true;

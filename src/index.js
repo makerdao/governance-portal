@@ -30,17 +30,29 @@ const currTheme = {
 
 console.log('window reload, privateKey', process.env.REACT_APP_PRIVATE_KEY);
 const store = createStore();
-const network = 'mainnet';
-const makerOptions = {
-  provider: {
-    url: `https://${network}.infura.io/`,
-    type: 'HTTP'
-    // network: 'kovan',
-  },
-  // overrideMetamask: true
-  privateKey: process.env.REACT_APP_PRIVATE_KEY
-};
-const maker = (window.maker = createMaker('http', makerOptions));
+let preset, makerOptions;
+// when we start we want network to be whatever MM reports, then default to mainnet
+if (window.web3 && window.web3.eth.defaultAccount) {
+  console.log(
+    'initialize app and we have window.web3',
+    window.web3.eth.defaultAccount
+  );
+  preset = 'browser';
+} else {
+  console.log('initialize app, no web3/mm');
+  const network = 'mainnet';
+  preset = 'http';
+  makerOptions = {
+    provider: {
+      url: `https://${network}.infura.io/`,
+      type: 'HTTP'
+      // network: 'kovan',
+    },
+    // overrideMetamask: true
+    privateKey: process.env.REACT_APP_PRIVATE_KEY
+  };
+}
+const maker = (window.maker = createMaker(preset, makerOptions));
 
 // TODO fail gracefully if authentication fails, e.g. if the user denies
 // Metamask access or there's a network problem. in order to still show

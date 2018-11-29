@@ -59,6 +59,7 @@ export function activeCanVote(state) {
 // Actions ------------------------------------------------
 
 export const addAccounts = accounts => async dispatch => {
+  console.log('dispatch add acounts par 2', accounts);
   dispatch({ type: FETCHING_ACCOUNT_DATA, payload: true });
 
   for (let account of accounts) {
@@ -130,6 +131,7 @@ export const addAccounts = accounts => async dispatch => {
 };
 
 export const addAccount = account => async dispatch => {
+  console.log('dispatch add acounts', account);
   return dispatch(addAccounts([account]));
 };
 
@@ -149,6 +151,16 @@ export const setActiveAccount = (address, isMetamask) => async (
   dispatch,
   getState
 ) => {
+  console.log('setActive account', address, 'isMM', isMetamask);
+  // where should we check and add account to maker?
+  // console.log('list accounts', await window.maker.listAccounts());
+  // const makerAccounts = await window.maker.listAccounts();
+  // if (!makerAccounts.includes(address)) {
+  //   await window.maker.addAccount(address, {type: browser})
+  // }
+
+  // end add acct to maker
+
   // if we haven't seen this account before, fetch its data and add it to the
   // Maker instance
   if (
@@ -157,7 +169,13 @@ export const setActiveAccount = (address, isMetamask) => async (
       a => a.address.toLowerCase() === address.toLowerCase()
     )
   ) {
-    await window.maker.addAccount({ type: AccountTypes.METAMASK });
+    console.log('supposedly this means we dont have, the account, so add it');
+    // we have to change the provider before we can add the account
+    // why werent we passing in the account name here?
+    const acctRes = await window.maker.addAccount(address, {
+      type: AccountTypes.METAMASK
+    });
+    console.log('acctRes', acctRes);
     await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
   }
   window.maker.useAccountWithAddress(address);
