@@ -25,8 +25,6 @@ export const updateAddress = address => ({
 
 const updateNetwork = network => async dispatch => {
   const web3Service = window.maker.service('web3');
-  // last console (kovan) before AccountsService and crash
-  console.log('network in update network', network);
   if (network !== 'mainnet' && network !== 'kovan') {
     dispatch({ type: NO_METAMASK_ACCOUNTS });
     return dispatch({ type: WRONG_NETWORK });
@@ -40,52 +38,34 @@ const pollForMetamaskChanges = maker => async (dispatch, getState) => {
     metamask: { network, activeAddress },
     accounts: { fetching }
   } = getState();
-  console.log('state on latest MM poll', getState());
+  console.log('fetching & active address before', fetching, activeAddress);
   try {
-    const newNetwork = netIdToName(maker.service('web3').networkId());
-
-    // all the data in the store could be wrong now. in later versions we could
-    // clear out any network-specific data from the store carefully, but for now
-    // the simplest thing is to start over from scratch.
-    if (newNetwork !== network) {
-      console.log('new', newNetwork, 'orig', network);
-      return window.location.reload();
-    }
-
-    // check account again
+    // check if we have metamask
     if (window.web3 && window.web3.eth.defaultAccount) {
-      let mmNet;
-      await window.web3.version.getNetwork(async (err, netId) => {
-        console.log('netId', netId);
-        mmNet = netId;
-        console.log('mmNet', mmNet);
+      const newNetwork = netIdToName(maker.service('web3').networkId());
+      // all the data in the store could be wrong now. in later versions we could
+      // clear out any network-specific data from the store carefully, but for now
+      // the simplest thing is to start over from scratch.
+      if (newNetwork !== network) {
+        console.log('new', newNetwork, 'orig', network);
+        return window.location.reload();
+      }
 
-        const mmNetName = netIdToName(mmNet);
-        console.log('mmNetName', mmNetName);
-
-        if (mmNetName !== network) await dispatch(updateNetwork(mmNetName));
-        // await dispatch(updateNetwork(mmNetName));
-      });
-
-      // first thing after logging into MM
+      // await window.web3.version.getNetwork(async (err, netId) => {
+      // console.log('netId', netId);
+      // when should we set the provider?
+      // await window.maker.service('web3')._web3.setProvider(netToUri(network));
+      // this could be simplified:
       const address = window.web3.eth.defaultAccount;
-      console.log('address in polling', address);
-      console.log('are we fetching?', fetching);
-
       if (address && address !== activeAddress) {
-        console.log('you shouldnt see this unless this has a value:', address);
-        // const addAcctResult = await maker
-        //   .service('accounts')
-        //   .addAccount(address, { type: 'browser' });
-
-        // console.log('addAcctResult', addAcctResult);
         dispatch(updateAddress(address));
         await dispatch(setActiveAccount(address, true));
+        console.log('fetching & active address after', fetching, activeAddress);
       } else if (fetching && !activeAddress) {
-        console.log('dispatch no MM accounts');
         dispatch({ type: NO_METAMASK_ACCOUNTS });
         dispatch({ type: NOT_AVAILABLE });
       }
+      // });
     }
     // end check
 
@@ -105,15 +85,12 @@ export const init = maker => async dispatch => {
   let networkIsSet = false;
 
   const web3Service = maker.service('web3');
-  // window.web3.eth.accounts causes exception?
   // this checks if MM is connected:
   if (!window.web3 || !window.web3.eth.defaultAccount) {
-    console.log('no default account');
-    // should probably dispatch no metamask accounts
+    console.log('not connected to MetaMask');
     dispatch({ type: NO_METAMASK_ACCOUNTS });
     dispatch({ type: NOT_AVAILABLE });
     dispatch(pollForMetamaskChanges(maker));
-    // also skip down to bottom
   } else {
     try {
       network = netIdToName(web3Service.networkId());
@@ -136,7 +113,7 @@ export const init = maker => async dispatch => {
 
   if (!networkIsSet) web3Service._web3.setProvider(netToUri(network));
   dispatch(voteTallyInit());
-  dispatch(proposalsInit(network));
+  dispatch(proposalsInit(network)); // this doesn't return anything because no account err
   dispatch(hatInit());
   dispatch(ethInit());
 };

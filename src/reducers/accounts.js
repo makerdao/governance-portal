@@ -151,16 +151,6 @@ export const setActiveAccount = (address, isMetamask) => async (
   dispatch,
   getState
 ) => {
-  console.log('setActive account', address, 'isMM', isMetamask);
-  // where should we check and add account to maker?
-  // console.log('list accounts', await window.maker.listAccounts());
-  // const makerAccounts = await window.maker.listAccounts();
-  // if (!makerAccounts.includes(address)) {
-  //   await window.maker.addAccount(address, {type: browser})
-  // }
-
-  // end add acct to maker
-
   // if we haven't seen this account before, fetch its data and add it to the
   // Maker instance
   if (
@@ -169,13 +159,15 @@ export const setActiveAccount = (address, isMetamask) => async (
       a => a.address.toLowerCase() === address.toLowerCase()
     )
   ) {
-    console.log('supposedly this means we dont have, the account, so add it');
-    // we have to change the provider before we can add the account
     // why werent we passing in the account name here?
-    const acctRes = await window.maker.addAccount(address, {
-      type: AccountTypes.METAMASK
-    });
-    console.log('acctRes', acctRes);
+    try {
+      await window.maker.service('accounts').addAccount(address, {
+        type: AccountTypes.METAMASK
+      });
+    } catch (e) {
+      console.log(e);
+    }
+
     await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
   }
   window.maker.useAccountWithAddress(address);

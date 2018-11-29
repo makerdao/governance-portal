@@ -28,7 +28,7 @@ const currTheme = {
   }
 };
 
-console.log('window reload, privateKey', process.env.REACT_APP_PRIVATE_KEY);
+console.log('window reload', window.web3);
 const store = createStore();
 let preset, makerOptions;
 // when we start we want network to be whatever MM reports, then default to mainnet
@@ -39,17 +39,14 @@ if (window.web3 && window.web3.eth.defaultAccount) {
   );
   preset = 'browser';
 } else {
-  console.log('initialize app, no web3/mm');
+  console.log('initialize app, no web3/mm', window.web3.settings);
   const network = 'mainnet';
   preset = 'http';
   makerOptions = {
     provider: {
       url: `https://${network}.infura.io/`,
       type: 'HTTP'
-      // network: 'kovan',
-    },
-    // overrideMetamask: true
-    privateKey: process.env.REACT_APP_PRIVATE_KEY
+    }
   };
 }
 const maker = (window.maker = createMaker(preset, makerOptions));
