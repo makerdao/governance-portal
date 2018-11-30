@@ -28,27 +28,39 @@ const currTheme = {
   }
 };
 
-console.log('window reload', window.web3);
+console.log('application reload');
 const store = createStore();
 let preset, makerOptions;
+console.log('window.ethereum', window.ethereum);
+console.log('window.web3', window.web3);
+// console.log('window.web3.eth', window.web3.eth);
 // when we start we want network to be whatever MM reports, then default to mainnet
-if (window.web3 && window.web3.eth.defaultAccount) {
-  console.log(
-    'initialize app and we have window.web3',
-    window.web3.eth.defaultAccount
-  );
-  preset = 'browser';
-} else {
-  console.log('initialize app, no web3/mm', window.web3.settings);
-  const network = 'mainnet';
-  preset = 'http';
-  makerOptions = {
-    provider: {
-      url: `https://${network}.infura.io/`,
-      type: 'HTTP'
-    }
-  };
-}
+// if (window.web3 && window.web3.eth.defaultAccount) {
+//   console.log(
+//     'initialize app and we have window.web3',
+//     window.web3.eth.defaultAccount
+//   );
+//   preset = 'browser';
+// } else {
+//   console.log('initialize app, no web3/mm', window.web3.settings);
+//   const network = 'mainnet';
+//   preset = 'http';
+//   makerOptions = {
+//     provider: {
+//       url: `https://${network}.infura.io/`,
+//       type: 'HTTP'
+//     }
+//   };
+// }
+
+const network = 'mainnet';
+preset = 'http';
+makerOptions = {
+  provider: {
+    url: `https://${network}.infura.io/`,
+    type: 'HTTP'
+  }
+};
 const maker = (window.maker = createMaker(preset, makerOptions));
 
 // TODO fail gracefully if authentication fails, e.g. if the user denies
@@ -57,6 +69,7 @@ const maker = (window.maker = createMaker(preset, makerOptions));
 maker
   .authenticate()
   .then(async () => {
+    console.log('authenticate finished');
     store.dispatch(init(maker));
   })
   .catch(err => console.log('authenticate err is:', err));

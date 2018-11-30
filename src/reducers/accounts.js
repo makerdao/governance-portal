@@ -59,8 +59,14 @@ export function activeCanVote(state) {
 // Actions ------------------------------------------------
 
 export const addAccounts = accounts => async dispatch => {
-  console.log('dispatch add acounts par 2', accounts);
+  console.log('dispatch add acounts part 2', accounts);
   dispatch({ type: FETCHING_ACCOUNT_DATA, payload: true });
+
+  // what is the provider at this step?
+  console.log(
+    'provider before crash step',
+    window.maker.service('accounts').getProvider()
+  );
 
   for (let account of accounts) {
     const mkrToken = window.maker.getToken(MKR);
@@ -147,12 +153,15 @@ export const updateAccount = account => ({
 
 // This is called when an account is selected in the account box dropdown, or
 // when Metamask is switched to a different account
+// TODO Fix this error:
+// Unhandled Rejection (Error): cannot use a browser account that is not currently selected
 export const setActiveAccount = (address, isMetamask) => async (
   dispatch,
   getState
 ) => {
   // if we haven't seen this account before, fetch its data and add it to the
   // Maker instance
+  console.log('all accounts in state', getState().accounts.allAccounts);
   if (
     isMetamask &&
     !getState().accounts.allAccounts.find(

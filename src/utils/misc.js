@@ -62,13 +62,12 @@ export const promiseWait = time =>
  * @return {Promise}
  */
 export const promiseRetry = ({ times, fn, delay, args = [] }) => {
-  return fn(...args).catch(
-    err =>
-      times > 0
-        ? promiseWait(delay).then(() =>
-            promiseRetry({ times: times - 1, fn, delay, args })
-          )
-        : Promise.reject(err)
+  return fn(...args).catch(err =>
+    times > 0
+      ? promiseWait(delay).then(() =>
+          promiseRetry({ times: times - 1, fn, delay, args })
+        )
+      : Promise.reject(err)
   );
 };
 
