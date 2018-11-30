@@ -1,5 +1,6 @@
 import { createReducer } from '../utils/redux';
-import { getAccount, addAccount } from './accounts';
+import { BREAK_LINK_SUCCESS } from './proxy';
+import { SET_ACTIVE_ACCOUNT } from './accounts';
 
 // Constants ----------------------------------------------
 
@@ -13,6 +14,13 @@ const ONBOARDING_CHOOSE_WALLET_TYPE =
 const ONBOARDING_START_LINKED_FLOW = 'onboarding/ONBOARDING_START_LINKED_FLOW';
 const ONBOARDING_SET_HOT_WALLET = 'onboarding/ONBOARDING_SET_HOT_WALLET';
 const ONBOARDING_SET_COLD_WALLET = 'onboarding/ONBOARDING_SET_COLD_WALLET';
+const ONBOARDING_SET_STATE = 'onboarding/ONBOARDING_SET_STATE';
+
+export const OnboardingStates = {
+  INTRODUCTION: 'introduction',
+  SETUP_LINKED_WALLET: 'linked',
+  FINISHED: 'finished'
+};
 
 // Actions ------------------------------------------------
 
@@ -23,20 +31,6 @@ export const onboardingOpen = () => ({
 export const onboardingClose = () => ({
   type: ONBOARDING_CLOSE
 });
-
-export const setupOnboardingForAccount = account => dispatch => {
-  if (account.hasProxy) {
-    const otherAccount = account.proxy.linkedAccount;
-
-    const hotAccount = (account.proxyRole === 'hot' && account) || otherAccount;
-    const coldAccount =
-      (account.proxyRole === 'cold' && account) || otherAccount;
-    dispatch(onboardingStartLinkedFlow());
-    dispatch(setHotWallet(hotAccount));
-    dispatch(setColdWallet(coldAccount));
-    dispatch(onboardingToStep(4));
-  }
-};
 
 export const onboardingToStep = step => ({
   type: ONBOARDING_TO_STEP,
@@ -85,12 +79,19 @@ export const resetColdWallet = () => ({
   payload: {}
 });
 
+export const setOnboardingState = state => ({
+  type: ONBOARDING_SET_STATE,
+  payload: {
+    state
+  }
+});
+
 // Reducer ------------------------------------------------
 
 const initialState = {
-  step: 1,
-  open: true,
-  flow: 'linked',
+  step: 0,
+  open: false,
+  state: OnboardingStates.INTRODUCTION,
   hotWallet: {
     address: '0xd90b1122376F44e3d00a62C409F1b105950869b5',
     type: 'metamask'
@@ -123,13 +124,9 @@ const onboarding = createReducer(initialState, {
     ...state,
     step: state.step - 1
   }),
-  [ONBOARDING_CHOOSE_WALLET_TYPE]: state => ({
+  [ONBOARDING_SET_STATE]: (state, { payload }) => ({
     ...state,
-    flow: null
-  }),
-  [ONBOARDING_START_LINKED_FLOW]: state => ({
-    ...state,
-    flow: 'linked'
+    state: payload.state
   }),
   [ONBOARDING_SET_HOT_WALLET]: (state, { payload }) => ({
     ...state,
@@ -138,6 +135,52 @@ const onboarding = createReducer(initialState, {
   [ONBOARDING_SET_COLD_WALLET]: (state, { payload }) => ({
     ...state,
     coldWallet: payload.account
+  }),
+  [BREAK_LINK_SUCCESS]: state => ({
+    ...state,
+    state: OnboardingStates.INTRODUCTION
+  }),
+  [SET_ACTIVE_ACCOUNT]: (state, { payload: { newAccount } }) => ({
+    ...state,
+    ...(() => {
+      if (!state.hotWallet || !state.coldWallet) {
+        // not onboarding - we can chill out
+      } else if (
+        state.hotWallet.address === newAccount.address ||
+        state.coldWallet.address === newAccount.address
+      ) {
+        // do nothing! we can continue onboarding where we left off.
+      } else if (newAccount.hasProxy && newAccount.proxyRole === 'hot') {
+        // we need access to the cold account to continue set up, so we're done here.
+        return { state: OnboardingStates.FINISHED };
+      } else if (
+        newAccount.hasProxy &&
+        newAccount.proxyRole === 'cold' &&
+        newAccount.proxy.hasInfMkrApproval
+      ) {
+        // we don't rely on onboarding for depositing MKR.
+        return { state: OnboardingStates.FINISHED };
+      } else if (
+        newAccount.hasProxy &&
+        newAccount.proxyRole === 'cold' &&
+        !newAccount.proxy.hasInfMkrApproval
+      ) {
+        // Now we're talking! We can pick up where they left off.
+        return {
+          state: OnboardingStates.SETUP_LINKED_WALLET,
+          hotWallet: newAccount.proxy.linkedAccount,
+          coldWallet: newAccount,
+          step: 3
+        };
+      } else {
+        return {
+          state: OnboardingStates.INTRODUCTION,
+          hotWallet: null,
+          coldWallet: null,
+          step: 0
+        };
+      }
+    })()
   })
 });
 

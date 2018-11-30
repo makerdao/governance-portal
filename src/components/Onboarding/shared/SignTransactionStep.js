@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Flex, Button } from '@makerdao/ui-components';
 
-import TransactionStatusIndicator from './TransactionStatusIndicator';
+import TransactionStatusIndicator from '../../TransactionStatusIndicator';
 import Header from './Header';
 
 import { TransactionStatus } from '../../../utils/constants';
@@ -30,7 +30,7 @@ const SignTransactionStep = ({
             Cancel
           </Button>
         )}
-        {status !== TransactionStatus.ERROR && onRetry && (
+        {status !== TransactionStatus.ERROR && onNext && (
           <Button
             disabled={
               status !== TransactionStatus.MINED &&
@@ -41,7 +41,7 @@ const SignTransactionStep = ({
             Next
           </Button>
         )}
-        {status === TransactionStatus.ERROR && (
+        {status === TransactionStatus.ERROR && onRetry && (
           <Button onClick={onRetry}>Retry</Button>
         )}
       </Flex>

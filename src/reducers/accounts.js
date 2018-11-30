@@ -9,10 +9,8 @@ import { add, eq, subtract, toNum, promisedProperties } from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
-  WITHDRAW_ALL_MKR_SUCCESS,
-  INITIATE_LINK_REQUEST
+  MKR_APPROVE_SUCCESS
 } from './sharedProxyConstants';
-import { setupOnboardingForAccount } from './onboarding';
 import { MAX_UINT_ETH_BN } from '../utils/ethereum';
 import { MKR } from '../chain/maker';
 
@@ -26,13 +24,12 @@ const LEDGER_LIVE_PATH = "44'/60'/0'";
 const LEDGER_LEGACY_PATH = "44'/60'/0'/0";
 
 const REMOVE_ACCOUNTS = 'accounts/REMOVE_ACCOUNTS';
-const SET_ACTIVE_ACCOUNT = 'accounts/SET_ACTIVE_ACCOUNT';
+export const SET_ACTIVE_ACCOUNT = 'accounts/SET_ACTIVE_ACCOUNT';
 const FETCHING_ACCOUNT_DATA = 'accounts/FETCHING_ACCOUNT_DATA';
 export const UPDATE_ACCOUNT = 'accounts/UPDATE_ACCOUNT';
 const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
 const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
 export const NO_METAMASK_ACCOUNTS = 'accounts/NO_METAMASK_ACCOUNTS';
-const SET_INF_MKR_APPROVAL = 'accounts/SET_INF_MKR_APPROVAL';
 
 const HARDWARE_ACCOUNTS_CONNECTING = 'accounts/HARDWARE_ACCOUNTS_CONNECTING';
 const HARDWARE_ACCOUNTS_CONNECTED = 'accounts/HARDWARE_ACCOUNTS_CONNECTED';
@@ -144,7 +141,7 @@ export const addAccounts = accounts => async dispatch => {
 };
 
 export const addAccount = account => async dispatch => {
-  return dispatch(addAccounts([account]));
+  return await dispatch(addAccounts([account]));
 };
 
 export const removeAccounts = accounts => ({
@@ -165,27 +162,27 @@ export const setActiveAccount = (address, isMetamask) => async (
 ) => {
   // if we haven't seen this account before, fetch its data and add it to the
   // Maker instance
-  if (
-    isMetamask &&
-    !getState().accounts.allAccounts.find(
-      a => a.address.toLowerCase() === address.toLowerCase()
-    )
-  ) {
+  if (isMetamask && !getAccount(getState(), address)) {
     await window.maker.addAccount({ type: AccountTypes.METAMASK });
     await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
   }
-  const a = getState().accounts.allAccounts.find(
-    a => a.address.toLowerCase() === address.toLowerCase()
-  );
-  console.log(a);
-  dispatch(setupOnboardingForAccount(a));
-  window.maker.useAccountWithAddress(address);
-  return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
-};
 
-export function setInfMkrApproval() {
-  return { type: SET_INF_MKR_APPROVAL };
-}
+  const state = getState();
+  window.maker.useAccountWithAddress(address);
+  return dispatch({
+    type: SET_ACTIVE_ACCOUNT,
+    payload: {
+      newAccount: getAccount(state, address),
+      // unfortunately the only way I can think of (short of redoing the whole proxy store data design)
+      // to make sure the proxy store retains transaction information when you're only toggling between
+      // hot and cold accounts. This is so they can resume onboarding without any issues.
+      onboardingHotAddress:
+        state.onboarding.hotWallet && state.onboarding.hotWallet.address,
+      onboardingColdAddress:
+        state.onboarding.coldWallet && state.onboarding.coldWallet.address
+    }
+  });
+};
 
 export const connectHardwareAccounts = (
   accountType,
@@ -236,9 +233,6 @@ export const connectHardwareAccounts = (
         accountsLength: 5,
         choose: onChoose
       })
-      .then(account => {
-        window.maker.useAccountWithAddress(account.address);
-      })
       .catch(err => {
         console.error(err);
         dispatch({
@@ -249,11 +243,11 @@ export const connectHardwareAccounts = (
   });
 };
 
-export const addHardwareAccount = (address, accountType) => (
+export const addHardwareAccount = (address, accountType) => async (
   dispatch,
   getState
 ) => {
-  dispatch(
+  await dispatch(
     addAccount({
       address,
       type: accountType
@@ -265,9 +259,9 @@ export const addHardwareAccount = (address, accountType) => (
   } = getState();
 
   // add hardware account to maker object
-  hardwareAccountsAvailable[accountType].onChosen(null, address);
+  await hardwareAccountsAvailable[accountType].onChosen(null, address);
 
-  dispatch({
+  return dispatch({
     type: HARDWARE_ACCOUNT_CONNECTED,
     payload: {
       accountType
@@ -413,10 +407,10 @@ const accounts = createReducer(initialState, {
       allAccounts: uniqConcat([account], state.allAccounts)
     };
   },
-  [SET_ACTIVE_ACCOUNT]: (state, { payload: address }) => ({
+  [SET_ACTIVE_ACCOUNT]: (state, { payload: { newAccount } }) => ({
     ...state,
     allAccounts: state.allAccounts,
-    activeAccount: address
+    activeAccount: newAccount.address
   }),
   [SET_UNLOCKED_MKR]: (state, { payload }) => ({
     ...state,
@@ -430,7 +424,7 @@ const accounts = createReducer(initialState, {
     ...state,
     fetching: false
   }),
-  [SET_INF_MKR_APPROVAL]: state => {
+  [MKR_APPROVE_SUCCESS]: state => {
     const account = getAccount(
       { accounts: state },
       window.maker.currentAddress()
@@ -446,26 +440,6 @@ const accounts = createReducer(initialState, {
   },
   [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),
   [WITHDRAW_MKR_SUCCESS]: updateProxyBalance(false),
-  [WITHDRAW_ALL_MKR_SUCCESS]: updateProxyBalance(false),
-  [INITIATE_LINK_REQUEST]: (state, { payload }) => {
-    const hotAccount = {
-      ...getAccount({ accounts: state }, payload.hotAddress),
-      proxyRole: 'hot'
-    };
-
-    const coldAccount = {
-      ...getAccount({ accounts: state }, payload.coldAddress),
-      proxyRole: 'cold'
-    };
-
-    return {
-      ...state,
-      allAccounts: withUpdatedAccount(
-        withUpdatedAccount(state.allAccounts, hotAccount),
-        coldAccount
-      )
-    };
-  },
   [HARDWARE_ACCOUNTS_CONNECTING]: state => {
     return state;
   },

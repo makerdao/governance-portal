@@ -105,8 +105,9 @@ class InitiateLink extends React.Component {
       !this.props.coldWallet.proxy.hasInfMkrApproval
     ) {
       this.toGrantPermissions();
+    } else {
+      this.toInitiateLink();
     }
-    this.toInitiateLink();
   };
 
   toInitiateLink = priority => {
@@ -132,7 +133,16 @@ class InitiateLink extends React.Component {
   };
 
   toGrantPermissions = () => {
-    this.props.mkrApproveProxy();
+    const pollForProxyInformation = () => {
+      if (this.props.coldWallet.proxy && this.props.coldWallet.proxy.address) {
+        this.props.mkrApproveProxy();
+      } else {
+        setTimeout(pollForProxyInformation, 100);
+      }
+    };
+
+    setTimeout(pollForProxyInformation, 100);
+
     this.setState({
       step: 3,
       faqs: faqs.grantHotWalletPermissions
@@ -150,7 +160,7 @@ class InitiateLink extends React.Component {
           <div>
             <Stepper step={this.state.step}>
               <ChooseTransactionPriority
-                onChoose={this.toInitiateLink}
+                onChoose={this.onTransactionPriorityChosen}
                 onCancel={this.props.onCancel}
               />
               <SignTransactionStep
@@ -164,7 +174,7 @@ class InitiateLink extends React.Component {
                 walletProvider={this.props.coldWallet.type}
                 status={this.props.initiateLinkTxStatus}
                 tx={this.props.initiateLinkTxHash}
-                onNext={this.onTransactionPriorityChosen}
+                onNext={this.toApproveLink}
                 onRetry={this.toInitiateLink}
                 onCancel={this.toChooseTransactionPriority}
               />
@@ -179,7 +189,7 @@ class InitiateLink extends React.Component {
                 walletProvider={this.props.hotWallet.type}
                 status={this.props.approveLinkTxStatus}
                 tx={this.props.approveLinkTxHash}
-                onRetry={this.onTransactionPriorityChosen}
+                onRetry={this.props.toApproveLink}
                 onNext={this.toGrantPermissions}
               />
               <SignTransactionStep

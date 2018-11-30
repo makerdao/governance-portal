@@ -21,7 +21,6 @@ import { cutMiddle, firstLetterCapital, formatRound } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
 import Lock from './modals/Lock';
 import Withdraw from './modals/Withdraw';
-import ProxySetup from './modals/ProxySetup';
 
 const fadeIn = keyframes`
 0% {
@@ -131,10 +130,9 @@ const VoterStatus = ({
         <Strong>{isColdWallet ? 'Cold wallet:' : 'Hot wallet:'}</Strong> In
         voting contract{' '}
         <Black>{formatRound(account.proxy.votingPower, 4)} MKR</Black>{' '}
-        {account.proxyRole === 'cold' &&
-          Number(account.mkrBalance) > 0 && (
-            <TextButton onClick={() => modalOpen(Lock)}>Top-up</TextButton>
-          )}
+        {account.proxyRole === 'cold' && Number(account.mkrBalance) > 0 && (
+          <TextButton onClick={() => modalOpen(Lock)}>Top-up</TextButton>
+        )}
         {account.proxyRole === 'cold' &&
           Number(account.proxy.votingPower) > 0 && <span> | </span>}
         {Number(account.proxy.votingPower) > 0 && (

@@ -20,6 +20,7 @@ import ChooseMKRBalanceStep from './ChooseMKRBalanceStep';
 import linkImg from '../../imgs/onboarding/link.svg';
 
 import { setColdWallet, resetColdWallet } from '../../reducers/onboarding';
+import { setActiveAccount } from '../../reducers/accounts';
 
 import {
   connectHardwareAccounts,
@@ -183,9 +184,10 @@ class ChooseColdWallet extends React.Component {
     });
   };
 
-  onAccountSelected = account => {
-    this.props.addHardwareAccount(account.address, account.type);
+  onAccountSelected = async account => {
+    await this.props.addHardwareAccount(account.address, account.type);
     this.props.setColdWallet(account);
+    this.props.setActiveAccount(this.props.coldWallet.address);
     this.toConfirmWallet();
   };
 
@@ -247,6 +249,7 @@ export default connect(
     connectHardwareAccounts,
     addHardwareAccount,
     setColdWallet,
-    resetColdWallet
+    resetColdWallet,
+    setActiveAccount
   }
 )(ChooseColdWallet);

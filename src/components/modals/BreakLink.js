@@ -5,7 +5,7 @@ import { getActiveAccount } from '../../reducers/accounts';
 import { StyledTitle, StyledBlurb, StyledTop } from './shared/styles';
 import Button from '../Button';
 import { breakLink } from '../../reducers/proxy';
-import Transaction from './shared/Transaction';
+import TransactionModal from './shared/InitiateTransaction';
 import { modalClose } from '../../reducers/modal';
 import Withdraw from './Withdraw';
 import { modalOpen } from '../../reducers/modal';
@@ -44,94 +44,98 @@ class BreakLink extends Component {
       modalOpen,
       account,
       txHash,
-      confirming,
-      network,
-      txSent
+      txStatus
     } = this.props;
-    if (txSent) {
-      return (
-        <Transaction
-          lastCard
-          txPurpose="This transaction is to break your hot-cold wallet link"
-          {...{ txHash, confirming, network, account }}
-          nextStep={() => {
-            modalClose();
-          }}
-        />
-      );
-    }
-    const { linkedAccount } = account.proxy;
-    const isColdWallet = account.proxyRole === 'cold';
-    const coldAddress = isColdWallet ? account.address : linkedAccount.address;
-    const hotAddress = isColdWallet ? linkedAccount.address : account.address;
-    const mkrBalanceCold = isColdWallet
-      ? account.mkrBalance
-      : linkedAccount.mkrBalance;
-    const mkrBalanceHot = isColdWallet
-      ? linkedAccount.mkrBalance
-      : account.mkrBalance;
-    if (account.proxy.votingPower > 0) {
-      return (
-        <Fragment>
-          <StyledTop>
-            <StyledTitle>Break Wallet Link</StyledTitle>
-          </StyledTop>
-          <StyledBlurb style={{ textAlign: 'center', marginTop: '20px' }}>
-            Before you can break your wallet link, you must withdraw all MKR
-            from the voting contract
-          </StyledBlurb>
-          <div
-            style={{
-              display: 'flex',
-              marginTop: '10px',
-              justifyContent: 'flex-end'
-            }}
-          >
-            <Button
-              slim
-              onClick={() => {
-                modalOpen(Withdraw);
-              }}
-            >
-              Withdraw MKR
-            </Button>
-          </div>
-        </Fragment>
-      );
-    }
     return (
-      <Fragment>
-        <StyledTop>
-          <StyledTitle>Break wallet link</StyledTitle>
-        </StyledTop>
-        <StyledBlurb style={{ textAlign: 'center' }}>
-          Both addresses below will be unlinked
-        </StyledBlurb>
-        <HotColdTable
-          hotAddress={hotAddress}
-          coldAddress={coldAddress}
-          mkrBalanceHot={formatRound(mkrBalanceHot, 3)}
-          mkrBalanceCold={formatRound(mkrBalanceCold, 3)}
-          ethBalanceHot={this.state.ethHot}
-          ethBalanceCold={this.state.ethCold}
-        />
-        <div
-          style={{
-            display: 'flex',
-            marginTop: '20px',
-            justifyContent: 'flex-end'
-          }}
-        >
-          <Button
-            slim
-            onClick={() => {
-              breakLink();
-            }}
-          >
-            Break Link
-          </Button>
-        </div>
-      </Fragment>
+      <TransactionModal
+        txPurpose="This transaction is to break your hot-cold wallet link"
+        txHash={txHash}
+        txStatus={txStatus}
+        account={account}
+        onComplete={modalClose}
+      >
+        {onNext => {
+          const { linkedAccount } = account.proxy;
+          const isColdWallet = account.proxyRole === 'cold';
+          const coldAddress = isColdWallet
+            ? account.address
+            : linkedAccount.address;
+          const hotAddress = isColdWallet
+            ? linkedAccount.address
+            : account.address;
+          const mkrBalanceCold = isColdWallet
+            ? account.mkrBalance
+            : linkedAccount.mkrBalance;
+          const mkrBalanceHot = isColdWallet
+            ? linkedAccount.mkrBalance
+            : account.mkrBalance;
+          if (account.proxy.votingPower > 0) {
+            return (
+              <Fragment>
+                <StyledTop>
+                  <StyledTitle>Break Wallet Link</StyledTitle>
+                </StyledTop>
+                <StyledBlurb style={{ textAlign: 'center', marginTop: '20px' }}>
+                  Before you can break your wallet link, you must withdraw all
+                  MKR from the voting contract
+                </StyledBlurb>
+                <div
+                  style={{
+                    display: 'flex',
+                    marginTop: '10px',
+                    justifyContent: 'flex-end'
+                  }}
+                >
+                  <Button
+                    slim
+                    onClick={() => {
+                      modalOpen(Withdraw);
+                    }}
+                  >
+                    Withdraw MKR
+                  </Button>
+                </div>
+              </Fragment>
+            );
+          }
+
+          return (
+            <Fragment>
+              <StyledTop>
+                <StyledTitle>Break wallet link</StyledTitle>
+              </StyledTop>
+              <StyledBlurb style={{ textAlign: 'center' }}>
+                Both addresses below will be unlinked
+              </StyledBlurb>
+              <HotColdTable
+                hotAddress={hotAddress}
+                coldAddress={coldAddress}
+                mkrBalanceHot={formatRound(mkrBalanceHot, 3)}
+                mkrBalanceCold={formatRound(mkrBalanceCold, 3)}
+                ethBalanceHot={this.state.ethHot}
+                ethBalanceCold={this.state.ethCold}
+              />
+              <div
+                style={{
+                  display: 'flex',
+                  marginTop: '20px',
+                  justifyContent: 'flex-end'
+                }}
+              >
+                <Button
+                  slim
+                  onClick={() => {
+                    breakLink();
+                    onNext();
+                  }}
+                >
+                  Break Link
+                </Button>
+              </div>
+            </Fragment>
+          );
+        }}
+      </TransactionModal>
     );
   }
 }
@@ -139,9 +143,7 @@ class BreakLink extends Component {
 const mapStateToProps = state => ({
   account: getActiveAccount(state),
   txHash: state.proxy.breakLinkTxHash,
-  confirming: state.proxy.confirmingBreakLink,
-  network: state.metamask.network,
-  txSent: !!state.proxy.breakLinkInitiated
+  txStatus: state.proxy.breakLinkTxStatus
 });
 
 export default connect(

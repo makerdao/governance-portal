@@ -6,8 +6,8 @@ import {
   onboardingClose,
   onboardingNextStep,
   onboardingPrevStep,
-  onboardingStartLinkedFlow,
-  onboardingChooseWalletType
+  setOnboardingState,
+  OnboardingStates
 } from '../../reducers/onboarding';
 import Terms from './Terms';
 import ChooseHotWallet from './ChooseHotWallet';
@@ -15,6 +15,7 @@ import ChooseColdWallet from './ChooseColdWallet';
 import Introduction from './Introduction';
 import InitiateLink from './InitiateLink';
 import LockMKR from './LockMKR';
+import StartVoting from './StartVoting';
 
 import { OnboardingFullScreen, Box } from '@makerdao/ui-components';
 
@@ -36,14 +37,13 @@ const Background = styled(Box)`
 const Onboarding = ({
   open,
   step,
-  flow,
+  state,
   hotWalletAddress,
   onboardingClose,
   onboardingNextStep,
   onboardingPrevStep,
-  onboardingStartLinkedFlow,
-  setHotWallet,
-  onboardingChooseWalletType
+  setOnboardingState,
+  setHotWallet
 }) => {
   return (
     <Background
@@ -55,13 +55,15 @@ const Onboarding = ({
       left="0"
     >
       <Introduction
-        show={open && !flow}
+        show={open && state === OnboardingStates.INTRODUCTION}
         onClose={onboardingClose}
-        onLinkedWallet={onboardingStartLinkedFlow}
+        onLinkedWallet={() =>
+          setOnboardingState(OnboardingStates.SETUP_LINKED_WALLET)
+        }
       />
       <OnboardingFullScreen
         step={step}
-        show={open && flow === 'linked'}
+        show={open && state === OnboardingStates.SETUP_LINKED_WALLET}
         onClose={onboardingClose}
         steps={[
           'Terms of use',
@@ -73,7 +75,7 @@ const Onboarding = ({
         ]}
       >
         <Terms
-          onCancel={onboardingChooseWalletType}
+          onCancel={() => setOnboardingState(OnboardingStates.INTRODUCTION)}
           onComplete={onboardingNextStep}
         />
 
@@ -87,6 +89,12 @@ const Onboarding = ({
           onCancel={onboardingPrevStep}
         />
         <LockMKR onComplete={onboardingNextStep} />
+        <StartVoting
+          onComplete={() => {
+            onboardingClose();
+            setOnboardingState(OnboardingStates.FINISHED);
+          }}
+        />
       </OnboardingFullScreen>
     </Background>
   );
@@ -97,8 +105,7 @@ export default connect(
     ...state.onboarding
   }),
   {
-    onboardingChooseWalletType,
-    onboardingStartLinkedFlow,
+    setOnboardingState,
     onboardingClose,
     onboardingNextStep,
     onboardingPrevStep

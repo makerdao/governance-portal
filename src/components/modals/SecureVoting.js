@@ -5,7 +5,6 @@ import { getActiveAccount } from '../../reducers/accounts';
 import { modalOpen, modalClose } from '../../reducers/modal';
 import { cutMiddle, formatRound } from '../../utils/misc';
 import { ethScanLink } from '../../utils/ethereum';
-import ProxySetup from './ProxySetup';
 import Lock from './Lock';
 import theme from '../../theme';
 import Withdraw from './Withdraw';
@@ -114,7 +113,7 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
         </FlexRowEnd>
       </Fragment>
     );
-  } else return <ProxySetup />;
+  }
 };
 
 export default connect(

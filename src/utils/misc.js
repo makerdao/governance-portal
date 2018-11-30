@@ -62,13 +62,12 @@ export const promiseWait = time =>
  * @return {Promise}
  */
 export const promiseRetry = ({ times, fn, delay, args = [] }) => {
-  return fn(...args).catch(
-    err =>
-      times > 0
-        ? promiseWait(delay).then(() =>
-            promiseRetry({ times: times - 1, fn, delay, args })
-          )
-        : Promise.reject(err)
+  return fn(...args).catch(err =>
+    times > 0
+      ? promiseWait(delay).then(() =>
+          promiseRetry({ times: times - 1, fn, delay, args })
+        )
+      : Promise.reject(err)
   );
 };
 
@@ -160,7 +159,7 @@ export const parseError = error => {
  * @param  {String} b
  * @return {Boolean}
  */
-export const eq = (a, b) => a.toLowerCase() === b.toLowerCase();
+export const eq = (a, b) => a && a.toLowerCase() === b && b.toLowerCase();
 
 /**
  * @desc takes an object with properties that might be promises and returns a promise of that object with resolved properties

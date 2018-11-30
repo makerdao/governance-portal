@@ -7,6 +7,7 @@ import { addToastWithTimeout, ToastTypes } from './toasts';
 import { voteTallyInit } from './tally';
 import { initApprovalsFetch } from './approvals';
 import { hatInit } from './hat';
+import { TransactionStatus } from '../utils/constants';
 
 // Constants ----------------------------------------------
 
@@ -142,6 +143,7 @@ export const withdrawVote = () => (dispatch, getState) => {
 
 const initialState = {
   proposalAddress: '',
+  txStatus: '',
   confirming: false,
   voteProgress: 'confirm',
   txHash: ''
@@ -151,41 +153,41 @@ const vote = createReducer(initialState, {
   [VOTE_REQUEST]: (state, { payload }) => ({
     ...state,
     proposalAddress: payload.address,
-    voteProgress: 'signTx'
+    txStatus: TransactionStatus.NOT_STARTED,
+    txHash: ''
   }),
   [VOTE_SENT]: (state, { payload }) => ({
     ...state,
-    confirming: true,
+    txStatus: TransactionStatus.PENDING,
     txHash: payload.txHash
   }),
   [VOTE_SUCCESS]: state => ({
     ...state,
     proposalAddress: '',
-    confirming: false
+    txStatus: TransactionStatus.MINED
   }),
   [VOTE_FAILURE]: state => ({
     ...state,
     proposalAddress: '',
-    confirming: false,
-    voteProgress: 'confirm'
+    txStatus: TransactionStatus.ERROR
   }),
   [WITHDRAW_REQUEST]: state => ({
     ...state,
-    voteProgress: 'signTx'
+    txHash: '',
+    txStatus: TransactionStatus.NOT_STARTED
   }),
   [WITHDRAW_SENT]: (state, { payload }) => ({
     ...state,
-    confirming: true,
+    txStatus: TransactionStatus.PENDING,
     txHash: payload.txHash
   }),
   [WITHDRAW_SUCCESS]: state => ({
     ...state,
-    confirming: false
+    txStatus: TransactionStatus.MINED
   }),
   [WITHDRAW_FAILURE]: state => ({
     ...state,
-    confirming: false,
-    voteProgress: 'confirm'
+    txStatus: TransactionStatus.ERROR
   }),
   [CLEAR]: () => ({
     ...initialState
