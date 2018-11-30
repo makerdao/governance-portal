@@ -175,7 +175,7 @@ const BaseLayout = ({
               </NetworkNotification>
             </div>
             {/* cheap network notification, probably to be replaced */}
-            <Flex style={{ zIndex: '100' }}>
+            <Flex>
               <DimHeaderLink
                 href="https://www.youtube.com/watch?v=wP7DedWcEmg"
                 target="_blank"

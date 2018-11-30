@@ -46,7 +46,7 @@ const Onboarding = ({
   return (
     <Background
       show={open}
-      zIndex="20000"
+      zIndex="2"
       bg="#F6F8F9"
       position="fixed"
       top="0"
