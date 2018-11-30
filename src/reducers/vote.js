@@ -6,6 +6,7 @@ import { getAccount, UPDATE_ACCOUNT } from './accounts';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { voteTallyInit } from './tally';
 import { initApprovalsFetch } from './approvals';
+import { hatInit } from './hat';
 
 // Constants ----------------------------------------------
 
@@ -27,7 +28,7 @@ export const clear = () => ({
   type: CLEAR
 });
 
-const handleTx = async ({
+const handleTx = ({
   prefix,
   dispatch,
   getState,
@@ -35,39 +36,41 @@ const handleTx = async ({
   acctType,
   activeAccount,
   proposalAddress = ''
-}) => {
-  const txMgr = window.maker.service('transactionManager');
-  txMgr.listen(txObject, {
-    pending: tx => {
-      dispatch({
-        type: `vote/${prefix}_SENT`,
-        payload: { txHash: tx.hash }
-      });
-    },
-    mined: tx => {
-      dispatch({ type: `vote/${prefix}_SUCCESS` });
-      ReactGA.event({
-        category: `${prefix} success`,
-        action: prefix,
-        label: `wallet type ${acctType || 'unknown'}`
-      });
-      // console.log('mined:', tx);
-      dispatch(voteTallyInit());
-      dispatch(initApprovalsFetch());
-      updateVotingFor(dispatch, getState, activeAccount, proposalAddress);
-    },
-    error: (tx, err) => {
-      // console.error(err.message);
-      dispatch({ type: `vote/${prefix}_FAILURE`, payload: err });
-      dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
-      ReactGA.event({
-        category: 'User notification error',
-        action: 'vote',
-        label: parseError(err)
-      });
-    }
+}) =>
+  new Promise(resolve => {
+    const txMgr = window.maker.service('transactionManager');
+    txMgr.listen(txObject, {
+      pending: tx => {
+        dispatch({
+          type: `vote/${prefix}_SENT`,
+          payload: { txHash: tx.hash }
+        });
+      },
+      mined: _ => {
+        dispatch({ type: `vote/${prefix}_SUCCESS` });
+        ReactGA.event({
+          category: `${prefix} success`,
+          action: prefix,
+          label: `wallet type ${acctType || 'unknown'}`
+        });
+        dispatch(voteTallyInit());
+        dispatch(hatInit());
+        dispatch(initApprovalsFetch());
+        updateVotingFor(dispatch, getState, activeAccount, proposalAddress);
+        resolve();
+      },
+      error: (_, err) => {
+        dispatch({ type: `vote/${prefix}_FAILURE`, payload: err });
+        dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+        ReactGA.event({
+          category: 'User notification error',
+          action: 'vote',
+          label: parseError(err)
+        });
+        resolve();
+      }
+    });
   });
-};
 
 const updateVotingFor = (
   dispatch,
@@ -93,7 +96,7 @@ const updateVotingFor = (
   dispatch({ type: UPDATE_ACCOUNT, payload: updatedLinkedAcc });
 };
 
-export const sendVote = proposalAddress => async (dispatch, getState) => {
+export const sendVote = proposalAddress => (dispatch, getState) => {
   const activeAccount = getAccount(getState(), window.maker.currentAddress());
   if (!activeAccount || !activeAccount.hasProxy)
     throw new Error('must have account active');
@@ -101,9 +104,9 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
 
   const voteExec = window.maker
     .service('voteProxy')
-    .voteExec(activeAccount.proxy.address, proposalAddress);
+    .voteExec(activeAccount.proxy.address, [proposalAddress]);
 
-  await handleTx({
+  return handleTx({
     prefix: 'VOTE',
     dispatch,
     getState,
@@ -112,27 +115,20 @@ export const sendVote = proposalAddress => async (dispatch, getState) => {
     activeAccount,
     proposalAddress
   });
-
-  /** TODO: This doesn't match exactly txManager, may need to double check this: */
-  // ReactGA.event({
-  //   category: 'Vote TX Success',
-  //   action: 'Cast',
-  //   label: `wallet type ${activeAccount.type || 'unknown'}`
-  // });
 };
 
-export const withdrawVote = () => async (dispatch, getState) => {
+export const withdrawVote = () => (dispatch, getState) => {
   const activeAccount = getAccount(getState(), window.maker.currentAddress());
   if (!activeAccount || !activeAccount.hasProxy)
     throw new Error('must have account active');
 
   dispatch({ type: WITHDRAW_REQUEST });
 
-  const voteExecNone = await window.maker.voteExecNone({
-    account: activeAccount
-  });
+  const voteExecNone = window.maker
+    .service('voteProxy')
+    .voteExec(activeAccount.proxy.address, []);
 
-  await handleTx({
+  return handleTx({
     prefix: 'WITHDRAW',
     dispatch,
     getState,
@@ -140,13 +136,6 @@ export const withdrawVote = () => async (dispatch, getState) => {
     acctType: activeAccount.type,
     activeAccount
   });
-
-  // TODO: double check this:
-  // ReactGA.event({
-  //   category: 'Vote TX Success',
-  //   action: 'Withdraw',
-  //   label: `wallet type ${activeAccount.type || 'unknown'}`
-  // });
 };
 
 // Reducer ------------------------------------------------

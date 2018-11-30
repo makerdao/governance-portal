@@ -28,8 +28,8 @@ export const hatInit = () => async dispatch => {
 
 const initialState = {
   fetching: false,
-  hatAddress: '',
-  hatApprovals: 0
+  address: '',
+  approvals: 0
 };
 
 const hat = createReducer(initialState, {
@@ -38,8 +38,8 @@ const hat = createReducer(initialState, {
     fetching: true
   }),
   [HAT_SUCCESS]: (_, { payload }) => ({
-    hatAddress: payload.address,
-    hatApprovals: payload.approvals,
+    address: payload.address,
+    approvals: payload.approvals,
     fetching: false
   }),
   [HAT_FAILURE]: () => ({

@@ -2,6 +2,7 @@
   "name": "mkr-governance-dashboard",
   "type": "static",
   "alias": "dai-gov-master",
+  "version": 1,
   "static": {
     "rewrites": [
       {

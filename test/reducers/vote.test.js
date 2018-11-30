@@ -36,7 +36,6 @@ const testErrorMessage = 'testErrorMessage';
 
 // Mock service methods
 const voteExec = jest.fn();
-const voteExecNone = jest.fn();
 
 const listenSuccess = jest.fn((txObject, txState) => {
   txState.pending({ hash: testPendingHash });
@@ -58,9 +57,7 @@ const mockServiceError = name => {
 
 const defaultFunctions = {
   service: jest.fn(mockService),
-  currentAddress: jest.fn(() => mockCurrentAddress),
-  voteExec: voteExec,
-  voteExecNone: voteExecNone
+  currentAddress: jest.fn(() => mockCurrentAddress)
 };
 
 describe('Vote Reducer', () => {
@@ -87,6 +84,7 @@ describe('Vote Reducer', () => {
   });
 
   beforeEach(() => {
+    jest.clearAllMocks();
     store = mockStore(initialState);
   });
 
@@ -136,7 +134,6 @@ describe('Vote Reducer', () => {
       );
 
       expect(voteExec).toBeCalledTimes(1);
-
       expect(store.getActions()[0]).toEqual({
         type: reducer.VOTE_REQUEST,
         payload: {
@@ -150,14 +147,14 @@ describe('Vote Reducer', () => {
       expect(store.getActions()[2]).toEqual({
         type: reducer.VOTE_SUCCESS
       });
-      expect(store.getActions()[5]).toEqual({
+      expect(store.getActions()[7]).toEqual({
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
           votingFor: mockProposalAddress
         }
       });
-      expect(store.getActions()[6]).toEqual({
+      expect(store.getActions()[8]).toEqual({
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
@@ -230,10 +227,12 @@ describe('Vote Reducer', () => {
 
       const voteTallyInit = jest.fn(() => mockAction);
       tally.voteTallyInit = voteTallyInit;
+      voteExec.mockClear();
 
       await reducer.withdrawVote()(store.dispatch, store.getState);
 
-      expect(voteExecNone).toBeCalledTimes(1);
+      expect(voteExec).toBeCalledTimes(1);
+      expect(voteExec).toBeCalledWith(undefined, []);
       expect(store.getActions()[0]).toEqual({
         type: reducer.WITHDRAW_REQUEST
       });
@@ -244,14 +243,14 @@ describe('Vote Reducer', () => {
       expect(store.getActions()[2]).toEqual({
         type: reducer.WITHDRAW_SUCCESS
       });
-      expect(store.getActions()[5]).toEqual({
+      expect(store.getActions()[7]).toEqual({
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
           votingFor: ''
         }
       });
-      expect(store.getActions()[6]).toEqual({
+      expect(store.getActions()[8]).toEqual({
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,

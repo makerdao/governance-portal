@@ -42,6 +42,7 @@ const initialState = {
       }
     ]
   },
+  proposals: ['fakeProposal'],
   proxy: {
     hotAddress: 'mockStateHotAddress',
     coldAddress: coldAddress
@@ -169,33 +170,30 @@ describe('Proxy Reducer', () => {
         }
       };
 
-      await reducer
-        .initiateLink(mockAccounts)(store.dispatch, store.getState)
-        .then(() => {
-          expect(initLink).toBeCalledTimes(1);
-          expect(store.getActions().length).toBe(4);
-          expect(store.getActions()[0]).toEqual({
-            type: SET_ACTIVE_ACCOUNT,
-            payload: expect.any(String)
-          });
-          expect(store.getActions()[1]).toEqual({
-            type: sharedConstants.INITIATE_LINK_REQUEST,
-            payload: {
-              hotAddress: expect.any(String),
-              coldAddress: expect.any(String)
-            }
-          });
-          expect(store.getActions()[2]).toEqual({
-            type: reducer.INITIATE_LINK_SENT,
-            payload: {
-              txHash: testPendingHash
-            }
-          });
-          expect(store.getActions()[3]).toEqual({
-            type: reducer.INITIATE_LINK_SUCCESS,
-            payload: ''
-          });
-        });
+      await reducer.initiateLink(mockAccounts)(store.dispatch, store.getState);
+      expect(initLink).toBeCalledTimes(1);
+      expect(store.getActions().length).toBe(4);
+      expect(store.getActions()[0]).toEqual({
+        type: SET_ACTIVE_ACCOUNT,
+        payload: expect.any(String)
+      });
+      expect(store.getActions()[1]).toEqual({
+        type: sharedConstants.INITIATE_LINK_REQUEST,
+        payload: {
+          hotAddress: expect.any(String),
+          coldAddress: expect.any(String)
+        }
+      });
+      expect(store.getActions()[2]).toEqual({
+        type: reducer.INITIATE_LINK_SENT,
+        payload: {
+          txHash: testPendingHash
+        }
+      });
+      expect(store.getActions()[3]).toEqual({
+        type: reducer.INITIATE_LINK_SUCCESS,
+        payload: ''
+      });
     });
 
     test('Initiate Link should dispatch FAILURE action when TxMgr calls error', async () => {

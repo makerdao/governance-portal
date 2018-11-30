@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 
 const Container = styled.div`
   text-align: center;
+  min-height: 800px;
 `;
 
 const Background = styled.div`

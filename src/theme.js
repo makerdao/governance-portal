@@ -7,6 +7,8 @@ export const colors = {
   box_dark: '5, 60, 75',
   box_light: '67, 83, 103',
   dark_grey: '39, 39, 39',
+  dark_green: '43, 169, 142',
+  darker_green: '38,148,125',
   dark: '12, 12, 13',
   black: '0, 0, 0'
 };
