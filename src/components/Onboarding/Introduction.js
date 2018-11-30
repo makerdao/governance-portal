@@ -97,7 +97,7 @@ const Introduction = ({ show, onClose, onLinkedWallet }) => {
         >
           <Box mb="l">
             <Box mb="xl">
-              <h1 style={{ fontWeight: 'normal', fontSize: '40px' }}>
+              <h1 style={{ fontWeight: 'normal', fontSize: '4rem' }}>
                 Set up your voting contract
               </h1>
             </Box>
