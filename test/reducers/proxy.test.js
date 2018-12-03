@@ -20,33 +20,39 @@ const ADD_TOAST = 'toast/ADD_TOAST';
 
 // Mock state setup
 const coldAddress = '0xf00bae';
+const hotAddress = '0xbeefed1bedded2dabbed3defaced4decade5feed';
 const testPendingHash = 'testPendingHash';
 const testMinedHash = 'testMinedHash';
 const testErrorMessage = 'testErrorMessage';
 
+const currentAccount = {
+  address: coldAddress,
+  proxyRole: 'cold',
+  hasProxy: 'true',
+  proxy: {
+    address: 'mockProxyAddress',
+    linkedAccount: {
+      address: hotAddress,
+      proxyRole: 'hot'
+    }
+  }
+};
+
 const initialState = {
   accounts: {
     activeAccount: coldAddress,
-    allAccounts: [
-      {
-        address: coldAddress,
-        proxyRole: 'cold',
-        hasProxy: 'true',
-        proxy: {
-          address: 'mockProxyAddress',
-          linkedAccount: {
-            address: '0xbeefed1bedded2dabbed3defaced4decade5feed',
-            proxyRole: 'cold'
-          }
-        }
-      }
-    ]
+    allAccounts: [currentAccount]
+  },
+  onboarding: {
+    hotWallet: {
+      address: hotAddress
+    },
+    coldWallet: {
+      address: coldAddress
+    }
   },
   proposals: ['fakeProposal'],
-  proxy: {
-    hotAddress: 'mockStateHotAddress',
-    coldAddress: coldAddress
-  }
+  proxy: {}
 };
 
 // Mock service methods
@@ -114,7 +120,7 @@ const tokenClass = token => {
 
 const defaultFunctions = {
   currentAddress: jest.fn(() => coldAddress),
-  currentAccount: jest.fn(() => initialState),
+  currentAccount: jest.fn(() => currentAccount),
   useAccountWithAddress: jest.fn(),
   service: jest.fn(mockService),
   getToken: jest.fn(tokenClass)
@@ -166,7 +172,7 @@ describe('Proxy Reducer', () => {
           address: coldAddress
         },
         hot: {
-          address: 'mockHotAddress'
+          address: coldAddress
         }
       };
 
@@ -174,25 +180,21 @@ describe('Proxy Reducer', () => {
       expect(initLink).toBeCalledTimes(1);
       expect(store.getActions().length).toBe(4);
       expect(store.getActions()[0]).toEqual({
-        type: SET_ACTIVE_ACCOUNT,
-        payload: expect.any(String)
+        type: reducer.INITIATE_LINK_REQUEST
       });
       expect(store.getActions()[1]).toEqual({
-        type: sharedConstants.INITIATE_LINK_REQUEST,
-        payload: {
-          hotAddress: expect.any(String),
-          coldAddress: expect.any(String)
-        }
-      });
-      expect(store.getActions()[2]).toEqual({
         type: reducer.INITIATE_LINK_SENT,
         payload: {
           txHash: testPendingHash
         }
       });
-      expect(store.getActions()[3]).toEqual({
+      expect(store.getActions()[2]).toEqual({
         type: reducer.INITIATE_LINK_SUCCESS,
         payload: ''
+      });
+      expect(store.getActions()[3]).toEqual({
+        type: accounts.FETCHING_ACCOUNT_DATA,
+        payload: true
       });
     });
 
@@ -211,23 +213,15 @@ describe('Proxy Reducer', () => {
       };
       await reducer.initiateLink(mockAccounts)(store.dispatch, store.getState);
 
-      expect(store.getActions().length).toBe(4);
+      expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
-        type: SET_ACTIVE_ACCOUNT,
-        payload: expect.any(String)
+        type: reducer.INITIATE_LINK_REQUEST
       });
       expect(store.getActions()[1]).toEqual({
-        type: sharedConstants.INITIATE_LINK_REQUEST,
-        payload: {
-          hotAddress: expect.any(String),
-          coldAddress: expect.any(String)
-        }
-      });
-      expect(store.getActions()[2]).toEqual({
         type: reducer.INITIATE_LINK_FAILURE,
         payload: { message: testErrorMessage }
       });
-      expect(store.getActions()[3]).toEqual({
+      expect(store.getActions()[2]).toEqual({
         type: ADD_TOAST,
         payload: {
           toast: expect.any(Object)
@@ -241,33 +235,38 @@ describe('Proxy Reducer', () => {
       defaultFunctions.service = jest.fn(mockService);
     });
 
-    test('approveLink should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', () => {
+    test('approveLink should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', async () => {
       const mockAccounts = {
-        hotAccount: {
+        hot: {
           type: AccountTypes.METAMASK,
           address: coldAddress,
           proxyRole: 'someProxyRole'
+        },
+        cold: {
+          type: AccountTypes.LEDGER,
+          address: coldAddress
         }
       };
 
-      reducer.approveLink(mockAccounts)(store.dispatch, store.getState);
+      await reducer.approveLink(mockAccounts)(store.dispatch, store.getState);
       expect(approveLink).toBeCalledTimes(1);
       expect(store.getActions().length).toBe(4);
-      expect(store.getActions()[1]).toEqual({
+      expect(store.getActions()[0]).toEqual({
         type: reducer.APPROVE_LINK_REQUEST
       });
-      expect(store.getActions()[2]).toEqual({
+      expect(store.getActions()[1]).toEqual({
         type: reducer.APPROVE_LINK_SENT,
         payload: {
           txHash: testPendingHash
         }
       });
-      expect(store.getActions()[3]).toEqual({
+      expect(store.getActions()[2]).toEqual({
         type: reducer.APPROVE_LINK_SUCCESS,
-        payload: {
-          coldAddress: expect.any(String),
-          hotAddress: expect.any(String)
-        }
+        payload: ''
+      });
+      expect(store.getActions()[3]).toEqual({
+        type: accounts.FETCHING_ACCOUNT_DATA,
+        payload: true
       });
     });
 
@@ -275,24 +274,28 @@ describe('Proxy Reducer', () => {
       defaultFunctions.service = jest.fn(mockServiceError);
 
       const mockAccounts = {
-        hotAccount: {
+        hot: {
           type: AccountTypes.METAMASK,
           address: coldAddress,
           proxyRole: 'someProxyRole'
+        },
+        cold: {
+          type: AccountTypes.LEDGER,
+          address: coldAddress
         }
       };
 
       await reducer.approveLink(mockAccounts)(store.dispatch, store.getState);
 
-      expect(store.getActions().length).toBe(4);
-      expect(store.getActions()[1]).toEqual({
+      expect(store.getActions().length).toBe(3);
+      expect(store.getActions()[0]).toEqual({
         type: reducer.APPROVE_LINK_REQUEST
       });
-      expect(store.getActions()[2]).toEqual({
+      expect(store.getActions()[1]).toEqual({
         type: reducer.APPROVE_LINK_FAILURE,
         payload: { message: testErrorMessage }
       });
-      expect(store.getActions()[3]).toEqual({
+      expect(store.getActions()[2]).toEqual({
         type: ADD_TOAST,
         payload: {
           toast: expect.any(Object)
@@ -409,60 +412,6 @@ describe('Proxy Reducer', () => {
     });
   });
 
-  describe('Free All', () => {
-    const mockValue = 5;
-
-    afterAll(() => {
-      defaultFunctions.service = jest.fn(mockService);
-    });
-
-    test('Free All should not call voteProxyService when value is 0', async () => {
-      await reducer.freeAll(0)(store.dispatch, store.getState);
-      expect(freeAll).not.toBeCalled();
-    });
-
-    test('Free All should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', () => {
-      reducer.freeAll(mockValue)(store.dispatch, store.getState);
-
-      expect(freeAll).toBeCalledTimes(1);
-      expect(store.getActions().length).toBe(3);
-      expect(store.getActions()[0]).toEqual({
-        type: reducer.WITHDRAW_ALL_MKR_REQUEST,
-        payload: mockValue
-      });
-      expect(store.getActions()[1]).toEqual({
-        type: reducer.WITHDRAW_ALL_MKR_SENT,
-        payload: { txHash: testPendingHash }
-      });
-      expect(store.getActions()[2]).toEqual({
-        type: sharedConstants.WITHDRAW_ALL_MKR_SUCCESS,
-        payload: mockValue
-      });
-    });
-
-    test('Free All should dispatch FAILURE action when TxMgr calls error', () => {
-      defaultFunctions.service = jest.fn(mockServiceError);
-
-      reducer.freeAll(mockValue)(store.dispatch, store.getState);
-
-      expect(store.getActions().length).toBe(3);
-      expect(store.getActions()[0]).toEqual({
-        type: reducer.WITHDRAW_ALL_MKR_REQUEST,
-        payload: mockValue
-      });
-      expect(store.getActions()[1]).toEqual({
-        type: reducer.WITHDRAW_ALL_MKR_FAILURE,
-        payload: { message: testErrorMessage }
-      });
-      expect(store.getActions()[2]).toEqual({
-        type: ADD_TOAST,
-        payload: {
-          toast: expect.any(Object)
-        }
-      });
-    });
-  });
-
   describe('Break Link', () => {
     const mockAction = { type: FETCHING_ACCOUNT_DATA, payload: true };
     accounts.addAccounts = jest.fn(() => mockAction);
@@ -472,7 +421,7 @@ describe('Proxy Reducer', () => {
     });
 
     test('Break Link should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', async () => {
-      await reducer.breakLink()(store.dispatch);
+      await reducer.breakLink()(store.dispatch, store.getState);
 
       expect(breakLink).toBeCalledTimes(1);
       expect(store.getActions().length).toBe(4);
@@ -496,7 +445,7 @@ describe('Proxy Reducer', () => {
     test('Break Link should dispatch FAILURE action when TxMgr calls error', () => {
       defaultFunctions.service = jest.fn(mockServiceError);
 
-      reducer.breakLink()(store.dispatch);
+      reducer.breakLink()(store.dispatch, store.getState);
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
         type: reducer.BREAK_LINK_REQUEST
@@ -510,21 +459,6 @@ describe('Proxy Reducer', () => {
         payload: {
           toast: expect.any(Object)
         }
-      });
-    });
-  });
-
-  describe('Smart Step Skip', () => {
-    test('Smart Step Skip should dispatch GO_TO_STEP action when setupProgress is "lockInput"', () => {
-      initialState.proxy.setupProgress = 'lockInput';
-      store = mockStore(initialState);
-
-      reducer.smartStepSkip()(store.dispatch, store.getState);
-
-      expect(store.getActions().length).toBe(1);
-      expect(store.getActions()[0]).toEqual({
-        type: reducer.GO_TO_STEP,
-        payload: 'summary'
       });
     });
   });
@@ -545,7 +479,7 @@ describe('Proxy Reducer', () => {
         payload: { txHash: testPendingHash }
       });
       expect(store.getActions()[2]).toEqual({
-        type: reducer.MKR_APPROVE_SUCCESS,
+        type: sharedConstants.MKR_APPROVE_SUCCESS,
         payload: ''
       });
     });

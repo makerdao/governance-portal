@@ -25,7 +25,7 @@ const LEDGER_LEGACY_PATH = "44'/60'/0'/0";
 
 const REMOVE_ACCOUNTS = 'accounts/REMOVE_ACCOUNTS';
 export const SET_ACTIVE_ACCOUNT = 'accounts/SET_ACTIVE_ACCOUNT';
-const FETCHING_ACCOUNT_DATA = 'accounts/FETCHING_ACCOUNT_DATA';
+export const FETCHING_ACCOUNT_DATA = 'accounts/FETCHING_ACCOUNT_DATA';
 export const UPDATE_ACCOUNT = 'accounts/UPDATE_ACCOUNT';
 const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
 const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';

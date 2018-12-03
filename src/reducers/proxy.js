@@ -70,7 +70,7 @@ const handleTx = ({
           action: prefix,
           label: `wallet type ${acctType || 'unknown'}`
         });
-        resolve();
+        resolve(true);
       },
       error: (_, err) => {
         dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
@@ -80,7 +80,7 @@ const handleTx = ({
           action: 'proxy',
           label: parseError(err)
         });
-        resolve();
+        resolve(false);
       }
     });
   });
@@ -118,31 +118,25 @@ function useColdAccount(state) {
   return true;
 }
 
-export const initiateLink = ({ cold, hot }) => async (dispatch, getState) => {
+export const initiateLink = ({ cold, hot }) => (dispatch, getState) => {
   if (!useColdAccount(getState())) return;
   const initiateLink = window.maker
     .service('voteProxyFactory')
     .initiateLink(hot.address);
 
   dispatch({
-    type: INITIATE_LINK_REQUEST,
-    payload: {
-      hotAddress: hot.address,
-      coldAddress: cold.address
-    }
+    type: INITIATE_LINK_REQUEST
   });
 
-  await handleTx({
+  return handleTx({
     prefix: 'INITIATE_LINK',
     dispatch,
     txObject: initiateLink,
     acctType: cold.type
-  });
-
-  return dispatch(addAccounts([hot, cold]));
+  }).then(success => success && dispatch(addAccounts([hot, cold])));
 };
 
-export const approveLink = ({ hot, cold }) => async (dispatch, getState) => {
+export const approveLink = ({ hot, cold }) => (dispatch, getState) => {
   if (!useHotAccount(getState())) return;
   const approveLink = window.maker
     .service('voteProxyFactory')
@@ -150,17 +144,16 @@ export const approveLink = ({ hot, cold }) => async (dispatch, getState) => {
 
   dispatch({ type: APPROVE_LINK_REQUEST });
 
-  await handleTx({
+  return handleTx({
     prefix: 'APPROVE_LINK',
     dispatch,
     txObject: approveLink,
     acctType: hot.type
-  });
-
-  return dispatch(addAccounts([hot, cold]));
+  }).then(success => success && dispatch(addAccounts([hot, cold])));
 };
 
 export const lock = value => async (dispatch, getState) => {
+  if (value === 0) return;
   if (!useColdAccount(getState())) return;
   const account = getAccount(getState(), window.maker.currentAddress());
   const lock = window.maker
@@ -179,6 +172,7 @@ export const lock = value => async (dispatch, getState) => {
 };
 
 export const free = value => (dispatch, getState) => {
+  if (value <= 0) return;
   const account = getAccount(getState(), window.maker.currentAddress());
 
   const free = window.maker
@@ -195,7 +189,7 @@ export const free = value => (dispatch, getState) => {
   });
 };
 
-export const breakLink = () => (dispatch, getState) => {
+export const breakLink = () => async (dispatch, getState) => {
   dispatch({ type: BREAK_LINK_REQUEST });
   const currentAccount = window.maker.currentAccount();
   window.maker.useAccountWithAddress(currentAccount.address);
@@ -208,14 +202,14 @@ export const breakLink = () => (dispatch, getState) => {
   );
   const accountsToRefresh = otherAccount ? [account, otherAccount] : [account];
 
-  return handleTx({
+  await handleTx({
     prefix: 'BREAK_LINK',
     dispatch,
     txObject: breakLink,
     acctType: currentAccount.type
-  }).then(() => {
-    dispatch(addAccounts(accountsToRefresh));
   });
+
+  return dispatch(addAccounts(accountsToRefresh));
 };
 
 export const mkrApproveProxy = () => (dispatch, getState) => {
