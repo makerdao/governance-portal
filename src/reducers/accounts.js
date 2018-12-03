@@ -27,15 +27,18 @@ const REMOVE_ACCOUNTS = 'accounts/REMOVE_ACCOUNTS';
 export const SET_ACTIVE_ACCOUNT = 'accounts/SET_ACTIVE_ACCOUNT';
 export const FETCHING_ACCOUNT_DATA = 'accounts/FETCHING_ACCOUNT_DATA';
 export const UPDATE_ACCOUNT = 'accounts/UPDATE_ACCOUNT';
-const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
+export const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
 const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
 export const NO_METAMASK_ACCOUNTS = 'accounts/NO_METAMASK_ACCOUNTS';
 
-const HARDWARE_ACCOUNTS_CONNECTING = 'accounts/HARDWARE_ACCOUNTS_CONNECTING';
-const HARDWARE_ACCOUNTS_CONNECTED = 'accounts/HARDWARE_ACCOUNTS_CONNECTED';
-const HARDWARE_ACCOUNTS_ERROR = 'accounts/HARDWARE_ACCOUNTS_ERROR';
+export const HARDWARE_ACCOUNTS_CONNECTING =
+  'accounts/HARDWARE_ACCOUNTS_CONNECTING';
+export const HARDWARE_ACCOUNTS_CONNECTED =
+  'accounts/HARDWARE_ACCOUNTS_CONNECTED';
+export const HARDWARE_ACCOUNTS_ERROR = 'accounts/HARDWARE_ACCOUNTS_ERROR';
 
-const HARDWARE_ACCOUNT_CONNECTED = 'accounts/HARDWARE_ACCOUNT_CONNECTED';
+export const HARDWARE_ACCOUNT_CONNECTED = 'accounts/HARDWARE_ACCOUNT_CONNECTED';
+export const HARDWARE_ACCOUNT_ERROR = 'accounts/HARDWARE_ACCOUNT_ERROR';
 
 // Selectors ----------------------------------------------
 
@@ -78,21 +81,34 @@ export const addAccounts = accounts => async dispatch => {
       .service('voteProxy')
       .getVoteProxy(account.address);
 
-    let currProposal = Promise.resolve('');
-    let proxyRole = '';
-    if (hasProxy) {
-      currProposal = currProposal.then(() =>
-        // NOTE for now we just take the first address in the slate since we're
-        // assuming that they're only voting for one in the frontend. This
-        // should be changed if that changes
-        (async () => {
+    const proxyRole = hasProxy
+      ? voteProxy.getColdAddress() === account.address
+        ? 'cold'
+        : 'hot'
+      : '';
+    const currProposal = hasProxy
+      ? (async () => {
+          // NOTE for now we just take the first address in the slate since we're
+          // assuming that they're only voting for one in the frontend. This
+          // should be changed if that changes
           const addresses = await voteProxy.getVotedProposalAddresses();
           return addresses[0] || '';
         })()
-      );
-      proxyRole =
-        voteProxy.getColdAddress() === account.address ? 'cold' : 'hot';
-    }
+      : '';
+
+    const linkedAccountData = async () => {
+      const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
+      const linkedAddress =
+        otherRole === 'hot'
+          ? voteProxy.getHotAddress()
+          : voteProxy.getColdAddress();
+      return {
+        proxyRole: otherRole,
+        address: linkedAddress,
+        mkrBalance: await toNum(mkrToken.balanceOf(linkedAddress))
+      };
+    };
+
     const _payload = {
       ...account,
       address: account.address,
@@ -106,31 +122,19 @@ export const addAccounts = accounts => async dispatch => {
             votingPower: toNum(voteProxy.getNumDeposits()),
             hasInfMkrApproval: mkrToken
               .allowance(account.address, voteProxy.getProxyAddress())
-              .then(val => val.eq(MAX_UINT_ETH_BN))
+              .then(val => val.eq(MAX_UINT_ETH_BN)),
+            linkedAccount: linkedAccountData()
           })
-        : { address: '', votingPower: 0, hasInfMkrApproval: false }
+        : {
+            address: '',
+            votingPower: 0,
+            hasInfMkrApproval: false,
+            linkedAccount: {}
+          }
     };
 
-    const fetchLinkedAccountData = async () => {
-      if (hasProxy) {
-        const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
-        const linkedAddress =
-          otherRole === 'hot'
-            ? voteProxy.getHotAddress()
-            : voteProxy.getColdAddress();
-        return {
-          address: linkedAddress,
-          proxyRole: otherRole,
-          mkrBalance: await toNum(mkrToken.balanceOf(linkedAddress))
-        };
-      } else return {};
-    };
     try {
-      const [payload, linkedAccount] = await Promise.all([
-        promisedProperties(_payload),
-        fetchLinkedAccountData()
-      ]);
-      payload.proxy.linkedAccount = linkedAccount;
+      const payload = await promisedProperties(_payload);
       dispatch({ type: ADD_ACCOUNT, payload });
     } catch (e) {
       console.log('failed to add account', e);
@@ -201,29 +205,21 @@ export const connectHardwareAccounts = (
 
   return new Promise((resolve, reject) => {
     const onChoose = async (addresses, callback) => {
-      try {
-        const accountsWithType = addresses.map(address => ({
-          address,
-          type: accountType
-        }));
+      const accountsWithType = addresses.map(address => ({
+        address,
+        type: accountType
+      }));
 
-        dispatch({
-          type: HARDWARE_ACCOUNTS_CONNECTED,
-          payload: {
-            accountType,
-            accounts: accountsWithType,
-            onAccountChosen: callback
-          }
-        });
+      dispatch({
+        type: HARDWARE_ACCOUNTS_CONNECTED,
+        payload: {
+          accountType,
+          accounts: accountsWithType,
+          onAccountChosen: callback
+        }
+      });
 
-        resolve(accountsWithType);
-      } catch (err) {
-        console.error(err);
-        dispatch({
-          type: HARDWARE_ACCOUNTS_ERROR
-        });
-        reject(err);
-      }
+      resolve(accountsWithType);
     };
 
     window.maker
@@ -234,7 +230,6 @@ export const connectHardwareAccounts = (
         choose: onChoose
       })
       .catch(err => {
-        console.error(err);
         dispatch({
           type: HARDWARE_ACCOUNTS_ERROR
         });
@@ -247,26 +242,32 @@ export const addHardwareAccount = (address, accountType) => async (
   dispatch,
   getState
 ) => {
-  await dispatch(
-    addAccount({
-      address,
-      type: accountType
-    })
-  );
+  try {
+    const {
+      accounts: { hardwareAccountsAvailable }
+    } = getState();
 
-  const {
-    accounts: { hardwareAccountsAvailable }
-  } = getState();
+    await hardwareAccountsAvailable[accountType].onChosen(null, address);
 
-  // add hardware account to maker object
-  await hardwareAccountsAvailable[accountType].onChosen(null, address);
+    // add hardware account to maker object
+    await dispatch(
+      addAccount({
+        address,
+        type: accountType
+      })
+    );
 
-  return dispatch({
-    type: HARDWARE_ACCOUNT_CONNECTED,
-    payload: {
-      accountType
-    }
-  });
+    return dispatch({
+      type: HARDWARE_ACCOUNT_CONNECTED,
+      payload: {
+        accountType
+      }
+    });
+  } catch (err) {
+    return dispatch({
+      type: HARDWARE_ACCOUNT_ERROR
+    });
+  }
 };
 
 // Reducer ------------------------------------------------
@@ -290,37 +291,7 @@ const withUpdatedAccount = (accounts, updatedAccount) => {
   );
 };
 
-const fakeColdAccount = {
-  address: '0xbeefed1bedded2dabbed3defaced4decade5feed',
-  proxyRole: 'cold',
-  mkrBalance: 222
-};
-
-const fakeHotAccount = {
-  id: '_',
-  address: '0xbeefed1bedded2dabbed3defaced4decade5dead',
-  type: 'fake',
-  hasProxy: true,
-  proxyRole: 'hot',
-  votingFor: '0xbeefed1bedded2dabbed3defaced4decade5feed',
-  mkrBalance: 333,
-  proxy: {
-    address: '0xproxyfake',
-    votingPower: 111,
-    hasInfMkrApproval: false,
-    linkedAccount: fakeColdAccount
-  }
-};
-
-// eslint-disable-next-line no-unused-vars
-const fakeInitialState = {
-  activeAccount: fakeHotAccount.address,
-  allAccounts: [fakeHotAccount, fakeColdAccount],
-  fetching: false
-};
-
-// eslint-disable-next-line no-unused-vars
-const realInitialState = {
+const initialState = {
   activeAccount: '',
   fetching: true,
   allAccounts: [],
@@ -335,8 +306,6 @@ const realInitialState = {
     }
   }
 };
-
-const initialState = realInitialState;
 
 const updateProxyBalance = adding => (state, { payload: amount }) => {
   let account = getActiveAccount({ accounts: state });
@@ -467,6 +436,9 @@ const accounts = createReducer(initialState, {
         }
       }
     };
+  },
+  [HARDWARE_ACCOUNT_ERROR]: state => {
+    return state;
   }
 });
 
