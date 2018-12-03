@@ -9,9 +9,6 @@ const ONBOARDING_CLOSE = 'onboarding/ONBOARDING_CLOSE';
 const ONBOARDING_NEXT_STEP = 'onboarding/ONBOARDING_NEXT_STEP';
 const ONBOARDING_PREV_STEP = 'onboarding/ONBOARDING_PREV_STEP';
 const ONBOARDING_TO_STEP = 'onboarding/ONBOARDING_TO_STEP';
-const ONBOARDING_CHOOSE_WALLET_TYPE =
-  'onboarding/ONBOARDING_CHOOSE_WALLET_TYPE';
-const ONBOARDING_START_LINKED_FLOW = 'onboarding/ONBOARDING_START_LINKED_FLOW';
 const ONBOARDING_SET_HOT_WALLET = 'onboarding/ONBOARDING_SET_HOT_WALLET';
 const ONBOARDING_SET_COLD_WALLET = 'onboarding/ONBOARDING_SET_COLD_WALLET';
 const ONBOARDING_SET_STATE = 'onboarding/ONBOARDING_SET_STATE';
@@ -45,14 +42,6 @@ export const onboardingNextStep = () => ({
 
 export const onboardingPrevStep = () => ({
   type: ONBOARDING_PREV_STEP
-});
-
-export const onboardingChooseWalletType = () => ({
-  type: ONBOARDING_CHOOSE_WALLET_TYPE
-});
-
-export const onboardingStartLinkedFlow = () => ({
-  type: ONBOARDING_START_LINKED_FLOW
 });
 
 export const setHotWallet = account => ({
@@ -92,15 +81,8 @@ const initialState = {
   step: 0,
   open: false,
   state: OnboardingStates.INTRODUCTION,
-  hotWallet: {
-    address: '0xd90b1122376F44e3d00a62C409F1b105950869b5',
-    type: 'metamask'
-  },
-  coldWallet: {
-    address: '0x1b2bc31a10d8e20f111d9a00aeb5ee96de75a418',
-    type: 'trezor',
-    mkrBalance: 0.075
-  }
+  hotWallet: undefined,
+  coldWallet: undefined
 };
 
 const onboarding = createReducer(initialState, {
@@ -143,11 +125,9 @@ const onboarding = createReducer(initialState, {
   [SET_ACTIVE_ACCOUNT]: (state, { payload: { newAccount } }) => ({
     ...state,
     ...(() => {
-      if (!state.hotWallet || !state.coldWallet) {
-        // not onboarding - we can chill out
-      } else if (
-        state.hotWallet.address === newAccount.address ||
-        state.coldWallet.address === newAccount.address
+      if (
+        (state.hotWallet && state.hotWallet.address === newAccount.address) ||
+        (state.coldWallet && state.coldWallet.address === newAccount.address)
       ) {
         // do nothing! we can continue onboarding where we left off.
       } else if (newAccount.hasProxy && newAccount.proxyRole === 'hot') {
@@ -175,8 +155,8 @@ const onboarding = createReducer(initialState, {
       } else {
         return {
           state: OnboardingStates.INTRODUCTION,
-          hotWallet: null,
-          coldWallet: null,
+          hotWallet: undefined,
+          coldWallet: undefined,
           step: 0
         };
       }
