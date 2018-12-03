@@ -25,16 +25,20 @@ export const updateAddress = address => ({
 
 const updateNetwork = network => async dispatch => {
   console.log('update network called with', network);
-  const web3Service = window.maker.service('web3');
+  // const web3Service = window.maker.service('web3');
   if (network !== 'mainnet' && network !== 'kovan') {
     dispatch({ type: NO_METAMASK_ACCOUNTS });
     return dispatch({ type: WRONG_NETWORK });
   }
   dispatch({ type: CONNECT_SUCCESS, payload: { network } });
 
-  const setProvider = await web3Service._web3.setProvider(netToUri(network));
-  console.log('setProvider', setProvider, 'network used', network);
-  dispatch(initializeOtherStuff(network));
+  // const setProvider = await web3Service._web3.setProvider(netToUri(network));
+  // await window.web3.setProvider(netToUri(network));
+  await window.maker
+    .service('web3')
+    ._web3.setProvider('https://kovan.infura.io/');
+  console.log('setProvider network used', network);
+  // dispatch(initializeOtherStuff(network));
 };
 
 const pollForMetamaskChanges = maker => async (dispatch, getState) => {
@@ -88,7 +92,7 @@ export const init = maker => async dispatch => {
     await dispatch(getNetworkNameFromMetaMask());
     // meanwhile load up accounts for mainnet (current network)
     try {
-      await dispatch(initWeb3Accounts());
+      // await dispatch(initWeb3Accounts());
     } catch (err) {
       console.log('update accounts error in MM', err);
     }
@@ -109,6 +113,14 @@ const initWeb3Accounts = () => async (dispatch, getState) => {
   if (window.web3 && window.web3.eth.defaultAccount) {
     const address = window.web3.eth.defaultAccount;
     if (address !== activeAddress) {
+      // ostensibly now that we're using MM for sure,
+      // we need to set the provider via MM, even if it has
+      // already been set by our web3service...
+      // await window.web3.setProvider(netToUri(network));
+      console.log(
+        'network should be newest updated network (kovan for now)',
+        network
+      );
       dispatch(updateAddress(address));
       await dispatch(setActiveAccount(address, true));
       dispatch({ type: CONNECT_SUCCESS, payload: { network } });

@@ -53,6 +53,18 @@ console.log('window.web3', window.web3);
 //   };
 // }
 
+// TODO: move this step into index and set the network there before creating maker
+// const { network } = getState();
+window.web3.version.getNetwork(async (err, netId) => {
+  console.log('NET ID IS', netId);
+  // const metaMaskNetworkName = netIdToName(netId);
+  // console.log('metaMaskNetworkName', metaMaskNetworkName);
+  // if (metaMaskNetworkName !== network) {
+  //   await dispatch(updateNetwork(metaMaskNetworkName));
+  //   await dispatch(initWeb3Accounts());
+  // }
+});
+
 const network = 'mainnet';
 preset = 'http';
 makerOptions = {
