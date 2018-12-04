@@ -9,6 +9,7 @@ import createStore from './store';
 import Router from './Routes';
 import createMaker from './chain/maker';
 import { init } from './reducers/metamask';
+import { netIdToName } from './utils/ethereum';
 
 import './global.css.js';
 import theme from './theme';
@@ -30,61 +31,37 @@ const currTheme = {
 
 console.log('application reload');
 const store = createStore();
-let preset, makerOptions;
-console.log('window.ethereum', window.ethereum);
-console.log('window.web3', window.web3);
-// console.log('window.web3.eth', window.web3.eth);
-// when we start we want network to be whatever MM reports, then default to mainnet
-// if (window.web3 && window.web3.eth.defaultAccount) {
-//   console.log(
-//     'initialize app and we have window.web3',
-//     window.web3.eth.defaultAccount
-//   );
-//   preset = 'browser';
-// } else {
-//   console.log('initialize app, no web3/mm', window.web3.settings);
-//   const network = 'mainnet';
-//   preset = 'http';
-//   makerOptions = {
-//     provider: {
-//       url: `https://${network}.infura.io/`,
-//       type: 'HTTP'
-//     }
-//   };
-// }
-
-// TODO: move this step into index and set the network there before creating maker
-// const { network } = getState();
-window.web3.version.getNetwork(async (err, netId) => {
-  console.log('NET ID IS', netId);
-  // const metaMaskNetworkName = netIdToName(netId);
-  // console.log('metaMaskNetworkName', metaMaskNetworkName);
-  // if (metaMaskNetworkName !== network) {
-  //   await dispatch(updateNetwork(metaMaskNetworkName));
-  //   await dispatch(initWeb3Accounts());
-  // }
-});
-
-const network = 'mainnet';
-preset = 'http';
-makerOptions = {
-  provider: {
-    url: `https://${network}.infura.io/`,
-    type: 'HTTP'
-  }
-};
-const maker = (window.maker = createMaker(preset, makerOptions));
-
-// TODO fail gracefully if authentication fails, e.g. if the user denies
-// Metamask access or there's a network problem. in order to still show
-// read-only data, we will have to re-run Maker.create with an Infura preset.
-maker
-  .authenticate()
-  .then(async () => {
-    console.log('authenticate finished');
-    store.dispatch(init(maker));
-  })
-  .catch(err => console.log('authenticate err is:', err));
+if (window.web3) {
+  window.web3.version.getNetwork(async (err, netId) => {
+    console.log('NET ID IS', netId);
+    const network = netIdToName(netId);
+    console.log('netid to name', network);
+    const maker = (window.maker = createMaker(network));
+    maker
+      .authenticate()
+      .then(async () => {
+        console.log(
+          'authenticate finished. network to initialize with',
+          network
+        );
+        store.dispatch(init(maker, network));
+      })
+      .catch(err => console.log('Authenticate Error:', err));
+  });
+} else {
+  // TODO fail gracefully if authentication fails, e.g. if the user denies
+  // Metamask access or there's a network problem. in order to still show
+  // read-only data, we will have to re-run Maker.create with an Infura preset.
+  console.log('initialize app in read only mode');
+  const maker = (window.maker = createMaker());
+  maker
+    .authenticate()
+    .then(async () => {
+      console.log('authenticate finished for read only');
+      store.dispatch(init(maker));
+    })
+    .catch(err => console.log('Authenticate Error for read only:', err));
+}
 
 function render() {
   ReactDOM.render(

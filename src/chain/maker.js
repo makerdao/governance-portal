@@ -3,12 +3,15 @@ import trezorPlugin from '@makerdao/dai-plugin-trezor-web';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 import Maker, { ETH, MKR } from '@makerdao/dai';
 
-export default function createMaker(preset, options = {}) {
-  return Maker.create(preset, {
+export default function createMaker(network = 'mainnet') {
+  return Maker.create('http', {
     plugins: [trezorPlugin, ledgerPlugin, governancePlugin],
     autoAuthenticate: true,
     log: false,
-    ...options
+    provider: {
+      url: `https://${network}.infura.io/`,
+      type: 'HTTP'
+    }
   });
 }
 

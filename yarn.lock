@@ -965,10 +965,10 @@
   dependencies:
     events "^3.0.0"
 
-"@makerdao/dai-plugin-governance@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.3.0.tgz#ab4ec119e3f7f8d1fbd144fa2e15a658bb43f6cb"
-  integrity sha512-i9Moc5/3noi/Njq8y034jBvOxIRI4T6T+YEx+zuTeIDGwTAQgqE0Er4MQKlxkIUgdjBxQ3ehmK2DnGAlQrQngg==
+"@makerdao/dai-plugin-governance@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.3.1.tgz#b8875991805c8431b3e29e2d0891296fc3bc0a03"
+  integrity sha512-cBMdTYNDzOq+iH5+sYCQ2EJqOvIb1p5n3bra/iNyo6TAGRw13wA1A2TSiBhYY7bRCZFRbPD89F38EEH0xzvCCQ==
   dependencies:
     "@makerdao/dai" "^0.9.8"
     babel-runtime "^6.26.0"

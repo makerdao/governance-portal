@@ -62,61 +62,6 @@ export const addAccounts = accounts => async dispatch => {
   console.log('dispatch add acounts part 2', accounts);
   dispatch({ type: FETCHING_ACCOUNT_DATA, payload: true });
 
-  //wait for example service and its dependencies to initialize
-  const settings = {
-    web3: {
-      provider: {
-        type: 'BROWSER',
-        url: 'https://kovan.infura.io/'
-      }
-    }
-  };
-  const init = await window.maker
-    .service('accounts')
-    .manager()
-    .initialize(settings);
-  console.log('accounts init', init);
-
-  await window.maker
-    .service('accounts')
-    .manager()
-    .connect();
-  // console.log('accounts conn', conn);
-  await window.maker
-    .service('accounts')
-    .manager()
-    .authenticate();
-  console.log('web3 is connected', window.web3.isConnected());
-  console.log(
-    'web3 is connected',
-    window.maker.service('web3')._web3.isConnected
-  );
-  // console.log('accounts auth', auth);
-
-  // await window.web3.setProvider('https://kovan.infura.io/');
-  // await window.maker
-  //   .service('web3')
-  //   ._web3.setProvider('https://kovan.infura.io/');
-  // what is the provider at this step?
-  /**
-   * TODO: Seems we successfully change providers, but voteproxy service still
-   * crashes when we look for an account
-   */
-  console.log(
-    'provider before crash step',
-    window.maker.service('accounts').getProvider(),
-    'currentprovider',
-    window.web3.currentProvider,
-    'givenProvider',
-    // window.web3.givenProvider,
-    // 'web3service CP',
-    window.maker.service('web3')._web3.currentProvider
-  );
-  // console.log(
-  //   'provider before crash step',
-  //   window.maker.service('accounts').getProvider()
-  // );
-
   for (let account of accounts) {
     const mkrToken = window.maker.getToken(MKR);
     const { hasProxy, voteProxy } = await window.maker
@@ -200,36 +145,40 @@ export const updateAccount = account => ({
   payload: account
 });
 
-// This is called when an account is selected in the account box dropdown, or
-// when Metamask is switched to a different account
-// TODO Fix this error:
-// Unhandled Rejection (Error): cannot use a browser account that is not currently selected
 export const setActiveAccount = (address, isMetamask) => async (
   dispatch,
   getState
 ) => {
   // if we haven't seen this account before, fetch its data and add it to the
   // Maker instance
-  console.log('all accounts in state', getState().accounts.allAccounts);
   if (
     isMetamask &&
     !getState().accounts.allAccounts.find(
       a => a.address.toLowerCase() === address.toLowerCase()
     )
   ) {
-    // why werent we passing in the account name here?
+    // TODO: should we be passing in the account name here?
     try {
       await window.maker.service('accounts').addAccount(address, {
         type: AccountTypes.METAMASK
       });
-    } catch (e) {
-      console.log(e);
+      await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
+    } catch (error) {
+      // this error occurs when user rejects provider access
+      console.log(
+        'error adding accounts, did we reject provider access?',
+        error
+      );
+      return dispatch({ type: NO_METAMASK_ACCOUNTS });
     }
-
-    await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
   }
-  window.maker.useAccountWithAddress(address);
-  return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
+  try {
+    window.maker.useAccountWithAddress(address);
+    return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
+  } catch (err) {
+    console.log('useAccountWithAddress error for', address);
+    return dispatch({ type: NO_METAMASK_ACCOUNTS });
+  }
 };
 
 export function setInfMkrApproval() {
