@@ -186,7 +186,7 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
     successAction: () =>
       dispatch({
         type: STORE_PROXY_ADDRESS,
-        payload: '0xt3sT' /*approveLink.proxyAddress()*/
+        payload: approveLink.proxyAddress()
       })
   });
 };
