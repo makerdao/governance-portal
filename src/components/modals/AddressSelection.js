@@ -18,6 +18,7 @@ import {
 import { Wrapper, Blurb } from './LedgerType';
 import Loader from '../Loader';
 import { ETH, MKR } from '../../chain/maker';
+import theme from '../../theme';
 
 const CircleNumber = styled.div`
   width: 32px;
@@ -150,7 +151,10 @@ class AddressSelection extends Component {
         >
           <Button
             disabled={currentPage < 1 || !paginationEnabled}
-            onClick={e => this.handleAddressPagination(e, -1)}
+            onClick={this.handleAddressPaginationPrevious}
+            color={'light_grey2'}
+            textColor={theme.text.darker_default}
+            hoverColor={'dark_grey2'}
             style={{ margin: '0 auto' }}
           >
             Back
@@ -158,7 +162,10 @@ class AddressSelection extends Component {
 
           <Button
             disabled={!paginationEnabled}
-            onClick={e => this.handleAddressPagination(e, 1)}
+            color={'light_grey2'}
+            hoverColor={'dark_grey2'}
+            textColor={theme.text.darker_default}
+            onClick={this.handleAddressPaginationNext}
             style={{ margin: '0 auto' }}
           >
             More
@@ -211,6 +218,14 @@ class AddressSelection extends Component {
         });
     });
   }
+
+  handleAddressPaginationPrevious = e => {
+    this.handleAddressPagination(e, -1);
+  };
+
+  handleAddressPaginationNext = e => {
+    this.handleAddressPagination(e, 1);
+  };
 
   handleAddressPagination = (e, offset) => {
     const { currentPage } = this.state;

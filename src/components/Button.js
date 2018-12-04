@@ -12,7 +12,7 @@ const StyledButton = styled.button`
   border-style: none;
   box-sizing: border-box;
   background-color: ${({ color }) => `rgb(${colors[color]})`};
-  color: ${({ theme }) => theme.generic.white};
+  color: ${({ theme, textColor }) => textColor || theme.generic.white};
   border-radius: 4px;
   font-size: ${({ theme }) => theme.fonts.size.large};
   font-weight: ${fonts.weight.semibold};
@@ -51,6 +51,7 @@ const Button = ({
   children,
   loading,
   color,
+  textColor,
   hoverColor,
   activeColor,
   disabled,
@@ -62,6 +63,7 @@ const Button = ({
     hoverColor={hoverColor}
     activeColor={activeColor}
     disabled={disabled}
+    textColor={textColor}
     wide={wide}
     {...props}
   >

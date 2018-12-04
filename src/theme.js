@@ -8,7 +8,9 @@ export const colors = {
   box_light: '67, 83, 103',
   dark_grey: '39, 39, 39',
   dark: '12, 12, 13',
-  black: '0, 0, 0'
+  black: '0, 0, 0',
+  light_grey2: '226, 233, 236', // <-- same as theme.generic.light_grey
+  dark_grey2: '203, 209, 213' // <-- same as theme.generic.dark_grey
 };
 
 export const fonts = {
