@@ -176,17 +176,16 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
     .approveLink(coldAddress);
 
   dispatch({ type: APPROVE_LINK_REQUEST });
-
   return handleTx({
     prefix: 'APPROVE_LINK',
     dispatch,
     txObject: approveLink,
     successPayload: { coldAddress, hotAddress: hotAccount.address },
     acctType: hotAccount.type,
-    successAction: () =>
+    successAction: async () =>
       dispatch({
         type: STORE_PROXY_ADDRESS,
-        payload: approveLink.proxyAddress()
+        payload: (await approveLink).proxyAddress()
       })
   });
 };
