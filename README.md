@@ -48,9 +48,9 @@ By default the production backend ([`content.makerfoundation.com`](https://conte
 - `staging`: uses the staging backend (`elb.content.makerfoundation.com:444`)
 - `mock`: uses the mocked backend (see [`/src/_mock/topics.js`](/src/_mock/topics.js))
 
-## Dogfooding
+## Maker Packages
 
-This project takes advantage of several other maker projects, including [maker ui components](https://github.com/makerdao/ui-components), [dai.js](https://github.com/makerdao/dai.js), & [the dai governance pulgin](https://github.com/makerdao/dai-plugin-governance).
+This project takes advantage of several other maker projects, including [Maker UI Components](https://github.com/makerdao/ui-components), [Dai.js](https://github.com/makerdao/dai.js), & [The Dai Governance Plugin](https://github.com/makerdao/dai-plugin-governance).
 
 ## Code Style
 
