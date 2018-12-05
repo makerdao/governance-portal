@@ -80,21 +80,17 @@ const ConfirmWalletStep = ({
         title="Link hot and cold wallet"
         subtitle="Linking your hot and cold wallet will enable you to vote while your MKR is still stored in your cold wallet."
       />
-      <Grid>
+      <div>
         <AccountInfo account={coldWallet} tag={<ColdWalletTag />} />
-        <Box gridColumn="1" mb="-7px" justifySelf="center">
+        <Grid gridTemplateColumns="50px 1fr" justifyItems="center">
           <img src={linkImg} alt="" />
-        </Box>
-        <Box
-          gridColumn="2"
-          alignSelf="center"
-          fontWeight="medium"
-          color="#48495F"
-        >
-          <p>You are linking the above cold wallet to the below hot wallet</p>
-        </Box>
+          <Box alignSelf="center" fontWeight="medium" color="#48495F">
+            <p>You are linking the above cold wallet to the below hot wallet</p>
+          </Box>
+        </Grid>
+
         <AccountInfo account={hotWallet} tag={<HotWalletTag />} />
-      </Grid>
+      </div>
       <Grid
         gridRowGap="xs"
         gridColumnGap="s"
