@@ -155,6 +155,7 @@ class AddressSelection extends Component {
             color={'light_grey2'}
             textColor={theme.text.darker_default}
             hoverColor={'dark_grey2'}
+            activeColor={'dark_grey2'}
             style={{ margin: '0 auto' }}
           >
             Back
@@ -164,6 +165,7 @@ class AddressSelection extends Component {
             disabled={!paginationEnabled}
             color={'light_grey2'}
             hoverColor={'dark_grey2'}
+            activeColor={'dark_grey2'}
             textColor={theme.text.darker_default}
             onClick={this.handleAddressPaginationNext}
             style={{ margin: '0 auto' }}
