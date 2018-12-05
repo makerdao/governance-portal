@@ -10,6 +10,7 @@ import LedgerStep from './LedgerStep';
 import ChooseMKRBalanceStep from './ChooseMKRBalanceStep';
 import Sidebar from './shared/Sidebar';
 import Stepper from './shared/Stepper';
+import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
 import ButtonCard from './shared/ButtonCard';
 import WalletIcon from './shared/WalletIcon';
 import Header from './shared/Header';
@@ -247,42 +248,35 @@ class ChooseHotWallet extends React.Component {
 
   render() {
     return (
-      <Box maxWidth="930px" m="0 auto">
-        <Grid
-          gridColumnGap="xl"
-          gridRowGap="m"
-          gridTemplateColumns={['1fr', '1fr', 'auto 340px']}
-        >
-          <div>
-            <Stepper step={this.state.step}>
-              <SelectAWalletStep
-                onMetamaskSelected={this.onMetamaskSelected}
-                onTrezorSelected={this.onTrezorSelected}
-                onLedgerSelected={this.onLedgerSelected}
-              />
-              <LedgerStep
-                onLedgerLive={this.onLedgerLiveSelected}
-                onLedgerLegacy={this.onLedgerLegacySelected}
-                onCancel={this.toSelectAWallet}
-              />
-              <ChooseMKRBalanceStep
-                accounts={this.state.availableAccounts}
-                connecting={this.state.connecting}
-                error={this.state.error}
-                onAccountSelected={this.onAccountSelected}
-                onCancel={this.toSelectAWallet}
-              />
-              <ConfirmWalletStep
-                account={this.props.hotWallet}
-                connecting={this.state.connecting}
-                onConfirm={this.props.onComplete}
-                onCancel={this.toSelectAWallet}
-              />
-            </Stepper>
-          </div>
-          <Sidebar faqs={this.state.faqs} />
-        </Grid>
-      </Box>
+      <TwoColumnSidebarLayout sidebar={<Sidebar faqs={this.state.faqs} />}>
+        <div>
+          <Stepper step={this.state.step}>
+            <SelectAWalletStep
+              onMetamaskSelected={this.onMetamaskSelected}
+              onTrezorSelected={this.onTrezorSelected}
+              onLedgerSelected={this.onLedgerSelected}
+            />
+            <LedgerStep
+              onLedgerLive={this.onLedgerLiveSelected}
+              onLedgerLegacy={this.onLedgerLegacySelected}
+              onCancel={this.toSelectAWallet}
+            />
+            <ChooseMKRBalanceStep
+              accounts={this.state.availableAccounts}
+              connecting={this.state.connecting}
+              error={this.state.error}
+              onAccountSelected={this.onAccountSelected}
+              onCancel={this.toSelectAWallet}
+            />
+            <ConfirmWalletStep
+              account={this.props.hotWallet}
+              connecting={this.state.connecting}
+              onConfirm={this.props.onComplete}
+              onCancel={this.toSelectAWallet}
+            />
+          </Stepper>
+        </div>
+      </TwoColumnSidebarLayout>
     );
   }
 }

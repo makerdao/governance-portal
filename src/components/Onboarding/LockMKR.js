@@ -21,6 +21,7 @@ import Stepper from './shared/Stepper';
 import Header from './shared/Header';
 import WalletIcon from './shared/WalletIcon';
 import SignTransactionStep from './shared/SignTransactionStep';
+import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
 import { lock } from '../../reducers/proxy';
 import { getAccount } from '../../reducers/accounts';
 import { ColdWalletTag, VotingContractTag } from './shared/Tags';
@@ -108,166 +109,160 @@ class LockMKR extends React.Component {
 
   render() {
     return (
-      <Box maxWidth="960px" m="0 auto">
-        <Grid
-          gridColumnGap="xl"
-          gridRowGap="m"
-          gridTemplateColumns={['1fr', '1fr', 'auto 340px']}
-        >
-          <div>
-            <Grid gridRowGap="l">
-              {this.state.step <= 1 && (
-                <Header
-                  title="Deposit MKR"
-                  subtitle="In order to participate in voting, you must deposit MKR
-        into your secure voting contract. The higher the amount, the more impact you’ll have on the system"
-                />
-              )}
-
-              <Stepper step={this.state.step}>
-                <Grid gridRowGap="l">
-                  <div>
-                    <Label mb="s">Available MKR</Label>
-                    <div>
-                      {this.props.coldWallet.mkrBalance} MKR available to vote
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label mb="s">MKR you would like to vote with?</Label>
-                    <div>
-                      <Input
-                        maxWidth="334px"
-                        placeholder="00.0000 MKR"
-                        value={this.state.votingMKR}
-                        onChange={this.handleVotingMKRChange}
-                        onBlur={this.validateOnBlur}
-                        after={
-                          <Link
-                            fontWeight="medium"
-                            onClick={this.setMaxVotingMKR}
-                          >
-                            Set max
-                          </Link>
-                        }
-                        errorMessage={this.state.error}
-                      />
-                    </div>
-                  </div>
-
-                  <Flex justifyContent="center">
-                    <Button
-                      variant="secondary-outline"
-                      onClick={this.props.onComplete}
-                      mr="s"
-                    >
-                      Skip step
-                    </Button>
-                    <Button
-                      disabled={!this.state.votingMKR || this.state.error}
-                      onClick={this.toConfirmDepositAmount}
-                    >
-                      Confirm
-                    </Button>
-                  </Flex>
-                </Grid>
-                <div>
-                  <Label mb="xs">MKR in your control</Label>
-                  <Card px="m" py="s">
-                    <Grid
-                      alignItems="center"
-                      gridTemplateColumns="auto 1fr 1fr 1fr"
-                      gridColumnGap="s"
-                    >
-                      <Box>
-                        <WalletIcon
-                          provider={this.props.coldWallet.type}
-                          style={{ maxWidth: '27px', maxHeight: '27px' }}
-                        />
-                      </Box>
-                      <Box>
-                        <Link fontWeight="semibold">
-                          <Address
-                            full={this.props.coldWallet.address}
-                            shorten
-                          />
-                        </Link>
-                      </Box>
-                      <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
-                        {this.props.coldWallet.mkrBalance} MKR
-                      </Box>
-                      <Flex justifyContent="flex-end">
-                        <ColdWalletTag />
-                      </Flex>
-                    </Grid>
-                  </Card>
-
-                  <Box ml="s" mt="xs">
-                    <img src={linkImg} alt="" />
-                  </Box>
-
-                  <Label mb="xs">Secure MKR ready to vote</Label>
-                  <Card px="m" py="s">
-                    <Grid
-                      alignItems="center"
-                      gridTemplateColumns="auto 1fr 1fr 1fr"
-                      gridColumnGap="s"
-                    >
-                      <Box>
-                        <img src={lockImg} alt="" />
-                      </Box>
-                      <Box>
-                        <Link fontWeight="semibold">Address hidden</Link>
-                      </Box>
-                      <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
-                        {this.state.votingMKR} MKR
-                      </Box>
-                      <Flex justifyContent="flex-end">
-                        <VotingContractTag />
-                      </Flex>
-                    </Grid>
-                  </Card>
-
-                  <Flex justifyContent="flex-end" mt="m">
-                    <Button
-                      variant="secondary-outline"
-                      mr="s"
-                      onClick={this.toChooseDepositAmount}
-                    >
-                      Back
-                    </Button>
-
-                    <Button onClick={this.toLockMKR}>Confirm</Button>
-                  </Flex>
-                </div>
-                <SignTransactionStep
-                  title="Confirm lock MKR"
-                  subtitle={
-                    <span>
-                      In order to start voting please confirm the Locking of MKR
-                      on your cold wallet ending in{' '}
-                      <Link>{this.props.coldWallet.address.slice(-4)}</Link>.
-                      <br />
-                      You can withdraw your MKR at anytime.
-                    </span>
-                  }
-                  walletProvider={this.props.coldWallet.type}
-                  status={this.props.sendMkrTxStatus}
-                  tx={this.props.sendMkrTxHash}
-                  onNext={this.props.onComplete}
-                  onRetry={this.toConfirmDepositAmount}
-                  onCancel={this.toConfirmDepositAmount}
-                />
-              </Stepper>
-            </Grid>
-          </div>
+      <TwoColumnSidebarLayout
+        sidebar={
           <Sidebar
             hotWallet={this.props.hotWallet}
             coldWallet={this.props.coldWallet}
             faqs={this.state.faqs}
           />
-        </Grid>
-      </Box>
+        }
+      >
+        <div>
+          <Grid gridRowGap="l">
+            {this.state.step <= 1 && (
+              <Header
+                title="Deposit MKR"
+                subtitle="In order to participate in voting, you must deposit MKR
+        into your secure voting contract. The higher the amount, the more impact you’ll have on the system"
+              />
+            )}
+
+            <Stepper step={this.state.step}>
+              <Grid gridRowGap="l">
+                <div>
+                  <Label mb="s">Available MKR</Label>
+                  <div>
+                    {this.props.coldWallet.mkrBalance} MKR available to vote
+                  </div>
+                </div>
+
+                <div>
+                  <Label mb="s">MKR you would like to vote with?</Label>
+                  <div>
+                    <Input
+                      maxWidth="334px"
+                      placeholder="00.0000 MKR"
+                      value={this.state.votingMKR}
+                      onChange={this.handleVotingMKRChange}
+                      onBlur={this.validateOnBlur}
+                      after={
+                        <Link
+                          fontWeight="medium"
+                          onClick={this.setMaxVotingMKR}
+                        >
+                          Set max
+                        </Link>
+                      }
+                      errorMessage={this.state.error}
+                    />
+                  </div>
+                </div>
+
+                <Flex justifyContent="center">
+                  <Button
+                    variant="secondary-outline"
+                    onClick={this.props.onComplete}
+                    mr="s"
+                  >
+                    Skip step
+                  </Button>
+                  <Button
+                    disabled={!this.state.votingMKR || this.state.error}
+                    onClick={this.toConfirmDepositAmount}
+                  >
+                    Confirm
+                  </Button>
+                </Flex>
+              </Grid>
+              <div>
+                <Label mb="xs">MKR in your control</Label>
+                <Card px="m" py="s">
+                  <Grid
+                    alignItems="center"
+                    gridTemplateColumns="auto 1fr 1fr 1fr"
+                    gridColumnGap="s"
+                  >
+                    <Box>
+                      <WalletIcon
+                        provider={this.props.coldWallet.type}
+                        style={{ maxWidth: '27px', maxHeight: '27px' }}
+                      />
+                    </Box>
+                    <Box>
+                      <Link fontWeight="semibold">
+                        <Address full={this.props.coldWallet.address} shorten />
+                      </Link>
+                    </Box>
+                    <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
+                      {this.props.coldWallet.mkrBalance} MKR
+                    </Box>
+                    <Flex justifyContent="flex-end">
+                      <ColdWalletTag />
+                    </Flex>
+                  </Grid>
+                </Card>
+
+                <Box ml="s" mt="xs">
+                  <img src={linkImg} alt="" />
+                </Box>
+
+                <Label mb="xs">Secure MKR ready to vote</Label>
+                <Card px="m" py="s">
+                  <Grid
+                    alignItems="center"
+                    gridTemplateColumns="auto 1fr 1fr 1fr"
+                    gridColumnGap="s"
+                  >
+                    <Box>
+                      <img src={lockImg} alt="" />
+                    </Box>
+                    <Box>
+                      <Link fontWeight="semibold">Address hidden</Link>
+                    </Box>
+                    <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
+                      {this.state.votingMKR} MKR
+                    </Box>
+                    <Flex justifyContent="flex-end">
+                      <VotingContractTag />
+                    </Flex>
+                  </Grid>
+                </Card>
+
+                <Flex justifyContent="flex-end" mt="m">
+                  <Button
+                    variant="secondary-outline"
+                    mr="s"
+                    onClick={this.toChooseDepositAmount}
+                  >
+                    Back
+                  </Button>
+
+                  <Button onClick={this.toLockMKR}>Confirm</Button>
+                </Flex>
+              </div>
+              <SignTransactionStep
+                title="Confirm lock MKR"
+                subtitle={
+                  <span>
+                    In order to start voting please confirm the Locking of MKR
+                    on your cold wallet ending in{' '}
+                    <Link>{this.props.coldWallet.address.slice(-4)}</Link>.
+                    <br />
+                    You can withdraw your MKR at anytime.
+                  </span>
+                }
+                walletProvider={this.props.coldWallet.type}
+                status={this.props.sendMkrTxStatus}
+                tx={this.props.sendMkrTxHash}
+                onNext={this.props.onComplete}
+                onRetry={this.toConfirmDepositAmount}
+                onCancel={this.toConfirmDepositAmount}
+              />
+            </Stepper>
+          </Grid>
+        </div>
+      </TwoColumnSidebarLayout>
     );
   }
 }
