@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
 import {
   Box,
@@ -15,24 +14,9 @@ import {
 import NetworkIndicator from '../../NetworkIndicator';
 import { TransactionStatus } from '../../../utils/constants';
 import WalletIcon from './WalletIcon';
-import newTab from '../../../imgs/onboarding/newtab.svg';
+import ExternalLink from './ExternalLink';
 import linkImg from '../../../imgs/onboarding/link.svg';
 import logo from '../../../imgs/onboarding/maker-logomark.svg';
-
-const ExternalLink = styled(Link)`
-  position: relative;
-  &:after {
-    margin-left: 0.5rem;
-    content: '';
-    position: absolute;
-    top: calc(50% - 4px);
-    bottom: 0;
-    mask: url(${newTab}) no-repeat center center;
-    height: 8px;
-    width: 8px;
-    background-color: currentColor;
-  }
-`;
 
 const GrayTag = ({ children, ...props }) => {
   return (
