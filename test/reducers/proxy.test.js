@@ -389,8 +389,8 @@ describe('Proxy Reducer', () => {
       expect(free).not.toBeCalled();
     });
 
-    test('Free should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', () => {
-      proxy.free(mockValue)(store.dispatch, store.getState);
+    test('Free should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', async () => {
+      await proxy.free(mockValue)(store.dispatch, store.getState);
 
       expect(free).toBeCalledTimes(1);
       expect(approvals.initApprovalsFetch).toBeCalledTimes(1);

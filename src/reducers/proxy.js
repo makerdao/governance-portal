@@ -169,7 +169,7 @@ export const lock = value => async (dispatch, getState) => {
     txObject: lock,
     successPayload: value,
     acctType: account.type
-  }).then(() => dispatch(initApprovalsFetch()));
+  }).then(success => success && dispatch(initApprovalsFetch()));
 };
 
 export const free = value => (dispatch, getState) => {
@@ -187,7 +187,7 @@ export const free = value => (dispatch, getState) => {
     txObject: free,
     successPayload: value,
     acctType: account.type
-  }).then(() => dispatch(initApprovalsFetch()));
+  }).then(success => success && dispatch(initApprovalsFetch()));
 };
 
 export const breakLink = () => async (dispatch, getState) => {
