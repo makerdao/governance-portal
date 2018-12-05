@@ -59,7 +59,6 @@ export function activeCanVote(state) {
 // Actions ------------------------------------------------
 
 export const addAccounts = accounts => async dispatch => {
-  console.log('dispatch add acounts part 2', accounts);
   dispatch({ type: FETCHING_ACCOUNT_DATA, payload: true });
 
   for (let account of accounts) {
@@ -122,8 +121,8 @@ export const addAccounts = accounts => async dispatch => {
       ]);
       payload.proxy.linkedAccount = linkedAccount;
       dispatch({ type: ADD_ACCOUNT, payload });
-    } catch (e) {
-      console.log('failed to add account', e);
+    } catch (err) {
+      console.log('failed to add account', err);
     }
   }
 
@@ -131,7 +130,6 @@ export const addAccounts = accounts => async dispatch => {
 };
 
 export const addAccount = account => async dispatch => {
-  console.log('dispatch add acounts', account);
   return dispatch(addAccounts([account]));
 };
 
@@ -176,7 +174,6 @@ export const setActiveAccount = (address, isMetamask) => async (
     window.maker.useAccountWithAddress(address);
     return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
   } catch (err) {
-    console.log('useAccountWithAddress error for', address);
     return dispatch({ type: NO_METAMASK_ACCOUNTS });
   }
 };

@@ -29,35 +29,24 @@ const currTheme = {
   }
 };
 
-console.log('application reload');
 const store = createStore();
 if (window.web3) {
   window.web3.version.getNetwork(async (err, netId) => {
-    console.log('NET ID IS', netId);
     const network = netIdToName(netId);
-    console.log('netid to name', network);
     const maker = (window.maker = createMaker(network));
     maker
       .authenticate()
       .then(async () => {
-        console.log(
-          'authenticate finished. network to initialize with',
-          network
-        );
         store.dispatch(init(maker, network));
       })
       .catch(err => console.log('Authenticate Error:', err));
   });
 } else {
-  // TODO fail gracefully if authentication fails, e.g. if the user denies
-  // Metamask access or there's a network problem. in order to still show
-  // read-only data, we will have to re-run Maker.create with an Infura preset.
-  console.log('initialize app in read only mode');
+  // In order to still show read-only data, we will have to re-run Maker.create with an Infura preset.
   const maker = (window.maker = createMaker());
   maker
     .authenticate()
     .then(async () => {
-      console.log('authenticate finished for read only');
       store.dispatch(init(maker));
     })
     .catch(err => console.log('Authenticate Error for read only:', err));

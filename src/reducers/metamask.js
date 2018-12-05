@@ -1,5 +1,5 @@
 import { createReducer } from '../utils/redux';
-import { setActiveAccount, addAccount, NO_METAMASK_ACCOUNTS } from './accounts';
+import { setActiveAccount, NO_METAMASK_ACCOUNTS } from './accounts';
 import { netIdToName, netToUri } from '../utils/ethereum';
 import { ethInit } from './eth';
 import { voteTallyInit } from './tally';
@@ -25,19 +25,33 @@ export const updateAddress = address => ({
 
 const pollForMetamaskChanges = maker => async dispatch => {
   try {
-    // TODO: need to account for MM logout
     await dispatch(initWeb3Accounts());
+    await dispatch(checkNetwork());
 
     setTimeout(() => dispatch(pollForMetamaskChanges(maker)), 1000);
   } catch (err) {
     console.error(err);
-    console.error('stopped polling for metamask changes');
+  }
+};
+
+const checkNetwork = () => async (dispatch, getState) => {
+  if (window.web3 && window.web3.eth.defaultAccount) {
+    window.web3.version.getNetwork(async (err, netId) => {
+      const {
+        metamask: { network }
+      } = getState();
+      const newNetwork = netIdToName(netId);
+      if (newNetwork !== network) {
+        dispatch({ type: UPDATE_NETWORK, payload: { network: newNetwork } });
+        window.maker.service('web3')._web3.setProvider(netToUri(newNetwork));
+      }
+    });
   }
 };
 
 const initWeb3Accounts = () => async (dispatch, getState) => {
   const {
-    metamask: { network, activeAddress },
+    metamask: { activeAddress },
     accounts: { fetching }
   } = getState();
   if (window.web3 && window.web3.eth.defaultAccount) {
@@ -45,7 +59,6 @@ const initWeb3Accounts = () => async (dispatch, getState) => {
     if (address !== activeAddress) {
       dispatch(updateAddress(address));
       await dispatch(setActiveAccount(address, true));
-      // dispatch({ type: CONNECT_SUCCESS, payload: { network } });
     } else if (fetching && !activeAddress) {
       dispatch({ type: NO_METAMASK_ACCOUNTS });
       dispatch({ type: NOT_AVAILABLE });
@@ -54,12 +67,10 @@ const initWeb3Accounts = () => async (dispatch, getState) => {
 };
 
 export const init = (maker, network = 'mainnet') => async dispatch => {
-  console.log('initialize with network', network);
   dispatch({ type: CONNECT_REQUEST });
   dispatch({ type: CONNECT_SUCCESS, payload: { network } });
 
   if (!window.web3 || !window.web3.eth.defaultAccount) {
-    console.log('not connected to MetaMask');
     dispatch({ type: NO_METAMASK_ACCOUNTS });
     dispatch({ type: NOT_AVAILABLE });
   }
@@ -67,10 +78,11 @@ export const init = (maker, network = 'mainnet') => async dispatch => {
     dispatch({ type: NO_METAMASK_ACCOUNTS });
     return dispatch({ type: WRONG_NETWORK });
   }
+
+  dispatch({ type: UPDATE_NETWORK, payload: { network: network } });
   maker.service('web3')._web3.setProvider(netToUri(network));
   await dispatch(initWeb3Accounts());
 
-  // dispatch(initializeOtherStuff(network));
   dispatch(voteTallyInit());
   dispatch(proposalsInit(network));
   dispatch(hatInit());
@@ -114,9 +126,9 @@ const metamask = createReducer(initialState, {
     ...state,
     activeAddress: address
   }),
-  [UPDATE_NETWORK]: (state, { payload: network }) => ({
+  [UPDATE_NETWORK]: (state, { payload }) => ({
     ...state,
-    network,
+    network: payload.network,
     wrongNetwork: false
   }),
   [WRONG_NETWORK]: state => ({

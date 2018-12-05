@@ -11,9 +11,7 @@ export const TALLY_UPDATE = 'voteTally/TALLY_UPDATE';
 // Actions ------------------------------------------------
 
 export const voteTallyInit = () => dispatch => {
-  console.log('voteTallyInit');
   const service = window.maker.service('chief');
-  console.log('service', service);
   dispatch({ type: TALLY_REQUEST });
   return (
     promiseRetry({
@@ -22,13 +20,11 @@ export const voteTallyInit = () => dispatch => {
       delay: 500
     })
       .then(tally => {
-        console.log('tally returned by vtInit', tally);
         dispatch({ type: TALLY_SUCCESS, payload: { tally } });
       })
       // sometimes this fails when we're reading event logs
       .catch(error => {
         // TODO: notify user or throw to a fallback component
-        console.error('ERROR GETTING VOTE TALLY', error);
         dispatch({ type: TALLY_FAILURE });
       })
   );
