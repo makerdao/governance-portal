@@ -17,6 +17,12 @@ import commandLine from '../../imgs/onboarding/command-line.svg';
 import paperWallet from '../../imgs/onboarding/paper-wallet.svg';
 import rightArrow from '../../imgs/onboarding/right-arrow.svg';
 
+// here only very temporarily as we standardize typography in the styleguide
+const H1 = styled.h1`
+  font-weight: normal;
+  font-size: 4rem;
+`;
+
 const H3 = styled.h3`
   font-size: 2rem;
 `;
@@ -97,9 +103,7 @@ const Introduction = ({ show, onClose, onLinkedWallet }) => {
         >
           <Box mb="l">
             <Box mb="xl">
-              <h1 style={{ fontWeight: 'normal', fontSize: '4rem' }}>
-                Set up your voting contract
-              </h1>
+              <H1>Set up your voting contract</H1>
             </Box>
 
             <Grid

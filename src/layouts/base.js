@@ -162,7 +162,7 @@ const BaseLayout = ({
                 {childrenShouldMount && <NetworkIndicator network={network} />}
               </NetworkNotification>
             </div>
-            <Flex style={{ zIndex: '100' }}>
+            <Flex>
               <StyledLinkWrapper>
                 <StyledLink to="/" r={115}>
                   Executive
