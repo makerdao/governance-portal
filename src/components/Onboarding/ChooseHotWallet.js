@@ -95,7 +95,7 @@ const ConfirmWalletStep = ({
                 <Loader />
               </Box>
               <Box ml="s" color="#868997">
-                Waiting for approval to access your account
+                <p>Waiting for approval to access your account</p>
               </Box>
             </Flex>
           </Card>
@@ -108,8 +108,10 @@ const ConfirmWalletStep = ({
               opacity="0.6"
               textAlign="center"
             >
-              There was an error connecting your wallet. Please ensure that your
-              wallet is connected and try again.
+              <p>
+                There was an error connecting your wallet. Please ensure that
+                your wallet is connected and try again.
+              </p>
             </Flex>
           </Card>
         )}

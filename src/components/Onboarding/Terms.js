@@ -134,15 +134,17 @@ const Terms = ({ onCancel, onComplete }) => {
           </Overflow>
         </Card>
         <Text textAlign="center">
-          By clicking 'I agree' you confirm you have read and agree to the terms
-          of service and agree to our{' '}
-          <Link
-            href="https://makerdao.com/privacy/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            privacy policy
-          </Link>
+          <p>
+            By clicking 'I agree' you confirm you have read and agree to the
+            terms of service and agree to our{' '}
+            <Link
+              href="https://makerdao.com/privacy/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              privacy policy
+            </Link>
+          </p>
         </Text>
         <Flex justifyContent="center">
           <Button variant="secondary-outline" onClick={onCancel} mr="s">
