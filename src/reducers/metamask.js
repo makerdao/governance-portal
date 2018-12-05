@@ -67,12 +67,15 @@ export const init = (maker, network = 'mainnet') => async dispatch => {
     dispatch({ type: NO_METAMASK_ACCOUNTS });
     return dispatch({ type: WRONG_NETWORK });
   }
-  dispatch(pollForMetamaskChanges(maker));
+  maker.service('web3')._web3.setProvider(netToUri(network));
+  await dispatch(initWeb3Accounts());
+
   // dispatch(initializeOtherStuff(network));
   dispatch(voteTallyInit());
   dispatch(proposalsInit(network));
   dispatch(hatInit());
   dispatch(ethInit());
+  dispatch(pollForMetamaskChanges(maker));
 };
 
 // Reducer ------------------------------------------------
