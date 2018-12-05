@@ -1,11 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, Flex, Button } from '@makerdao/ui-components';
 
 import Sidebar from './shared/Sidebar';
 import Stepper from './shared/Stepper';
-import ButtonCard from './shared/ButtonCard';
-import Header from './shared/Header';
 import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
 import SignTransactionStep from './shared/SignTransactionStep';
 import faqs from './data/faqs';
@@ -19,48 +16,6 @@ import {
 } from '../../reducers/proxy';
 
 import { getAccount } from '../../reducers/accounts';
-
-const ChooseTransactionPriority = ({ onChoose, onCancel }) => {
-  return (
-    <div>
-      <Grid gridRowGap="m" alignContent="start">
-        <Header
-          title="Select transaction priority"
-          subtitle={
-            <React.Fragment>
-              Note these are estimates of the time and cost per transaction.
-              <br />
-              There are 4 transactions in total.
-            </React.Fragment>
-          }
-        />
-        <ButtonCard
-          title="Low"
-          subtitle="$0.009 USD < 30 minutes"
-          buttonText="Select"
-          onNext={onChoose}
-        />
-        <ButtonCard
-          title="Medium"
-          subtitle="$0.018 USD <5 minutes"
-          buttonText="Select"
-          onNext={onChoose}
-        />
-        <ButtonCard
-          title="High"
-          subtitle="$0.120 USD • Estimate 2 minutes"
-          buttonText="Select"
-          onNext={onChoose}
-        />
-        <Flex justifyContent="flex-start">
-          <Button variant="secondary-outline" onClick={onCancel}>
-            Change cold wallet
-          </Button>
-        </Flex>
-      </Grid>
-    </div>
-  );
-};
 
 const nicelyFormatWalletProvider = provider => {
   switch (provider) {
@@ -88,14 +43,7 @@ class InitiateLink extends React.Component {
     };
   }
 
-  toChooseTransactionPriority = () => {
-    this.setState({
-      step: 0,
-      faqs: []
-    });
-  };
-
-  onTransactionPriorityChosen = () => {
+  componentDidMount() {
     if (
       this.props.coldWallet.hasProxy &&
       this.props.coldWallet.proxy.hasInfMkrApproval
@@ -109,7 +57,7 @@ class InitiateLink extends React.Component {
     } else {
       this.toInitiateLink();
     }
-  };
+  }
 
   toInitiateLink = priority => {
     this.props.initiateLink({
@@ -117,7 +65,7 @@ class InitiateLink extends React.Component {
       cold: this.props.coldWallet
     });
     this.setState({
-      step: 1,
+      step: 0,
       faqs: []
     });
   };
@@ -128,7 +76,7 @@ class InitiateLink extends React.Component {
       cold: this.props.coldWallet
     });
     this.setState({
-      step: 2,
+      step: 1,
       faqs: faqs.approveLink
     });
   };
@@ -145,7 +93,7 @@ class InitiateLink extends React.Component {
     setTimeout(pollForProxyInformation, 100);
 
     this.setState({
-      step: 3,
+      step: 2,
       faqs: faqs.grantHotWalletPermissions
     });
   };
@@ -163,10 +111,6 @@ class InitiateLink extends React.Component {
       >
         <div>
           <Stepper step={this.state.step}>
-            <ChooseTransactionPriority
-              onChoose={this.onTransactionPriorityChosen}
-              onCancel={this.props.onCancel}
-            />
             <SignTransactionStep
               title={`Sign ${nicelyFormatWalletProvider(
                 this.props.coldWallet.type
