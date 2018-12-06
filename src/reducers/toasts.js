@@ -10,6 +10,9 @@ const REMOVE_TOAST = 'toast/REMOVE_TOAST';
 // Actions ------------------------------------------------
 
 const addToast = (id, type, message) => {
+  if (message.includes('Ledger') && message.includes('0x6a80')) {
+    message += ' (is contract data enabled on your device?)';
+  }
   return {
     type: ADD_TOAST,
     payload: {
