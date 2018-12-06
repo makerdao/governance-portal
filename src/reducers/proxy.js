@@ -185,7 +185,7 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
     successAction: async () =>
       dispatch({
         type: STORE_PROXY_ADDRESS,
-        payload: (await approveLink).proxyAddress()
+        payload: (await approveLink).proxyAddress
       })
   });
 };
@@ -299,7 +299,6 @@ export const mkrApproveProxy = () => (dispatch, getState) => {
   if (!proxyAddress) {
     //if proxy address not stored in accounts yet, then it should be in proxy store
     proxyAddress = getState().proxy.proxyAddress;
-    console.log('proxyAddress in mkrApproveProxy', proxyAddress);
   }
   const giveProxyAllowance = window.maker
     .getToken(MKR)
@@ -330,7 +329,8 @@ const initialState = {
   coldAddress: '',
   sendMkrAmount: 0,
   withdrawMkrAmount: 0,
-  linkGas: 0
+  linkGas: 0,
+  proxyAddress: ''
 };
 
 // const withExisting = { ...initialState, ...existingState };
