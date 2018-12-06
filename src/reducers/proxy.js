@@ -267,7 +267,8 @@ export const refreshAccountDataLink = () => (dispatch, getState) => {
   const coldAccount = getAccount(getState(), getState().proxy.coldAddress);
   if (hotAccount === undefined) return window.location.reload();
   const accounts = coldAccount ? [hotAccount, coldAccount] : [hotAccount];
-  if (coldAccount) dispatch(setActiveAccount(coldAccount.address));
+  // if (coldAccount) dispatch(setActiveAccount(coldAccount.address));
+  dispatch(setActiveAccount(hotAccount.address));
   // this will replace duplicate accounts in the store
   dispatch(addAccounts(accounts));
 };
