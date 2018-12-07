@@ -8,13 +8,13 @@ import { hatInit } from './hat';
 
 // Constants ----------------------------------------------
 
-const UPDATE_ADDRESS = 'metamask/UPDATE_ADDRESS';
-const UPDATE_NETWORK = 'metamask/UPDATE_NETWORK';
-const CONNECT_REQUEST = 'metamask/CONNECT_REQUEST';
-const CONNECT_SUCCESS = 'metamask/CONNECT_SUCCESS';
-const CONNECT_FAILURE = 'metamask/CONNECT_FAILURE';
-const NOT_AVAILABLE = 'metamask/NOT_AVAILABLE';
-const WRONG_NETWORK = 'metamask/WRONG_NETWORK';
+export const UPDATE_ADDRESS = 'metamask/UPDATE_ADDRESS';
+export const UPDATE_NETWORK = 'metamask/UPDATE_NETWORK';
+export const CONNECT_REQUEST = 'metamask/CONNECT_REQUEST';
+export const CONNECT_SUCCESS = 'metamask/CONNECT_SUCCESS';
+export const CONNECT_FAILURE = 'metamask/CONNECT_FAILURE';
+export const NOT_AVAILABLE = 'metamask/NOT_AVAILABLE';
+export const WRONG_NETWORK = 'metamask/WRONG_NETWORK';
 
 // Actions ------------------------------------------------
 
@@ -23,12 +23,34 @@ export const updateAddress = address => ({
   payload: address
 });
 
-const pollForMetamaskChanges = maker => async dispatch => {
+export const connectRequest = () => ({
+  type: CONNECT_REQUEST
+});
+
+export const connectSuccess = network => ({
+  type: CONNECT_SUCCESS,
+  payload: { network }
+});
+
+export const updateNetwork = network => ({
+  type: UPDATE_NETWORK,
+  payload: { network: network }
+});
+
+export const notAvailable = () => ({
+  type: NOT_AVAILABLE
+});
+
+export const wrongNetwork = () => ({
+  type: WRONG_NETWORK
+});
+
+const pollForMetamaskChanges = () => async dispatch => {
   try {
     await dispatch(initWeb3Accounts());
     await dispatch(checkNetwork());
 
-    setTimeout(() => dispatch(pollForMetamaskChanges(maker)), 1000);
+    setTimeout(() => dispatch(pollForMetamaskChanges()), 1000);
   } catch (err) {
     console.error(err);
   }
@@ -42,14 +64,14 @@ const checkNetwork = () => async (dispatch, getState) => {
       } = getState();
       const newNetwork = netIdToName(netId);
       if (newNetwork !== network) {
-        dispatch({ type: UPDATE_NETWORK, payload: { network: newNetwork } });
+        dispatch(updateNetwork(newNetwork));
         window.maker.service('web3')._web3.setProvider(netToUri(newNetwork));
       }
     });
   }
 };
 
-const initWeb3Accounts = () => async (dispatch, getState) => {
+export const initWeb3Accounts = () => async (dispatch, getState) => {
   const {
     metamask: { activeAddress },
     accounts: { fetching }
@@ -59,27 +81,29 @@ const initWeb3Accounts = () => async (dispatch, getState) => {
     if (address !== activeAddress) {
       dispatch(updateAddress(address));
       await dispatch(setActiveAccount(address, true));
+      //TODO: I don't think this is reachable:
     } else if (fetching && !activeAddress) {
       dispatch({ type: NO_METAMASK_ACCOUNTS });
-      dispatch({ type: NOT_AVAILABLE });
+      dispatch(notAvailable());
     }
   }
 };
 
 export const init = (maker, network = 'mainnet') => async dispatch => {
-  dispatch({ type: CONNECT_REQUEST });
-  dispatch({ type: CONNECT_SUCCESS, payload: { network } });
+  dispatch(connectRequest());
 
   if (!window.web3 || !window.web3.eth.defaultAccount) {
     dispatch({ type: NO_METAMASK_ACCOUNTS });
-    dispatch({ type: NOT_AVAILABLE });
+    dispatch(notAvailable());
   }
   if (network !== 'mainnet' && network !== 'kovan') {
     dispatch({ type: NO_METAMASK_ACCOUNTS });
-    return dispatch({ type: WRONG_NETWORK });
+    return dispatch(wrongNetwork());
   }
+  dispatch(connectSuccess(network));
+  dispatch(updateNetwork(network));
 
-  dispatch({ type: UPDATE_NETWORK, payload: { network: network } });
+  // TODO: use window.maker here
   maker.service('web3')._web3.setProvider(netToUri(network));
   await dispatch(initWeb3Accounts());
 
@@ -87,7 +111,7 @@ export const init = (maker, network = 'mainnet') => async dispatch => {
   dispatch(proposalsInit(network));
   dispatch(hatInit());
   dispatch(ethInit());
-  dispatch(pollForMetamaskChanges(maker));
+  dispatch(pollForMetamaskChanges());
 };
 
 // Reducer ------------------------------------------------

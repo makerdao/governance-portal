@@ -965,7 +965,7 @@
   dependencies:
     events "^3.0.0"
 
-"@makerdao/dai-plugin-governance@^0.3.1":
+"@makerdao/dai-plugin-governance@0.3.1":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.3.1.tgz#b8875991805c8431b3e29e2d0891296fc3bc0a03"
   integrity sha512-cBMdTYNDzOq+iH5+sYCQ2EJqOvIb1p5n3bra/iNyo6TAGRw13wA1A2TSiBhYY7bRCZFRbPD89F38EEH0xzvCCQ==
