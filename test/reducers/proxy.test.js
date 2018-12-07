@@ -322,20 +322,20 @@ describe('Proxy Reducer', () => {
 
       expect(lock).toBeCalledTimes(1);
       expect(approvals.initApprovalsFetch).toBeCalledTimes(1);
-      expect(store.getActions().length).toBe(4);
-      expect(store.getActions()[0]).toEqual({
+      expect(store.getActions().length).toBe(5);
+      expect(store.getActions()[1]).toEqual({
         type: reducer.SEND_MKR_TO_PROXY_REQUEST,
         payload: mockValue
       });
-      expect(store.getActions()[1]).toEqual({
+      expect(store.getActions()[2]).toEqual({
         type: reducer.SEND_MKR_TO_PROXY_SENT,
         payload: { txHash: testPendingHash }
       });
-      expect(store.getActions()[2]).toEqual({
+      expect(store.getActions()[3]).toEqual({
         type: sharedConstants.SEND_MKR_TO_PROXY_SUCCESS,
         payload: mockValue
       });
-      expect(store.getActions()[3]).toEqual(mockSuccessAction);
+      expect(store.getActions()[4]).toEqual(mockSuccessAction);
     });
 
     test('Lock should dispatch FAILURE action when TxMgr calls error', async () => {
@@ -343,16 +343,16 @@ describe('Proxy Reducer', () => {
 
       await reducer.lock(mockValue)(store.dispatch, store.getState);
 
-      expect(store.getActions().length).toBe(3);
-      expect(store.getActions()[0]).toEqual({
+      expect(store.getActions().length).toBe(4);
+      expect(store.getActions()[1]).toEqual({
         type: reducer.SEND_MKR_TO_PROXY_REQUEST,
         payload: mockValue
       });
-      expect(store.getActions()[1]).toEqual({
+      expect(store.getActions()[2]).toEqual({
         type: reducer.SEND_MKR_TO_PROXY_FAILURE,
         payload: { message: testErrorMessage }
       });
-      expect(store.getActions()[2]).toEqual({
+      expect(store.getActions()[3]).toEqual({
         type: ADD_TOAST,
         payload: {
           toast: expect.any(Object)
@@ -546,15 +546,15 @@ describe('Proxy Reducer', () => {
     test('mkrApproveProxy should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', () => {
       reducer.mkrApproveProxy()(store.dispatch, store.getState);
 
-      expect(store.getActions().length).toBe(3);
-      expect(store.getActions()[0]).toEqual({
+      expect(store.getActions().length).toBe(4);
+      expect(store.getActions()[1]).toEqual({
         type: reducer.MKR_APPROVE_REQUEST
       });
-      expect(store.getActions()[1]).toEqual({
+      expect(store.getActions()[2]).toEqual({
         type: reducer.MKR_APPROVE_SENT,
         payload: { txHash: testPendingHash }
       });
-      expect(store.getActions()[2]).toEqual({
+      expect(store.getActions()[3]).toEqual({
         type: reducer.MKR_APPROVE_SUCCESS,
         payload: ''
       });
@@ -564,16 +564,15 @@ describe('Proxy Reducer', () => {
       defaultFunctions.service = jest.fn(mockServiceError);
 
       reducer.mkrApproveProxy()(store.dispatch, store.getState);
-
-      expect(store.getActions().length).toBe(3);
-      expect(store.getActions()[0]).toEqual({
+      expect(store.getActions().length).toBe(4);
+      expect(store.getActions()[1]).toEqual({
         type: reducer.MKR_APPROVE_REQUEST
       });
-      expect(store.getActions()[1]).toEqual({
+      expect(store.getActions()[2]).toEqual({
         type: reducer.MKR_APPROVE_FAILURE,
         payload: { message: testErrorMessage }
       });
-      expect(store.getActions()[2]).toEqual({
+      expect(store.getActions()[3]).toEqual({
         type: ADD_TOAST,
         payload: {
           toast: expect.any(Object)

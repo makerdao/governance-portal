@@ -134,13 +134,10 @@ function useCorrectAccount(requiredAccount, dispatch, options = {}) {
 }
 
 function useColdAccount(dispatch, getState) {
-  const state = getState();
-  const account = getAccount(state, window.maker.currentAddress());
-  if (account.proxyRole !== 'cold') {
-    const cold = state.accounts.allAccounts.find(a => a.proxyRole === 'cold');
-    return useCorrectAccount(cold, dispatch);
-  }
-  return true;
+  const cold = getState().accounts.allAccounts.find(
+    a => a.proxyRole === 'cold'
+  );
+  return useCorrectAccount(cold, dispatch);
 }
 
 export const initiateLink = ({ cold, hot }) => (dispatch, getState) => {
