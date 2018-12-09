@@ -176,7 +176,6 @@ describe('Proxy Reducer', () => {
 
       await reducer.initiateLink(mockAccounts)(store.dispatch, store.getState);
       expect(initLink).toBeCalledTimes(1);
-      console.log('store.getActions()', store.getActions());
       expect(store.getActions().length).toBe(4);
       expect(store.getActions()[0]).toEqual({
         type: SET_ACTIVE_ACCOUNT,
