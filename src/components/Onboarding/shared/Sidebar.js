@@ -16,13 +16,14 @@ import NetworkIndicator from '../../NetworkIndicator';
 import { TransactionStatus } from '../../../utils/constants';
 import WalletIcon from './WalletIcon';
 import ExternalLink from './ExternalLink';
-import { DataLabel } from '../typography';
+import { DataLabel, SubtitleDataLabel } from '../../../utils/typography';
 import { GreyTag } from './Tags';
 import linkImg from '../../../imgs/onboarding/link.svg';
 import logo from '../../../imgs/onboarding/maker-logomark.svg';
 
 const iconBackgroundSize = '4.3rem';
 const iconSize = '2.3rem';
+const connectingLineHeight = '5rem';
 
 const contractAddresses = [
   {
@@ -80,11 +81,6 @@ const ConnectingLine = ({ lineStyle = 'solid', ...props }) => (
     {...props}
   />
 );
-
-const SubtitleDataLabel = styled(Box).attrs({
-  fontSize: '1rem',
-  color: 'grey'
-})``;
 
 const Sidebar = ({
   show,
@@ -195,7 +191,7 @@ const Sidebar = ({
                     gridRow="3/span 3"
                     lineStyle="dotted"
                   />
-                  <Box gridRow="4" height="50px" />
+                  <Box gridRow="4" height={connectingLineHeight} />
                   <IconBackground gridColumn="1" gridRow="5">
                     <img src={logo} alt="" />
                   </IconBackground>

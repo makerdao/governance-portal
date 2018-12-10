@@ -9,7 +9,7 @@ import {
   OnboardingMenu
 } from '@makerdao/ui-components';
 
-import { H1, H3 } from './typography.js';
+import { H1, H3 } from '../../utils/typography';
 
 import metamask from '../../imgs/metamask.svg';
 import time from '../../imgs/onboarding/time.svg';

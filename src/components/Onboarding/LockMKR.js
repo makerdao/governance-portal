@@ -24,7 +24,7 @@ import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
 import { lock } from '../../reducers/proxy';
 import { getAccount } from '../../reducers/accounts';
 import { ColdWalletTag, VotingContractTag } from './shared/Tags';
-import { Label } from './typography';
+import { Label } from '../../utils/typography';
 
 const inputWidth = '33.4rem';
 const walletIconSize = '2.7rem';

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Box } from '@makerdao/ui-components';
+import { Text } from '@makerdao/ui-components';
 
 // here only very temporarily as we standardize typography in the styleguide
 export const H1 = styled.h1`
@@ -17,14 +17,24 @@ export const H3 = styled.h3`
   font-size: 2rem;
 `;
 
-export const Label = styled(Box).attrs({
+export const Label = styled(Text).attrs({
   fontSize: '1.4rem',
   fontWeight: 'medium',
   color: 'heading'
 })``;
 
-export const DataLabel = styled(Box).attrs({
+export const DataLabel = styled(Text).attrs({
   color: 'grey',
   fontSize: '1rem',
   fontWeight: 'bold'
 })``;
+
+export const SubtitleDataLabel = styled(Text).attrs({
+  fontSize: '1rem',
+  color: 'grey'
+})``;
+
+export const BreakableText = styled(Text)`
+  overflow-wrap: break-word;
+  word-break: break-word;
+`;

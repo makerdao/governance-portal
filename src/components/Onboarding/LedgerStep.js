@@ -5,11 +5,7 @@ import { Grid, Box, Text, Button } from '@makerdao/ui-components';
 import ButtonCard from './shared/ButtonCard';
 import WalletIcon from './shared/WalletIcon';
 import OnboardingHeader from './shared/OnboardingHeader';
-
-const BreakableText = styled(Text)`
-  overflow-wrap: break-word;
-  word-break: break-word;
-`;
+import { BreakableText } from '../../utils/typography';
 
 const LedgerStep = ({ active, onLedgerLive, onLedgerLegacy, onCancel }) => {
   return (

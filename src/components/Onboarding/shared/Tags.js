@@ -12,7 +12,7 @@ export const HotWalletTag = props => (
     style={{ whiteSpace: 'nowrap' }}
     {...props}
   >
-    HOT WALLET
+    <p>HOT WALLET</p>
   </Box>
 );
 
@@ -26,7 +26,7 @@ export const ColdWalletTag = props => (
     px="xs"
     {...props}
   >
-    COLD WALLET
+    <p>COLD WALLET</p>
   </Box>
 );
 
@@ -40,7 +40,7 @@ export const VotingContractTag = props => (
     px="xs"
     {...props}
   >
-    VOTING CONTRACT
+    <p>VOTING CONTRACT</p>
   </Box>
 );
 
@@ -55,7 +55,7 @@ export const GreyTag = ({ children, ...props }) => {
       px="xs"
       {...props}
     >
-      {children}
+      <p>{children}</p>
     </Box>
   );
 };
