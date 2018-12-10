@@ -73,25 +73,21 @@ class LockMKR extends React.Component {
 
   validate = amount => {
     const mkr = parseFloat(amount);
+    let error = false;
+
     if (Number.isNaN(mkr)) {
-      this.setState({
-        error: 'Please enter a valid number'
-      });
+      error = 'Please enter a valid number';
     } else if (mkr === 0) {
-      this.setState({
-        error: 'Please enter a number greater than zero'
-      });
+      error = 'Please enter a number greater than zero';
     } else if (mkr > this.props.coldWallet.mkrBalance) {
-      this.setState({
-        error: `The maximum amount of MKR you can lock is ${
-          this.props.coldWallet.mkrBalance
-        }`
-      });
-    } else {
-      this.setState({
-        error: false
-      });
+      error = `The maximum amount of MKR you can lock is ${
+        this.props.coldWallet.mkrBalance
+      }`;
     }
+
+    this.setState({
+      error
+    });
   };
 
   setMaxVotingMKR = () => {
