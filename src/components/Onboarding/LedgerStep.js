@@ -3,12 +3,12 @@ import { Grid, Box, Text, Button } from '@makerdao/ui-components';
 
 import ButtonCard from './shared/ButtonCard';
 import WalletIcon from './shared/WalletIcon';
-import Header from './shared/Header';
+import OnboardingHeader from './shared/OnboardingHeader';
 
 const LedgerStep = ({ active, onLedgerLive, onLedgerLegacy, onCancel }) => {
   return (
     <Grid gridRowGap="m">
-      <Header
+      <OnboardingHeader
         mt={[0, 0, 0, 'l']}
         title="Ledger live or legacy"
         subtitle="Due to a firmware update, you will need to choose between Ledger

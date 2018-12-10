@@ -18,7 +18,7 @@ import lockImg from '../../imgs/onboarding/lock.svg';
 import faqs from './data/faqs';
 import Sidebar from './shared/Sidebar';
 import Stepper from './shared/Stepper';
-import Header from './shared/Header';
+import OnboardingHeader from './shared/OnboardingHeader';
 import WalletIcon from './shared/WalletIcon';
 import SignTransactionStep from './shared/SignTransactionStep';
 import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
@@ -121,7 +121,7 @@ class LockMKR extends React.Component {
         <div>
           <Grid gridRowGap="l">
             {this.state.step <= 1 && (
-              <Header
+              <OnboardingHeader
                 title="Deposit MKR"
                 subtitle="In order to participate in voting, you must deposit MKR
         into your secure voting contract. The higher the amount, the more impact you’ll have on the system"

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Grid, Button, Flex } from '@makerdao/ui-components';
 
 import { getAccount } from '../../reducers/accounts';
-import Header from './shared/Header';
+import OnboardingHeader from './shared/OnboardingHeader';
 import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
 import Sidebar from './shared/Sidebar';
 
@@ -14,7 +14,7 @@ const StartVoting = ({ onComplete, hotWallet, coldWallet }) => {
       sidebarPosition="left"
     >
       <Grid gridRowGap="l" maxWidth="440px">
-        <Header
+        <OnboardingHeader
           title="Set up complete!"
           subtitle="Thank you for setting up your secure voting contract.
 You are now ready to impact the system."

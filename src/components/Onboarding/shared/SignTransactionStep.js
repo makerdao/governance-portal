@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Flex, Button } from '@makerdao/ui-components';
 
 import TransactionStatusIndicator from '../../TransactionStatusIndicator';
-import Header from './Header';
+import OnboardingHeader from './OnboardingHeader';
 
 import { TransactionStatus } from '../../../utils/constants';
 
@@ -18,7 +18,7 @@ const SignTransactionStep = ({
 }) => {
   return (
     <Grid gridRowGap="l" justifyItems="center">
-      <Header title={title} subtitle={subtitle} />
+      <OnboardingHeader title={title} subtitle={subtitle} />
       <TransactionStatusIndicator
         provider={walletProvider}
         status={status}

@@ -12,7 +12,7 @@ import {
 } from '@makerdao/ui-components';
 
 import Loader from '../Loader';
-import Header from './shared/Header';
+import OnboardingHeader from './shared/OnboardingHeader';
 
 class ChooseMKRBalance extends React.Component {
   constructor(props) {
@@ -39,7 +39,7 @@ class ChooseMKRBalance extends React.Component {
   render() {
     return (
       <Grid gridRowGap="m">
-        <Header
+        <OnboardingHeader
           mt={[0, 0, 0, 'l']}
           title="Select MKR Balance"
           subtitle="Select the MKR balance that you would like to vote with, and its

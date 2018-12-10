@@ -13,7 +13,7 @@ import Stepper from './shared/Stepper';
 import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
 import ButtonCard from './shared/ButtonCard';
 import WalletIcon from './shared/WalletIcon';
-import Header from './shared/Header';
+import OnboardingHeader from './shared/OnboardingHeader';
 import AccountInfo from './shared/AccountInfo';
 import { HotWalletTag } from './shared/Tags';
 
@@ -35,7 +35,7 @@ const SelectAWalletStep = ({
 }) => {
   return (
     <Grid gridRowGap="m" alignContent="start">
-      <Header
+      <OnboardingHeader
         mt={[0, 0, 0, 'l']}
         title="Select a voting wallet"
         subtitle={
@@ -81,7 +81,7 @@ const ConfirmWalletStep = ({
 }) => {
   return (
     <Grid gridRowGap="l" alignContent="start">
-      <Header
+      <OnboardingHeader
         mt={[0, 0, 0, 'l']}
         title="Confirm voting wallet"
         subtitle="By confirming your voting wallet, you will be selecting the hot

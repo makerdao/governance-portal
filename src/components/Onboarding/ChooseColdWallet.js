@@ -6,7 +6,7 @@ import { AccountTypes } from '../../utils/constants';
 
 import LedgerStep from './LedgerStep';
 import Sidebar from './shared/Sidebar';
-import Header from './shared/Header';
+import OnboardingHeader from './shared/OnboardingHeader';
 import Stepper from './shared/Stepper';
 import ButtonCard from './shared/ButtonCard';
 import WalletIcon from './shared/WalletIcon';
@@ -36,7 +36,7 @@ const SelectAWalletStep = ({
 }) => {
   return (
     <Grid gridRowGap="m" alignContent="start">
-      <Header
+      <OnboardingHeader
         mt={[0, 0, 0, 'l']}
         title="Select a cold wallet"
         subtitle="Select the cold wallet that holds your MKR. This selection will
@@ -75,7 +75,7 @@ const ConfirmWalletStep = ({
 }) => {
   return (
     <Grid gridRowGap="l" alignContent="start">
-      <Header
+      <OnboardingHeader
         mt={[0, 0, 0, 'l']}
         title="Link hot and cold wallet"
         subtitle="Linking your hot and cold wallet will enable you to vote while your MKR is still stored in your cold wallet."
