@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
 import {
   Box,
@@ -25,12 +24,7 @@ import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
 import { lock } from '../../reducers/proxy';
 import { getAccount } from '../../reducers/accounts';
 import { ColdWalletTag, VotingContractTag } from './shared/Tags';
-
-const Label = styled(Box).attrs({
-  fontSize: '1.4rem',
-  fontWeight: 'medium',
-  color: 'heading'
-})``;
+import { Label } from './typography';
 
 class LockMKR extends React.Component {
   constructor(props) {

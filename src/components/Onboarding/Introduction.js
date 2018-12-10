@@ -9,6 +9,8 @@ import {
   OnboardingMenu
 } from '@makerdao/ui-components';
 
+import { H1, H3 } from './typography.js';
+
 import metamask from '../../imgs/metamask.svg';
 import time from '../../imgs/onboarding/time.svg';
 import wallets from '../../imgs/onboarding/wallets.svg';
@@ -16,16 +18,6 @@ import eth from '../../imgs/onboarding/eth.svg';
 import commandLine from '../../imgs/onboarding/command-line.svg';
 import paperWallet from '../../imgs/onboarding/paper-wallet.svg';
 import rightArrow from '../../imgs/onboarding/right-arrow.svg';
-
-// here only very temporarily as we standardize typography in the styleguide
-const H1 = styled.h1`
-  font-weight: normal;
-  font-size: 4rem;
-`;
-
-const H3 = styled.h3`
-  font-size: 2rem;
-`;
 
 const Container = styled(Box)`
   transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;

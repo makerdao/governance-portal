@@ -1,12 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Box, Text } from '@makerdao/ui-components';
-
-const H2 = styled.h2`
-  font-weight: 500;
-  font-size: 3.2rem;
-  letter-spacing: 0.03rem;
-`;
+import { H2 } from '../typography';
 
 const OnboardingHeader = ({ title, subtitle, ...props }) => {
   return (
