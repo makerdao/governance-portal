@@ -81,10 +81,10 @@ const WalletCard = props => {
 
 const Introduction = ({ show, onClose, onLinkedWallet }) => {
   return (
-    <Container show={show}>
+    <Container show={show} height="100%" position="fixed">
       <Grid
         width="100vw"
-        height="100vh"
+        height="100%"
         gridTemplateColumns={['1fr', '1fr', '1fr', '1fr 1fr']}
         style={{ overflow: 'scroll' }}
       >

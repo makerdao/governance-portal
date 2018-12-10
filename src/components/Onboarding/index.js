@@ -51,6 +51,8 @@ const Onboarding = ({
       zIndex="2"
       bg="backgroundGrey"
       position="fixed"
+      height="100%"
+      width="100%"
       top="0"
       left="0"
     >
