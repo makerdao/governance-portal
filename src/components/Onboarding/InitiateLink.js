@@ -6,8 +6,8 @@ import Stepper from './shared/Stepper';
 import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
 import SignTransactionStep from './shared/SignTransactionStep';
 import faqs from './data/faqs';
+import { nicelyFormatWalletProvider } from './utils';
 
-import { AccountTypes } from '../../utils/constants';
 import {
   breakLink,
   initiateLink,
@@ -16,22 +16,6 @@ import {
 } from '../../reducers/proxy';
 
 import { getAccount } from '../../reducers/accounts';
-
-const nicelyFormatWalletProvider = provider => {
-  switch (provider) {
-    case 'provider':
-    case 'browser':
-    case 'metamask':
-    case AccountTypes.METAMASK:
-      return 'MetaMask';
-    case AccountTypes.TREZOR:
-      return 'Trezor';
-    case AccountTypes.LEDGER:
-      return 'Ledger';
-    default:
-      return 'your wallet';
-  }
-};
 
 class InitiateLink extends React.Component {
   constructor(props) {
