@@ -99,55 +99,62 @@ class InitiateLink extends React.Component {
   };
 
   render() {
+    const {
+      hotWallet,
+      coldWallet,
+      initiateLinkTxHash,
+      initiateLinkTxStatus,
+      approveLinkTxHash,
+      approveLinkTxStatus,
+      mkrApproveProxyTxHash,
+      mkrApproveProxyTxStatus,
+      onComplete
+    } = this.props;
     return (
       <TwoColumnSidebarLayout
         sidebar={
-          <Sidebar
-            faqs={[]}
-            hotWallet={this.props.hotWallet}
-            coldWallet={this.props.coldWallet}
-          />
+          <Sidebar faqs={[]} hotWallet={hotWallet} coldWallet={coldWallet} />
         }
       >
         <div>
           <Stepper step={this.state.step}>
             <SignTransactionStep
               title={`Sign ${nicelyFormatWalletProvider(
-                this.props.coldWallet.type
+                coldWallet.type
               )} transaction`}
               subtitle={`To proceed with setting up your voting contract,
       please sign the transaction in ${nicelyFormatWalletProvider(
-        this.props.coldWallet.type
+        coldWallet.type
       )}.`}
-              walletProvider={this.props.coldWallet.type}
-              status={this.props.initiateLinkTxStatus}
-              tx={this.props.initiateLinkTxHash}
+              walletProvider={coldWallet.type}
+              status={initiateLinkTxStatus}
+              tx={initiateLinkTxHash}
               onNext={this.toApproveLink}
               onRetry={this.toInitiateLink}
               onCancel={this.toChooseTransactionPriority}
             />
             <SignTransactionStep
               title={`Sign ${nicelyFormatWalletProvider(
-                this.props.hotWallet.type
+                hotWallet.type
               )} transaction`}
               subtitle={`To proceed with setting up your voting contract,
       please sign the transaction in ${nicelyFormatWalletProvider(
-        this.props.hotWallet.type
+        hotWallet.type
       )}.`}
-              walletProvider={this.props.hotWallet.type}
-              status={this.props.approveLinkTxStatus}
-              tx={this.props.approveLinkTxHash}
-              onRetry={this.props.toApproveLink}
+              walletProvider={hotWallet.type}
+              status={approveLinkTxStatus}
+              tx={approveLinkTxHash}
+              onRetry={this.toApproveLink}
               onNext={this.toGrantPermissions}
             />
             <SignTransactionStep
               title="Grant hot wallet permissions"
               subtitle="Give your voting contract permission so that your hot wallet can vote with your MKR"
-              walletProvider={this.props.coldWallet.type}
-              status={this.props.mkrApproveProxyTxStatus}
-              tx={this.props.mkrApproveProxyTxHash}
+              walletProvider={coldWallet.type}
+              status={mkrApproveProxyTxStatus}
+              tx={mkrApproveProxyTxHash}
               onRetry={this.toGrantPermissions}
-              onNext={this.props.onComplete}
+              onNext={onComplete}
             />
           </Stepper>
         </div>
