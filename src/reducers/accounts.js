@@ -121,8 +121,8 @@ export const addAccounts = accounts => async dispatch => {
       ]);
       payload.proxy.linkedAccount = linkedAccount;
       dispatch({ type: ADD_ACCOUNT, payload });
-    } catch (err) {
-      console.log('failed to add account', err);
+    } catch (e) {
+      console.log('failed to add account', e);
     }
   }
 
@@ -155,18 +155,14 @@ export const setActiveAccount = (address, isMetamask) => async (
       a => a.address.toLowerCase() === address.toLowerCase()
     )
   ) {
-    // TODO: should we be passing in the account name here?
     try {
       await window.maker.service('accounts').addAccount(address, {
         type: AccountTypes.METAMASK
       });
       await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
     } catch (error) {
-      // this error occurs when user rejects provider access
-      console.log(
-        'error adding accounts, did we reject provider access?',
-        error
-      );
+      // This error occurs when user rejects provider access in MetaMask
+      console.error('Error adding account', error);
       return dispatch({ type: NO_METAMASK_ACCOUNTS });
     }
   }

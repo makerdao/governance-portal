@@ -1,19 +1,21 @@
 import * as reducer from '../../src/reducers/metamask';
-import * as utils from '../../src/utils/misc';
 import * as tally from '../../src/reducers/tally';
 import * as proposals from '../../src/reducers/proposals';
 import * as hat from '../../src/reducers/hat';
 import * as eth from '../../src/reducers/eth';
 import * as accounts from '../../src/reducers/accounts';
 import { getAction } from '../helpers/getAction';
+import { netIdToName } from '../../src/utils/ethereum';
 
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
+// Importing actions using an alias results in empty string
+const NO_METAMASK_ACCOUNTS = 'accounts/NO_METAMASK_ACCOUNTS';
+
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 let store;
-let maker;
 const origWindow = {};
 
 const mockWeb3 = () => {
@@ -24,11 +26,17 @@ const mockWeb3 = () => {
       }
     }
   };
+  const mockVersion = {
+    getNetwork: async callback => {
+      callback(null, mockNetId);
+    }
+  };
   window.web3 = {
     currentProvider: mockProvider,
     eth: {
       defaultAccount: mockDefaultAccount
-    }
+    },
+    version: mockVersion
   };
   window.ethereum = {
     enable: async () => {
@@ -46,6 +54,7 @@ const clearWeb3Mock = () => {
 };
 
 // Mock state setup
+const mockNetId = 999;
 const mockDefaultAccount = 'mockDefaultAccount';
 const initialState = {
   metamask: {
@@ -57,20 +66,15 @@ const initialState = {
   }
 };
 
+// Mock imported action creators
 const mockAction = { type: 'MOCK_ACTION', payload: true };
-
-// reducer.initWeb3Accounts = jest.fn(jest.fn());
-// reducer.initWeb3Accounts = jest.fn(() => Promise.resolve(mockAction));
 tally.voteTallyInit = jest.fn(() => mockAction);
 proposals.proposalsInit = jest.fn(() => mockAction);
 hat.hatInit = jest.fn(() => mockAction);
 eth.ethInit = jest.fn(() => mockAction);
 accounts.setActiveAccount = jest.fn(() => mockAction);
 
-// tally.voteTallyInit = jest.fn(() => mockAction);
-
-// approvals.initApprovalsFetch = jest.fn(() => mockSuccessAction);
-
+// Mock Maker services
 const setProvider = jest.fn();
 const mockService = name => {
   if (name === 'web3') {
@@ -127,32 +131,23 @@ describe('actions', () => {
       type: reducer.WRONG_NETWORK
     });
   });
-  //end describe actions
 });
 
 describe('async actions', () => {
   beforeAll(() => {
-    maker = defaultFunctions;
     mockWeb3();
   });
   beforeEach(() => {
     store = mockStore(initialState);
   });
   afterEach(() => {
-    // fetchMock.restore();
     jest.clearAllMocks();
   });
 
   test('init with valid network, but no web3 accounts', async () => {
     clearWeb3Mock();
-    // const pfm = reducer.pollForMetamaskChanges
-    // reducer.pollForMetamaskChanges = jest.fn(() => 'TEST POLL');
     const network = 'mainnet';
-    await reducer.init(maker, network)(store.dispatch);
-    /**TODO
-     * Check InitWeb3Accounts here
-     */
-    // expect(reducer.pollForMetamaskChanges).toBeCalledTimes(1);
+    await reducer.init(network)(store.dispatch);
 
     expect(setProvider).toBeCalledTimes(1);
     expect(tally.voteTallyInit).toBeCalledTimes(1);
@@ -160,7 +155,6 @@ describe('async actions', () => {
     expect(proposals.proposalsInit).toBeCalledWith(network);
     expect(hat.hatInit).toBeCalledTimes(1);
     expect(eth.ethInit).toBeCalledTimes(1);
-
     expect(await getAction(store, reducer.CONNECT_REQUEST)).toEqual({
       type: reducer.CONNECT_REQUEST
     });
@@ -169,7 +163,7 @@ describe('async actions', () => {
       payload: { network }
     });
     expect(await getAction(store, 'accounts/NO_METAMASK_ACCOUNTS')).toEqual({
-      type: 'accounts/NO_METAMASK_ACCOUNTS'
+      type: NO_METAMASK_ACCOUNTS
     });
     expect(await getAction(store, reducer.NOT_AVAILABLE)).toEqual({
       type: reducer.NOT_AVAILABLE
@@ -184,13 +178,13 @@ describe('async actions', () => {
   test('init with an invalid network, and no web3 accounts', async () => {
     clearWeb3Mock();
     const network = 'invalidNet';
-    await reducer.init(maker, network)(store.dispatch);
+    await reducer.init(network)(store.dispatch);
 
     expect(await getAction(store, reducer.CONNECT_REQUEST)).toEqual({
       type: reducer.CONNECT_REQUEST
     });
-    expect(await getAction(store, 'accounts/NO_METAMASK_ACCOUNTS')).toEqual({
-      type: 'accounts/NO_METAMASK_ACCOUNTS'
+    expect(await getAction(store, NO_METAMASK_ACCOUNTS)).toEqual({
+      type: NO_METAMASK_ACCOUNTS
     });
     expect(await getAction(store, reducer.NOT_AVAILABLE)).toEqual({
       type: reducer.NOT_AVAILABLE
@@ -201,17 +195,35 @@ describe('async actions', () => {
     expect(store.getActions().length).toBe(5);
   });
 
-  test.skip('init with valid network and valid web3 instance', async () => {
-    mockWeb3();
-    // jest.spyOn(reducer, 'initWeb3Accounts');
-    // reducer.initWeb3Accounts = jest.fn();
-    reducer.initWeb3Accounts = jest.fn(() => mockAction);
-
+  test('init with valid network and valid web3 instance', async () => {
     const network = 'mainnet';
-    await reducer.init(maker, network)(store.dispatch);
+    mockWeb3();
 
-    // expect(reducer.initWeb3Accounts).toBeCalledTimes(1);
-    expect(reducer.initWeb3Accounts).toHaveBeenCalled();
+    await reducer.init(network)(store.dispatch);
+
+    expect(setProvider).toBeCalledTimes(1);
+    expect(accounts.setActiveAccount).toBeCalledTimes(2);
+    expect(store.getActions()[0]).toEqual({
+      type: reducer.CONNECT_REQUEST
+    });
+    expect(store.getActions()[1]).toEqual({
+      type: reducer.CONNECT_SUCCESS,
+      payload: { network }
+    });
+    expect(store.getActions()[2]).toEqual({
+      type: reducer.UPDATE_NETWORK,
+      payload: { network }
+    });
+    expect(store.getActions()[3]).toEqual({
+      type: reducer.UPDATE_ADDRESS,
+      payload: mockDefaultAccount
+    });
+    // Since our mock store doesn't get updated, initWeb3Accounts will update address again
+    expect(store.getActions()[9]).toEqual({
+      type: reducer.UPDATE_ADDRESS,
+      payload: mockDefaultAccount
+    });
+    expect(store.getActions().length).toBe(11);
   });
 
   test('initWeb3Accounts and update address with web3 default address', async () => {
@@ -224,23 +236,67 @@ describe('async actions', () => {
       payload: mockDefaultAccount
     });
     expect(store.getActions().length).toBe(2);
-    console.log(store.getActions());
   });
 
-  test.skip('initWeb3Accounts with no default address, and we are fetching', async () => {
-    mockWeb3();
-    store.getState().metamask.activeAddress = null;
-    window.web3.eth.defaultAccount = mockDefaultAccount;
-
+  test('initWeb3Accounts with no accounts should dispatch NO_METAMASK_ACCOUNTS and NOT_AVAILABLE if we are currently fetching', async () => {
+    clearWeb3Mock();
+    store.getState().metamask.activeAddress = '';
     await reducer.initWeb3Accounts()(store.dispatch, store.getState);
 
-    // expect(accounts.setActiveAccount).toBeCalledTimes(1);
-    // expect(await getAction(store, reducer.UPDATE_ADDRESS)).toEqual({
-    //   type: reducer.UPDATE_ADDRESS,
-    //   payload: mockDefaultAccount
-    // });
-    // expect(store.getActions().length).toBe(2);
-    console.log(store.getState());
-    console.log(store.getActions());
+    expect(await getAction(store, NO_METAMASK_ACCOUNTS)).toEqual({
+      type: NO_METAMASK_ACCOUNTS
+    });
+    expect(await getAction(store, reducer.NOT_AVAILABLE)).toEqual({
+      type: reducer.NOT_AVAILABLE
+    });
+    expect(store.getActions().length).toBe(2);
+  });
+
+  test('initWeb3Accounts with no accounts should dispatch nothing when not fetching accounts', async () => {
+    clearWeb3Mock();
+    store.getState().metamask.activeAddress = '';
+    store.getState().accounts.fetching = false;
+    await reducer.initWeb3Accounts()(store.dispatch, store.getState);
+
+    expect(store.getActions().length).toBe(0);
+  });
+
+  test('checkNetwork dispatches UPDATE_NETWORK and web3.setProvider when receiving a new network', async () => {
+    mockWeb3();
+    await reducer.checkNetwork()(store.dispatch, store.getState);
+
+    expect(setProvider).toBeCalledTimes(1);
+    expect(await getAction(store, reducer.UPDATE_NETWORK)).toEqual({
+      type: reducer.UPDATE_NETWORK,
+      payload: { network: netIdToName(mockNetId) }
+    });
+    expect(store.getActions().length).toBe(1);
+  });
+
+  test('checkNetwork dispatches nothing when receiving network existing in state', async () => {
+    mockWeb3();
+    store.getState().metamask.network = 'ganache';
+    await reducer.checkNetwork()(store.dispatch, store.getState);
+
+    expect(setProvider).toBeCalledTimes(0);
+    expect(store.getActions().length).toBe(0);
+  });
+
+  test('pollForMetamaskChanges dispatches initWeb3Accounts and checkNetwork', async () => {
+    mockWeb3();
+    store.getState().metamask.network = 'oldNetwork';
+    await reducer.pollForMetamaskChanges()(store.dispatch);
+
+    expect(accounts.setActiveAccount).toBeCalledTimes(1);
+    expect(setProvider).toBeCalledTimes(1);
+    expect(await getAction(store, reducer.UPDATE_ADDRESS)).toEqual({
+      type: reducer.UPDATE_ADDRESS,
+      payload: mockDefaultAccount
+    });
+    expect(await getAction(store, reducer.UPDATE_NETWORK)).toEqual({
+      type: reducer.UPDATE_NETWORK,
+      payload: { network: netIdToName(mockNetId) }
+    });
+    expect(store.getActions().length).toBe(3);
   });
 });

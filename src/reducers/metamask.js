@@ -45,7 +45,7 @@ export const wrongNetwork = () => ({
   type: WRONG_NETWORK
 });
 
-const pollForMetamaskChanges = () => async dispatch => {
+export const pollForMetamaskChanges = () => async dispatch => {
   try {
     await dispatch(initWeb3Accounts());
     await dispatch(checkNetwork());
@@ -56,7 +56,7 @@ const pollForMetamaskChanges = () => async dispatch => {
   }
 };
 
-const checkNetwork = () => async (dispatch, getState) => {
+export const checkNetwork = () => async (dispatch, getState) => {
   if (window.web3 && window.web3.eth.defaultAccount) {
     window.web3.version.getNetwork(async (err, netId) => {
       const {
@@ -81,15 +81,14 @@ export const initWeb3Accounts = () => async (dispatch, getState) => {
     if (address !== activeAddress) {
       dispatch(updateAddress(address));
       await dispatch(setActiveAccount(address, true));
-      //TODO: I don't think this is reachable:
-    } else if (fetching && !activeAddress) {
-      dispatch({ type: NO_METAMASK_ACCOUNTS });
-      dispatch(notAvailable());
     }
+  } else if (fetching && !activeAddress) {
+    dispatch({ type: NO_METAMASK_ACCOUNTS });
+    dispatch(notAvailable());
   }
 };
 
-export const init = (maker, network = 'mainnet') => async dispatch => {
+export const init = (network = 'mainnet') => async dispatch => {
   dispatch(connectRequest());
 
   if (!window.web3 || !window.web3.eth.defaultAccount) {
@@ -103,8 +102,7 @@ export const init = (maker, network = 'mainnet') => async dispatch => {
   dispatch(connectSuccess(network));
   dispatch(updateNetwork(network));
 
-  // TODO: use window.maker here
-  maker.service('web3')._web3.setProvider(netToUri(network));
+  window.maker.service('web3')._web3.setProvider(netToUri(network));
   await dispatch(initWeb3Accounts());
 
   dispatch(voteTallyInit());

@@ -34,22 +34,12 @@ if (window.web3) {
   window.web3.version.getNetwork(async (err, netId) => {
     const network = netIdToName(netId);
     const maker = (window.maker = createMaker(network));
-    maker
-      .authenticate()
-      .then(async () => {
-        store.dispatch(init(maker, network));
-      })
-      .catch(err => console.log('Authenticate Error:', err));
+    maker.authenticate().then(async () => store.dispatch(init(network)));
   });
 } else {
   // In order to still show read-only data, we will have to re-run Maker.create with an Infura preset.
   const maker = (window.maker = createMaker());
-  maker
-    .authenticate()
-    .then(async () => {
-      store.dispatch(init(maker));
-    })
-    .catch(err => console.log('Authenticate Error for read only:', err));
+  maker.authenticate().then(async () => store.dispatch(init()));
 }
 
 function render() {
