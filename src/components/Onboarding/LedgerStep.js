@@ -1,9 +1,15 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Grid, Box, Text, Button } from '@makerdao/ui-components';
 
 import ButtonCard from './shared/ButtonCard';
 import WalletIcon from './shared/WalletIcon';
 import OnboardingHeader from './shared/OnboardingHeader';
+
+const BreakableText = styled(Text)`
+  overflow-wrap: break-word;
+  word-break: break-word;
+`;
 
 const LedgerStep = ({ active, onLedgerLive, onLedgerLegacy, onCancel }) => {
   return (
@@ -22,12 +28,12 @@ const LedgerStep = ({ active, onLedgerLive, onLedgerLegacy, onCancel }) => {
           <span>
             Derivation Path:
             <br />
-            <Text color="rgba(255, 0, 0, 0.5)">
+            <BreakableText color="grey">
               {
                 // eslint-disable-next-line
                 "44'/60'/0'/${x}"
               }
-            </Text>
+            </BreakableText>
           </span>
         }
         buttonText="Connect"
@@ -40,15 +46,12 @@ const LedgerStep = ({ active, onLedgerLive, onLedgerLegacy, onCancel }) => {
           <span>
             Derivation Path:
             <br />
-            <Text
-              color="rgba(255, 0, 0, 0.5)"
-              style={{ overflowWrap: 'break-word', wordBreak: 'break-word' }}
-            >
+            <BreakableText color="grey">
               {
                 // eslint-disable-next-line
                 "${purpose}'/${coinType}'/${x}'/0/0"
               }
-            </Text>
+            </BreakableText>
           </span>
         }
         buttonText="Connect"

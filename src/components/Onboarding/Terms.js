@@ -12,6 +12,9 @@ import {
   Link
 } from '@makerdao/ui-components';
 
+const containerWidth = '54.8rem';
+const termsMaxHeight = '30rem';
+
 const terms = `
 #### 1. Acceptance of Terms
 Please read these Terms of Use (the “Terms” or “Terms of Use”) carefully before using the Service. By using or otherwise accessing the Service, or clicking to accept or agree to these Terms where that option is made available, you (1) agree that you have read and understand these Terms (2) accept and agree to these Terms and (3) any additional terms, rules and conditions of participation issued from time-to-time. If you do not agree to the Terms, then you may not access or use the Content or Service.
@@ -119,13 +122,13 @@ const TermsWrapper = styled.div`
 
 const Terms = ({ onCancel, onComplete }) => {
   return (
-    <Box maxWidth="548px" m="0 auto">
+    <Box maxWidth={`${containerWidth}`} m="0 auto">
       <Grid gridRowGap="m">
         <Box mb="s" textAlign="center">
           <h2>Terms of Use</h2>
         </Box>
         <Card py="m" px="l">
-          <Overflow y="scroll" height="300px">
+          <Overflow y="scroll" height={`${termsMaxHeight}`}>
             <TermsWrapper>
               <Text t="p4">
                 <ReactMarkdown skipHtml={true} source={terms} />

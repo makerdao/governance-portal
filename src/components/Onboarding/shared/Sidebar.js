@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import { connect } from 'react-redux';
 import {
   Box,
@@ -15,28 +16,17 @@ import NetworkIndicator from '../../NetworkIndicator';
 import { TransactionStatus } from '../../../utils/constants';
 import WalletIcon from './WalletIcon';
 import ExternalLink from './ExternalLink';
+import { DataLabel } from '../typography';
+import { GreyTag } from './Tags';
 import linkImg from '../../../imgs/onboarding/link.svg';
 import logo from '../../../imgs/onboarding/maker-logomark.svg';
 
-const GrayTag = ({ children, ...props }) => {
-  return (
-    <Box
-      borderRadius="4px"
-      display="inline-block"
-      color="#868997"
-      bg="#F5F5F5"
-      fontWeight="bold"
-      px="xs"
-      {...props}
-    >
-      {children}
-    </Box>
-  );
-};
+const iconBackgroundSize = '4.3rem';
+const iconSize = '2.3rem';
 
 const IconBackground = ({ children, ...props }) => {
   return (
-    <Grid {...props}>
+    <Grid alignItems="center" {...props}>
       <Flex
         alignItems="center"
         justifyContent="center"
@@ -45,9 +35,9 @@ const IconBackground = ({ children, ...props }) => {
       >
         <Box
           borderRadius="50%"
-          bg="#C4C4C4"
-          opacity="0.2"
-          style={{ width: '43px', height: '43px' }}
+          bg="greys.veryLight"
+          width={iconBackgroundSize}
+          height={iconBackgroundSize}
         />
       </Flex>
       <Flex
@@ -61,6 +51,25 @@ const IconBackground = ({ children, ...props }) => {
     </Grid>
   );
 };
+
+const ConnectingLine = ({ lineStyle = 'solid', ...props }) => (
+  <Box
+    gridColumn="1"
+    height={`calc(100% - ${iconBackgroundSize})`}
+    width="2px"
+    borderRight={`2px ${lineStyle}`}
+    ml="-1px"
+    borderColor="makerTeal"
+    alignSelf="center"
+    justifySelf="center"
+    {...props}
+  />
+);
+
+const SubtitleDataLabel = styled(Box).attrs({
+  fontSize: '1rem',
+  color: 'grey'
+})``;
 
 const Sidebar = ({
   show,
@@ -82,16 +91,14 @@ const Sidebar = ({
           <Grid gridTemplateColumns="auto 1fr" gridColumnGap="s">
             {hotWallet && (
               <React.Fragment>
-                <IconBackground alignItems="center" minHeight="53px">
+                <IconBackground gridColumn="1" gridRow="1" zIndex="1">
                   <WalletIcon
                     provider={hotWallet.type}
-                    style={{ maxWidth: '23px', maxHeight: '23px' }}
+                    style={{ maxWidth: iconSize, maxHeight: iconSize }}
                   />
                 </IconBackground>
                 <Flex justifyContent="center" flexDirection="column">
-                  <Box color="#868997" fontSize="1rem" fontWeight="bold">
-                    YOUR HOT WALLET
-                  </Box>
+                  <DataLabel>YOUR HOT WALLET</DataLabel>
                   <div>
                     <Link>
                       <Text t="p2" fontWeight="medium">
@@ -99,41 +106,44 @@ const Sidebar = ({
                       </Text>
                     </Link>
                   </div>
-                  <Box fontSize="1rem" color="#868997">
+                  <SubtitleDataLabel>
                     {approveLinkTxHash &&
                       approveLinkTxStatus === TransactionStatus.MINED && (
-                        <React.Fragment>
+                        <p>
                           LINK APPROVED ON HW{' '}
-                          <GrayTag>
+                          <GreyTag>
                             TX{' '}
                             <Link>
                               <Address veryShort full={approveLinkTxHash} />
                             </Link>
-                          </GrayTag>
-                        </React.Fragment>
+                          </GreyTag>
+                        </p>
                       )}
-                  </Box>
+                  </SubtitleDataLabel>
                 </Flex>
               </React.Fragment>
             )}
             {coldWallet && (
               <React.Fragment>
-                <Box alignItems="flex-start" justifySelf="center">
-                  <img
-                    src={linkImg}
-                    alt=""
-                    style={{ marginTop: '-6px', marginBottom: '-12px' }}
-                  />
+                <Box
+                  alignItems="flex-start"
+                  justifySelf="center"
+                  lineHeight="0"
+                  gridColumn="1"
+                  gridRow="2"
+                  zIndex="1"
+                >
+                  <img src={linkImg} alt="" />
                 </Box>
                 <Box />
-                <IconBackground alignItems="center" minHeight="53px">
+                <IconBackground gridColumn="1" gridRow="3" zIndex="1">
                   <WalletIcon
                     provider={coldWallet.type}
-                    style={{ maxWidth: '23px', maxHeight: '23px' }}
+                    style={{ maxWidth: iconSize, maxHeight: iconSize }}
                   />
                 </IconBackground>
                 <Flex justifyContent="center" flexDirection="column">
-                  <Box color="#868997" fontSize="1rem" fontWeight="bold">
+                  <Box color="grey" fontSize="1rem" fontWeight="bold">
                     YOUR COLD WALLET
                   </Box>
                   <Box>
@@ -143,55 +153,50 @@ const Sidebar = ({
                       </Text>
                     </Link>
                   </Box>
-                  <Box fontSize="1rem" color="#868997">
+                  <SubtitleDataLabel>
                     {initiateLinkTxHash &&
                       initiateLinkTxStatus === TransactionStatus.MINED && (
-                        <React.Fragment>
+                        <p>
                           LINK APPROVED ON CW{' '}
-                          <GrayTag>
+                          <GreyTag>
                             TX{' '}
                             <Link>
                               <Address veryShort full={initiateLinkTxHash} />
                             </Link>
-                          </GrayTag>
-                        </React.Fragment>
+                          </GreyTag>
+                        </p>
                       )}
-                  </Box>
+                  </SubtitleDataLabel>
                 </Flex>
+                <ConnectingLine gridRow="1/span 3" />
               </React.Fragment>
             )}
             {coldWallet &&
               coldWallet.hasProxy &&
               coldWallet.proxy.hasInfMkrApproval && (
                 <React.Fragment>
-                  <Box
-                    height="50px"
-                    width="1px"
-                    mr="-2px"
-                    mt="-6px"
-                    mb="-6px"
-                    style={{ borderLeft: '2px dotted #30BD9F' }}
-                    justifySelf="center"
+                  <ConnectingLine
+                    gridColumn="1"
+                    gridRow="3/span 3"
+                    lineStyle="dotted"
                   />
-                  <Box />
-                  <IconBackground alignItems="center" minHeight="53px">
+                  <Box gridRow="4" height="50px" />
+                  <IconBackground gridColumn="1" gridRow="5">
                     <img src={logo} alt="" />
                   </IconBackground>
                   <Flex justifyContent="center" flexDirection="column">
-                    <Box color="#868997" fontSize="1rem" fontWeight="bold">
-                      STORED MKR
-                    </Box>
+                    <DataLabel>STORED MKR</DataLabel>
                     <div>
                       <Text t="p2" fontWeight="semibold">
                         {coldWallet.proxy.votingPower || 0} MKR
                       </Text>
                     </div>
-                    <Box fontSize="1rem" color="#868997">
+                    <SubtitleDataLabel>
                       {mkrApproveProxyTxHash &&
                         mkrApproveProxyTxStatus === TransactionStatus.MINED && (
-                          <React.Fragment>
+                          <p>
                             APPROVED ON CW{' '}
-                            <GrayTag>
+                            <GreyTag>
                               TX{' '}
                               <Link>
                                 <Address
@@ -199,10 +204,10 @@ const Sidebar = ({
                                   full={mkrApproveProxyTxHash}
                                 />
                               </Link>
-                            </GrayTag>
-                          </React.Fragment>
+                            </GreyTag>
+                          </p>
                         )}
-                    </Box>
+                    </SubtitleDataLabel>
                   </Flex>
                 </React.Fragment>
               )}
@@ -210,7 +215,7 @@ const Sidebar = ({
         )}
         <div>
           <NetworkIndicator network={network} mb="xs" fontWeight="medium" />
-          <Box fontSize="1.5rem" color="#868997">
+          <Box fontSize="1.5rem" color="grey">
             <Table width="100%" variant="cozy">
               <tbody>
                 <tr>

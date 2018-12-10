@@ -49,7 +49,7 @@ const Onboarding = ({
     <Background
       show={open}
       zIndex="2"
-      bg="#F6F8F9"
+      bg="backgroundGrey"
       position="fixed"
       top="0"
       left="0"

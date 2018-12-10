@@ -4,8 +4,8 @@ import { Box } from '@makerdao/ui-components';
 export const HotWalletTag = props => (
   <Box
     borderRadius="4px"
-    color="#E45432"
-    bg="#FFE2D9"
+    color="red"
+    bg="reds.light"
     fontSize="1.2rem"
     fontWeight="bold"
     px="xs"
@@ -19,8 +19,8 @@ export const HotWalletTag = props => (
 export const ColdWalletTag = props => (
   <Box
     borderRadius="4px"
-    color="#447AFB"
-    bg="#EAF0FF"
+    color="blue"
+    bg="blues.light"
     fontSize="1.2rem"
     fontWeight="bold"
     px="xs"
@@ -33,8 +33,8 @@ export const ColdWalletTag = props => (
 export const VotingContractTag = props => (
   <Box
     borderRadius="4px"
-    color="#30BD9F"
-    bg="#C3F5EA"
+    color="green"
+    bg="greens.light"
     fontSize="1.2rem"
     fontWeight="bold"
     px="xs"
@@ -43,3 +43,19 @@ export const VotingContractTag = props => (
     VOTING CONTRACT
   </Box>
 );
+
+export const GreyTag = ({ children, ...props }) => {
+  return (
+    <Box
+      borderRadius="4px"
+      display="inline-block"
+      color="grey"
+      bg="greys.veryLight"
+      fontWeight="bold"
+      px="xs"
+      {...props}
+    >
+      {children}
+    </Box>
+  );
+};

@@ -26,6 +26,9 @@ import { getAccount } from '../../reducers/accounts';
 import { ColdWalletTag, VotingContractTag } from './shared/Tags';
 import { Label } from './typography';
 
+const inputWidth = '33.4rem';
+const walletIconSize = '2.7rem';
+
 class LockMKR extends React.Component {
   constructor(props) {
     super(props);
@@ -131,7 +134,7 @@ class LockMKR extends React.Component {
                   <Label mb="s">MKR you would like to vote with?</Label>
                   <div>
                     <Input
-                      maxWidth="334px"
+                      maxWidth={`${inputWidth}`}
                       placeholder="00.0000 MKR"
                       value={this.state.votingMKR}
                       onChange={this.handleVotingMKRChange}
@@ -176,7 +179,10 @@ class LockMKR extends React.Component {
                     <Box>
                       <WalletIcon
                         provider={this.props.coldWallet.type}
-                        style={{ maxWidth: '27px', maxHeight: '27px' }}
+                        style={{
+                          maxWidth: walletIconSize,
+                          maxHeight: walletIconSize
+                        }}
                       />
                     </Box>
                     <Box>

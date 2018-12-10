@@ -64,7 +64,7 @@ class ChooseMKRBalance extends React.Component {
               <Box style={{ opacity: '0.6' }}>
                 <Loader />
               </Box>
-              <Box ml="s" color="#868997">
+              <Box ml="s" color="grey">
                 <p>Waiting for approval to access your account</p>
               </Box>
             </Flex>

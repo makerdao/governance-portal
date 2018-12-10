@@ -26,6 +26,8 @@ import {
   addHardwareAccount
 } from '../../reducers/accounts';
 
+const iconWidth = '3rem';
+
 const SelectAWalletStep = ({
   active,
   resetHotWallet,
@@ -48,21 +50,23 @@ const SelectAWalletStep = ({
         }
       />
       <ButtonCard
-        icon={<WalletIcon provider="metamask" style={{ maxWidth: '30px' }} />}
+        icon={
+          <WalletIcon provider="metamask" style={{ maxWidth: iconWidth }} />
+        }
         title="MetaMask"
         subtitle="Connect and unlock wallet."
         buttonText="Connect"
         onNext={onMetamaskSelected}
       />
       <ButtonCard
-        icon={<WalletIcon provider="trezor" style={{ maxWidth: '30px' }} />}
+        icon={<WalletIcon provider="trezor" style={{ maxWidth: iconWidth }} />}
         title="Trezor"
         subtitle="Connect via USB and unlock."
         buttonText="Connect"
         onNext={onTrezorSelected}
       />
       <ButtonCard
-        icon={<WalletIcon provider="ledger" style={{ maxWidth: '30px' }} />}
+        icon={<WalletIcon provider="ledger" style={{ maxWidth: iconWidth }} />}
         title="Ledger"
         subtitle="Open and unlock wallet."
         buttonText="Connect"
@@ -89,12 +93,12 @@ const ConfirmWalletStep = ({
       />
       <div>
         {connecting && (
-          <Card p="m">
+          <Card p="m" color="grey">
             <Flex justifyContent="center" alignItems="center">
               <Box style={{ opacity: '0.6' }}>
                 <Loader />
               </Box>
-              <Box ml="s" color="#868997">
+              <Box ml="s">
                 <p>Waiting for approval to access your account</p>
               </Box>
             </Flex>

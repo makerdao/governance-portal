@@ -22,3 +22,9 @@ export const Label = styled(Box).attrs({
   fontWeight: 'medium',
   color: 'heading'
 })``;
+
+export const DataLabel = styled(Box).attrs({
+  color: 'grey',
+  fontSize: '1rem',
+  fontWeight: 'bold'
+})``;

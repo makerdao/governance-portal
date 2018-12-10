@@ -7,13 +7,15 @@ import OnboardingHeader from './shared/OnboardingHeader';
 import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
 import Sidebar from './shared/Sidebar';
 
+const containerWidth = '44rem';
+
 const StartVoting = ({ onComplete, hotWallet, coldWallet }) => {
   return (
     <TwoColumnSidebarLayout
       sidebar={<Sidebar hotWallet={hotWallet} coldWallet={coldWallet} />}
       sidebarPosition="left"
     >
-      <Grid gridRowGap="l" maxWidth="440px">
+      <Grid gridRowGap="l" maxWidth={`${containerWidth}`}>
         <OnboardingHeader
           title="Set up complete!"
           subtitle="Thank you for setting up your secure voting contract.

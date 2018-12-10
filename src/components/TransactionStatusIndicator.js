@@ -32,10 +32,19 @@ const SpinnerBar = styled(Box)`
   `}
 `;
 
+const spinnerSize = '15.5rem';
+const spinnerInternalSize = '14rem';
+const iconSize = '5.3rem';
+
 const TransactionStatusIndicator = ({ provider, status, tx, ...props }) => {
   return (
     <Grid alignItems="center" justifyItems="center" {...props}>
-      <Flex gridArea="1 / 2 / 1 / 2" height="155px" width="155px" zIndex="1">
+      <Flex
+        gridArea="1 / 2 / 1 / 2"
+        height={spinnerSize}
+        width={spinnerSize}
+        zIndex="1"
+      >
         {status === TransactionStatus.NOT_STARTED && (
           <SpinnerBar
             borderRadius="50%"
@@ -75,17 +84,17 @@ const TransactionStatusIndicator = ({ provider, status, tx, ...props }) => {
             borderRadius="50%"
             height="100%"
             width="100%"
-            bg="#F35833"
+            bg="red"
             show={status === TransactionStatus.ERROR}
           />
         )}
       </Flex>
       <Flex
         gridArea="1 / 2 / 1 / 2"
-        bg="#E8EDEF"
+        bg="greys.light"
         borderRadius="50%"
-        height="140px"
-        width="140px"
+        height={spinnerInternalSize}
+        width={spinnerInternalSize}
         alignItems="center"
         justifyContent="center"
         zIndex="2"
@@ -94,7 +103,7 @@ const TransactionStatusIndicator = ({ provider, status, tx, ...props }) => {
         {!tx && (
           <WalletIcon
             provider={provider}
-            style={{ height: '53px', width: '53px' }}
+            style={{ height: iconSize, width: iconSize }}
           />
         )}
         {tx && (

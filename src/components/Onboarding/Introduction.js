@@ -32,11 +32,14 @@ const Container = styled(Box)`
   `};
 `;
 
+const walletIconWidth = '3.4rem';
+const instructionImageWidth = '5.4rem';
+const instructionWidth = '46rem';
+
 const Instructions = props => {
   return (
     <React.Fragment>
-      <img src={props.imgSrc} alt="" />
-      <Box pl="m" maxWidth="460px">
+      <Box pl="m" maxWidth={instructionWidth}>
         <Box mb="0.6rem">
           <H3>{props.title}</H3>
         </Box>
@@ -60,8 +63,8 @@ const WalletCard = props => {
           src={props.imgSrc}
           alt=""
           style={{
-            maxWidth: '34px',
-            maxHeight: '34px'
+            maxWidth: walletIconWidth,
+            maxHeight: walletIconWidth
           }}
         />
         <Box>
@@ -101,20 +104,22 @@ const Introduction = ({ show, onClose, onLinkedWallet }) => {
             <Grid
               gridRowGap="l"
               gridColumnGap="s"
-              gridTemplateColumns="54px 1fr"
+              gridTemplateColumns={`${instructionImageWidth} 1fr`}
             >
+              <img src={time} alt="" />
               <Instructions
-                imgSrc={time}
                 title="It will take about 5 minutes"
                 subtitle="The total time to complete the contract set up is 5 minutes depending on transaction confirmation times."
               />
+
+              <img src={wallets} alt="" />
               <Instructions
-                imgSrc={wallets}
                 title="You will need access to your wallets"
                 subtitle="You will need access both your hot and cold wallets to confirm the transactions."
               />
+
+              <img src={eth} alt="" />
               <Instructions
-                imgSrc={eth}
                 title="You will need to pay ETH gas costs"
                 subtitle="You will need to confirm 4 transactions which costs an estimated total of $3.30 USD."
               />
@@ -132,7 +137,7 @@ const Introduction = ({ show, onClose, onLinkedWallet }) => {
         </Box>
         <Flex
           p="m"
-          bg="#F6F8F9"
+          bg="backgroundGrey"
           justifyContent="center"
           alignItems="center"
           flexDirection="column"
