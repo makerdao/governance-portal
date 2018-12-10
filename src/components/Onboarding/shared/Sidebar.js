@@ -24,6 +24,21 @@ import logo from '../../../imgs/onboarding/maker-logomark.svg';
 const iconBackgroundSize = '4.3rem';
 const iconSize = '2.3rem';
 
+const contractAddresses = [
+  {
+    name: 'Contract 1',
+    address: '0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2'
+  },
+  {
+    name: 'Contract 2',
+    address: '0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2'
+  },
+  {
+    name: 'Contract 3',
+    address: '0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2'
+  }
+];
+
 const IconBackground = ({ children, ...props }) => {
   return (
     <Grid alignItems="center" {...props}>
@@ -218,42 +233,16 @@ const Sidebar = ({
           <Box fontSize="1.5rem" color="grey">
             <Table width="100%" variant="cozy">
               <tbody>
-                <tr>
-                  <td>Contract 1</td>
-                  <td>
-                    <ExternalLink>
-                      <Address
-                        full="0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2"
-                        show={show}
-                        shorten
-                      />
-                    </ExternalLink>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Contract 2</td>
-                  <td>
-                    <ExternalLink>
-                      <Address
-                        full="0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2"
-                        show={show}
-                        shorten
-                      />
-                    </ExternalLink>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Contract 3</td>
-                  <td>
-                    <ExternalLink>
-                      <Address
-                        full="0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2"
-                        show={show}
-                        shorten
-                      />
-                    </ExternalLink>
-                  </td>
-                </tr>
+                {contractAddresses.map(({ name, address }) => (
+                  <tr>
+                    <td>{name}</td>
+                    <td>
+                      <ExternalLink>
+                        <Address full={address} shorten />
+                      </ExternalLink>
+                    </td>
+                  </tr>
+                ))}
                 <tr>
                   <td style={{ whiteSpace: 'nowrap' }}>Source code</td>
                   <td
