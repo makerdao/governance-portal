@@ -137,6 +137,9 @@ export const cleanErrorMsg = errorMsg => {
   )
     return 'The account you tried to send a transaction from does not have enough ETH to pay for gas';
   if (errorMsg.search('transport') > -1) return 'Ledger connect failed';
+  if (errorMsg.search('Ledger') > -1 && errorMsg.search('0x6a80') > -1) {
+    return (errorMsg += ' (is contract data enabled on your device?)');
+  }
   return errorMsg;
 };
 
