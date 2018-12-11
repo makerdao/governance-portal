@@ -133,7 +133,7 @@ class ProxySetup extends Component {
       case 'lock':
         return (
           <Transaction
-            txPurpose="This transaction is to lock your MKR. Your funds are safe. You can withdrawn them at anytime"
+            txPurpose="This transaction is to lock your MKR. Your funds are safe. You can withdraw them at anytime"
             confirming={confirming}
             network={network}
             txHash={sendMkrTxHash}
