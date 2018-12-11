@@ -20,20 +20,17 @@ class MKRApprove extends Component {
       mkrApproveInitiated: initiated,
       confirmingMkrApproveProxy: confirming,
       network,
-      activeAccount,
-      linkedAccount,
+      account,
       mkrApproveProxyTxHash: txHash
     } = this.props;
     if (initiated) {
-      const coldAccount =
-        activeAccount.proxyRole === 'hot' ? linkedAccount : activeAccount;
       return (
         <Transaction
           txPurpose="This transaction is to give your personal voting contract some approvals"
           confirming={confirming}
           network={network}
           txHash={txHash}
-          account={coldAccount}
+          account={account}
           nextStep={() => this.props.setInfMkrApproval()}
         />
       );
@@ -76,11 +73,6 @@ class MKRApprove extends Component {
 
 export default connect(
   ({ proxy, metamask, accounts }) => ({
-    activeAccount: getActiveAccount({ accounts }),
-    linkedAccount: getAccount(
-      { accounts },
-      getActiveAccount({ accounts }).proxy.linkedAccount.address
-    ),
     network: metamask.network,
     mkrApproveProxyTxHash: proxy.mkrApproveProxyTxHash,
     confirmingMkrApproveProxy: proxy.confirmingMkrApproveProxy,
