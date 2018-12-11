@@ -23,6 +23,9 @@ import {
 } from '../shared/styles';
 import TransactionModal from '../shared/InitiateTransaction';
 
+const headingColor = '#212536';
+const borderColor = '#DFE1E3';
+
 class Vote extends Component {
   componentDidMount() {
     this.props.voteClear();
@@ -62,7 +65,9 @@ class Vote extends Component {
                 </StyledTop>
                 <StyledBlurb>
                   You will be withdrawing your vote from{' '}
-                  <strong style={{ color: '#212536' }}>{proposal.title}</strong>{' '}
+                  <strong style={{ color: headingColor }}>
+                    {proposal.title}
+                  </strong>{' '}
                   please confirm below.
                 </StyledBlurb>
                 <WithTally candidate={proposal.address}>
@@ -81,7 +86,7 @@ class Vote extends Component {
                         style={{
                           width: '100%',
                           padding: '8px 30px',
-                          borderLeft: '1px solid #DFE1E3'
+                          borderLeft: `1px solid ${borderColor}`
                         }}
                       >
                         <VoteImpactHeading>
@@ -125,7 +130,9 @@ class Vote extends Component {
                 </StyledTop>
                 <StyledBlurb>
                   You will be voting for{' '}
-                  <strong style={{ color: '#212536' }}>{proposal.title}</strong>{' '}
+                  <strong style={{ color: headingColor }}>
+                    {proposal.title}
+                  </strong>{' '}
                   please confirm vote below. Vote can be withdrawn at anytime
                 </StyledBlurb>
                 <WithTally candidate={proposal.address}>
@@ -148,7 +155,7 @@ class Vote extends Component {
                           width: '100%',
                           padding: '8px 30px',
                           maxWidth: '180px',
-                          borderLeft: '1px solid #DFE1E3'
+                          borderLeft: `1px solid ${borderColor}`
                         }}
                       >
                         <VoteImpactHeading>Current vote</VoteImpactHeading>
@@ -159,7 +166,7 @@ class Vote extends Component {
                           width: '100%',
                           padding: '8px 30px',
                           maxWidth: '180px',
-                          borderLeft: '1px solid #DFE1E3'
+                          borderLeft: `1px solid ${borderColor}`
                         }}
                       >
                         <VoteImpactHeading>After vote cast</VoteImpactHeading>
