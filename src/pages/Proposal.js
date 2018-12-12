@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import find from 'ramda/src/find';
 import styled, { keyframes } from 'styled-components';
 import ReactMarkdown from 'react-markdown';
-import { Link } from 'react-router-dom';
+import { isNil, isEmpty } from 'ramda';
 
 import { toSlug, eq } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
@@ -18,10 +17,7 @@ import WithTally from '../components/hocs/WithTally';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import NotFound from './NotFound';
 import theme, { colors } from '../theme';
-import {
-  // formatDate,
-  cutMiddle
-} from '../utils/misc';
+import { formatDate, cutMiddle } from '../utils/misc';
 import { modalOpen } from '../reducers/modal';
 
 const riseUp = keyframes`
@@ -163,194 +159,157 @@ const LoadingWrapper = styled.div`
   padding: 25px 0;
 `;
 
-const StyledLink = styled(Link)`
-  width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-`;
-
 const toChecksumAddress = address => {
   const { toChecksumAddress } = window.maker.service('web3')._web3.utils;
   return toChecksumAddress(address);
 };
 
-class Proposal extends Component {
-  state = {
-    proposal: {}
-  };
-
-  componentDidMount() {
-    const { topicSlug, proposalSlug } = this.props.match.params;
-    const topic = find(
-      ({ topic }) => toSlug(topic) === topicSlug,
-      this.props.topics
-    );
-    if (topic === undefined) return; //not found
-    const proposal = find(
-      ({ title }) => toSlug(title) === proposalSlug,
-      topic.proposals
-    );
-    if (proposal === undefined) return; //not found
-    this.setState({
-      proposal,
-      parent: topic.topic,
-      parentKey: topic.key,
-      active: topic.active
-    });
-  }
-
-  render() {
-    const { proposal, parent, active, parentKey } = this.state;
-    if (Object.keys(proposal).length === 0) return <NotFound />;
-    const {
-      voteState,
-      voteStateFetching,
-      modalOpen,
-      accountDataFetching,
-      network,
-      canVote,
-      votingFor
-    } = this.props;
-    const supporters = voteState[proposal.source.toLowerCase()] || null;
-    return (
-      <RiseUp>
-        <WhiteBackground>
-          <StyledTop>
-            <StyledCenter>
-              <StyledTitle>{proposal.title}</StyledTitle>
-              <StyledBody
-                dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
-              />
-              {active ? (
-                <Timer
-                  fs={16}
-                  endTimestamp={proposal.end_timestamp}
-                  small
-                  mt="6"
-                />
-              ) : null}
-            </StyledCenter>
-            {active ? (
-              <div>
-                <WithTally candidate={proposal.source}>
-                  {({ loadingApprovals, approvals, percentage }) => (
-                    <VoteTally
-                      statusBar
-                      loadingApprovals={loadingApprovals}
-                      approvals={approvals}
-                      percentage={percentage}
-                    />
-                  )}
-                </WithTally>
-                <Button
-                  disabled={!canVote || !active}
-                  loading={accountDataFetching}
-                  wide={true}
-                  onClick={() =>
-                    modalOpen(Vote, {
-                      proposal: {
-                        address: proposal.source,
-                        title: proposal.title
-                      }
-                    })
-                  }
-                >
-                  {eq(votingFor, proposal.source)
-                    ? 'Withdraw vote'
-                    : 'Vote for this Proposal'}
-                </Button>
-              </div>
-            ) : (
-              <ClosedStatus
-                topicKey={parentKey}
-                proposalAddress={proposal.source}
-              />
-            )}
-          </StyledTop>
-        </WhiteBackground>
-        <ConentWrapper>
-          <DescriptionCard>
-            <ReactMarkdown
-              className="markdown"
-              skipHtml={true}
-              source={proposal.about}
+function Proposal({
+  proposal,
+  voteState,
+  voteStateFetching,
+  modalOpen,
+  accountDataFetching,
+  network,
+  canVote,
+  votingFor
+}) {
+  if (isNil(proposal) || isEmpty(proposal)) return <NotFound />;
+  const { active, topicKey } = proposal;
+  const supporters = voteState[proposal.source.toLowerCase()] || null;
+  return (
+    <RiseUp>
+      <WhiteBackground>
+        <StyledTop>
+          <StyledCenter>
+            <StyledTitle>{proposal.title}</StyledTitle>
+            <StyledBody
+              dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
             />
-          </DescriptionCard>
-          <RightPanels>
-            <DetailsCard>
-              <CardTitle>Details</CardTitle>
-              <Supporter>
-                <Detail>Topic</Detail>
-                <StyledLink to={`/${toSlug(parent)}`}>{parent}</StyledLink>
-              </Supporter>
-              <Supporter>
-                <Detail>Started</Detail>
-                <Detail>
-                  {
-                    // FIXME
-                    'Sep 12, 2018'
-                    // formatDate(proposal.date)
-                  }
-                </Detail>
-              </Supporter>
-              <Supporter>
-                <Detail>Source</Detail>
-                <Address
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={ethScanLink(proposal.source, network)}
-                >
-                  {cutMiddle(proposal.source, 8, 8)}
-                </Address>
-              </Supporter>
-            </DetailsCard>
-            <SupporterCard>
-              <CardTitle>Top Supporters</CardTitle>
-              <SupporterWrapper>
-                {supporters ? (
-                  supporters.map(supporter => (
-                    <Supporter key={supporter.address}>
-                      <Detail pct>{supporter.percent}</Detail>
-                      <Address
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href={ethScanLink(supporter.address, network)}
-                      >
-                        {toChecksumAddress(supporter.address)}
-                      </Address>
-                    </Supporter>
-                  ))
-                ) : voteStateFetching ? (
-                  <LoadingWrapper>
-                    <Loader
-                      size={20}
-                      mt={100}
-                      color="header"
-                      background="white"
-                    />
-                  </LoadingWrapper>
-                ) : (
-                  <NoSupporters>No supporters found</NoSupporters>
+            {active ? (
+              <Timer
+                fs={16}
+                endTimestamp={proposal.end_timestamp}
+                small
+                mt="6"
+              />
+            ) : null}
+          </StyledCenter>
+          {active ? (
+            <div>
+              <WithTally candidate={proposal.source}>
+                {({ loadingApprovals, approvals, percentage }) => (
+                  <VoteTally
+                    statusBar
+                    loadingApprovals={loadingApprovals}
+                    approvals={approvals}
+                    percentage={percentage}
+                  />
                 )}
-              </SupporterWrapper>
-            </SupporterCard>
-          </RightPanels>
-        </ConentWrapper>
-      </RiseUp>
-    );
-  }
+              </WithTally>
+              <Button
+                disabled={!canVote || !active}
+                loading={accountDataFetching}
+                wide={true}
+                onClick={() =>
+                  modalOpen(Vote, {
+                    proposal: {
+                      address: proposal.source,
+                      title: proposal.title
+                    }
+                  })
+                }
+              >
+                {eq(votingFor, proposal.source)
+                  ? 'Withdraw vote'
+                  : 'Vote for this Proposal'}
+              </Button>
+            </div>
+          ) : (
+            <ClosedStatus
+              topicKey={topicKey}
+              proposalAddress={proposal.source}
+            />
+          )}
+        </StyledTop>
+      </WhiteBackground>
+      <ConentWrapper>
+        <DescriptionCard>
+          <ReactMarkdown
+            className="markdown"
+            skipHtml={true}
+            source={proposal.about}
+          />
+        </DescriptionCard>
+        <RightPanels>
+          <DetailsCard>
+            <CardTitle>Details</CardTitle>
+            <Supporter>
+              <Detail>Started</Detail>
+              <Detail>{formatDate(proposal.date)}</Detail>
+            </Supporter>
+            <Supporter>
+              <Detail>Source</Detail>
+              <Address
+                target="_blank"
+                rel="noopener noreferrer"
+                href={ethScanLink(proposal.source, network)}
+              >
+                {cutMiddle(proposal.source, 8, 8)}
+              </Address>
+            </Supporter>
+          </DetailsCard>
+          <SupporterCard>
+            <CardTitle>Top Supporters</CardTitle>
+            <SupporterWrapper>
+              {supporters ? (
+                supporters.map(supporter => (
+                  <Supporter key={supporter.address}>
+                    <Detail pct>{supporter.percent}</Detail>
+                    <Address
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={ethScanLink(supporter.address, network)}
+                    >
+                      {toChecksumAddress(supporter.address)}
+                    </Address>
+                  </Supporter>
+                ))
+              ) : voteStateFetching ? (
+                <LoadingWrapper>
+                  <Loader
+                    size={20}
+                    mt={100}
+                    color="header"
+                    background="white"
+                  />
+                </LoadingWrapper>
+              ) : (
+                <NoSupporters>No supporters found</NoSupporters>
+              )}
+            </SupporterWrapper>
+          </SupporterCard>
+        </RightPanels>
+      </ConentWrapper>
+    </RiseUp>
+  );
 }
 
-const reduxProps = ({ topics, tally, accounts, metamask, hat }) => ({
-  topics,
-  voteStateFetching: tally.fetching,
-  voteState: tally.tally,
-  accountDataFetching: accounts.fetching,
-  canVote: activeCanVote({ accounts }),
-  votingFor: getActiveVotingFor({ accounts }),
-  network: metamask.network
-});
+const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
+  const { proposalSlug } = match.params;
+  const proposal = proposals.find(
+    ({ title }) => toSlug(title) === proposalSlug
+  );
+  return {
+    proposal,
+    voteStateFetching: tally.fetching,
+    voteState: tally.tally,
+    accountDataFetching: accounts.fetching,
+    canVote: activeCanVote({ accounts }),
+    votingFor: getActiveVotingFor({ accounts }),
+    network: metamask.network
+  };
+};
 
 export default connect(
   reduxProps,

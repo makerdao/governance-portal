@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import metamask from './metamask';
 import modal from './modal';
-import topics from './topics';
+import proposals from './proposals';
 import tally from './tally';
 import approvals from './approvals';
 import proxy from './proxy';
@@ -14,7 +14,7 @@ import eth from './eth';
 const rootReducer = combineReducers({
   metamask,
   modal,
-  topics,
+  proposals,
   tally,
   approvals,
   proxy,

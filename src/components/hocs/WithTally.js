@@ -40,9 +40,12 @@ WithTally.defaultProps = {
   candidate: ''
 };
 
-const reduxProps = ({ approvals }) => ({
+const reduxProps = ({ approvals, hat }) => ({
   approvalFetching: approvals.fetching,
-  approvalObj: approvals.approvals,
+  approvalObj: {
+    ...approvals.approvals,
+    [hat.address.toLowerCase()]: hat.approvals
+  },
   totalApprovals: approvals.total
 });
 

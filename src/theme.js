@@ -7,6 +7,8 @@ export const colors = {
   box_dark: '5, 60, 75',
   box_light: '67, 83, 103',
   dark_grey: '39, 39, 39',
+  dark_green: '43, 169, 142',
+  darker_green: '38,148,125',
   dark: '12, 12, 13',
   black: '0, 0, 0',
   light_grey2: '226, 233, 236', // <-- same as theme.generic.light_grey
@@ -101,6 +103,7 @@ const theme = {
     dark_default: '#c4c4c4',
     darker_default: '#0e1029',
     dark_link: '#212536',
+    blue_link: '#3080ed',
     green: '#30bd9f',
     header_dim: '#9AA3AD',
     dim_green: '#ACDAD0',

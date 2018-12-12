@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import Loader from './Loader';
 import { eq, formatDate, formatRound } from '../utils/misc';
-import { getWinningProp } from '../reducers/topics';
+import { getWinningProp } from '../reducers/proposals';
 
 const fadeIn = keyframes`
 0% {
@@ -31,11 +31,14 @@ export const GreyBox = styled.div`
 `;
 
 const Row = styled.strong`
+  margin: ${({ center }) => (center ? `auto` : '')};
   display: flex;
 `;
 
 export const Key = styled.div`
+  margin: ${({ center }) => (center ? `auto` : '')};
   margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
+  font-style: ${({ oblique }) => (oblique ? `oblique` : '')};
   font-size: 14px;
   color: #546978;
 `;
@@ -43,10 +46,6 @@ export const Key = styled.div`
 export const Value = styled.div`
   font-size: 14px;
   color: #272727;
-`;
-
-const Slash = styled.strong`
-  color: #aebbd1;
 `;
 
 const WinningTag = styled.div`
@@ -70,7 +69,8 @@ const TagWrapper = styled.div`
 const ClosedProposal = ({
   winningProposal,
   approvalFetching,
-  proposalAddress
+  proposalAddress,
+  signalVote
 }) => {
   if (approvalFetching)
     return <Loader mr={70} size={20} color="header" background="white" />;
@@ -82,25 +82,43 @@ const ClosedProposal = ({
         <WinningTag />
       </TagWrapper>
       <GreyBox>
-        <Row>
-          <Key mr={6}>Approved</Key>{' '}
-          <Value>{formatDate(winningProposal.end_timestamp)}</Value>
-        </Row>
-        <Row>
-          <Key mr={36}>Votes</Key>{' '}
-          <Value>
-            {formatRound(winningProposal.end_approvals)} MKR <Slash>/</Slash>{' '}
-            {winningProposal.end_percentage}%
-          </Value>
-        </Row>
+        {signalVote ? (
+          <React.Fragment>
+            <Key center oblique>
+              Approved
+            </Key>
+            <Row center>
+              <Key mr={6}>on</Key>{' '}
+              <Value>{formatDate(winningProposal.end_timestamp)}</Value>
+            </Row>
+            <Row center>
+              <Key mr={6}>with</Key>{' '}
+              <Value>{formatRound(winningProposal.end_approvals)} MKR</Value>
+            </Row>{' '}
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            <Key center oblique>
+              Excecuted
+            </Key>
+            <Row center>
+              <Key mr={6}>on</Key>{' '}
+              <Value>{formatDate(winningProposal.end_timestamp)}</Value>
+            </Row>
+            <Row center>
+              <Key mr={6}>with</Key>{' '}
+              <Value>{formatRound(winningProposal.end_approvals)} MKR</Value>
+            </Row>
+          </React.Fragment>
+        )}
       </GreyBox>
     </FadeIn>
   );
 };
 
-const mapStateToProps = ({ topics, approvals }, props) => ({
+const mapStateToProps = ({ proposals, approvals }, props) => ({
   approvalFetching: approvals.fetching,
-  winningProposal: getWinningProp({ approvals, topics }, props.topicKey)
+  winningProposal: getWinningProp({ approvals, proposals }, props.topicKey)
 });
 
 export default connect(

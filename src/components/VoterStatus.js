@@ -71,6 +71,11 @@ const BorderBottom = styled.div`
   width: 100%;
 `;
 
+const TextButton = styled.span`
+  color: ${theme.text.blue_link};
+  cursor: pointer;
+`;
+
 const WelcomeBanner = ({ modalOpen }) => {
   return (
     <Banner>
@@ -120,14 +125,13 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
         <Strong>{isColdWallet ? 'Cold wallet:' : 'Hot wallet:'}</Strong> In
         voting contract{' '}
         <Black>{formatRound(account.proxy.votingPower, 4)} MKR</Black>{' '}
-        {account.proxyRole === 'cold' &&
-          Number(account.mkrBalance) > 0 && (
-            <a onClick={() => modalOpen(Lock)}> Top-up </a>
-          )}
+        {account.proxyRole === 'cold' && Number(account.mkrBalance) > 0 && (
+          <TextButton onClick={() => modalOpen(Lock)}>Top-up</TextButton>
+        )}
         {account.proxyRole === 'cold' &&
           Number(account.proxy.votingPower) > 0 && <span> | </span>}
         {Number(account.proxy.votingPower) > 0 && (
-          <a onClick={() => modalOpen(Withdraw)}>Withdraw</a>
+          <TextButton onClick={() => modalOpen(Withdraw)}>Withdraw</TextButton>
         )}
         <DotSpacer />
         In cold wallet{' '}

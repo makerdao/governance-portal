@@ -1,22 +1,20 @@
 import round from 'lodash.round';
 
 import { createReducer } from '../utils/redux';
-import flatten from 'ramda/src/flatten';
 import { add, toNum } from '../utils/misc';
 
 // Constants ----------------------------------------------
 
-const APPROVALS_REQUEST = 'approvals/APPROVALS_REQUEST';
-const APPROVALS_SUCCESS = 'approvals/APPROVALS_SUCCESS';
-const APPROVALS_FAILURE = 'approvals/APPROVALS_FAILURE';
+const APPROVALS_REQUEST = 'approvals/REQUEST';
+const APPROVALS_SUCCESS = 'approvals/SUCCESS';
+const APPROVALS_FAILURE = 'approvals/FAILURE';
 
 // Actions ------------------------------------------------
 
 export const initApprovalsFetch = () => (dispatch, getState) => {
-  const topics = getState().topics;
-  if (!topics || topics.length === 0)
+  const proposals = getState().proposals;
+  if (!proposals || proposals.length === 0)
     throw new Error('cannot get approvals before we have the topics');
-  const proposals = flatten(topics.map(topic => topic.proposals));
   dispatch({ type: APPROVALS_REQUEST });
   Promise.all(
     proposals.map(({ source }) =>

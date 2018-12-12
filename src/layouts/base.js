@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import { Header, Footer } from '@makerdao/ui-components';
 import { colors, fonts } from '../theme';
@@ -13,7 +13,6 @@ import SecureVoting from '../components/modals/SecureVoting';
 import Loader from '../components/Loader';
 import AccountBox from '../components/AccountBox';
 import Toasts from '../components/Toasts';
-import play from '../imgs/play.svg';
 
 const StyledLayout = styled.div`
   position: relative;
@@ -23,6 +22,7 @@ const StyledLayout = styled.div`
   min-width: 1000px;
 `;
 const AppWrapper = styled.div`
+  min-height: 400px;
   padding: 0px 16px;
 `;
 
@@ -43,24 +43,15 @@ const StyledHeader = styled.div`
 
 const HeaderBottom = styled.div`
   width: 100%;
-  padding: 16px 16px;
-  min-height: 66px;
 `;
 
 const HeaderBottomContent = styled.div`
   display: flex;
   justify-content: space-between;
-  height: 100%;
-  width: 100%;
   max-width: 1140px;
+  padding: 16px 0;
   align-items: center;
-  margin: 0px auto;
-`;
-
-const HeaderBottomLeft = styled.div`
-  color: rgb(${colors.white});
-  font-size: ${fonts.size.medium};
-  font-weight: ${fonts.weight.medium};
+  margin: 0 auto;
 `;
 
 const StyledContent = styled.div`
@@ -78,19 +69,30 @@ const DimHeaderElement = styled.div`
   font-weight: 500;
   font-size: ${fonts.size.medium};
   margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
+  margin-left: ${({ ml }) => (ml ? `${ml}px` : '')};
 `;
 
-const DimHeaderLink = styled.a`
-  cursor: pointer;
-  color: ${({ theme }) => theme.text.header_dim};
-  font-weight: 500;
-  font-size: ${fonts.size.medium};
-  margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
-`;
-
-const StyledLink = styled(Link)`
+const StyledLinkWrapper = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
+  right: -18px;
+`;
+
+const StyledLink = styled(NavLink).attrs({
+  exact: true,
+  activeStyle: { fontWeight: 'bold' }
+})`
+  position: absolute;
+  right: ${({ r }) => (!isNaN(r) ? `${r}px` : '')};
+  opacity: 0.9;
+  padding: 5px 14px;
+  color: rgb(${colors.white});
+  font-size: ${fonts.size.medium};
+  font-weight: ${fonts.weight.normal};
+  &:hover {
+    background-color: #4a4b584d;
+  }
 `;
 
 const Padding = styled.div`
@@ -104,6 +106,7 @@ const BorderLine = styled.div`
 
 const NetworkNotification = styled.div`
   color: ${({ theme }) => theme.text.header_dim};
+  align-self: center;
   font-weight: 500;
 `;
 
@@ -115,13 +118,6 @@ const NoContent = styled.div`
   justify-content: center;
   margin-bottom: 350px;
   font-style: oblique;
-`;
-
-const PlayBtn = styled.div`
-  background: url(${play}) no-repeat;
-  width: 19px;
-  height: 19px;
-  margin-right: 6px;
 `;
 
 const Circle = styled.div`
@@ -139,12 +135,12 @@ const BaseLayout = ({
   network,
   modalOpen,
   metamaskFetching,
-  topicsAvailable,
+  proposalsAvailable,
   accountsFetching,
   wrongNetwork
 }) => {
   const childrenShouldMount =
-    !metamaskFetching && topicsAvailable && !wrongNetwork;
+    !metamaskFetching && proposalsAvailable && !wrongNetwork;
   const noContentMsg = wrongNetwork ? (
     'Please switch network to Kovan or Mainnet'
   ) : (
@@ -163,10 +159,10 @@ const BaseLayout = ({
         <BorderLine />
         <HeaderBottom>
           <HeaderBottomContent>
-            <div style={{ display: 'flex' }}>
-              <StyledLink to="/">
-                <HeaderBottomLeft>Governance</HeaderBottomLeft>
-              </StyledLink>
+            <div style={{ display: 'flex', paddingLeft: '2.5rem' }}>
+              <NavLink style={{ color: 'white' }} to="/">
+                Governance
+              </NavLink>
               <NetworkNotification style={{ marginLeft: '16px' }}>
                 {childrenShouldMount && (
                   <React.Fragment>
@@ -176,25 +172,23 @@ const BaseLayout = ({
                 )}
               </NetworkNotification>
             </div>
-            {/* cheap network notification, probably to be replaced */}
             <Flex style={{ zIndex: '100' }}>
-              <DimHeaderLink
-                href="https://www.youtube.com/watch?v=wP7DedWcEmg"
-                target="_blank"
-                rel="noopener noreferrer"
-                mr={50}
-                style={{ display: 'flex', alignItems: 'center' }}
-              >
-                <PlayBtn />
-                Watch intro video
-              </DimHeaderLink>
+              <StyledLinkWrapper>
+                <StyledLink to="/" r={115}>
+                  Executive
+                </StyledLink>
+                <StyledLink to="/signaling" r={0}>
+                  Signaling
+                </StyledLink>
+              </StyledLinkWrapper>
               <DimHeaderElement
                 onClick={() => {
                   if (!accountsFetching) modalOpen(SecureVoting);
                 }}
                 mr={50}
+                ml={50}
               >
-                Personal Voting Contract
+                Voting Contract
               </DimHeaderElement>
               <AccountBox fetching={!wrongNetwork && metamaskFetching} />
             </Flex>
@@ -224,12 +218,12 @@ BaseLayout.propTypes = {
   children: PropTypes.node.isRequired
 };
 
-const reduxProps = ({ metamask, topics, accounts }) => ({
+const reduxProps = ({ metamask, proposals, accounts }) => ({
   metamaskFetching: metamask.fetching,
   wrongNetwork: metamask.wrongNetwork,
   network: metamask.network,
   accountsFetching: accounts.fetching,
-  topicsAvailable: topics.length > 0
+  proposalsAvailable: proposals.length > 0
 });
 
 export default withRouter(

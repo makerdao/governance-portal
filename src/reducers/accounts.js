@@ -11,7 +11,7 @@ import {
   WITHDRAW_MKR_SUCCESS,
   WITHDRAW_ALL_MKR_SUCCESS,
   INITIATE_LINK_REQUEST
-} from './proxy';
+} from './sharedProxyConstants';
 import { MAX_UINT_ETH_BN } from '../utils/ethereum';
 import { MKR } from '../chain/maker';
 
@@ -68,6 +68,7 @@ export const addAccounts = accounts => async dispatch => {
       .getVoteProxy(account.address);
 
     let currProposal = Promise.resolve('');
+    let proxyRole = '';
     if (hasProxy) {
       currProposal = currProposal.then(() =>
         // NOTE for now we just take the first address in the slate since we're
@@ -78,20 +79,22 @@ export const addAccounts = accounts => async dispatch => {
           return addresses[0] || '';
         })()
       );
+      proxyRole =
+        voteProxy.getColdAddress() === account.address ? 'cold' : 'hot';
     }
     const _payload = {
       ...account,
       address: account.address,
       mkrBalance: toNum(mkrToken.balanceOf(account.address)),
       hasProxy,
-      proxyRole: hasProxy ? voteProxy.getRole() : '',
+      proxyRole: proxyRole,
       votingFor: currProposal,
       proxy: hasProxy
         ? promisedProperties({
-            address: voteProxy.getAddress(),
+            address: voteProxy.getProxyAddress(),
             votingPower: toNum(voteProxy.getNumDeposits()),
             hasInfMkrApproval: mkrToken
-              .allowance(account.address, voteProxy.getAddress())
+              .allowance(account.address, voteProxy.getProxyAddress())
               .then(val => val.eq(MAX_UINT_ETH_BN))
           })
         : { address: '', votingPower: 0, hasInfMkrApproval: false }
@@ -99,8 +102,11 @@ export const addAccounts = accounts => async dispatch => {
 
     const fetchLinkedAccountData = async () => {
       if (hasProxy) {
-        const otherRole = voteProxy.getRole() === 'hot' ? 'cold' : 'hot';
-        const linkedAddress = await voteProxy.getLinkedAddress();
+        const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
+        const linkedAddress =
+          otherRole === 'hot'
+            ? voteProxy.getHotAddress()
+            : voteProxy.getColdAddress();
         return {
           address: linkedAddress,
           proxyRole: otherRole,
@@ -108,12 +114,16 @@ export const addAccounts = accounts => async dispatch => {
         };
       } else return {};
     };
-    const [payload, linkedAccount] = await Promise.all([
-      promisedProperties(_payload),
-      fetchLinkedAccountData()
-    ]);
-    payload.proxy.linkedAccount = linkedAccount;
-    dispatch({ type: ADD_ACCOUNT, payload });
+    try {
+      const [payload, linkedAccount] = await Promise.all([
+        promisedProperties(_payload),
+        fetchLinkedAccountData()
+      ]);
+      payload.proxy.linkedAccount = linkedAccount;
+      dispatch({ type: ADD_ACCOUNT, payload });
+    } catch (e) {
+      console.log('failed to add account', e);
+    }
   }
 
   dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
@@ -148,9 +158,9 @@ export const setActiveAccount = (address, isMetamask) => async (
     )
   ) {
     await window.maker.addAccount({ type: AccountTypes.METAMASK });
-    window.maker.useAccountWithAddress(address);
     await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
   }
+  window.maker.useAccountWithAddress(address);
   return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
 };
 
@@ -168,19 +178,24 @@ const uniqConcat = pipe(
 );
 const addressCmp = (x, y) => x.address === y.address;
 const withUpdatedAccount = (accounts, updatedAccount) => {
-  return accounts.map(
-    account =>
-      account.address === updatedAccount.address &&
-      account.type === updatedAccount.type
-        ? {
-            ...account,
-            ...updatedAccount
-          }
-        : account
+  return accounts.map(account =>
+    account.address === updatedAccount.address &&
+    account.type === updatedAccount.type
+      ? {
+          ...account,
+          ...updatedAccount
+        }
+      : account
   );
 };
 
-export const fakeAccount = {
+const fakeColdAccount = {
+  address: '0xbeefed1bedded2dabbed3defaced4decade5feed',
+  proxyRole: 'cold',
+  mkrBalance: 222
+};
+
+const fakeHotAccount = {
   id: '_',
   address: '0xbeefed1bedded2dabbed3defaced4decade5dead',
   type: 'fake',
@@ -192,22 +207,25 @@ export const fakeAccount = {
     address: '0xproxyfake',
     votingPower: 111,
     hasInfMkrApproval: false,
-    linkedAccount: {
-      address: '0xbeefed1bedded2dabbed3defaced4decade5feed',
-      proxyRole: 'cold',
-      mkrBalance: 222
-    }
+    linkedAccount: fakeColdAccount
   }
 };
 
-const initialState = {
+// eslint-disable-next-line no-unused-vars
+const fakeInitialState = {
+  activeAccount: fakeHotAccount.address,
+  allAccounts: [fakeHotAccount, fakeColdAccount],
+  fetching: false
+};
+
+// eslint-disable-next-line no-unused-vars
+const realInitialState = {
   activeAccount: '',
   fetching: true,
-  // activeAccount: '0xbeefed1bedded2dabbed3defaced4decade5dead', // just for dev
-  allAccounts: [
-    // fakeAccount
-  ]
+  allAccounts: []
 };
+
+const initialState = realInitialState;
 
 const updateProxyBalance = adding => (state, { payload: amount }) => {
   let account = getActiveAccount({ accounts: state });
@@ -258,51 +276,6 @@ const updateProxyBalance = adding => (state, { payload: amount }) => {
 
   return { ...state, allAccounts };
 };
-
-// temporarily commented out until more debugging
-// const breakProxyLink = () => state => {
-//   let account = getActiveAccount({ accounts: state });
-//   let linkedAccountVar = getAccount(
-//     { accounts: state },
-//     account.proxy.linkedAccount.address
-//   );
-//   const linkedAccount = account.proxy.linkedAccount;
-//   account = {
-//     ...account,
-//     hasProxy: false,
-//     proxyRole: '',
-//     proxy: {
-//       ...account.proxy,
-//       address: '',
-//       linkedAccount: {
-//         ...account.proxy.linkedAccount,
-//         address: '',
-//         proxyRole: '',
-//         mkrBalance: ''
-//       }
-//     }
-//   };
-//   let allAccounts = withUpdatedAccount(state.allAccounts, account);
-//   if (linkedAccountVar) {
-//     linkedAccountVar = {
-//       ...linkedAccountVar,
-//       hasProxy: false,
-//       proxyRole: '',
-//       proxy: {
-//         ...linkedAccount.proxy,
-//         address: '',
-//         linkedAccount: {
-//           ...linkedAccountVar.proxy.linkedAccount,
-//           address: '',
-//           proxyRole: '',
-//           mkrBalance: ''
-//         }
-//       }
-//     };
-//     allAccounts = withUpdatedAccount(allAccounts, linkedAccountVar);
-//   }
-//   return { ...state, allAccounts };
-// };
 
 const accounts = createReducer(initialState, {
   [REMOVE_ACCOUNTS]: (state, { payload: accounts }) => ({
@@ -356,7 +329,6 @@ const accounts = createReducer(initialState, {
     };
   },
   [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),
-  // [BREAK_LINK_SUCCESS]: breakProxyLink(),
   [WITHDRAW_MKR_SUCCESS]: updateProxyBalance(false),
   [WITHDRAW_ALL_MKR_SUCCESS]: updateProxyBalance(false),
   [INITIATE_LINK_REQUEST]: (state, { payload }) => {
@@ -378,36 +350,6 @@ const accounts = createReducer(initialState, {
       )
     };
   }
-  // TODO: right now we're updating account data by refetching via 'postLinkUpdate'
-  // but this would be quicker
-  // [APPROVE_LINK_SUCCESS]: (state, { payload }) => {
-  //   let hotAccount = getAccount({ accounts: state }, payload.hotAddress);
-  //   let coldAccount = getAccount({ accounts: state }, payload.coldAddress);
-
-  //   hotAccount = {
-  //     ...hotAccount,
-  //     proxy: {
-  //       ...hotAccount.proxy,
-  //       linkedAccount: pick(['address', 'mkrBalance', 'type'], coldAccount)
-  //     }
-  //   };
-
-  //   coldAccount = {
-  //     ...coldAccount,
-  //     proxy: {
-  //       ...coldAccount.proxy,
-  //       linkedAccount: pick(['address', 'mkrBalance', 'type'], hotAccount)
-  //     }
-  //   };
-
-  //   return {
-  //     ...state,
-  //     allAccounts: withUpdatedAccount(
-  //       withUpdatedAccount(state.allAccounts, hotAccount),
-  //       coldAccount
-  //     )
-  //   };
-  // }
 });
 
 export default accounts;

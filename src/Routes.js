@@ -7,7 +7,6 @@ import {
 } from 'react-router-dom';
 import BaseLayout from './layouts/base';
 import Timeline from './pages/Timeline';
-import Topic from './pages/Topic';
 import Proposal from './pages/Proposal';
 import NotFound from './pages/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -32,9 +31,12 @@ class App extends Component {
             <BaseLayout>
               <Switch>
                 <Route exact path="/" component={Timeline} />
+                <Route
+                  path="/signaling"
+                  render={() => <Timeline signaling />}
+                />
                 <Route path="/not-found" component={NotFound} />
-                <Route path="/:topicSlug/:proposalSlug" component={Proposal} />
-                <Route path="/:topicSlug" component={Topic} />
+                <Route path="/:proposalSlug" component={Proposal} />
               </Switch>
             </BaseLayout>
           </ErrorBoundary>

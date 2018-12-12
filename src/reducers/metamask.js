@@ -3,7 +3,7 @@ import { setActiveAccount, NO_METAMASK_ACCOUNTS } from './accounts';
 import { netIdToName, netToUri } from '../utils/ethereum';
 import { ethInit } from './eth';
 import { voteTallyInit } from './tally';
-import { topicsInit } from './topics';
+import { proposalsInit } from './proposals';
 import { hatInit } from './hat';
 
 // Constants ----------------------------------------------
@@ -85,7 +85,7 @@ export const init = maker => async dispatch => {
 
   if (!networkIsSet) web3Service._web3.setProvider(netToUri(network));
   dispatch(voteTallyInit());
-  dispatch(topicsInit(network));
+  dispatch(proposalsInit(network));
   dispatch(hatInit());
   dispatch(ethInit());
 };

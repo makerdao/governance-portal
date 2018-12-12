@@ -2,48 +2,25 @@
 //// Mocked backend w/ the current proposals ////
 /////////////////////////////////////////////////
 
-import find from 'ramda/src/find';
 import round from 'lodash.round';
 
 import { createReducer } from '../utils/redux';
 import { initApprovalsFetch } from './approvals';
-import { eq, div, mul, promiseRetry } from '../utils/misc';
+import { div, mul, promiseRetry } from '../utils/misc';
 
 // Constants ----------------------------------------------
 
-const TOPICS_REQUEST = 'topics/TOPICS_REQUEST';
-const TOPICS_SUCCESS = 'topics/TOPICS_SUCCESS';
-const TOPICS_FAILURE = 'topics/TOPICS_FAILURE';
+const PROPOSALS_REQUEST = 'proposals/REQUEST';
+const PROPOSALS_SUCCESS = 'proposals/SUCCESS';
+const PROPOSALS_FAILURE = 'proposals/FAILURE';
 
 // Selectors ----------------------------------------------
 
-export function getProposal(state, proposalAddress) {
-  for (let topic of state.topics) {
-    const proposal = find(
-      ({ source }) => eq(source, proposalAddress),
-      topic.proposals
-    );
-    if (proposal !== undefined) return proposal;
-  }
-  return null;
-}
-
-export function getTopic(state, topicKey) {
-  for (let topic of state.topics) {
-    if (topic.key === topicKey) return topic;
-  }
-  return null;
-}
-
 export function getWinningProp(state, topicKey) {
-  const proposals = getTopic(state, topicKey).proposals;
+  const proposals = state.proposals.filter(p => p.topicKey === topicKey);
   // all child proposals of a topic must have the snapshot for this to work
   const hasEndSnapshot = proposals =>
-    proposals.every(
-      proposal =>
-        proposal.end_approvals !== undefined &&
-        proposal.end_percentage !== undefined
-    );
+    proposals.every(proposal => proposal.end_approvals !== undefined);
   if (hasEndSnapshot(proposals)) {
     return proposals.sort(
       (a, b) => Number(b.end_approvals) - Number(a.end_approvals)
@@ -68,7 +45,11 @@ export function getWinningProp(state, topicKey) {
       approvals > 0
         ? round(div(mul(approvals, 100), state.approvals.total), 2)
         : 0;
-    return { ...winner, end_approvals: approvals, end_percentage: percentage };
+    return {
+      ...winner,
+      end_approvals: approvals,
+      end_percentage: percentage
+    };
   }
 }
 
@@ -106,7 +87,7 @@ const fetchNetwork = async (url, network) => {
 // dispatch
 
 const fetchTopics = async network => {
-  if (process.env.REACT_APP_GOV_BACKEND === 'mock') {
+  if (process.env.REACT_APP_GOV_BACKEND === 'mock' || network === 'ganache') {
     return await fetchMock(network);
   }
 
@@ -123,63 +104,46 @@ const fetchTopics = async network => {
 
 // Actions ------------------------------------------------
 
-const formatTopic = network => topic => {
-  return {
-    ...topic,
-    proposals: topic.proposals.map(({ source, ...otherProps }) => ({
+function extractProposals(topics, network) {
+  return topics.reduce((acc, topic) => {
+    const proposals = topic.proposals.map(({ source, ...otherProps }) => ({
       ...otherProps,
-      source: source.startsWith('{') ? JSON.parse(source)[network] : source
-    }))
-  };
-};
+      source: source.startsWith('{') ? JSON.parse(source)[network] : source,
+      active: topic.active,
+      govVote: topic.govVote,
+      topicKey: topic.key
+    }));
+    return acc.concat(proposals);
+  }, []);
+}
 
-export const topicsInit = network => async dispatch => {
-  if (network === 'ganache') {
-    // look up all slates
-    const slates = await window.maker.service('chief').getEtchedSlates();
-    const topics = [
-      {
-        topic: 'Test topic',
-        proposals: slates.map(source => ({
-          title: 'Test proposal',
-          source
-        }))
-      }
-    ];
-    dispatch({
-      type: TOPICS_SUCCESS,
-      payload: topics.map(formatTopic(network))
+export const proposalsInit = network => async dispatch => {
+  dispatch({ type: PROPOSALS_REQUEST, payload: {} });
+  try {
+    const topics = await promiseRetry({
+      fn: fetchTopics,
+      args: [network],
+      times: 4,
+      delay: 1
     });
-  } else {
-    dispatch({ type: TOPICS_REQUEST, payload: {} });
-    try {
-      const topics = await promiseRetry({
-        fn: fetchTopics,
-        args: [network],
-        times: 4,
-        delay: 1
-      });
 
-      dispatch({
-        type: TOPICS_SUCCESS,
-        payload: topics.map(formatTopic(network))
-      });
-    } catch (err) {
-      dispatch({
-        type: TOPICS_FAILURE,
-        payload: {
-          error: err
-        }
-      });
-    }
+    dispatch({
+      type: PROPOSALS_SUCCESS,
+      payload: extractProposals(topics, network)
+    });
+  } catch (err) {
+    dispatch({
+      type: PROPOSALS_FAILURE,
+      payload: {
+        error: err
+      }
+    });
   }
   dispatch(initApprovalsFetch());
 };
 
 // Reducer ------------------------------------------------
 
-const topics = createReducer([], {
-  [TOPICS_SUCCESS]: (_, { payload }) => payload || []
+export default createReducer([], {
+  [PROPOSALS_SUCCESS]: (_, { payload }) => payload || []
 });
-
-export default topics;
