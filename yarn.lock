@@ -859,11 +859,11 @@
   dependencies:
     events "^3.0.0"
 
-"@makerdao/dai-plugin-governance@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.3.0.tgz#ab4ec119e3f7f8d1fbd144fa2e15a658bb43f6cb"
+"@makerdao/dai-plugin-governance@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.3.3.tgz#bf13cfa9d09aedc221df40576196b9dbc076f963"
   dependencies:
-    "@makerdao/dai" "^0.9.8"
+    "@makerdao/dai" "^0.9.9"
     babel-runtime "^6.26.0"
     ramda "^0.25.0"
     web3-utils "^1.0.0-beta.36"
@@ -890,9 +890,9 @@
     hdkey "^1.0.0"
     web3-provider-engine "14.0.4"
 
-"@makerdao/dai@^0.9.8":
-  version "0.9.8"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.9.8.tgz#58668a5b587ce0e36b29bc66a1d003d1c6137ee3"
+"@makerdao/dai@^0.9.9":
+  version "0.9.9"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.9.9.tgz#65b57d0738afe8c1ea07e94ebe4d2629e9727710"
   dependencies:
     babel-plugin-transform-decorators-legacy "^1.3.5"
     babel-runtime "^6.26.0"
@@ -4563,6 +4563,21 @@ ethers@^3.0.15:
     inherits "2.0.1"
     js-sha3 "0.5.7"
     scrypt-js "2.0.3"
+    setimmediate "1.0.4"
+    uuid "2.0.1"
+    xmlhttprequest "1.8.0"
+
+ethers@^4.0.18:
+  version "4.0.18"
+  resolved "https://registry.yarnpkg.com/ethers/-/ethers-4.0.18.tgz#04870405fe2066ccdaafe99d34a8806fd2191bc6"
+  dependencies:
+    "@types/node" "^10.3.2"
+    aes-js "3.0.0"
+    bn.js "^4.4.0"
+    elliptic "6.3.3"
+    hash.js "1.1.3"
+    js-sha3 "0.5.7"
+    scrypt-js "2.0.4"
     setimmediate "1.0.4"
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
@@ -10466,6 +10481,10 @@ schema-utils@^1.0.0:
 scrypt-js@2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/scrypt-js/-/scrypt-js-2.0.3.tgz#bb0040be03043da9a012a2cea9fc9f852cfc87d4"
+
+scrypt-js@2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/scrypt-js/-/scrypt-js-2.0.4.tgz#32f8c5149f0797672e551c07e230f834b6af5f16"
 
 scrypt.js@0.2.0, scrypt.js@^0.2.0:
   version "0.2.0"

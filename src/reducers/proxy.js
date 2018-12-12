@@ -32,6 +32,8 @@ export const APPROVE_LINK_SENT = 'proxy/APPROVE_LINK_SENT';
 export const APPROVE_LINK_SUCCESS = 'proxy/APPROVE_LINK_SUCCESS';
 export const APPROVE_LINK_FAILURE = 'proxy/APPROVE_LINK_FAILURE';
 
+export const STORE_PROXY_ADDRESS = 'proxy/STORE_PROXY_ADDRESS';
+
 export const SEND_MKR_TO_PROXY_REQUEST = 'proxy/SEND_MKR_TO_PROXY_REQUEST';
 export const SEND_MKR_TO_PROXY_SENT = 'proxy/SEND_MKR_TO_PROXY_SENT';
 
@@ -134,13 +136,10 @@ function useCorrectAccount(requiredAccount, dispatch, options = {}) {
 }
 
 function useColdAccount(dispatch, getState) {
-  const state = getState();
-  const account = getAccount(state, window.maker.currentAddress());
-  if (account.proxyRole !== 'cold') {
-    const cold = state.accounts.allAccounts.find(a => a.proxyRole === 'cold');
-    return useCorrectAccount(cold, dispatch);
-  }
-  return true;
+  const cold = getState().accounts.allAccounts.find(
+    a => a.proxyRole === 'cold'
+  );
+  return useCorrectAccount(cold, dispatch);
 }
 
 export const initiateLink = ({ cold, hot }) => (dispatch, getState) => {
@@ -174,13 +173,17 @@ export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
     .approveLink(coldAddress);
 
   dispatch({ type: APPROVE_LINK_REQUEST });
-
   return handleTx({
     prefix: 'APPROVE_LINK',
     dispatch,
     txObject: approveLink,
     successPayload: { coldAddress, hotAddress: hotAccount.address },
-    acctType: hotAccount.type
+    acctType: hotAccount.type,
+    successAction: async () =>
+      dispatch({
+        type: STORE_PROXY_ADDRESS,
+        payload: (await approveLink).proxyAddress
+      })
   });
 };
 
@@ -289,10 +292,14 @@ export const refreshAccountData = () => (dispatch, getState) => {
 export const mkrApproveProxy = () => (dispatch, getState) => {
   if (!useColdAccount(dispatch, getState)) return;
   const account = getAccount(getState(), window.maker.currentAddress());
-
+  let proxyAddress = account.proxy.address;
+  if (!proxyAddress) {
+    //if proxy address not stored in accounts yet, then it should be in proxy store
+    proxyAddress = getState().proxy.proxyAddress;
+  }
   const giveProxyAllowance = window.maker
     .getToken(MKR)
-    .approveUnlimited(account.proxy.address);
+    .approveUnlimited(proxyAddress);
 
   dispatch({ type: MKR_APPROVE_REQUEST });
   return handleTx({
@@ -319,7 +326,8 @@ const initialState = {
   coldAddress: '',
   sendMkrAmount: 0,
   withdrawMkrAmount: 0,
-  linkGas: 0
+  linkGas: 0,
+  proxyAddress: ''
 };
 
 // const withExisting = { ...initialState, ...existingState };
@@ -358,6 +366,10 @@ const proxy = createReducer(initialState, {
     ...state,
     setupProgress: 'midLink',
     confirmingApprove: false
+  }),
+  [STORE_PROXY_ADDRESS]: (state, { payload }) => ({
+    ...state,
+    proxyAddress: payload
   }),
   // Send -------------------------------------------
   [SEND_MKR_TO_PROXY_REQUEST]: (state, { payload: value }) => {
