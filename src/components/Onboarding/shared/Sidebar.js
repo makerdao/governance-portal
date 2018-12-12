@@ -119,15 +119,15 @@ const Sidebar = ({
                   <SubtitleDataLabel>
                     {approveLinkTxHash &&
                       approveLinkTxStatus === TransactionStatus.MINED && (
-                        <p>
-                          LINK APPROVED ON HW{' '}
+                        <Flex>
+                          <p>LINK APPROVED ON HW </p>
                           <GreyTag>
                             TX{' '}
                             <Link>
                               <Address veryShort full={approveLinkTxHash} />
                             </Link>
                           </GreyTag>
-                        </p>
+                        </Flex>
                       )}
                   </SubtitleDataLabel>
                 </Flex>
@@ -166,15 +166,15 @@ const Sidebar = ({
                   <SubtitleDataLabel>
                     {initiateLinkTxHash &&
                       initiateLinkTxStatus === TransactionStatus.MINED && (
-                        <p>
-                          LINK APPROVED ON CW{' '}
+                        <Flex>
+                          <p>LINK APPROVED ON CW </p>
                           <GreyTag>
                             TX{' '}
                             <Link>
                               <Address veryShort full={initiateLinkTxHash} />
                             </Link>
                           </GreyTag>
-                        </p>
+                        </Flex>
                       )}
                   </SubtitleDataLabel>
                 </Flex>
@@ -229,7 +229,7 @@ const Sidebar = ({
             <Table width="100%" variant="cozy">
               <tbody>
                 {contractAddresses.map(({ name, address }) => (
-                  <tr>
+                  <tr key={name + address}>
                     <td>{name}</td>
                     <td>
                       <ExternalLink>
