@@ -1026,10 +1026,10 @@
     web3 "^1.0.0-beta.36"
     web3-provider-engine makerdao/provider-engine#remove-provider-dist
 
-"@makerdao/ui-components@1.0.0-alpha.20":
-  version "1.0.0-alpha.20"
-  resolved "https://registry.yarnpkg.com/@makerdao/ui-components/-/ui-components-1.0.0-alpha.20.tgz#d1e137f4e6ec5630a2b876046420aab2af66a2c6"
-  integrity sha512-Ak9pEG57F0sLQlHzDpH6Pa2MJ4JVCILigLHgxciYtGHt35IVYucQf9wTlwSoBHD37RrkK8akS9CbYqSwiw6AVQ==
+"@makerdao/ui-components@1.0.0-alpha.21":
+  version "1.0.0-alpha.21"
+  resolved "https://registry.yarnpkg.com/@makerdao/ui-components/-/ui-components-1.0.0-alpha.21.tgz#63512e36f1193f709d4946a991db7d37e7ccd98e"
+  integrity sha512-9h1v3YMnsugHyr9AO3rtfgmlwNOn2e0dsHZE1rO2cysPDupj36bc78qxMLM1O3NoWOsNpjNMDkfzIam7Zb1y0Q==
   dependencies:
     jazzicon "^1.5.0"
     react-popper "1.0.2"
