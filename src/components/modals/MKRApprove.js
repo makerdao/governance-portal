@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import { mkrApproveProxy, goToStep, smartStepSkip } from '../../reducers/proxy';
-import { getActiveAccount, getAccount } from '../../reducers/accounts';
 import Transaction from './shared/Transaction';
 import {
   StyledTitle,

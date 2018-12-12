@@ -299,7 +299,7 @@ export const mkrApproveProxy = () => (dispatch, getState) => {
   }
   const giveProxyAllowance = window.maker
     .getToken(MKR)
-    .approveUnlimited(account.proxy.address);
+    .approveUnlimited(proxyAddress);
 
   dispatch({ type: MKR_APPROVE_REQUEST });
   return handleTx({
