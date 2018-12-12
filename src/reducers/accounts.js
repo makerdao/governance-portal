@@ -158,8 +158,6 @@ export const updateAccount = account => ({
   payload: account
 });
 
-// This is called when an account is selected in the account box dropdown, or
-// when Metamask is switched to a different account
 export const setActiveAccount = (address, isMetamask) => async (
   dispatch,
   getState
@@ -167,25 +165,38 @@ export const setActiveAccount = (address, isMetamask) => async (
   // if we haven't seen this account before, fetch its data and add it to the
   // Maker instance
   if (isMetamask && !getAccount(getState(), address)) {
-    await window.maker.addAccount({ type: AccountTypes.METAMASK });
-    await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
+    try {
+      await window.maker
+        .service('accounts')
+        .addAccount({ type: AccountTypes.METAMASK });
+      await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
+    } catch (error) {
+      // This error occurs when user rejects provider access in MetaMask
+      console.error('Error adding account', error);
+      return dispatch({ type: NO_METAMASK_ACCOUNTS });
+    }
   }
 
   const state = getState();
-  window.maker.useAccountWithAddress(address);
-  return dispatch({
-    type: SET_ACTIVE_ACCOUNT,
-    payload: {
-      newAccount: getAccount(state, address),
-      // unfortunately the only way I can think of (short of redoing the whole proxy store data design)
-      // to make sure the proxy store retains transaction information when you're only toggling between
-      // hot and cold accounts. This is so they can resume onboarding without any issues.
-      onboardingHotAddress:
-        state.onboarding.hotWallet && state.onboarding.hotWallet.address,
-      onboardingColdAddress:
-        state.onboarding.coldWallet && state.onboarding.coldWallet.address
-    }
-  });
+
+  try {
+    window.maker.useAccountWithAddress(address);
+    return dispatch({
+      type: SET_ACTIVE_ACCOUNT,
+      payload: {
+        newAccount: getAccount(state, address),
+        // unfortunately the only way I can think of (short of redoing the whole proxy store data design)
+        // to make sure the proxy store retains transaction information when you're only toggling between
+        // hot and cold accounts. This is so they can resume onboarding without any issues.
+        onboardingHotAddress:
+          state.onboarding.hotWallet && state.onboarding.hotWallet.address,
+        onboardingColdAddress:
+          state.onboarding.coldWallet && state.onboarding.coldWallet.address
+      }
+    });
+  } catch (err) {
+    return dispatch({ type: NO_METAMASK_ACCOUNTS });
+  }
 };
 
 export const connectHardwareAccounts = (

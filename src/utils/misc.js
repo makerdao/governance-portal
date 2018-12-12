@@ -137,6 +137,9 @@ export const cleanErrorMsg = errorMsg => {
   )
     return 'The account you tried to send a transaction from does not have enough ETH to pay for gas';
   if (errorMsg.search('transport') > -1) return 'Ledger connect failed';
+  if (errorMsg.search('Ledger') > -1 && errorMsg.search('0x6a80') > -1) {
+    return (errorMsg += ' (is contract data enabled on your device?)');
+  }
   return errorMsg;
 };
 
@@ -159,7 +162,7 @@ export const parseError = error => {
  * @param  {String} b
  * @return {Boolean}
  */
-export const eq = (a, b) => a && a.toLowerCase() === b && b.toLowerCase();
+export const eq = (a, b) => (a && a.toLowerCase()) === (b && b.toLowerCase());
 
 /**
  * @desc takes an object with properties that might be promises and returns a promise of that object with resolved properties

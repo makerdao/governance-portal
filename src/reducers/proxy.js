@@ -144,13 +144,14 @@ export const approveLink = ({ hot, cold }) => (dispatch, getState) => {
     .approveLink(cold.address);
 
   dispatch({ type: APPROVE_LINK_REQUEST });
-
   return handleTx({
     prefix: 'APPROVE_LINK',
     dispatch,
     txObject: approveLink,
     acctType: hot.type
-  }).then(success => success && dispatch(addAccounts([hot, cold])));
+  }).then(async success => {
+    success && dispatch(addAccounts([hot, cold]));
+  });
 };
 
 export const lock = value => async (dispatch, getState) => {
@@ -190,36 +191,37 @@ export const free = value => (dispatch, getState) => {
   }).then(success => success && dispatch(initApprovalsFetch()));
 };
 
-export const breakLink = () => async (dispatch, getState) => {
+export const breakLink = () => (dispatch, getState) => {
   dispatch({ type: BREAK_LINK_REQUEST });
   const currentAccount = window.maker.currentAccount();
-  window.maker.useAccountWithAddress(currentAccount.address);
-  const breakLink = window.maker.service('voteProxyFactory').breakLink();
-
   const account = getAccount(getState(), currentAccount.address);
+
   const otherAccount = getAccount(
     getState(),
     account.proxy.linkedAccount.address
   );
   const accountsToRefresh = otherAccount ? [account, otherAccount] : [account];
 
-  await handleTx({
+  window.maker.useAccountWithAddress(currentAccount.address);
+  const breakLink = window.maker.service('voteProxyFactory').breakLink();
+
+  return handleTx({
     prefix: 'BREAK_LINK',
     dispatch,
     txObject: breakLink,
     acctType: currentAccount.type
+  }).then(success => {
+    success && dispatch(addAccounts(accountsToRefresh));
   });
-
-  return dispatch(addAccounts(accountsToRefresh));
 };
 
 export const mkrApproveProxy = () => (dispatch, getState) => {
   if (!useColdAccount(getState())) return;
   const account = getAccount(getState(), window.maker.currentAddress());
-
+  const proxyAddress = account.proxy.address;
   const giveProxyAllowance = window.maker
     .getToken(MKR)
-    .approveUnlimited(account.proxy.address);
+    .approveUnlimited(proxyAddress);
 
   dispatch({ type: MKR_APPROVE_REQUEST });
   return handleTx({
