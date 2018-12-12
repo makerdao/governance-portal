@@ -10,7 +10,9 @@ export const colors = {
   dark_green: '43, 169, 142',
   darker_green: '38,148,125',
   dark: '12, 12, 13',
-  black: '0, 0, 0'
+  black: '0, 0, 0',
+  light_grey2: '226, 233, 236', // <-- same as theme.generic.light_grey
+  dark_grey2: '203, 209, 213' // <-- same as theme.generic.dark_grey
 };
 
 export const fonts = {
