@@ -153,8 +153,9 @@ class AddressSelection extends Component {
             disabled={currentPage < 1 || !paginationEnabled}
             onClick={this.handleAddressPaginationPrevious}
             color={'light_grey2'}
-            textColor={theme.text.darker_default}
             hoverColor={'dark_grey2'}
+            textColor={theme.text.darker_default}
+            hoverTextColor={theme.text.darker_default}
             activeColor={'dark_grey2'}
             style={{ margin: '0 auto' }}
           >
@@ -167,6 +168,7 @@ class AddressSelection extends Component {
             hoverColor={'dark_grey2'}
             activeColor={'dark_grey2'}
             textColor={theme.text.darker_default}
+            hoverTextColor={theme.text.darker_default}
             onClick={this.handleAddressPaginationNext}
             style={{ margin: '0 auto' }}
           >

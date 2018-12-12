@@ -11,10 +11,11 @@ const StyledButton = styled.button`
   border: none;
   border-style: none;
   box-sizing: border-box;
-  background-color: ${({ theme }) => theme.generic.white};
-  color: ${({ color }) => `rgb(${colors[color]})`};
+  background-color: ${({ theme, bgColor }) => bgColor || theme.generic.white};
+  color: ${({ color, textColor }) => textColor || `rgb(${colors[color]})`};
   border-radius: 4px;
-  border: 2px solid ${({ color }) => `rgb(${colors[color]})`};
+  border: 2px solid
+    ${({ color, borderColor }) => borderColor || `rgb(${colors[color]})`};
   font-size: ${({ theme }) => theme.fonts.size.large};
   font-weight: ${fonts.weight.semibold};
   padding: 0 15px;
@@ -26,8 +27,10 @@ const StyledButton = styled.button`
   }
   @media (hover: hover) {
     &:hover {
-      color: ${({ hoverColor }) => `rgb(${colors[hoverColor]})`};
-      border-color: ${({ hoverColor }) => `rgb(${colors[hoverColor]})`};
+      color: ${({ hoverColor, hoverTextColor }) =>
+        hoverTextColor || `rgb(${colors[hoverColor]})`};
+      border-color: ${({ hoverColor, hoverBorderColor }) =>
+        hoverBorderColor || `rgb(${colors[hoverColor]})`};
     }
   }
 `;
