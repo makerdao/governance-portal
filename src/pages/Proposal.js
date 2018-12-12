@@ -6,14 +6,12 @@ import { isNil, isEmpty } from 'ramda';
 
 import { toSlug, eq } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
-import VoteTally from '../components/VoteTally';
 import Vote from '../components/modals/Vote';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Loader from '../components/Loader';
 import Timer from '../components/Timer';
 import ClosedStatus from '../components/ClosedStatus';
-import WithTally from '../components/hocs/WithTally';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import NotFound from './NotFound';
 import theme, { colors } from '../theme';
@@ -186,7 +184,7 @@ function Proposal({
             <StyledBody
               dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
             />
-            {active ? (
+            {active && proposal.govVote ? (
               <Timer
                 fs={16}
                 endTimestamp={proposal.end_timestamp}
@@ -195,20 +193,10 @@ function Proposal({
               />
             ) : null}
           </StyledCenter>
-          {active ? (
+          {active || !proposal.govVote ? (
             <div>
-              <WithTally candidate={proposal.source}>
-                {({ loadingApprovals, approvals, percentage }) => (
-                  <VoteTally
-                    statusBar
-                    loadingApprovals={loadingApprovals}
-                    approvals={approvals}
-                    percentage={percentage}
-                  />
-                )}
-              </WithTally>
               <Button
-                disabled={!canVote || !active}
+                disabled={!canVote || (!active && proposal.govVote)}
                 loading={accountDataFetching}
                 wide={true}
                 onClick={() =>
@@ -259,36 +247,38 @@ function Proposal({
               </Address>
             </Supporter>
           </DetailsCard>
-          <SupporterCard>
-            <CardTitle>Top Supporters</CardTitle>
-            <SupporterWrapper>
-              {supporters ? (
-                supporters.map(supporter => (
-                  <Supporter key={supporter.address}>
-                    <Detail pct>{supporter.percent}</Detail>
-                    <Address
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      href={ethScanLink(supporter.address, network)}
-                    >
-                      {toChecksumAddress(supporter.address)}
-                    </Address>
-                  </Supporter>
-                ))
-              ) : voteStateFetching ? (
-                <LoadingWrapper>
-                  <Loader
-                    size={20}
-                    mt={100}
-                    color="header"
-                    background="white"
-                  />
-                </LoadingWrapper>
-              ) : (
-                <NoSupporters>No supporters found</NoSupporters>
-              )}
-            </SupporterWrapper>
-          </SupporterCard>
+          {proposal.active ? (
+            <SupporterCard>
+              <CardTitle>Top Supporters</CardTitle>
+              <SupporterWrapper>
+                {supporters ? (
+                  supporters.map(supporter => (
+                    <Supporter key={supporter.address}>
+                      <Detail pct>{supporter.percent}</Detail>
+                      <Address
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={ethScanLink(supporter.address, network)}
+                      >
+                        {toChecksumAddress(supporter.address)}
+                      </Address>
+                    </Supporter>
+                  ))
+                ) : voteStateFetching ? (
+                  <LoadingWrapper>
+                    <Loader
+                      size={20}
+                      mt={100}
+                      color="header"
+                      background="white"
+                    />
+                  </LoadingWrapper>
+                ) : (
+                  <NoSupporters>No supporters found</NoSupporters>
+                )}
+              </SupporterWrapper>
+            </SupporterCard>
+          ) : null}
         </RightPanels>
       </ConentWrapper>
     </RiseUp>

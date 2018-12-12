@@ -69,8 +69,7 @@ const TagWrapper = styled.div`
 const ClosedProposal = ({
   winningProposal,
   approvalFetching,
-  proposalAddress,
-  signalVote
+  proposalAddress
 }) => {
   if (approvalFetching)
     return <Loader mr={70} size={20} color="header" background="white" />;
@@ -82,35 +81,19 @@ const ClosedProposal = ({
         <WinningTag />
       </TagWrapper>
       <GreyBox>
-        {signalVote ? (
-          <React.Fragment>
-            <Key center oblique>
-              Approved
-            </Key>
-            <Row center>
-              <Key mr={6}>on</Key>{' '}
-              <Value>{formatDate(winningProposal.end_timestamp)}</Value>
-            </Row>
-            <Row center>
-              <Key mr={6}>with</Key>{' '}
-              <Value>{formatRound(winningProposal.end_approvals)} MKR</Value>
-            </Row>{' '}
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <Key center oblique>
-              Excecuted
-            </Key>
-            <Row center>
-              <Key mr={6}>on</Key>{' '}
-              <Value>{formatDate(winningProposal.end_timestamp)}</Value>
-            </Row>
-            <Row center>
-              <Key mr={6}>with</Key>{' '}
-              <Value>{formatRound(winningProposal.end_approvals)} MKR</Value>
-            </Row>
-          </React.Fragment>
-        )}
+        <React.Fragment>
+          <Key center oblique>
+            Approved
+          </Key>
+          <Row center>
+            <Key mr={6}>on</Key>{' '}
+            <Value>{formatDate(winningProposal.end_timestamp)}</Value>
+          </Row>
+          <Row center>
+            <Key mr={6}>with</Key>{' '}
+            <Value>{formatRound(winningProposal.end_approvals)} MKR</Value>
+          </Row>{' '}
+        </React.Fragment>
       </GreyBox>
     </FadeIn>
   );
