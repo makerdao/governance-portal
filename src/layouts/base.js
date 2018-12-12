@@ -218,12 +218,12 @@ BaseLayout.propTypes = {
   children: PropTypes.node.isRequired
 };
 
-const reduxProps = ({ metamask, proposals, accounts }) => ({
+const reduxProps = ({ metamask, proposals, accounts, hat }) => ({
   metamaskFetching: metamask.fetching,
   wrongNetwork: metamask.wrongNetwork,
   network: metamask.network,
   accountsFetching: accounts.fetching,
-  proposalsAvailable: proposals.length > 0
+  proposalsAvailable: proposals.length > 0 && !hat.fetching
 });
 
 export default withRouter(
