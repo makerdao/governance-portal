@@ -9,6 +9,7 @@ import createStore from './store';
 import Router from './Routes';
 import createMaker from './chain/maker';
 import { init } from './reducers/metamask';
+import SomeComponent from './components/SomeComponent';
 
 import './global.css.js';
 import theme from './theme';
@@ -42,7 +43,7 @@ function render() {
   ReactDOM.render(
     <ThemeProvider theme={currTheme}>
       <Provider store={store}>
-        <Router />
+        <SomeComponent />
       </Provider>
     </ThemeProvider>,
     document.getElementById('root')
