@@ -95,7 +95,7 @@ const Timeline = ({
   const otherProposals = proposals.filter(
     ({ source }) => !eq(source, hat.address)
   );
-  console.log('proposals', proposals);
+
   return (
     <Fragment>
       <VoterStatus signaling={signaling} />
@@ -166,10 +166,8 @@ const Timeline = ({
                       proposal.end_timestamp
                     )} with ${formatRound(proposal.end_approvals)} MKR`}</Tag>
                   </div>
-                ) : hatProposal &&
-                  hatProposal.govVote === proposal.govVote &&
-                  hat.approvals <
-                    approvals.approvals[proposal.source.toLowerCase()] ? (
+                ) : !signaling &&
+                  hat.approvals < approvals.approvals[proposal.source] ? (
                   <div>
                     <Tag>Available for execution</Tag>
                   </div>
