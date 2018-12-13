@@ -29,6 +29,11 @@ const currTheme = {
   }
 };
 
+const params = new URL(window.location).searchParams;
+const testchainId = params.get('testchain_id');
+console.log(window.location.search);
+console.log('testchainId', testchainId);
+
 const store = createStore();
 if (window.web3) {
   window.web3.version.getNetwork(async (err, netId) => {
