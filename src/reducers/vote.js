@@ -54,9 +54,13 @@ const handleTx = ({
           action: prefix,
           label: `wallet type ${acctType || 'unknown'}`
         });
-        dispatch(voteTallyInit());
-        dispatch(hatInit());
-        dispatch(initApprovalsFetch());
+        // give infura time to catch up
+        setTimeout(() => {
+          dispatch(voteTallyInit());
+          dispatch(hatInit());
+          dispatch(initApprovalsFetch());
+        }, 1500); // there is not science here
+
         updateVotingFor(dispatch, getState, activeAccount, proposalAddress);
         resolve();
       },

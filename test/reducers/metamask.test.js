@@ -228,7 +228,7 @@ describe('async actions', () => {
 
   test('initWeb3Accounts and update address with web3 default address', async () => {
     mockWeb3();
-    await reducer.initWeb3Accounts()(store.dispatch, store.getState);
+    await store.dispatch(reducer.initWeb3Accounts());
 
     expect(accounts.setActiveAccount).toBeCalledTimes(1);
     expect(await getAction(store, reducer.UPDATE_ADDRESS)).toEqual({
@@ -241,7 +241,7 @@ describe('async actions', () => {
   test('initWeb3Accounts with no accounts should dispatch NO_METAMASK_ACCOUNTS and NOT_AVAILABLE if we are currently fetching', async () => {
     clearWeb3Mock();
     store.getState().metamask.activeAddress = '';
-    await reducer.initWeb3Accounts()(store.dispatch, store.getState);
+    await store.dispatch(reducer.initWeb3Accounts());
 
     expect(await getAction(store, NO_METAMASK_ACCOUNTS)).toEqual({
       type: NO_METAMASK_ACCOUNTS
@@ -256,14 +256,14 @@ describe('async actions', () => {
     clearWeb3Mock();
     store.getState().metamask.activeAddress = '';
     store.getState().accounts.fetching = false;
-    await reducer.initWeb3Accounts()(store.dispatch, store.getState);
+    await store.dispatch(reducer.initWeb3Accounts());
 
     expect(store.getActions().length).toBe(0);
   });
 
   test('checkNetwork dispatches UPDATE_NETWORK and web3.setProvider when receiving a new network', async () => {
     mockWeb3();
-    await reducer.checkNetwork()(store.dispatch, store.getState);
+    await store.dispatch(reducer.checkNetwork());
 
     expect(setProvider).toBeCalledTimes(1);
     expect(await getAction(store, reducer.UPDATE_NETWORK)).toEqual({
@@ -276,7 +276,7 @@ describe('async actions', () => {
   test('checkNetwork dispatches nothing when receiving network existing in state', async () => {
     mockWeb3();
     store.getState().metamask.network = 'ganache';
-    await reducer.checkNetwork()(store.dispatch, store.getState);
+    await store.dispatch(reducer.checkNetwork());
 
     expect(setProvider).toBeCalledTimes(0);
     expect(store.getActions().length).toBe(0);
@@ -285,7 +285,7 @@ describe('async actions', () => {
   test('pollForMetamaskChanges dispatches initWeb3Accounts and checkNetwork', async () => {
     mockWeb3();
     store.getState().metamask.network = 'oldNetwork';
-    await reducer.pollForMetamaskChanges()(store.dispatch);
+    await store.dispatch(reducer.pollForMetamaskChanges());
 
     expect(accounts.setActiveAccount).toBeCalledTimes(1);
     expect(setProvider).toBeCalledTimes(1);

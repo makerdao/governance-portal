@@ -193,7 +193,7 @@ describe('Proxy Reducer', () => {
         }
       };
 
-      await proxy.initiateLink(mockAccounts)(store.dispatch, store.getState);
+      await store.dispatch(proxy.initiateLink(mockAccounts));
       expect(initLink).toBeCalledTimes(1);
       expect(store.getActions().length).toBe(4);
       expect(store.getActions()[0]).toEqual({
@@ -228,7 +228,7 @@ describe('Proxy Reducer', () => {
           address: 'mockHotAddress'
         }
       };
-      await proxy.initiateLink(mockAccounts)(store.dispatch, store.getState);
+      await store.dispatch(proxy.initiateLink(mockAccounts));
 
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
@@ -265,7 +265,7 @@ describe('Proxy Reducer', () => {
         }
       };
 
-      await proxy.approveLink(mockAccounts)(store.dispatch, store.getState);
+      await store.dispatch(proxy.approveLink(mockAccounts));
       expect(approveLink).toBeCalledTimes(1);
       expect(store.getActions().length).toBe(4);
       expect(store.getActions()[0]).toEqual({
@@ -302,7 +302,7 @@ describe('Proxy Reducer', () => {
         }
       };
 
-      await proxy.approveLink(mockAccounts)(store.dispatch, store.getState);
+      await store.dispatch(proxy.approveLink(mockAccounts));
 
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
@@ -329,12 +329,12 @@ describe('Proxy Reducer', () => {
     });
 
     test('Lock should not call voteProxyService when value is 0', async () => {
-      await proxy.lock(0)(store.dispatch, store.getState);
+      await store.dispatch(proxy.lock(0));
       expect(lock).not.toBeCalled();
     });
 
     test('Lock should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', async () => {
-      await proxy.lock(mockValue)(store.dispatch, store.getState);
+      await store.dispatch(proxy.lock(mockValue));
 
       expect(lock).toBeCalledTimes(1);
       expect(approvals.initApprovalsFetch).toBeCalledTimes(1);
@@ -357,7 +357,7 @@ describe('Proxy Reducer', () => {
     test('Lock should dispatch FAILURE action when TxMgr calls error', async () => {
       defaultFunctions.service = jest.fn(mockServiceError);
 
-      await proxy.lock(mockValue)(store.dispatch, store.getState);
+      await store.dispatch(proxy.lock(mockValue));
 
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
@@ -385,12 +385,12 @@ describe('Proxy Reducer', () => {
     });
 
     test('Free should not call voteProxyService when value is 0', async () => {
-      await proxy.free(0)(store.dispatch, store.getState);
+      await store.dispatch(proxy.free(0));
       expect(free).not.toBeCalled();
     });
 
     test('Free should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', async () => {
-      await proxy.free(mockValue)(store.dispatch, store.getState);
+      await store.dispatch(proxy.free(mockValue));
 
       expect(free).toBeCalledTimes(1);
       expect(approvals.initApprovalsFetch).toBeCalledTimes(1);
@@ -410,10 +410,10 @@ describe('Proxy Reducer', () => {
       expect(store.getActions()[3]).toEqual(mockSuccessAction);
     });
 
-    test('Free should dispatch FAILURE action when TxMgr calls error', () => {
+    test('Free should dispatch FAILURE action when TxMgr calls error', async () => {
       defaultFunctions.service = jest.fn(mockServiceError);
 
-      proxy.free(mockValue)(store.dispatch, store.getState);
+      await store.dispatch(proxy.free(mockValue));
 
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
@@ -442,7 +442,7 @@ describe('Proxy Reducer', () => {
     });
 
     test('Break Link should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', async () => {
-      await proxy.breakLink()(store.dispatch, store.getState);
+      await store.dispatch(proxy.breakLink());
 
       expect(breakLink).toBeCalledTimes(1);
       expect(store.getActions().length).toBe(4);
@@ -463,10 +463,11 @@ describe('Proxy Reducer', () => {
       });
     });
 
-    test('Break Link should dispatch FAILURE action when TxMgr calls error', () => {
+    test('Break Link should dispatch FAILURE action when TxMgr calls error', async () => {
       defaultFunctions.service = jest.fn(mockServiceError);
 
-      proxy.breakLink()(store.dispatch, store.getState);
+      await store.dispatch(proxy.breakLink());
+
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
         type: proxy.BREAK_LINK_REQUEST
@@ -488,8 +489,8 @@ describe('Proxy Reducer', () => {
     afterAll(() => {
       defaultFunctions.service = jest.fn(mockService);
     });
-    test('mkrApproveProxy should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', () => {
-      proxy.mkrApproveProxy()(store.dispatch, store.getState);
+    test('mkrApproveProxy should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', async () => {
+      await store.dispatch(proxy.mkrApproveProxy());
 
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
@@ -505,11 +506,10 @@ describe('Proxy Reducer', () => {
       });
     });
 
-    test('mkrApproveProxy should dispatch FAILURE action when TxMgr calls error', () => {
+    test('mkrApproveProxy should dispatch FAILURE action when TxMgr calls error', async () => {
       defaultFunctions.service = jest.fn(mockServiceError);
 
-      proxy.mkrApproveProxy()(store.dispatch, store.getState);
-
+      await store.dispatch(proxy.mkrApproveProxy());
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
         type: proxy.MKR_APPROVE_REQUEST
