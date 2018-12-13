@@ -51,7 +51,7 @@ class LockMKR extends React.Component {
   toConfirmDepositAmount = () => {
     this.setState({
       step: 1,
-      faqs: faqs.confirmLockMKR
+      faqs: []
     });
   };
 

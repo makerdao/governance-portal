@@ -46,12 +46,6 @@ export default {
         'By granting permissions in this transaction, you are approving that you will be able to Lock MKR in your secure voting contract. You are not relinquishing control of your MKR and can withdraw it at anytime.'
     }
   ],
-  confirmLockMKR: [
-    {
-      title: 'Why is my voting contract address hidden?',
-      body: 'Lorem ipsum dolor sit amet, consect'
-    }
-  ],
   lockMKR: [
     {
       title: 'Who controls my MKR when it is Locked?',
