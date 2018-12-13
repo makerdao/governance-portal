@@ -110,10 +110,7 @@ describe('Vote Reducer', () => {
       expect.assertions(2);
 
       try {
-        await reducer.sendVote(mockProposalAddress)(
-          store.dispatch,
-          store.getState
-        );
+        await store.dispatch(reducer.sendVote(mockProposalAddress));
       } catch (err) {
         expect(err.message).toEqual('must have account active');
         expect(err instanceof Error).toBeTruthy();
@@ -133,10 +130,7 @@ describe('Vote Reducer', () => {
       const hatInit = jest.fn(() => mockAction);
       hat.hatInit = hatInit;
 
-      await reducer.sendVote(mockProposalAddress)(
-        store.dispatch,
-        store.getState
-      );
+      await store.dispatch(reducer.sendVote(mockProposalAddress));
 
       jest.advanceTimersByTime(1500);
       done();
@@ -181,10 +175,7 @@ describe('Vote Reducer', () => {
       // Setup mock Tx manager to return an error
       defaultFunctions.service = jest.fn(mockServiceError);
 
-      await reducer.sendVote(mockProposalAddress)(
-        store.dispatch,
-        store.getState
-      );
+      await store.dispatch(reducer.sendVote(mockProposalAddress));
 
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
@@ -221,7 +212,7 @@ describe('Vote Reducer', () => {
       expect.assertions(2);
 
       try {
-        await reducer.withdrawVote()(store.dispatch, store.getState);
+        await store.dispatch(reducer.withdrawVote());
       } catch (err) {
         expect(err.message).toEqual('must have account active');
         expect(err instanceof Error).toBeTruthy();
@@ -242,7 +233,7 @@ describe('Vote Reducer', () => {
       hat.hatInit = hatInit;
       voteExec.mockClear();
 
-      await reducer.withdrawVote()(store.dispatch, store.getState);
+      await store.dispatch(reducer.withdrawVote());
 
       jest.advanceTimersByTime(1500);
       done();
@@ -284,7 +275,7 @@ describe('Vote Reducer', () => {
     test('withdraw vote should dispatch FAILURE action when TxMgr calls error', async () => {
       // Setup mock Tx manager to return an error
       defaultFunctions.service = jest.fn(mockServiceError);
-      await reducer.withdrawVote()(store.dispatch, store.getState);
+      await store.dispatch(reducer.withdrawVote());
 
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
