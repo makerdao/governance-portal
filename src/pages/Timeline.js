@@ -88,23 +88,25 @@ const Timeline = ({
   fetching,
   votingFor,
   signaling,
-  hat
+  hat,
+  approvals
 }) => {
-  const hatPropsal = proposals.find(({ source }) => eq(source, hat.address));
+  const hatProposal = proposals.find(({ source }) => eq(source, hat.address));
   const otherProposals = proposals.filter(
     ({ source }) => !eq(source, hat.address)
   );
+
   return (
     <Fragment>
       <VoterStatus signaling={signaling} />
       <RiseUp key={otherProposals.toString()}>
-        {signaling || !hatPropsal ? null : (
+        {signaling || !hatProposal ? null : (
           <StyledCard>
             <Card.Element height={164}>
               <ProposalDetails>
                 <div style={{ display: 'flex' }}>
-                  <Link to={`/${toSlug(hatPropsal.title)}`}>
-                    <SubHeading>{hatPropsal.title}</SubHeading>
+                  <Link to={`/${toSlug(hatProposal.title)}`}>
+                    <SubHeading>{hatProposal.title}</SubHeading>
                   </Link>
                   <Tag ml="16" green>
                     GOVERNING PROPOSAL
@@ -112,14 +114,16 @@ const Timeline = ({
                 </div>
                 <Body
                   dangerouslySetInnerHTML={{
-                    __html: hatPropsal.proposal_blurb
+                    __html: hatProposal.proposal_blurb
                   }}
                 />
                 <div>
-                  {hatPropsal.end_approvals !== undefined ? (
+                  {hatProposal.end_approvals !== undefined ? (
                     <Tag>{`Executed on ${formatDate(
-                      hatPropsal.end_timestamp
-                    )} with ${formatRound(hatPropsal.end_approvals)} MKR`}</Tag>
+                      hatProposal.end_timestamp
+                    )} with ${formatRound(
+                      hatProposal.end_approvals
+                    )} MKR`}</Tag>
                   ) : null}
                 </div>
               </ProposalDetails>
@@ -141,7 +145,7 @@ const Timeline = ({
                     : 'Vote for no change'}
                 </Button>
                 <br />
-                <TillHat candidate={hatPropsal.source} />
+                <TillHat candidate={hatProposal.source} />
               </div>
             </Card.Element>
           </StyledCard>
@@ -161,6 +165,11 @@ const Timeline = ({
                     <Tag>{`Executed on ${formatDate(
                       proposal.end_timestamp
                     )} with ${formatRound(proposal.end_approvals)} MKR`}</Tag>
+                  </div>
+                ) : !signaling &&
+                  hat.approvals < approvals.approvals[proposal.source] ? (
+                  <div>
+                    <Tag>Available for execution</Tag>
                   </div>
                 ) : null}
                 {proposal.active && signaling ? (
@@ -206,9 +215,10 @@ const Timeline = ({
   );
 };
 
-const reduxProps = ({ proposals, accounts, hat }, { signaling }) => {
+const reduxProps = ({ proposals, accounts, hat, approvals }, { signaling }) => {
   return {
     hat,
+    approvals,
     proposals: proposals.filter(p => !!p.govVote === !!signaling),
     canVote: activeCanVote({ accounts }),
     fetching: accounts.fetching,

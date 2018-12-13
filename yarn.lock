@@ -862,6 +862,7 @@
 "@makerdao/dai-plugin-governance@^0.3.3":
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.3.3.tgz#bf13cfa9d09aedc221df40576196b9dbc076f963"
+  integrity sha512-yrj3ZN5dgmD3UMZ0dGb0XIr5aut4FFiRORlB7ucnic5sJDK3Osx22HP627RbQmmRxF/QbnLnM4vMjC1ogTSW+g==
   dependencies:
     "@makerdao/dai" "^0.9.9"
     babel-runtime "^6.26.0"
@@ -893,6 +894,7 @@
 "@makerdao/dai@^0.9.9":
   version "0.9.9"
   resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.9.9.tgz#65b57d0738afe8c1ea07e94ebe4d2629e9727710"
+  integrity sha512-d2ZQSnT163+/pznhQ9eZnO9WtvzpBzucJZrafIGKYt3RSLyv1nsE6GUXC7p3exSTVZ+CmE1NFRJOHn4WcGV3mQ==
   dependencies:
     babel-plugin-transform-decorators-legacy "^1.3.5"
     babel-runtime "^6.26.0"
@@ -12236,7 +12238,7 @@ web3-net@1.0.0-beta.36:
     web3-core-method "1.0.0-beta.36"
     web3-utils "1.0.0-beta.36"
 
-web3-provider-engine@14.0.4, web3-provider-engine@makerdao/provider-engine#remove-provider-dist:
+web3-provider-engine@14.0.4, "web3-provider-engine@github:makerdao/provider-engine#remove-provider-dist":
   version "14.0.4"
   resolved "https://codeload.github.com/makerdao/provider-engine/tar.gz/df251328c54b45982e5fd67fe8d74664b2243944"
   dependencies:
