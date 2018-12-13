@@ -2,11 +2,13 @@ import * as reducer from '../../src/reducers/vote';
 import * as accounts from '../../src/reducers/accounts';
 import * as approvals from '../../src/reducers/approvals';
 import * as tally from '../../src/reducers/tally';
+import * as hat from '../../src/reducers/hat';
 
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
 jest.mock('react-ga');
+jest.useFakeTimers();
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
@@ -108,17 +110,14 @@ describe('Vote Reducer', () => {
       expect.assertions(2);
 
       try {
-        await reducer.sendVote(mockProposalAddress)(
-          store.dispatch,
-          store.getState
-        );
+        await store.dispatch(reducer.sendVote(mockProposalAddress));
       } catch (err) {
         expect(err.message).toEqual('must have account active');
         expect(err instanceof Error).toBeTruthy();
       }
     });
 
-    test('send vote should dispatch SENT & SUCCESS actions with successful transaction, then UPDATE both accounts.', async () => {
+    test('send vote should dispatch SENT & SUCCESS actions with successful transaction, then UPDATE both accounts.', async done => {
       const getAccount = jest.fn(() => activeAccount);
       accounts.getAccount = getAccount;
 
@@ -128,11 +127,15 @@ describe('Vote Reducer', () => {
       const voteTallyInit = jest.fn(() => mockAction);
       tally.voteTallyInit = voteTallyInit;
 
-      await reducer.sendVote(mockProposalAddress)(
-        store.dispatch,
-        store.getState
-      );
+      const hatInit = jest.fn(() => mockAction);
+      hat.hatInit = hatInit;
 
+      await store.dispatch(reducer.sendVote(mockProposalAddress));
+
+      jest.advanceTimersByTime(1500);
+      done();
+
+      expect(store.getActions().length).toBe(8);
       expect(voteExec).toBeCalledTimes(1);
       expect(store.getActions()[0]).toEqual({
         type: reducer.VOTE_REQUEST,
@@ -147,14 +150,14 @@ describe('Vote Reducer', () => {
       expect(store.getActions()[2]).toEqual({
         type: reducer.VOTE_SUCCESS
       });
-      expect(store.getActions()[7]).toEqual({
+      expect(store.getActions()[3]).toEqual({
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
           votingFor: mockProposalAddress
         }
       });
-      expect(store.getActions()[8]).toEqual({
+      expect(store.getActions()[4]).toEqual({
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
@@ -165,16 +168,14 @@ describe('Vote Reducer', () => {
       expect(getAccount).toBeCalledTimes(2);
       expect(initApprovalsFetch).toBeCalledTimes(1);
       expect(voteTallyInit).toBeCalledTimes(1);
+      expect(hatInit).toBeCalledTimes(1);
     });
 
     test('send vote should dispatch FAILURE action when TxMgr calls error', async () => {
       // Setup mock Tx manager to return an error
       defaultFunctions.service = jest.fn(mockServiceError);
 
-      await reducer.sendVote(mockProposalAddress)(
-        store.dispatch,
-        store.getState
-      );
+      await store.dispatch(reducer.sendVote(mockProposalAddress));
 
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
@@ -211,14 +212,14 @@ describe('Vote Reducer', () => {
       expect.assertions(2);
 
       try {
-        await reducer.withdrawVote()(store.dispatch, store.getState);
+        await store.dispatch(reducer.withdrawVote());
       } catch (err) {
         expect(err.message).toEqual('must have account active');
         expect(err instanceof Error).toBeTruthy();
       }
     });
 
-    test('withdraw vote should dispatch SENT & SUCCESS actions with successful transaction, then UPDATE both accounts.', async () => {
+    test('withdraw vote should dispatch SENT & SUCCESS actions with successful transaction, then UPDATE both accounts.', async done => {
       const getAccount = jest.fn(() => activeAccount);
       accounts.getAccount = getAccount;
 
@@ -227,10 +228,17 @@ describe('Vote Reducer', () => {
 
       const voteTallyInit = jest.fn(() => mockAction);
       tally.voteTallyInit = voteTallyInit;
+
+      const hatInit = jest.fn(() => mockAction);
+      hat.hatInit = hatInit;
       voteExec.mockClear();
 
-      await reducer.withdrawVote()(store.dispatch, store.getState);
+      await store.dispatch(reducer.withdrawVote());
 
+      jest.advanceTimersByTime(1500);
+      done();
+
+      expect(store.getActions().length).toBe(8);
       expect(voteExec).toBeCalledTimes(1);
       expect(voteExec).toBeCalledWith(undefined, []);
       expect(store.getActions()[0]).toEqual({
@@ -243,14 +251,14 @@ describe('Vote Reducer', () => {
       expect(store.getActions()[2]).toEqual({
         type: reducer.WITHDRAW_SUCCESS
       });
-      expect(store.getActions()[7]).toEqual({
+      expect(store.getActions()[3]).toEqual({
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
           votingFor: ''
         }
       });
-      expect(store.getActions()[8]).toEqual({
+      expect(store.getActions()[4]).toEqual({
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
@@ -261,12 +269,13 @@ describe('Vote Reducer', () => {
       expect(getAccount).toBeCalledTimes(2);
       expect(initApprovalsFetch).toBeCalledTimes(1);
       expect(voteTallyInit).toBeCalledTimes(1);
+      expect(hatInit).toBeCalledTimes(1);
     });
 
     test('withdraw vote should dispatch FAILURE action when TxMgr calls error', async () => {
       // Setup mock Tx manager to return an error
       defaultFunctions.service = jest.fn(mockServiceError);
-      await reducer.withdrawVote()(store.dispatch, store.getState);
+      await store.dispatch(reducer.withdrawVote());
 
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({

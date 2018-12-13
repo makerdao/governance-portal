@@ -1,16 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-import { connect } from 'react-redux';
 
+import { formatRound } from '../utils/misc';
 import Loader from './Loader';
 import WithTally from './hocs/WithTally';
 
-const NeededToPass = styled.p`
+const InSupport = styled.p`
   color: #989fa3;
   display: inline;
   margin-left: 6px;
   &::after {
-    content: 'needed to pass';
+    content: 'in support';
   }
 `;
 
@@ -21,21 +21,19 @@ const Standings = styled.div`
   margin-bottom: -12px;
 `;
 
-export default connect(({ hat }) => ({
-  hat
-}))(({ candidate, hat }) => (
+export default ({ candidate }) => (
   <WithTally candidate={candidate}>
     {({ loadingApprovals, approvals }) => (
       <Standings>
         {' '}
-        {loadingApprovals || !hat.approvals ? (
+        {loadingApprovals ? (
           <Loader size={18} color="light_grey" background="white" />
         ) : (
-          hat.approvals - approvals
+          formatRound(approvals)
         )}{' '}
         MKR
-        <NeededToPass />
+        <InSupport />
       </Standings>
     )}
   </WithTally>
-));
+);
