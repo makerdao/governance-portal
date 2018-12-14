@@ -41,7 +41,7 @@ const CardElementWrapper = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  padding: 24px;
+  padding: 20px 24px;
   transition: ${({ theme }) => theme.transitions.base};
   position: relative;
   width: 100%;

@@ -1,0 +1,8 @@
+{
+  "proxy_factory": {
+    "initiate_link_gas": 45840,
+    "approve_link_gas": 886503,
+    "send_mkr_gas": 46471,
+    "total_link_gas": 1123568
+  }
+}

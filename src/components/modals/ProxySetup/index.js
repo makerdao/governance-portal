@@ -206,7 +206,6 @@ const stateProps = state => {
       linkGas
     }
   } = state;
-
   let props = {
     modal: modal.modal,
     accounts: accounts.allAccounts,
