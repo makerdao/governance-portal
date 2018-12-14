@@ -118,13 +118,17 @@ const Timeline = ({
                   }}
                 />
                 <div>
-                  {hatProposal.end_approvals !== undefined ? (
+                  {!!hatProposal.end_approvals ? (
                     <Tag>{`Executed on ${formatDate(
                       hatProposal.end_timestamp
                     )} with ${formatRound(
                       hatProposal.end_approvals
                     )} MKR`}</Tag>
-                  ) : null}
+                  ) : (
+                    <div>
+                      <Tag>Available for execution</Tag>
+                    </div>
+                  )}
                 </div>
               </ProposalDetails>
               <div>
@@ -135,7 +139,7 @@ const Timeline = ({
                     modalOpen(Vote, {
                       proposal: {
                         address: hat.address,
-                        title: 'Hat'
+                        title: hatProposal.title
                       }
                     })
                   }
@@ -160,7 +164,7 @@ const Timeline = ({
                 <Body
                   dangerouslySetInnerHTML={{ __html: proposal.proposal_blurb }}
                 />
-                {!signaling && proposal.end_approvals !== undefined ? (
+                {!signaling && !!proposal.end_approvals ? (
                   <div>
                     <Tag>{`Executed on ${formatDate(
                       proposal.end_timestamp

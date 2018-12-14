@@ -13,6 +13,7 @@ import { AccountTypes } from '../utils/constants';
 import { modalClose } from './modal';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { MKR } from '../chain/maker';
+import { getLinkGas } from '../chain/utils';
 
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
@@ -326,7 +327,7 @@ const initialState = {
   coldAddress: '',
   sendMkrAmount: 0,
   withdrawMkrAmount: 0,
-  linkGas: 0,
+  linkGas: getLinkGas() || 0,
   proxyAddress: ''
 };
 
