@@ -8,6 +8,11 @@ export default function createMaker(network = 'mainnet') {
     plugins: [trezorPlugin, ledgerPlugin, governancePlugin],
     autoAuthenticate: true,
     log: false,
+    web3: {
+      transactionSettings: {
+        gasPrice: 5000000000
+      }
+    },
     provider: {
       url: `https://${network}.infura.io/`,
       type: 'HTTP'

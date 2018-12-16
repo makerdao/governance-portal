@@ -45,6 +45,13 @@ const WhiteBackground = styled.div`
   background-color: rgb(${colors.white});
   border-bottom: 2px solid #eaeaea;
   text-align: left;
+  @media screen and (max-width: 1199px) {
+    width: 103%;
+    left: 0px;
+    right: 0px;
+    margin-left: -16px;
+    margin-right: 0px;
+  }
 `;
 
 const StyledTop = styled.div`

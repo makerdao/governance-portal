@@ -93,8 +93,11 @@ const WelcomeBanner = ({ modalOpen }) => {
       </Content>
       <Button
         slim
-        color="grey"
-        hoverColor="grey"
+        color={'grey'}
+        hoverColor={'grey'}
+        textColor={theme.text.darker_default}
+        hoverTextColor={theme.text.darker_default}
+        activeColor={'grey'}
         onClick={() => modalOpen(ProxySetup)}
       >
         Set up now

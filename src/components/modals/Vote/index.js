@@ -166,8 +166,8 @@ class Vote extends Component {
           <Transaction
             txPurpose={
               alreadyVotingFor
-                ? 'This transaction is to withdraw your vote'
-                : 'This transaction is to cast your vote'
+                ? 'This transaction is to withdraw your vote.'
+                : 'This transaction is to cast your vote.'
             }
             txHash={this.props.voteTxHash}
             nextStep={() => this.props.modalClose()}

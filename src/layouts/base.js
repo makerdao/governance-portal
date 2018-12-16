@@ -19,7 +19,7 @@ const StyledLayout = styled.div`
   width: 100%;
   height: 100%;
   min-height: 100vh;
-  min-width: 1000px;
+  min-width: 1200px;
 `;
 const AppWrapper = styled.div`
   min-height: 400px;

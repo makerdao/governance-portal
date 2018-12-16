@@ -106,27 +106,18 @@ class AddressSelection extends Component {
           <Table>
             <thead>
               <tr>
+                <th className="radio">Select</th>
+
                 <th>#</th>
 
                 <th>Address</th>
                 <th>ETH</th>
                 <th>MKR</th>
-                <th className="radio">Select</th>
               </tr>
             </thead>
             <tbody>
               {slicedAccounts.map(({ address, eth, mkr, index }) => (
                 <tr key={address}>
-                  <td>{index}</td>
-
-                  <InlineTd title={address}>
-                    {cutMiddle(address, 7, 5)}
-                    <CopyBtn onClick={() => copyToClipboard(address)}>
-                      <CopyBtnIcon />
-                    </CopyBtn>
-                  </InlineTd>
-                  <td>{eth} ETH</td>
-                  <td>{mkr} MKR</td>
                   <td className="radio">
                     <input
                       type="radio"
@@ -136,6 +127,16 @@ class AddressSelection extends Component {
                       onChange={() => this.setState({ selectedIndex: index })}
                     />
                   </td>
+                  <td>{index + 1}</td>
+
+                  <InlineTd title={address}>
+                    {cutMiddle(address, 7, 5)}
+                    <CopyBtn onClick={() => copyToClipboard(address)}>
+                      <CopyBtnIcon />
+                    </CopyBtn>
+                  </InlineTd>
+                  <td>{eth} ETH</td>
+                  <td>{mkr} MKR</td>
                 </tr>
               ))}
             </tbody>
@@ -152,11 +153,11 @@ class AddressSelection extends Component {
           <Button
             disabled={currentPage < 1 || !paginationEnabled}
             onClick={this.handleAddressPaginationPrevious}
-            color={'light_grey2'}
-            hoverColor={'dark_grey2'}
+            color={'grey'}
+            hoverColor={'grey'}
             textColor={theme.text.darker_default}
             hoverTextColor={theme.text.darker_default}
-            activeColor={'dark_grey2'}
+            activeColor={'grey'}
             style={{ margin: '0 auto' }}
           >
             Back
@@ -164,9 +165,9 @@ class AddressSelection extends Component {
 
           <Button
             disabled={!paginationEnabled}
-            color={'light_grey2'}
-            hoverColor={'dark_grey2'}
-            activeColor={'dark_grey2'}
+            color={'grey'}
+            hoverColor={'grey'}
+            activeColor={'grey'}
             textColor={theme.text.darker_default}
             hoverTextColor={theme.text.darker_default}
             onClick={this.handleAddressPaginationNext}
