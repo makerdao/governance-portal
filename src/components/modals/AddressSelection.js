@@ -241,10 +241,7 @@ class AddressSelection extends Component {
         this.setState({
           paginationEnabled: false
         });
-        if (offset > 0) {
-          return this.loadAddresses(newPage);
-        }
-        return true;
+        return this.loadAddresses(newPage);
       })
       .then(() => {
         this.setState({
