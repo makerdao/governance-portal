@@ -12,9 +12,9 @@ import {
   Banner,
   BannerHeader,
   BannerBody,
-  BannerContent,
-  BannerButton
+  BannerContent
 } from './Banner';
+import Button from './Button';
 import Loader from './Loader';
 import { cutMiddle, firstLetterCapital, formatRound } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
@@ -91,9 +91,14 @@ const WelcomeBanner = ({ modalOpen }) => {
           </BannerContent>
         </BannerBody>
       </Content>
-      <BannerButton onClick={() => modalOpen(ProxySetup)}>
+      <Button
+        slim
+        color="grey"
+        hoverColor="grey"
+        onClick={() => modalOpen(ProxySetup)}
+      >
         Set up now
-      </BannerButton>
+      </Button>
     </Banner>
   );
 };

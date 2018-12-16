@@ -73,7 +73,7 @@ const Intro = ({ nextStep, linkCost }) => (
           <GuideInfo>
             <TooltipCard
               link="https://makerdao.com/faq/"
-              body="Redeem your MKR tokens for voting rights"
+              body="Redeem your MKR tokens for voting rights."
               title="Locking MKR"
             >
               Lock MKR
