@@ -118,8 +118,6 @@ const DropdownRow = styled.div`
   display: flex;
   cursor: pointer;
   justify-content: flex-start;
-  border-top: ${({ top }) =>
-    top ? '' : `1px solid rgba(${colors.black}, 0.15)`};
   font-weight: ${({ selected }) =>
     selected ? fonts.weight.bold : fonts.weight.normal};
   padding: 6px;
@@ -139,7 +137,6 @@ const DropdownRowForLink = styled(DropdownRow)`
 
 const ConnectLink = styled.a`
   color: black;
-  font-style: oblique;
   padding: 6px;
   display: block;
   width: 100%;

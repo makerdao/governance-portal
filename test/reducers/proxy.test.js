@@ -485,7 +485,7 @@ describe('Proxy Reducer', () => {
       await store.dispatch(reducer.breakLink());
 
       expect(breakLink).toBeCalledTimes(1);
-      expect(store.getActions().length).toBe(4);
+      expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
         type: reducer.BREAK_LINK_REQUEST
       });
@@ -496,10 +496,6 @@ describe('Proxy Reducer', () => {
       expect(store.getActions()[2]).toEqual({
         type: reducer.BREAK_LINK_SUCCESS,
         payload: ''
-      });
-      expect(store.getActions()[3]).toEqual({
-        type: FETCHING_ACCOUNT_DATA,
-        payload: true
       });
     });
 

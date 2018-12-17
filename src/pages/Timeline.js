@@ -41,9 +41,6 @@ const SubHeading = styled.p`
   opacity: ${({ disabled }) => (disabled ? 0.7 : 1)};
   flex: none;
   position: relative;
-  @media screen and (max-width: 736px) {
-    display: ${({ isAlwaysVisible }) => (isAlwaysVisible ? 'block' : 'none')};
-  }
 `;
 
 const Body = styled.p`

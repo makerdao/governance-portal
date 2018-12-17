@@ -25,7 +25,7 @@ class MKRApprove extends Component {
     if (initiated) {
       return (
         <Transaction
-          txPurpose="This transaction is to give your personal voting contract some approvals"
+          txPurpose="This transaction is to give your personal voting contract some approvals."
           confirming={confirming}
           network={network}
           txHash={txHash}

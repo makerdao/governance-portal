@@ -19,8 +19,8 @@ export const ethInit = () => async dispatch => {
         type: ETH_INFO_SUCCESS,
         payload: {
           price: ethPrice.toNumber(),
-          gasCost: weiToEther(gasPrice * 5)
-          // * 5 to compensate for getGasPrice's underestimation
+          gasCost: weiToEther(gasPrice * 3)
+          // * 3 to compensate for getGasPrice's underestimation
           // maybe we should remove this feature for now if it's going to be so unreliable
         }
       });

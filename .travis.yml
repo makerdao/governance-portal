@@ -29,7 +29,7 @@ deploy:
       webhooks:
         secure: 'lFvyMMOCuhrmUoT85Eg3Zq+FYpjWTXBo2OTlH8E9kzMWbYGKFk7FkU7N8l3jHUpXqQoWzc6N3sFHs+nYecWq5kpcZtNnBxmHKLGohXc2PxwHy0tCohMrK+RrjZYQzdLtcRQpEhpRb8RonLQFj0l4YralgatZkXxyEjTvnml+SufPiT1h4l6qJRuVspMN90KyWmm/MEF7Ra0/QuRuj7MNOCqLVYhSsLL3HNVEGrb+oAU6CsiH5kdnTWYsc8e+BuKBkfXEB926Nc/EJHnnIIklVM1LMFuvf2CFPAUGZDVnlwsebe8hEMKsuEqAa9uNv6ZaVwxki80iPl3SPZLEo7l3oBRo08yW9KRfMnHRqDXnWFryf94p/03BcT9By0F30oHqplsd6oxowmz7Js44Ra7a9ydTVySnMSS4BQTNVcAMB8oBzhCAF7Xy2Dx+2EOuIk1TnXrerFVu4PMMPrVm6u3UQhIWXx/FdFiRRgzsLrSX2bomX/aNyTzqCKYFiGLpRQljL8K/Jum7SnutJ1DrXio4w3KZGx/jAAH667acGk8tzbrK1ZYmNBmcBGgnYpVPOhxhHinngVncacXp2vEEBO5Bj6CEMy5lOsxpLoHpU5KE+W55hnC+yzlcbJP9Tjf9/TfyIlEZlxd0+5cCqqX6MjQTOCvq/Lmt4aaiNZmrsT6pPI8='
   - provider: script
-    script: now ./build --token $NOW_TOKEN -A ../now.dev.json && now alias --token $NOW_TOKEN
+    script: now ./build --token $NOW_TOKEN -A ../now.dev.json && now alias --token $NOW_TOKEN -A ./now.dev.json
     skip_cleanup: true
     on:
       branch: develop
