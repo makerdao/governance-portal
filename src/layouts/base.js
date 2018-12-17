@@ -174,10 +174,10 @@ const BaseLayout = ({
             </div>
             <Flex style={{ zIndex: '100' }}>
               <StyledLinkWrapper>
-                <StyledLink to="/" r={115}>
+                <StyledLink to="/" r={107}>
                   Executive
                 </StyledLink>
-                <StyledLink to="/polling" r={0}>
+                <StyledLink to="/polling" r={6}>
                   Polling
                 </StyledLink>
               </StyledLinkWrapper>
