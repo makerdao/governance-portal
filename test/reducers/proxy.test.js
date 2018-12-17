@@ -378,8 +378,8 @@ describe('Proxy Reducer', () => {
       expect(free).not.toBeCalled();
     });
 
-    test('Free should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', () => {
-      store.dispatch(reducer.free(mockValue));
+    test('Free should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', async () => {
+      await store.dispatch(reducer.free(mockValue));
 
       expect(free).toBeCalledTimes(1);
       expect(approvals.initApprovalsFetch).toBeCalledTimes(1);
@@ -399,10 +399,10 @@ describe('Proxy Reducer', () => {
       expect(store.getActions()[3]).toEqual(mockSuccessAction);
     });
 
-    test('Free should dispatch FAILURE action when TxMgr calls error', () => {
+    test('Free should dispatch FAILURE action when TxMgr calls error', async () => {
       defaultFunctions.service = jest.fn(mockServiceError);
 
-      store.dispatch(reducer.free(mockValue));
+      await store.dispatch(reducer.free(mockValue));
 
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
@@ -434,8 +434,8 @@ describe('Proxy Reducer', () => {
       expect(freeAll).not.toBeCalled();
     });
 
-    test('Free All should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', () => {
-      store.dispatch(reducer.freeAll(mockValue));
+    test('Free All should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', async () => {
+      await store.dispatch(reducer.freeAll(mockValue));
 
       expect(freeAll).toBeCalledTimes(1);
       expect(approvals.initApprovalsFetch).toBeCalledTimes(1);
@@ -455,10 +455,10 @@ describe('Proxy Reducer', () => {
       expect(store.getActions()[3]).toEqual(mockSuccessAction);
     });
 
-    test('Free All should dispatch FAILURE action when TxMgr calls error', () => {
+    test('Free All should dispatch FAILURE action when TxMgr calls error', async () => {
       defaultFunctions.service = jest.fn(mockServiceError);
 
-      store.dispatch(reducer.freeAll(mockValue));
+      await store.dispatch(reducer.freeAll(mockValue));
 
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
@@ -504,10 +504,10 @@ describe('Proxy Reducer', () => {
       });
     });
 
-    test('Break Link should dispatch FAILURE action when TxMgr calls error', () => {
+    test('Break Link should dispatch FAILURE action when TxMgr calls error', async () => {
       defaultFunctions.service = jest.fn(mockServiceError);
 
-      store.dispatch(reducer.breakLink());
+      await store.dispatch(reducer.breakLink());
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({
         type: reducer.BREAK_LINK_REQUEST
@@ -544,8 +544,8 @@ describe('Proxy Reducer', () => {
     afterAll(() => {
       defaultFunctions.service = jest.fn(mockService);
     });
-    test('mkrApproveProxy should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', () => {
-      store.dispatch(reducer.mkrApproveProxy());
+    test('mkrApproveProxy should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', async () => {
+      await store.dispatch(reducer.mkrApproveProxy());
 
       expect(store.getActions().length).toBe(4);
       expect(store.getActions()[1]).toEqual({
@@ -561,10 +561,10 @@ describe('Proxy Reducer', () => {
       });
     });
 
-    test('mkrApproveProxy should dispatch FAILURE action when TxMgr calls error', () => {
+    test('mkrApproveProxy should dispatch FAILURE action when TxMgr calls error', async () => {
       defaultFunctions.service = jest.fn(mockServiceError);
 
-      store.dispatch(reducer.mkrApproveProxy());
+      await store.dispatch(reducer.mkrApproveProxy());
       expect(store.getActions().length).toBe(4);
       expect(store.getActions()[1]).toEqual({
         type: reducer.MKR_APPROVE_REQUEST
