@@ -8,7 +8,7 @@ import { ThemeProvider } from 'styled-components';
 import createStore from './store';
 import Router from './Routes';
 import createMaker from './chain/maker';
-import { init } from './reducers/metamask';
+import { init, wrongNetwork } from './reducers/metamask';
 import { netIdToName } from './utils/ethereum';
 
 import './global.css.js';
@@ -31,10 +31,14 @@ const currTheme = {
 
 const store = createStore();
 if (window.web3) {
-  window.web3.version.getNetwork(async (err, netId) => {
-    const network = netIdToName(netId);
-    const maker = (window.maker = createMaker(network));
-    maker.authenticate().then(async () => store.dispatch(init(network)));
+  window.web3.version.getNetwork(async (err, _netId) => {
+    const netId = parseInt(_netId, 10);
+    if (netId !== 1 && netId !== 42) store.dispatch(wrongNetwork());
+    else {
+      const network = netIdToName(netId);
+      const maker = (window.maker = createMaker(network));
+      maker.authenticate().then(async () => store.dispatch(init(network)));
+    }
   });
 } else {
   // In order to still show read-only data, we will have to re-run Maker.create with an Infura preset.
