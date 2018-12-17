@@ -25,6 +25,7 @@ const coldAddress = '0xf00bae';
 const testPendingHash = 'testPendingHash';
 const testMinedHash = 'testMinedHash';
 const testErrorMessage = 'testErrorMessage';
+const mockProxyTx = { proxyAddress: '0xt3St' };
 
 const initialState = {
   accounts: {
@@ -53,7 +54,7 @@ const initialState = {
 
 // Mock service methods
 const initLink = jest.fn();
-const approveLink = jest.fn();
+const approveLink = jest.fn(() => Promise.resolve(mockProxyTx));
 const lock = jest.fn();
 const free = jest.fn();
 const freeAll = jest.fn();
@@ -245,7 +246,7 @@ describe('Proxy Reducer', () => {
       defaultFunctions.service = jest.fn(mockService);
     });
 
-    test('approveLink should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', () => {
+    test('approveLink should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', async () => {
       const mockAccounts = {
         hotAccount: {
           type: AccountTypes.METAMASK,
@@ -254,9 +255,9 @@ describe('Proxy Reducer', () => {
         }
       };
 
-      store.dispatch(reducer.approveLink(mockAccounts));
+      await store.dispatch(reducer.approveLink(mockAccounts));
       expect(approveLink).toBeCalledTimes(1);
-      expect(store.getActions().length).toBe(4);
+      expect(store.getActions().length).toBe(5);
       expect(store.getActions()[1]).toEqual({
         type: reducer.APPROVE_LINK_REQUEST
       });
@@ -272,6 +273,10 @@ describe('Proxy Reducer', () => {
           coldAddress: expect.any(String),
           hotAddress: expect.any(String)
         }
+      });
+      expect(store.getActions()[4]).toEqual({
+        type: reducer.STORE_PROXY_ADDRESS,
+        payload: mockProxyTx.proxyAddress
       });
     });
 
