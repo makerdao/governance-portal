@@ -12,9 +12,9 @@ import {
   Banner,
   BannerHeader,
   BannerBody,
-  BannerContent,
-  BannerButton
+  BannerContent
 } from './Banner';
+import Button from './Button';
 import Loader from './Loader';
 import { cutMiddle, firstLetterCapital, formatRound } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
@@ -91,9 +91,17 @@ const WelcomeBanner = ({ modalOpen }) => {
           </BannerContent>
         </BannerBody>
       </Content>
-      <BannerButton onClick={() => modalOpen(ProxySetup)}>
+      <Button
+        slim
+        color={'grey'}
+        hoverColor={'grey'}
+        textColor={theme.text.darker_default}
+        hoverTextColor={theme.text.darker_default}
+        activeColor={'grey'}
+        onClick={() => modalOpen(ProxySetup)}
+      >
         Set up now
-      </BannerButton>
+      </Button>
     </Banner>
   );
 };
@@ -102,7 +110,7 @@ const Padding = styled.div`
   margin-top: 20px;
 `;
 
-const VoterStatus = ({ account, network, modalOpen, fetching }) => {
+const VoterStatus = ({ account, network, modalOpen, fetching, signaling }) => {
   if (fetching) {
     return (
       <Padding>
@@ -125,10 +133,9 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
         <Strong>{isColdWallet ? 'Cold wallet:' : 'Hot wallet:'}</Strong> In
         voting contract{' '}
         <Black>{formatRound(account.proxy.votingPower, 4)} MKR</Black>{' '}
-        {account.proxyRole === 'cold' &&
-          Number(account.mkrBalance) > 0 && (
-            <TextButton onClick={() => modalOpen(Lock)}>Top-up</TextButton>
-          )}
+        {account.proxyRole === 'cold' && Number(account.mkrBalance) > 0 && (
+          <TextButton onClick={() => modalOpen(Lock)}>Top-up</TextButton>
+        )}
         {account.proxyRole === 'cold' &&
           Number(account.proxy.votingPower) > 0 && <span> | </span>}
         {Number(account.proxy.votingPower) > 0 && (
@@ -153,13 +160,19 @@ const VoterStatus = ({ account, network, modalOpen, fetching }) => {
         <br />
         {account.votingFor && account.proxy.votingPower > 0 ? (
           <Fragment>
-            Currently voting for{' '}
-            <WithVote proposalAddress={account.votingFor}>
-              {({ proposalTitle, proposalSlug, noVote }) => (
-                <StyledLink disabled={noVote} to={proposalSlug}>
-                  {proposalTitle}
-                </StyledLink>
-              )}
+            <WithVote proposalAddress={account.votingFor} signaling={signaling}>
+              {({ proposalTitle, proposalSlug, noVote }) =>
+                noVote ? (
+                  'Currently not voting'
+                ) : (
+                  <Fragment>
+                    Currently voting for{' '}
+                    <StyledLink disabled={noVote} to={proposalSlug}>
+                      {proposalTitle}
+                    </StyledLink>
+                  </Fragment>
+                )
+              }
             </WithVote>
           </Fragment>
         ) : (

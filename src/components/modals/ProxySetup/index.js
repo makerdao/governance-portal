@@ -99,7 +99,7 @@ class ProxySetup extends Component {
       case 'initiate':
         return (
           <Transaction
-            txPurpose="This transaction is to initiate the link between your wallets. No funds are being moved"
+            txPurpose="This transaction is to initiate the link between your wallets. No funds are being moved."
             confirming={confirming}
             network={network}
             txHash={initiateLinkTxHash}
@@ -120,7 +120,7 @@ class ProxySetup extends Component {
       case 'approve':
         return (
           <Transaction
-            txPurpose="This transaction is to confirm the link between your wallets. No funds are being moved"
+            txPurpose="This transaction is to confirm the link between your wallets. No funds are being moved."
             confirming={confirming}
             network={network}
             txHash={approveLinkTxHash}
@@ -133,7 +133,7 @@ class ProxySetup extends Component {
       case 'lock':
         return (
           <Transaction
-            txPurpose="This transaction is to lock your MKR. Your funds are safe. You can withdrawn them at anytime"
+            txPurpose="This transaction is to lock your MKR. Your funds are safe. You can withdraw them at anytime."
             confirming={confirming}
             network={network}
             txHash={sendMkrTxHash}
@@ -206,7 +206,6 @@ const stateProps = state => {
       linkGas
     }
   } = state;
-
   let props = {
     modal: modal.modal,
     accounts: accounts.allAccounts,

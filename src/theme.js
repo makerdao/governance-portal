@@ -2,6 +2,7 @@ export const colors = {
   white: '255, 255, 255',
   green: '48, 189, 159',
   header: '14, 16, 41',
+  grey: '128, 128, 128',
   background: '246, 248, 249',
   light_grey: '234, 239, 247',
   box_dark: '5, 60, 75',
@@ -10,7 +11,9 @@ export const colors = {
   dark_green: '43, 169, 142',
   darker_green: '38,148,125',
   dark: '12, 12, 13',
-  black: '0, 0, 0'
+  black: '0, 0, 0',
+  light_grey2: '226, 233, 236', // <-- same as theme.generic.light_grey
+  dark_grey2: '203, 209, 213' // <-- same as theme.generic.dark_grey
 };
 
 export const fonts = {

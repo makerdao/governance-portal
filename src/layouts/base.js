@@ -19,7 +19,7 @@ const StyledLayout = styled.div`
   width: 100%;
   height: 100%;
   min-height: 100vh;
-  min-width: 1000px;
+  min-width: 1200px;
 `;
 const AppWrapper = styled.div`
   min-height: 400px;
@@ -218,12 +218,12 @@ BaseLayout.propTypes = {
   children: PropTypes.node.isRequired
 };
 
-const reduxProps = ({ metamask, proposals, accounts }) => ({
+const reduxProps = ({ metamask, proposals, accounts, hat }) => ({
   metamaskFetching: metamask.fetching,
   wrongNetwork: metamask.wrongNetwork,
   network: metamask.network,
   accountsFetching: accounts.fetching,
-  proposalsAvailable: proposals.length > 0
+  proposalsAvailable: proposals.length > 0 && !hat.fetching
 });
 
 export default withRouter(

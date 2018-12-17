@@ -5,7 +5,14 @@ import differenceWith from 'ramda/src/differenceWith';
 
 import { createReducer } from '../utils/redux';
 import { AccountTypes } from '../utils/constants';
-import { add, eq, subtract, toNum, promisedProperties } from '../utils/misc';
+import {
+  add,
+  eq,
+  subtract,
+  toNum,
+  promiseRetry,
+  promisedProperties
+} from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
@@ -75,7 +82,9 @@ export const addAccounts = accounts => async dispatch => {
         // assuming that they're only voting for one in the frontend. This
         // should be changed if that changes
         (async () => {
-          const addresses = await voteProxy.getVotedProposalAddresses();
+          const addresses = await promiseRetry({
+            fn: () => voteProxy.getVotedProposalAddresses()
+          });
           return addresses[0] || '';
         })()
       );
@@ -85,7 +94,9 @@ export const addAccounts = accounts => async dispatch => {
     const _payload = {
       ...account,
       address: account.address,
-      mkrBalance: toNum(mkrToken.balanceOf(account.address)),
+      mkrBalance: toNum(
+        promiseRetry({ fn: () => mkrToken.balanceOf(account.address) })
+      ),
       hasProxy,
       proxyRole: proxyRole,
       votingFor: currProposal,
@@ -110,7 +121,9 @@ export const addAccounts = accounts => async dispatch => {
         return {
           address: linkedAddress,
           proxyRole: otherRole,
-          mkrBalance: await toNum(mkrToken.balanceOf(linkedAddress))
+          mkrBalance: await toNum(
+            promiseRetry({ fn: () => mkrToken.balanceOf(linkedAddress) })
+          )
         };
       } else return {};
     };
@@ -122,7 +135,7 @@ export const addAccounts = accounts => async dispatch => {
       payload.proxy.linkedAccount = linkedAccount;
       dispatch({ type: ADD_ACCOUNT, payload });
     } catch (e) {
-      console.log('failed to add account', e);
+      console.err('failed to add account', e);
     }
   }
 
@@ -143,8 +156,6 @@ export const updateAccount = account => ({
   payload: account
 });
 
-// This is called when an account is selected in the account box dropdown, or
-// when Metamask is switched to a different account
 export const setActiveAccount = (address, isMetamask) => async (
   dispatch,
   getState
@@ -157,11 +168,23 @@ export const setActiveAccount = (address, isMetamask) => async (
       a => a.address.toLowerCase() === address.toLowerCase()
     )
   ) {
-    await window.maker.addAccount({ type: AccountTypes.METAMASK });
-    await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
+    try {
+      await window.maker.service('accounts').addAccount(address, {
+        type: AccountTypes.METAMASK
+      });
+      await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
+    } catch (error) {
+      // This error occurs when user rejects provider access in MetaMask
+      console.error('Error adding account', error);
+      return dispatch({ type: NO_METAMASK_ACCOUNTS });
+    }
   }
-  window.maker.useAccountWithAddress(address);
-  return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
+  try {
+    window.maker.useAccountWithAddress(address);
+    return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
+  } catch (err) {
+    return dispatch({ type: NO_METAMASK_ACCOUNTS });
+  }
 };
 
 export function setInfMkrApproval() {

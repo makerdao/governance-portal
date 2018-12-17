@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import { mkrApproveProxy, goToStep, smartStepSkip } from '../../reducers/proxy';
-import { getActiveAccount } from '../../reducers/accounts';
 import Transaction from './shared/Transaction';
 import {
   StyledTitle,
@@ -20,17 +19,17 @@ class MKRApprove extends Component {
       mkrApproveInitiated: initiated,
       confirmingMkrApproveProxy: confirming,
       network,
-      activeAccount,
+      account,
       mkrApproveProxyTxHash: txHash
     } = this.props;
     if (initiated) {
       return (
         <Transaction
-          txPurpose="This transaction is to give your personal voting contract some approvals"
+          txPurpose="This transaction is to give your personal voting contract some approvals."
           confirming={confirming}
           network={network}
           txHash={txHash}
-          account={activeAccount}
+          account={account}
           nextStep={() => this.props.setInfMkrApproval()}
         />
       );
@@ -73,7 +72,6 @@ class MKRApprove extends Component {
 
 export default connect(
   ({ proxy, metamask, accounts }) => ({
-    activeAccount: getActiveAccount({ accounts }),
     network: metamask.network,
     mkrApproveProxyTxHash: proxy.mkrApproveProxyTxHash,
     confirmingMkrApproveProxy: proxy.confirmingMkrApproveProxy,
