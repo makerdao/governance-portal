@@ -177,8 +177,8 @@ const BaseLayout = ({
                 <StyledLink to="/" r={115}>
                   Executive
                 </StyledLink>
-                <StyledLink to="/signaling" r={0}>
-                  Signaling
+                <StyledLink to="/polling" r={0}>
+                  Polling
                 </StyledLink>
               </StyledLinkWrapper>
               <DimHeaderElement
