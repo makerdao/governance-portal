@@ -4,13 +4,13 @@ import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 import Maker, { ETH, MKR } from '@makerdao/dai';
 
 export default async function createMaker(network = 'mainnet') {
-  let gasPrice = 5 * 10 ** 9; // default to 5 Gwei gas price
+  let gasPrice = 6 * 10 ** 9; // default to 6 Gwei gas price
   try {
     // check ethgasstation for gas price info
     const res = await fetch('https://ethgasstation.info/json/ethgasAPI.json');
     const gasData = await res.json();
     gasPrice = gasData.average * 10 ** 8;
-    gasPrice = gasPrice + 2 * 10 ** 9; // 2 Gwei buffer
+    gasPrice = gasPrice + 3 * 10 ** 9; // 3 Gwei buffer
   } catch (err) {
     console.error(
       `Gas price fetch failed. Defaulting to ${gasPrice / 10 ** 9} Gwei.`

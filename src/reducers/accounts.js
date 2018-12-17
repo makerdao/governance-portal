@@ -5,7 +5,14 @@ import differenceWith from 'ramda/src/differenceWith';
 
 import { createReducer } from '../utils/redux';
 import { AccountTypes } from '../utils/constants';
-import { add, eq, subtract, toNum, promisedProperties } from '../utils/misc';
+import {
+  add,
+  eq,
+  subtract,
+  toNum,
+  promiseRetry,
+  promisedProperties
+} from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
@@ -75,7 +82,9 @@ export const addAccounts = accounts => async dispatch => {
         // assuming that they're only voting for one in the frontend. This
         // should be changed if that changes
         (async () => {
-          const addresses = await voteProxy.getVotedProposalAddresses();
+          const addresses = await promiseRetry({
+            fn: () => voteProxy.getVotedProposalAddresses()
+          });
           return addresses[0] || '';
         })()
       );
@@ -85,7 +94,9 @@ export const addAccounts = accounts => async dispatch => {
     const _payload = {
       ...account,
       address: account.address,
-      mkrBalance: toNum(mkrToken.balanceOf(account.address)),
+      mkrBalance: toNum(
+        promiseRetry({ fn: () => mkrToken.balanceOf(account.address) })
+      ),
       hasProxy,
       proxyRole: proxyRole,
       votingFor: currProposal,
@@ -110,7 +121,9 @@ export const addAccounts = accounts => async dispatch => {
         return {
           address: linkedAddress,
           proxyRole: otherRole,
-          mkrBalance: await toNum(mkrToken.balanceOf(linkedAddress))
+          mkrBalance: await toNum(
+            promiseRetry({ fn: () => mkrToken.balanceOf(linkedAddress) })
+          )
         };
       } else return {};
     };
@@ -122,7 +135,7 @@ export const addAccounts = accounts => async dispatch => {
       payload.proxy.linkedAccount = linkedAccount;
       dispatch({ type: ADD_ACCOUNT, payload });
     } catch (e) {
-      console.log('failed to add account', e);
+      console.err('failed to add account', e);
     }
   }
 

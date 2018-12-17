@@ -256,7 +256,7 @@ export const breakLink = () => dispatch => {
     dispatch,
     txObject: breakLink,
     acctType: account.type,
-    successAction: () => setTimeout(() => window.location.reload(true), 1500)
+    successAction: () => setTimeout(() => window.location.reload(true), 2000)
   });
 };
 
