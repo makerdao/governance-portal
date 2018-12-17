@@ -77,7 +77,7 @@ describe('Tally Reducer', () => {
       const promiseRetry = jest.fn(() => Promise.resolve(fakeTally));
       utils.promiseRetry = promiseRetry;
 
-      await reducer.voteTallyInit()(store.dispatch);
+      await store.dispatch(reducer.voteTallyInit());
 
       expect(promiseRetry).toBeCalledTimes(1);
       expect(promiseRetry).toBeCalledWith(
