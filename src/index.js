@@ -30,20 +30,25 @@ const currTheme = {
 };
 
 const store = createStore();
+
 if (window.web3) {
   window.web3.version.getNetwork(async (err, _netId) => {
     const netId = parseInt(_netId, 10);
     if (netId !== 1 && netId !== 42) store.dispatch(wrongNetwork());
     else {
       const network = netIdToName(netId);
-      const maker = (window.maker = createMaker(network));
-      maker.authenticate().then(async () => store.dispatch(init(network)));
+      const maker = (window.maker = await createMaker(network));
+      await maker.authenticate();
+      store.dispatch(init(network));
     }
   });
 } else {
   // In order to still show read-only data, we will have to re-run Maker.create with an Infura preset.
-  const maker = (window.maker = createMaker());
-  maker.authenticate().then(async () => store.dispatch(init()));
+  (async () => {
+    const maker = (window.maker = await createMaker());
+    await maker.authenticate();
+    store.dispatch(init());
+  })();
 }
 
 function render() {
