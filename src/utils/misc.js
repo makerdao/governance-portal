@@ -216,5 +216,5 @@ export const toBN = val => val.toBigNumber();
 
 export const toNum = async promise => {
   const val = await promise;
-  return val.toNumber();
+  return val.toBigNumber().toFixed();
 };
