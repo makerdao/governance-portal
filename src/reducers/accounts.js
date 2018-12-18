@@ -135,7 +135,7 @@ export const addAccounts = accounts => async dispatch => {
       payload.proxy.linkedAccount = linkedAccount;
       dispatch({ type: ADD_ACCOUNT, payload });
     } catch (e) {
-      console.err('failed to add account', e);
+      console.error('failed to add account', e);
     }
   }
 
