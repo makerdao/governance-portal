@@ -3,7 +3,10 @@ import trezorPlugin from '@makerdao/dai-plugin-trezor-web';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 import Maker, { ETH, MKR } from '@makerdao/dai';
 
-export default async function createMaker(network = 'mainnet') {
+export default async function createMaker(
+  network = 'mainnet',
+  testchainId = 1
+) {
   let gasPrice = 6 * 10 ** 9; // default to 6 Gwei gas price
   try {
     // check ethgasstation for gas price info
@@ -18,6 +21,7 @@ export default async function createMaker(network = 'mainnet') {
   }
 
   return Maker.create('http', {
+    testchainId,
     plugins: [trezorPlugin, ledgerPlugin, governancePlugin],
     autoAuthenticate: true,
     log: false,

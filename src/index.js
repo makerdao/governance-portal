@@ -42,7 +42,7 @@ if (window.web3) {
     if (netId !== 1 && netId !== 42) store.dispatch(wrongNetwork());
     else {
       const network = netIdToName(netId);
-      const maker = (window.maker = await createMaker(network));
+      const maker = (window.maker = await createMaker(network, testchainId));
       await maker.authenticate();
       store.dispatch(init(network));
     }
