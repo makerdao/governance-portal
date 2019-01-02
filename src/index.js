@@ -11,7 +11,7 @@ import createMaker from './chain/maker';
 import { init, wrongNetwork } from './reducers/metamask';
 import { netIdToName } from './utils/ethereum';
 
-import './global.css.js';
+import GlobalStyle from './global.css.js';
 import theme from './theme';
 import { themeDark, themeLight } from '@makerdao/ui-components';
 import '@makerdao/ui-components/dist/styles/global.css';
@@ -54,9 +54,12 @@ if (window.web3) {
 function render() {
   ReactDOM.render(
     <ThemeProvider theme={currTheme}>
-      <Provider store={store}>
-        <Router />
-      </Provider>
+      <React.Fragment>
+        <Provider store={store}>
+          <Router />
+        </Provider>
+        <GlobalStyle />
+      </React.Fragment>
     </ThemeProvider>,
     document.getElementById('root')
   );

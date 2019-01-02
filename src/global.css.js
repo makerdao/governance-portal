@@ -1,7 +1,7 @@
-import { injectGlobal } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 import { fonts, colors } from './theme';
 
-const globalStyles = `
+const GlobalStyle = createGlobalStyle`
   * {
     border: 0;
     box-sizing: inherit;
@@ -283,6 +283,6 @@ const globalStyles = `
     margin-bottom: 5px;
     color: #231536;
   }
-  `;
+`;
 
-injectGlobal`${globalStyles}`;
+export default GlobalStyle;
