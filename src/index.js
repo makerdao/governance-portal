@@ -11,7 +11,7 @@ import createMaker from './chain/maker';
 import { init, wrongNetwork } from './reducers/metamask';
 import { netIdToName } from './utils/ethereum';
 
-import GlobalStyle from './global.css.js';
+import GlobalStyle from './global-styles';
 import theme from './theme';
 import { themeDark, themeLight } from '@makerdao/ui-components';
 import '@makerdao/ui-components/dist/styles/global.css';
