@@ -21,7 +21,7 @@
     "linebreak-style": ["error", "unix"],
     "semi": ["error", "always"],
     "quotes": ["error", "single", { "avoidEscape": true }],
-    "react/prop-types": 0,
-    "react/display-name": 0
+    "react/prop-types": "off",
+    "react/display-name": "off"
   }
 }
