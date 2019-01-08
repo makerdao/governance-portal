@@ -16,14 +16,17 @@ export const initApprovalsFetch = () => (dispatch, getState) => {
   if (!proposals || proposals.length === 0)
     throw new Error('cannot get approvals before we have the topics');
   dispatch({ type: APPROVALS_REQUEST });
+  console.log('proposals containing source var', proposals);
   Promise.all(
-    proposals.map(({ source }) =>
-      toNum(window.maker.service('chief').getApprovalCount(source)).then(
-        approvals => ({
-          [source]: approvals
-        })
-      )
-    )
+    proposals.map(({ source }) => {
+      console.log('source used in getApprovalCount', source);
+      const num = toNum(
+        window.maker.service('chief').getApprovalCount(source)
+      ).then(approvals => ({
+        [source]: approvals
+      }));
+      return num;
+    })
   )
     .then(approvals => {
       let total = 0;

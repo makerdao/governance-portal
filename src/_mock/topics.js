@@ -15,7 +15,7 @@ export default [
         end_timestamp: 1537027200000,
         date: '2018-09-12T00:00:00.000Z',
         source:
-          '{"mainnet":"0x305505C8C9D51602f3Ebe0CE984aB2AEb0df3172","kovan":"0x0c0fC0952790A96D60CD82cA865C7bb1233477C3"}',
+          '{"mainnet":"0x305505C8C9D51602f3Ebe0CE984aB2AEb0df3172","kovan":"0x0c0fC0952790A96D60CD82cA865C7bb1233477C3","ganache":"0x0c0fC0952790A96D60CD82cA865C7bb1233477C3"}',
         proposal_blurb:
           'Voting for this proposal means voting YES to the five core principles of the Maker Governance philosophy as <a target="_blank" rel="noopener noreferrer" href="https://medium.com/makerdao/foundation-proposal-v2-f10d8ee5fe8c"> updated on Medium</a> on August 21, 2018',
         title:
@@ -34,7 +34,7 @@ export default [
         end_timestamp: 1537027200000,
         date: '2018-09-12T00:00:00.000Z',
         source:
-          '{"mainnet":"0xA9eB03F3a499E274170c378f958E4A0cBea2c7ef","kovan":"0x66fF2801fDfEa24db2873abf977cA32226c175BD"}',
+          '{"mainnet":"0xA9eB03F3a499E274170c378f958E4A0cBea2c7ef","kovan":"0x66fF2801fDfEa24db2873abf977cA32226c175BD","ganache":"0x0c0fC0952790A96D60CD82cA865C7bb1233477C3"}',
         proposal_blurb:
           'Voting for this proposal means voting NO to the five core principles of the Maker Governance philosophy as <a target="_blank" rel="noopener noreferrer" href="https://medium.com/makerdao/foundation-proposal-v2-f10d8ee5fe8c"> updated on Medium</a> on August 21, 2018',
         title:
@@ -70,7 +70,7 @@ export default [
         date: '2018-12-12T00:00:00.000Z',
         end_approvals: 72402.7,
         source:
-          '{"mainnet":"0x6091295974c12c4305b8bf6d2062bf48f37a3b36","kovan":"0x0c0fC0952790A96D60CD82cA865C7bb1233477C3"}',
+          '{"mainnet":"0x6091295974c12c4305b8bf6d2062bf48f37a3b36","kovan":"0x0c0fC0952790A96D60CD82cA865C7bb1233477C3","ganache":"0x0c0fC0952790A96D60CD82cA865C7bb1233477C3"}',
         end_timestamp: 1535606394000,
         proposal_blurb:
           'Vote for this proposal to approve an increase in the governance fee to 2.5% per year',

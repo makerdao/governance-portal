@@ -30,16 +30,20 @@ const currTheme = {
 };
 
 const params = new URL(window.location).searchParams;
-const testchainId = params.get('testchain_id');
+let testchainId = params.get('testchain_id');
 console.log(window.location.search);
-console.log('testchainId', testchainId);
+console.log('testchainId from param', testchainId);
 
 const store = createStore();
 
 if (window.web3) {
   window.web3.version.getNetwork(async (err, _netId) => {
+    if (!testchainId) testchainId = _netId;
     const netId = parseInt(_netId, 10);
-    if (netId !== 1 && netId !== 42) store.dispatch(wrongNetwork());
+    // if (netId !== 1 && netId !== 42 && netId !== 999)
+    console.log(testchainId, netId);
+    if (testchainId && parseInt(testchainId, 10) !== netId)
+      store.dispatch(wrongNetwork());
     else {
       const network = netIdToName(netId);
       const maker = (window.maker = await createMaker(network, testchainId));
