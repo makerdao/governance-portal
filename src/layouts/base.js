@@ -6,13 +6,15 @@ import { NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import { Header, Footer } from '@makerdao/ui-components';
 import { colors, fonts } from '../theme';
-import { firstLetterCapital } from '../utils/misc';
+import { onboardingOpen, OnboardingStates } from '../reducers/onboarding';
 import { modalOpen } from '../reducers/modal';
 import Modals from '../components/modals';
-import SecureVoting from '../components/modals/SecureVoting';
+import Onboarding from '../components/Onboarding';
 import Loader from '../components/Loader';
 import AccountBox from '../components/AccountBox';
 import Toasts from '../components/Toasts';
+import NetworkIndicator from '../components/NetworkIndicator';
+import SecureVoting from '../components/modals/SecureVoting';
 
 const StyledLayout = styled.div`
   position: relative;
@@ -21,6 +23,7 @@ const StyledLayout = styled.div`
   min-height: 100vh;
   min-width: 1200px;
 `;
+
 const AppWrapper = styled.div`
   min-height: 400px;
   padding: 0px 16px;
@@ -120,24 +123,16 @@ const NoContent = styled.div`
   font-style: oblique;
 `;
 
-const Circle = styled.div`
-  height: 10px;
-  width: 10px;
-  background-color: ${({ network }) =>
-    network === 'kovan' ? '#9055AF' : '#30bd9f'};
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 4px;
-`;
-
 const BaseLayout = ({
   children,
   network,
+  onboardingOpen,
   modalOpen,
   metamaskFetching,
   proposalsAvailable,
   accountsFetching,
-  wrongNetwork
+  wrongNetwork,
+  onboardingState
 }) => {
   const childrenShouldMount =
     !metamaskFetching && proposalsAvailable && !wrongNetwork;
@@ -164,15 +159,10 @@ const BaseLayout = ({
                 Governance
               </NavLink>
               <NetworkNotification style={{ marginLeft: '16px' }}>
-                {childrenShouldMount && (
-                  <React.Fragment>
-                    <Circle network={network} />
-                    {firstLetterCapital(network)}
-                  </React.Fragment>
-                )}
+                {childrenShouldMount && <NetworkIndicator network={network} />}
               </NetworkNotification>
             </div>
-            <Flex style={{ zIndex: '100' }}>
+            <Flex>
               <StyledLinkWrapper>
                 <StyledLink to="/" r={107}>
                   Executive
@@ -183,7 +173,16 @@ const BaseLayout = ({
               </StyledLinkWrapper>
               <DimHeaderElement
                 onClick={() => {
-                  if (!accountsFetching) modalOpen(SecureVoting);
+                  if (
+                    !accountsFetching &&
+                    onboardingState !== OnboardingStates.FINISHED
+                  )
+                    onboardingOpen();
+                  if (
+                    !accountsFetching &&
+                    onboardingState === OnboardingStates.FINISHED
+                  )
+                    modalOpen(SecureVoting);
                 }}
                 mr={50}
                 ml={50}
@@ -210,6 +209,7 @@ const BaseLayout = ({
       <Modals />
       <Toasts />
       <Footer />
+      <Onboarding />
     </StyledLayout>
   );
 };
@@ -218,17 +218,18 @@ BaseLayout.propTypes = {
   children: PropTypes.node.isRequired
 };
 
-const reduxProps = ({ metamask, proposals, accounts, hat }) => ({
+const reduxProps = ({ metamask, proposals, accounts, hat, onboarding }) => ({
   metamaskFetching: metamask.fetching,
   wrongNetwork: metamask.wrongNetwork,
   network: metamask.network,
   accountsFetching: accounts.fetching,
-  proposalsAvailable: proposals.length > 0 && !hat.fetching
+  proposalsAvailable: proposals.length > 0 && !hat.fetching,
+  onboardingState: onboarding.state
 });
 
 export default withRouter(
   connect(
     reduxProps,
-    { modalOpen }
+    { onboardingOpen, modalOpen }
   )(BaseLayout)
 );

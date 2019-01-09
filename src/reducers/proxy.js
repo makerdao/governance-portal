@@ -2,28 +2,21 @@ import ReactGA from 'react-ga';
 
 import { createReducer } from '../utils/redux';
 import { parseError } from '../utils/misc';
-import {
-  getActiveAccount,
-  getAccount,
-  addAccounts,
-  setActiveAccount
-} from './accounts';
+import { getAccount, addAccounts, SET_ACTIVE_ACCOUNT } from './accounts';
 import { initApprovalsFetch } from './approvals';
-import { AccountTypes } from '../utils/constants';
-import { modalClose } from './modal';
+import { AccountTypes, TransactionStatus } from '../utils/constants';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { MKR } from '../chain/maker';
-import { getLinkGas } from '../chain/utils';
 
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
-  WITHDRAW_ALL_MKR_SUCCESS,
-  INITIATE_LINK_REQUEST
+  MKR_APPROVE_SUCCESS
 } from './sharedProxyConstants';
 
 // Constants ----------------------------------------------
 
+export const INITIATE_LINK_REQUEST = 'proxy/INITIATE_LINK_REQUEST';
 export const INITIATE_LINK_SENT = 'proxy/INITIATE_LINK_SENT';
 export const INITIATE_LINK_SUCCESS = 'proxy/INITIATE_LINK_SUCCESS';
 export const INITIATE_LINK_FAILURE = 'proxy/INITIATE_LINK_FAILURE';
@@ -33,48 +26,33 @@ export const APPROVE_LINK_SENT = 'proxy/APPROVE_LINK_SENT';
 export const APPROVE_LINK_SUCCESS = 'proxy/APPROVE_LINK_SUCCESS';
 export const APPROVE_LINK_FAILURE = 'proxy/APPROVE_LINK_FAILURE';
 
-export const STORE_PROXY_ADDRESS = 'proxy/STORE_PROXY_ADDRESS';
-
 export const SEND_MKR_TO_PROXY_REQUEST = 'proxy/SEND_MKR_TO_PROXY_REQUEST';
 export const SEND_MKR_TO_PROXY_SENT = 'proxy/SEND_MKR_TO_PROXY_SENT';
-
 export const SEND_MKR_TO_PROXY_FAILURE = 'proxy/SEND_MKR_TO_PROXY_FAILURE';
+
+export const MKR_APPROVE_REQUEST = 'proxy/MKR_APPROVE_REQUEST';
+export const MKR_APPROVE_STATUS_UPDATE = 'proxy/MKR_APPROVE_STATUS_UPDATE';
+export const MKR_APPROVE_SENT = 'proxy/MKR_APPROVE_SENT';
+
+export const MKR_APPROVE_FAILURE = 'proxy/MKR_APPROVE_FAILURE';
 
 export const WITHDRAW_MKR_REQUEST = 'proxy/WITHDRAW_MKR_REQUEST';
 export const WITHDRAW_MKR_SENT = 'proxy/WITHDRAW_MKR_SENT';
 
 export const WITHDRAW_MKR_FAILURE = 'proxy/WITHDRAW_MKR_FAILURE';
 
-export const WITHDRAW_ALL_MKR_REQUEST = 'proxy/WITHDRAW_ALL_MKR_REQUEST';
-export const WITHDRAW_ALL_MKR_SENT = 'proxy/WITHDRAW_ALL_MKR_SENT';
-
-export const WITHDRAW_ALL_MKR_FAILURE = 'proxy/WITHDRAW_ALL_MKR_FAILURE';
-
 export const BREAK_LINK_REQUEST = 'proxy/BREAK_LINK_REQUEST';
 export const BREAK_LINK_SENT = 'proxy/BREAK_LINK_SENT';
 export const BREAK_LINK_SUCCESS = 'proxy/BREAK_LINK_SUCCESS';
 export const BREAK_LINK_FAILURE = 'proxy/BREAK_LINK_FAILURE';
 
-export const MKR_APPROVE_REQUEST = 'proxy/MKR_APPROVE_REQUEST';
-export const MKR_APPROVE_SENT = 'proxy/MKR_APPROVE_SENT';
-export const MKR_APPROVE_SUCCESS = 'proxy/MKR_APPROVE_SUCCESS';
-export const MKR_APPROVE_FAILURE = 'proxy/MKR_APPROVE_FAILURE';
-
-export const CLEAR = 'proxy/CLEAR';
-export const GO_TO_STEP = 'proxy/GO_TO_STEP';
-
 // Actions ------------------------------------------------
-
-export const clear = () => ({ type: CLEAR });
-
-export const goToStep = step => ({ type: GO_TO_STEP, payload: step });
 
 const handleTx = ({
   prefix,
   dispatch,
   txObject,
   successPayload = '',
-  successAction = () => {},
   acctType
 }) =>
   new Promise(resolve => {
@@ -93,8 +71,7 @@ const handleTx = ({
           action: prefix,
           label: `wallet type ${acctType || 'unknown'}`
         });
-        await successAction();
-        resolve();
+        resolve(true);
       },
       error: (_, err) => {
         dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
@@ -104,111 +81,100 @@ const handleTx = ({
           action: 'proxy',
           label: parseError(err)
         });
-        resolve();
+        resolve(false);
       }
     });
   });
 
-function useCorrectAccount(requiredAccount, dispatch, options = {}) {
-  const { address, type, proxyRole } = requiredAccount;
+function useHotAccount(state) {
+  const account = getAccount(state, window.maker.currentAddress());
 
   if (
-    type === AccountTypes.METAMASK &&
-    window.web3.eth.defaultAccount !== address
+    account.type === AccountTypes.METAMASK &&
+    window.web3.eth.defaultAccount !== account.address
   ) {
-    const label = proxyRole || options.label || 'other';
-    window.alert(`Please switch to your ${label} wallet with Metamask.`);
+    window.alert(`Please switch to your hot wallet with Metamask.`);
     return false;
   }
-  if (window.maker.currentAddress().toLowerCase() !== address.toLowerCase()) {
+
+  if (state.onboarding.hotWallet.address !== account.address) {
     if (
-      type === AccountTypes.METAMASK &&
+      account.type === AccountTypes.METAMASK &&
       window.maker.currentAccount().type === AccountTypes.METAMASK
     ) {
       console.warn('Should have auto-switched to this account...');
     }
-    window.maker.useAccountWithAddress(address);
+    window.maker.useAccountWithAddress(state.onboarding.hotWallet.address);
   }
-
-  // this is just so that we can see the change in the UI
-  dispatch(setActiveAccount(address));
 
   return true;
 }
 
-function useColdAccount(dispatch, getState) {
-  const cold = getState().accounts.allAccounts.find(
-    a => a.proxyRole === 'cold'
-  );
-  return useCorrectAccount(cold, dispatch);
+function useColdAccount(state) {
+  const account = getAccount(state, window.maker.currentAddress());
+
+  if (state.onboarding.coldWallet.address !== account.address) {
+    window.maker.useAccountWithAddress(state.onboarding.coldWallet.address);
+  }
+  return true;
 }
 
 export const initiateLink = ({ cold, hot }) => (dispatch, getState) => {
-  if (!useCorrectAccount(cold, dispatch, { label: 'cold' })) return;
+  if (!useColdAccount(getState())) return;
   const initiateLink = window.maker
     .service('voteProxyFactory')
     .initiateLink(hot.address);
 
   dispatch({
-    type: INITIATE_LINK_REQUEST,
-    payload: { hotAddress: hot.address, coldAddress: cold.address }
+    type: INITIATE_LINK_REQUEST
   });
+
   return handleTx({
     prefix: 'INITIATE_LINK',
     dispatch,
     txObject: initiateLink,
-    acctType: cold.type,
-    successAction: () => {
-      if (getAccount(getState(), getState().proxy.hotAddress)) {
-        dispatch(setActiveAccount(getState().proxy.hotAddress));
-      }
-    }
-  });
+    acctType: cold.type
+  }).then(success => success && dispatch(addAccounts([hot, cold])));
 };
 
-export const approveLink = ({ hotAccount }) => (dispatch, getState) => {
-  if (!useCorrectAccount(hotAccount, dispatch, { label: 'hot' })) return;
-  const { coldAddress } = getState().proxy;
+export const approveLink = ({ hot, cold }) => (dispatch, getState) => {
+  if (!useHotAccount(getState())) return;
   const approveLink = window.maker
     .service('voteProxyFactory')
-    .approveLink(coldAddress);
+    .approveLink(cold.address);
 
   dispatch({ type: APPROVE_LINK_REQUEST });
   return handleTx({
     prefix: 'APPROVE_LINK',
     dispatch,
     txObject: approveLink,
-    successPayload: { coldAddress, hotAddress: hotAccount.address },
-    acctType: hotAccount.type,
-    successAction: async () =>
-      dispatch({
-        type: STORE_PROXY_ADDRESS,
-        payload: (await approveLink).proxyAddress
-      })
+    acctType: hot.type
+  }).then(async success => {
+    success && dispatch(addAccounts([hot, cold]));
   });
 };
 
 export const lock = value => async (dispatch, getState) => {
-  if (Number(value) === 0) return dispatch(smartStepSkip());
-  if (!useColdAccount(dispatch, getState)) return;
+  if (value === 0) return;
+  if (!useColdAccount(getState())) return;
   const account = getAccount(getState(), window.maker.currentAddress());
   const lock = window.maker
     .service('voteProxy')
     .lock(account.proxy.address, value);
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
+
   return handleTx({
     prefix: 'SEND_MKR_TO_PROXY',
     dispatch,
     txObject: lock,
     successPayload: value,
-    acctType: account.type,
-    successAction: () => dispatch(initApprovalsFetch())
-  });
+    acctType: account.type
+  }).then(success => success && dispatch(initApprovalsFetch()));
 };
 
 export const free = value => (dispatch, getState) => {
-  if (Number(value) === 0) return dispatch(smartStepSkip());
+  if (value <= 0) return;
   const account = getAccount(getState(), window.maker.currentAddress());
 
   const free = window.maker
@@ -221,83 +187,38 @@ export const free = value => (dispatch, getState) => {
     dispatch,
     txObject: free,
     successPayload: value,
-    acctType: account.type,
-    successAction: () => dispatch(initApprovalsFetch())
-  });
+    acctType: account.type
+  }).then(success => success && dispatch(initApprovalsFetch()));
 };
 
-export const freeAll = value => (dispatch, getState) => {
-  if (Number(value) === 0) return dispatch(smartStepSkip());
-  const account = getAccount(getState(), window.maker.currentAddress());
-
-  const freeAll = window.maker
-    .service('voteProxy')
-    .freeAll(account.proxy.address);
-
-  dispatch({ type: WITHDRAW_ALL_MKR_REQUEST, payload: value });
-  return handleTx({
-    prefix: 'WITHDRAW_ALL_MKR',
-    dispatch,
-    txObject: freeAll,
-    successPayload: value,
-    acctType: account.type,
-    successAction: () => dispatch(initApprovalsFetch())
-  });
-};
-
-export const breakLink = () => dispatch => {
+export const breakLink = () => (dispatch, getState) => {
   dispatch({ type: BREAK_LINK_REQUEST });
-  const account = window.maker.currentAccount();
-  window.maker.useAccountWithAddress(account.address);
+  const currentAccount = window.maker.currentAccount();
+  const account = getAccount(getState(), currentAccount.address);
+
+  const otherAccount = getAccount(
+    getState(),
+    account.proxy.linkedAccount.address
+  );
+  const accountsToRefresh = otherAccount ? [account, otherAccount] : [account];
+
+  window.maker.useAccountWithAddress(currentAccount.address);
   const breakLink = window.maker.service('voteProxyFactory').breakLink();
 
   return handleTx({
     prefix: 'BREAK_LINK',
     dispatch,
     txObject: breakLink,
-    acctType: account.type,
-    successAction: () => setTimeout(() => window.location.reload(true), 2000)
+    acctType: currentAccount.type
+  }).then(success => {
+    success && dispatch(addAccounts(accountsToRefresh));
   });
 };
 
-export const smartStepSkip = () => (dispatch, getState) => {
-  const { setupProgress } = getState().proxy;
-  if (setupProgress === 'lockInput') return dispatch(goToStep('summary'));
-  return dispatch(modalClose());
-};
-
-export const refreshAccountDataLink = () => (dispatch, getState) => {
-  const hotAccount = getAccount(getState(), getState().proxy.hotAddress);
-  const coldAccount = getAccount(getState(), getState().proxy.coldAddress);
-  if (hotAccount === undefined) return window.location.reload();
-  const accounts = coldAccount ? [hotAccount, coldAccount] : [hotAccount];
-  if (coldAccount) dispatch(setActiveAccount(coldAccount.address));
-  // this will replace duplicate accounts in the store
-  dispatch(addAccounts(accounts));
-};
-
-export const refreshAccountData = () => (dispatch, getState) => {
-  const activeAccount = getActiveAccount(getState());
-  const { hasProxy, proxy } = activeAccount;
-  if (hasProxy) {
-    const otherAccount = getAccount(getState(), proxy.linkedAccount.address);
-    const accounts = otherAccount
-      ? [activeAccount, otherAccount]
-      : [activeAccount];
-    dispatch(addAccounts(accounts));
-  } else {
-    window.location.reload();
-  }
-};
-
 export const mkrApproveProxy = () => (dispatch, getState) => {
-  if (!useColdAccount(dispatch, getState)) return;
+  if (!useColdAccount(getState())) return;
   const account = getAccount(getState(), window.maker.currentAddress());
-  let proxyAddress = account.proxy.address;
-  if (!proxyAddress) {
-    //if proxy address not stored in accounts yet, then it should be in proxy store
-    proxyAddress = getState().proxy.proxyAddress;
-  }
+  const proxyAddress = account.proxy.address;
   const giveProxyAllowance = window.maker
     .getToken(MKR)
     .approveUnlimited(proxyAddress);
@@ -318,17 +239,14 @@ const initialState = {
   initiateLinkTxHash: '',
   approveLinkTxHash: '',
   mkrApproveProxyTxHash: '',
-  confirmingInitiate: false,
-  confirmingApprove: false,
-  confirmingSendMkr: false,
-  confirmingMkrApproveProxy: false,
-  setupProgress: 'intro',
-  hotAddress: '',
-  coldAddress: '',
-  sendMkrAmount: 0,
-  withdrawMkrAmount: 0,
-  linkGas: getLinkGas() || 0,
-  proxyAddress: ''
+  withdrawMkrTxHash: '',
+  breakLinkTxHash: '',
+  initiateLinkTxStatus: TransactionStatus.NOT_STARTED,
+  approveLinkTxStatus: TransactionStatus.NOT_STARTED,
+  mkrApproveProxyTxStatus: TransactionStatus.NOT_STARTED,
+  sendMkrTxStatus: TransactionStatus.NOT_STARTED,
+  withdrawMkrTxStatus: TransactionStatus.NOT_STARTED,
+  breakLinkTxStatus: TransactionStatus.NOT_STARTED
 };
 
 // const withExisting = { ...initialState, ...existingState };
@@ -337,210 +255,127 @@ const proxy = createReducer(initialState, {
   // Initiate ---------------------------------------
   [INITIATE_LINK_REQUEST]: (state, { payload }) => ({
     ...state,
-    setupProgress: 'initiate',
-    hotAddress: payload.hotAddress,
-    coldAddress: payload.coldAddress
+    initiateLinkTxHash: '',
+    initiateLinkTxStatus: TransactionStatus.NOT_STARTED
   }),
   [INITIATE_LINK_SENT]: (state, { payload }) => ({
     ...state,
-    confirmingInitiate: true,
-    initiateLinkTxHash: payload.txHash
+    initiateLinkTxHash: payload.txHash,
+    initiateLinkTxStatus: TransactionStatus.PENDING
   }),
-  [INITIATE_LINK_SUCCESS]: state => ({ ...state, confirmingInitiate: false }),
+  [INITIATE_LINK_SUCCESS]: state => ({
+    ...state,
+    initiateLinkTxStatus: TransactionStatus.MINED
+  }),
   [INITIATE_LINK_FAILURE]: state => ({
     ...state,
-    setupProgress: 'link',
-    confirmingInitiate: false
+    initiateLinkTxStatus: TransactionStatus.ERROR
   }),
   // Approve ----------------------------------------
-  [APPROVE_LINK_REQUEST]: state => ({
+  [APPROVE_LINK_REQUEST]: (state, { payload }) => ({
     ...state,
-    setupProgress: 'approve'
+    approveLinkTxHash: '',
+    approveLinkTxStatus: TransactionStatus.NOT_STARTED
   }),
   [APPROVE_LINK_SENT]: (state, { payload }) => ({
     ...state,
-    confirmingApprove: true,
-    approveLinkTxHash: payload.txHash
+    approveLinkTxHash: payload.txHash,
+    approveLinkTxStatus: TransactionStatus.PENDING
   }),
-  [APPROVE_LINK_SUCCESS]: state => ({ ...state, confirmingApprove: false }),
+  [APPROVE_LINK_SUCCESS]: (state, { payload }) => ({
+    ...state,
+    approveLinkTxStatus: TransactionStatus.MINED,
+    hotAddress: payload.hotAddress,
+    coldAddress: payload.coldAddress
+  }),
   [APPROVE_LINK_FAILURE]: state => ({
     ...state,
-    setupProgress: 'midLink',
-    confirmingApprove: false
-  }),
-  [STORE_PROXY_ADDRESS]: (state, { payload }) => ({
-    ...state,
-    proxyAddress: payload
+    approveLinkTxStatus: TransactionStatus.ERROR
   }),
   // Send -------------------------------------------
-  [SEND_MKR_TO_PROXY_REQUEST]: (state, { payload: value }) => {
-    if (state.setupProgress === 'lockInput') {
-      return { ...state, setupProgress: 'lock', sendMkrAmount: value };
-    }
-
-    return { ...state, sendMkrAmount: value };
-  },
+  [SEND_MKR_TO_PROXY_REQUEST]: state => ({
+    ...state,
+    sendMkrTxHash: '',
+    sendMkrTxStatus: TransactionStatus.NOT_STARTED
+  }),
   [SEND_MKR_TO_PROXY_SENT]: (state, { payload }) => ({
     ...state,
-    confirmingSendMkr: true,
+    sendMkrTxStatus: TransactionStatus.PENDING,
     sendMkrTxHash: payload.txHash
   }),
-  [SEND_MKR_TO_PROXY_SUCCESS]: state => {
-    if (state.setupProgress === 'lock') {
-      return { ...state, setupProgress: 'summary', confirmingSendMkr: false };
-    }
-
-    return { ...state, confirmingSendMkr: false };
-  },
+  [SEND_MKR_TO_PROXY_SUCCESS]: state => ({
+    ...state,
+    sendMkrTxStatus: TransactionStatus.MINED
+  }),
   [SEND_MKR_TO_PROXY_FAILURE]: state => ({
     ...state,
-    sendMkrAmount: 0,
-    confirmingSendMkr: false
+    sendMkrTxStatus: TransactionStatus.ERROR
   }),
   // MKR Approve Proxy ------------------------------
   [MKR_APPROVE_REQUEST]: state => ({
     ...state,
-    mkrApproveInitiated: true
+    mkrApproveProxyTxHash: '',
+    mkrApproveProxyTxStatus: TransactionStatus.NOT_STARTED
   }),
   [MKR_APPROVE_SENT]: (state, { payload }) => ({
     ...state,
-    confirmingMkrApproveProxy: true,
+    mkrApproveProxyTxStatus: TransactionStatus.PENDING,
     mkrApproveProxyTxHash: payload.txHash
   }),
   [MKR_APPROVE_SUCCESS]: state => ({
     ...state,
-    confirmingMkrApproveProxy: false
+    mkrApproveProxyTxStatus: TransactionStatus.MINED
   }),
   [MKR_APPROVE_FAILURE]: state => ({
     ...state,
-    confirmingMkrApproveProxy: false,
-    mkrApproveInitiated: false
+    mkrApproveProxyTxStatus: TransactionStatus.ERROR
   }),
   // Withdraw ---------------------------------------
-  [WITHDRAW_MKR_REQUEST]: (state, { payload: value }) => ({
+  [WITHDRAW_MKR_REQUEST]: state => ({
     ...state,
-    withdrawMkrAmount: value
+    withdrawMkrTxHash: '',
+    withdrawMkrTxStatus: TransactionStatus.NOT_STARTED
   }),
   [WITHDRAW_MKR_SENT]: (state, { payload }) => ({
     ...state,
-    confirmingWithdrawMkr: true,
+    withdrawMkrTxStatus: TransactionStatus.PENDING,
     withdrawMkrTxHash: payload.txHash
   }),
   [WITHDRAW_MKR_SUCCESS]: state => ({
     ...state,
-    confirmingWithdrawMkr: false
+    withdrawMkrTxStatus: TransactionStatus.MINED
   }),
   [WITHDRAW_MKR_FAILURE]: state => ({
     ...state,
-    confirmingWithdrawMkr: false,
-    withdrawMkrAmount: 0
-  }),
-  // WithdrawAll ---------------------------------------
-  [WITHDRAW_ALL_MKR_REQUEST]: (state, { payload: value }) => ({
-    ...state,
-    withdrawMkrAmount: value
-  }),
-  [WITHDRAW_ALL_MKR_SENT]: (state, { payload }) => ({
-    ...state,
-    confirmingWithdrawMkr: true,
-    withdrawMkrTxHash: payload.txHash
-  }),
-  [WITHDRAW_ALL_MKR_SUCCESS]: state => ({
-    ...state,
-    confirmingWithdrawMkr: false
-  }),
-  [WITHDRAW_ALL_MKR_FAILURE]: state => ({
-    ...state,
-    confirmingWithdrawMkr: false,
-    withdrawMkrAmount: 0
-  }),
-  // Reset ------------------------------------------
-  [CLEAR]: () => ({ ...initialState }),
-  [GO_TO_STEP]: (state, { payload }) => ({
-    ...state,
-    setupProgress: payload
+    withdrawMkrTxStatus: TransactionStatus.ERROR
   }),
   // Break Link -------------------------------------
   [BREAK_LINK_REQUEST]: state => ({
     ...state,
-    breakLinkInitiated: true
+    breakLinkTxHash: '',
+    breakLinkTxStatus: TransactionStatus.NOT_STARTED
   }),
   [BREAK_LINK_SENT]: (state, { payload }) => ({
     ...state,
-    confirmingBreakLink: true,
+    breakLinkTxStatus: TransactionStatus.PENDING,
     breakLinkTxHash: payload.txHash
   }),
   [BREAK_LINK_SUCCESS]: state => ({
     ...state,
-    confirmingBreakLink: false
+    breakLinkTxStatus: TransactionStatus.MINED
   }),
   [BREAK_LINK_FAILURE]: state => ({
     ...state,
-    confirmingBreakLink: false,
-    breakLinkInitiated: false
+    breakLinkTxStatus: TransactionStatus.ERROR
   }),
-  // Dev --------------------------------------------
-  MOCK_NEXT_STEP: state => {
-    const { setupProgress } = state;
-    const step = name => ({ ...state, setupProgress: name });
-
-    if (setupProgress === 'intro') return step('link');
-
-    if (setupProgress === 'link') return step('initiate');
-
-    if (setupProgress === 'initiate') {
-      if (!state.initiateLinkTxHash && !state.confirmingInitiate) {
-        return {
-          ...state,
-          confirmingInitiate: true,
-          initiateLinkTxHash: '0xbeefed1bedded2dabbed3defaced4decade5cafe',
-          coldAddress: '0xbeefed1bedded2dabbed3defaced4decade5cafe',
-          hotAddress: '0xbeefed1bedded2dabbed3defaced4decade5cafe'
-        };
-      }
-
-      if (state.confirmingInitiate)
-        return { ...state, confirmingInitiate: false };
-
-      return step('midLink');
-    }
-
-    if (setupProgress === 'midLink') return step('approve');
-
-    if (setupProgress === 'approve') {
-      if (!state.approveLinkTxHash && !state.confirmingApprove) {
-        return {
-          ...state,
-          confirmingApprove: true,
-          approveLinkTxHash: '0xbeefed1bedded2dabbed3defaced4decade5fade'
-        };
-      }
-
-      if (state.confirmingApprove)
-        return { ...state, confirmingApprove: false };
-
-      return step('lockInput');
-    }
-
-    if (setupProgress === 'lockInput') return step('lock');
-
-    if (setupProgress === 'lock') {
-      if (!state.sendMkrTxHash && !state.confirmingSendMkr) {
-        return {
-          ...state,
-          confirmingSendMkr: true,
-          sendMkrTxHash: '0xbeefed1bedded2dabbed3defaced4decade5fade'
-        };
-      }
-
-      if (state.confirmingSendMkr)
-        return { ...state, confirmingSendMkr: false };
-
-      return step('summary');
-    }
-
-    if (setupProgress === 'summary') return step(null);
-  }
+  [SET_ACTIVE_ACCOUNT]: (
+    state,
+    { payload: { newAccount, onboardingHotAddress, onboardingColdAddress } }
+  ) =>
+    newAccount.address === onboardingHotAddress ||
+    newAccount.address === onboardingColdAddress
+      ? state
+      : initialState
 });
 
 export default proxy;
