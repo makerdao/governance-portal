@@ -7,7 +7,6 @@ import { initApprovalsFetch } from './approvals';
 import { AccountTypes, TransactionStatus } from '../utils/constants';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { MKR } from '../chain/maker';
-import { getLinkGas } from '../chain/utils';
 
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
