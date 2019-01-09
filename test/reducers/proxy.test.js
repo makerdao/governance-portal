@@ -26,6 +26,7 @@ const hotAddress = '0xbeefed1bedded2dabbed3defaced4decade5feed';
 const testPendingHash = 'testPendingHash';
 const testMinedHash = 'testMinedHash';
 const testErrorMessage = 'testErrorMessage';
+const mockProxyTx = { proxyAddress: '0xt3St' };
 
 const currentAccount = {
   address: coldAddress,
@@ -72,7 +73,7 @@ const initialState = {
 
 // Mock service methods
 const initLink = jest.fn();
-const approveLink = jest.fn();
+const approveLink = jest.fn(() => Promise.resolve(mockProxyTx));
 const lock = jest.fn();
 const free = jest.fn();
 const freeAll = jest.fn();
@@ -285,6 +286,11 @@ describe('Proxy Reducer', () => {
         type: accounts.FETCHING_ACCOUNT_DATA,
         payload: true
       });
+      // TODO: add this action back into the reducer
+      // expect(store.getActions()[4]).toEqual({
+      //   type: proxy.STORE_PROXY_ADDRESS,
+      //   payload: mockProxyTx.proxyAddress
+      // });
     });
 
     test('Approve Link should dispatch FAILURE action when TxMgr calls error', async () => {
@@ -435,6 +441,7 @@ describe('Proxy Reducer', () => {
 
   describe('Break Link', () => {
     const mockAction = { type: FETCHING_ACCOUNT_DATA, payload: true };
+    const mockValue = 5;
     accounts.addAccounts = jest.fn(() => mockAction);
 
     afterAll(() => {
@@ -443,7 +450,6 @@ describe('Proxy Reducer', () => {
 
     test('Break Link should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', async () => {
       await store.dispatch(proxy.breakLink());
-
       expect(breakLink).toBeCalledTimes(1);
       expect(store.getActions().length).toBe(4);
       expect(store.getActions()[0]).toEqual({
@@ -456,10 +462,6 @@ describe('Proxy Reducer', () => {
       expect(store.getActions()[2]).toEqual({
         type: proxy.BREAK_LINK_SUCCESS,
         payload: ''
-      });
-      expect(store.getActions()[3]).toEqual({
-        type: FETCHING_ACCOUNT_DATA,
-        payload: true
       });
     });
 
@@ -589,6 +591,26 @@ describe('Proxy Reducer', () => {
       const newState = reducer(someState, action);
 
       expect(newState).toEqual(someState);
+    });
+
+    test('mkrApproveProxy should dispatch FAILURE action when TxMgr calls error', async () => {
+      defaultFunctions.service = jest.fn(mockServiceError);
+
+      await store.dispatch(proxy.mkrApproveProxy());
+      expect(store.getActions().length).toBe(3);
+      expect(store.getActions()[0]).toEqual({
+        type: proxy.MKR_APPROVE_REQUEST
+      });
+      expect(store.getActions()[1]).toEqual({
+        type: proxy.MKR_APPROVE_FAILURE,
+        payload: { message: testErrorMessage }
+      });
+      expect(store.getActions()[2]).toEqual({
+        type: ADD_TOAST,
+        payload: {
+          toast: expect.any(Object)
+        }
+      });
     });
   });
 });

@@ -147,7 +147,7 @@ describe('async actions', () => {
   test('init with valid network, but no web3 accounts', async () => {
     clearWeb3Mock();
     const network = 'mainnet';
-    await reducer.init(network)(store.dispatch);
+    await store.dispatch(reducer.init(network));
 
     expect(setProvider).toBeCalledTimes(1);
     expect(tally.voteTallyInit).toBeCalledTimes(1);
@@ -178,7 +178,7 @@ describe('async actions', () => {
   test.skip('init with an invalid network, and no web3 accounts', async () => {
     clearWeb3Mock();
     const network = 'invalidNet';
-    await reducer.init(network)(store.dispatch);
+    await store.dispatch(reducer.init(network));
 
     expect(await getAction(store, reducer.CONNECT_REQUEST)).toEqual({
       type: reducer.CONNECT_REQUEST
@@ -196,7 +196,7 @@ describe('async actions', () => {
     const network = 'mainnet';
     mockWeb3();
 
-    await reducer.init(network)(store.dispatch);
+    await store.dispatch(reducer.init(network));
 
     expect(setProvider).toBeCalledTimes(1);
     expect(accounts.setActiveAccount).toBeCalledTimes(2);
