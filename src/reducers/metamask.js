@@ -95,10 +95,6 @@ export const init = (network = 'mainnet') => async dispatch => {
     dispatch({ type: NO_METAMASK_ACCOUNTS });
     dispatch(notAvailable());
   }
-  if (network !== 'mainnet' && network !== 'kovan') {
-    dispatch({ type: NO_METAMASK_ACCOUNTS });
-    return dispatch(wrongNetwork());
-  }
   dispatch(connectSuccess(network));
   dispatch(updateNetwork(network));
 

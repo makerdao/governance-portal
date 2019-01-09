@@ -31,10 +31,7 @@ class App extends Component {
             <BaseLayout>
               <Switch>
                 <Route exact path="/" component={Timeline} />
-                <Route
-                  path="/signaling"
-                  render={() => <Timeline signaling />}
-                />
+                <Route path="/polling" render={() => <Timeline signaling />} />
                 <Route path="/not-found" component={NotFound} />
                 <Route path="/:proposalSlug" component={Proposal} />
               </Switch>

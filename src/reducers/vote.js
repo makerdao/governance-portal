@@ -55,11 +55,14 @@ const handleTx = ({
           label: `wallet type ${acctType || 'unknown'}`
         });
         // give infura time to catch up
-        setTimeout(() => {
-          dispatch(voteTallyInit());
-          dispatch(hatInit());
-          dispatch(initApprovalsFetch());
-        }, 1500); // there is not science here
+        setTimeout(
+          () => {
+            dispatch(voteTallyInit());
+            dispatch(hatInit());
+            dispatch(initApprovalsFetch());
+          },
+          acctType === 'ledger' || acctType === 'trezor' ? 5000 : 2000
+        ); // there is no science here
 
         updateVotingFor(dispatch, getState, activeAccount, proposalAddress);
         resolve();

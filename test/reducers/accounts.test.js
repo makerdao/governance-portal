@@ -49,9 +49,11 @@ const defaults = {
 };
 
 const setupMocks = (opts = defaults) => {
-  const balanceOf = jest.fn().mockReturnValue({
-    toNumber: () => opts.balance
-  });
+  const balanceOf = jest.fn().mockReturnValue(
+    Promise.resolve({
+      toBigNumber: () => ({ toFixed: () => opts.balance })
+    })
+  );
   const allowance = jest.fn().mockResolvedValue({
     eq: () => opts.hasInfMkrApproval
   });
@@ -64,7 +66,7 @@ const setupMocks = (opts = defaults) => {
     .fn()
     .mockReturnValue(opts.proxy.proposalAddresses);
   const getNumDeposits = jest.fn().mockReturnValue({
-    toNumber: () => opts.votingPower
+    toBigNumber: () => ({ toFixed: () => opts.votingPower })
   });
   const getColdAddress = jest.fn().mockReturnValue(opts.proxy.coldAddress);
   const getHotAddress = jest.fn().mockReturnValue(opts.proxy.hotAddress);

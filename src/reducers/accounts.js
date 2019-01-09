@@ -5,7 +5,14 @@ import differenceWith from 'ramda/src/differenceWith';
 
 import { createReducer } from '../utils/redux';
 import { AccountTypes } from '../utils/constants';
-import { add, eq, subtract, toNum, promisedProperties } from '../utils/misc';
+import {
+  add,
+  eq,
+  subtract,
+  toNum,
+  promiseRetry,
+  promisedProperties
+} from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
@@ -112,7 +119,9 @@ export const addAccounts = accounts => async dispatch => {
     const _payload = {
       ...account,
       address: account.address,
-      mkrBalance: toNum(mkrToken.balanceOf(account.address)),
+      mkrBalance: toNum(
+        promiseRetry({ fn: () => mkrToken.balanceOf(account.address) })
+      ),
       hasProxy,
       proxyRole: proxyRole,
       votingFor: currProposal,
@@ -137,7 +146,7 @@ export const addAccounts = accounts => async dispatch => {
       const payload = await promisedProperties(_payload);
       dispatch({ type: ADD_ACCOUNT, payload });
     } catch (e) {
-      console.log('failed to add account', e);
+      console.error('failed to add account', e);
     }
   }
 

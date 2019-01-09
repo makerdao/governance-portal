@@ -61,18 +61,3 @@ export const BannerBody = styled.div`
 export const BannerContent = styled.div`
   margin-right: 8px;
 `;
-
-export const BannerButton = styled.a`
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  align-self: center;
-  padding: 0 20px;
-  transition: ${theme.transitions.button};
-  background-color: ${theme.generic.light_grey};
-  color: ${theme.text.darker_default};
-  height: 44px;
-  &:hover {
-    background-color: ${theme.generic.dark_grey};
-  }
-`;

@@ -21,7 +21,7 @@ const StyledLayout = styled.div`
   width: 100%;
   height: 100%;
   min-height: 100vh;
-  min-width: 1000px;
+  min-width: 1200px;
 `;
 
 const AppWrapper = styled.div`
@@ -164,11 +164,11 @@ const BaseLayout = ({
             </div>
             <Flex>
               <StyledLinkWrapper>
-                <StyledLink to="/" r={115}>
+                <StyledLink to="/" r={107}>
                   Executive
                 </StyledLink>
-                <StyledLink to="/signaling" r={0}>
-                  Signaling
+                <StyledLink to="/polling" r={6}>
+                  Polling
                 </StyledLink>
               </StyledLinkWrapper>
               <DimHeaderElement

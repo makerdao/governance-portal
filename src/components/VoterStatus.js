@@ -13,9 +13,9 @@ import {
   Banner,
   BannerHeader,
   BannerBody,
-  BannerContent,
-  BannerButton
+  BannerContent
 } from './Banner';
+import Button from './Button';
 import Loader from './Loader';
 import { cutMiddle, firstLetterCapital, formatRound } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
@@ -91,7 +91,17 @@ const WelcomeBanner = ({ onboardingOpen }) => {
           </BannerContent>
         </BannerBody>
       </Content>
-      <BannerButton onClick={onboardingOpen}>Set up now</BannerButton>
+      <Button
+        slim
+        color={'grey'}
+        hoverColor={'grey'}
+        textColor={theme.text.darker_default}
+        hoverTextColor={theme.text.darker_default}
+        activeColor={'grey'}
+        onClick={onboardingOpen}
+      >
+        Set up now
+      </Button>
     </Banner>
   );
 };

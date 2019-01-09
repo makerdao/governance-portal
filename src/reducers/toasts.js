@@ -33,7 +33,7 @@ export const addToastWithTimeout = (type, error) => dispatch => {
   dispatch(addToast(id, type, message));
   setTimeout(() => {
     dispatch(removeToast(id));
-  }, 5000);
+  }, 7500);
 };
 
 // Reducer ------------------------------------------------
