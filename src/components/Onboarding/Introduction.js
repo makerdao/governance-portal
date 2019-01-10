@@ -115,7 +115,7 @@ const Introduction = ({ show, onClose, onLinkedWallet }) => {
               <img src={wallets} alt="" />
               <Instructions
                 title="You will need access to your wallets"
-                subtitle="You will need access both your hot and cold wallets to confirm the transactions."
+                subtitle="You will need access to both your hot and cold wallets to confirm the transactions."
               />
 
               <img src={eth} alt="" />

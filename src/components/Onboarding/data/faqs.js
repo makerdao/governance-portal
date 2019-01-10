@@ -3,7 +3,7 @@ export default {
     {
       title: 'What is a hot wallet?',
       body:
-        'Your Hot Wallet is connected to the internet. It only holds your MKR with the permission to vote within the system, reduce your voting power, or increase your voting power.'
+        'Your Hot Wallet is connected to the internet. It only has permission to vote within the system, reduce your voting power, or increase your voting power.'
     },
     {
       title: 'Why do I need a voting wallet?',
@@ -22,7 +22,7 @@ export default {
     {
       title: 'Am I giving up control of my MKR?',
       body:
-        'No. The voting contract is only able to vote on your behalf. Also, you will be able withdraw your MKR at any time.'
+        'No. The voting contract is only able to vote on your behalf. Also, you will be able to withdraw your MKR at any time.'
     }
   ],
   selectMKRBalance: [
@@ -55,7 +55,7 @@ export default {
     {
       title: 'How long does it take to withdraw my MKR?',
       body:
-        'Depending on the network speed. Withdrawing your MKR usually takes less than 5 minutes. '
+        'Depending on the network speed, withdrawing your MKR usually takes less than 5 minutes. '
     }
   ]
 };
