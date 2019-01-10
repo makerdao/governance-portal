@@ -13,6 +13,7 @@ import {
 
 import NetworkIndicator from '../../NetworkIndicator';
 import { TransactionStatus } from '../../../utils/constants';
+import { ethScanLink } from '../../../utils/ethereum';
 import WalletIcon from './WalletIcon';
 import ExternalLink from './ExternalLink';
 import { DataLabel, SubtitleDataLabel } from '../../../utils/typography';
@@ -26,16 +27,9 @@ const connectingLineHeight = '5rem';
 
 const contractAddresses = [
   {
-    name: 'Contract 1',
-    address: '0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2'
-  },
-  {
-    name: 'Contract 2',
-    address: '0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2'
-  },
-  {
-    name: 'Contract 3',
-    address: '0x99cb784f0429efd72wu39fn4256n8wud4e01c7d2'
+    name: 'Voting Contract',
+    kovan: '0xbbffc76e94b34f72d96d054b31f6424249c1337d',
+    mainnet: '0x8e2a84d6ade1e7fffee039a35ef5f19f13057152'
   }
 ];
 
@@ -82,7 +76,6 @@ const ConnectingLine = ({ lineStyle = 'solid', ...props }) => (
 );
 
 const Sidebar = ({
-  show,
   faqs,
   network,
   hotWallet,
@@ -228,12 +221,15 @@ const Sidebar = ({
           <Box fontSize="1.5rem" color="grey">
             <Table width="100%" variant="cozy">
               <tbody>
-                {contractAddresses.map(({ name, address }) => (
-                  <tr key={name + address}>
+                {contractAddresses.map(({ name, ...addresses }) => (
+                  <tr key={name + addresses[network]}>
                     <td>{name}</td>
                     <td>
-                      <ExternalLink>
-                        <Address full={address} shorten />
+                      <ExternalLink
+                        target="_blank"
+                        href={ethScanLink(addresses[network], network)}
+                      >
+                        <Address full={addresses[network]} shorten />
                       </ExternalLink>
                     </td>
                   </tr>
@@ -248,10 +244,11 @@ const Sidebar = ({
                     }}
                   >
                     <ExternalLink
+                      target="_blank"
                       style={{ whiteSpace: 'nowrap' }}
-                      href="https://github.com/makerdao/governance-dashboard"
+                      href="https://github.com/dapphub/ds-chief"
                     >
-                      https://github.com/makerdao/governance-dashboard
+                      https://github.com/dapphub/ds-chief
                     </ExternalLink>
                   </td>
                 </tr>
