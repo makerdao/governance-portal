@@ -30,23 +30,27 @@ const currTheme = {
 };
 
 const params = new URL(window.location).searchParams;
-let testchainId = params.get('testchain_id');
-console.log(window.location.search);
-console.log('testchainId from param', testchainId);
+let testchainConfigId = params.get('testchain_id');
 
 const store = createStore();
 
 if (window.web3) {
   window.web3.version.getNetwork(async (err, _netId) => {
-    if (!testchainId) testchainId = _netId;
+    // if (!testchainConfigId) testchainConfigId = _netId;
     const netId = parseInt(_netId, 10);
-    // if (netId !== 1 && netId !== 42 && netId !== 999)
-    console.log(testchainId, netId);
-    if (testchainId && parseInt(testchainId, 10) !== netId)
-      store.dispatch(wrongNetwork());
+    const networkValid =
+      netId !== 1 && netId !== 42
+        ? testchainConfigId && parseInt(testchainConfigId, 10) !== netId
+          ? false
+          : true
+        : true;
+    if (!networkValid) store.dispatch(wrongNetwork());
     else {
       const network = netIdToName(netId);
-      const maker = (window.maker = await createMaker(network, testchainId));
+      const maker = (window.maker = await createMaker(
+        network,
+        testchainConfigId
+      ));
       await maker.authenticate();
       store.dispatch(init(network));
     }

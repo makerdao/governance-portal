@@ -2,10 +2,12 @@ import governancePlugin from '@makerdao/dai-plugin-governance';
 import trezorPlugin from '@makerdao/dai-plugin-trezor-web';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 import Maker, { ETH, MKR } from '@makerdao/dai';
-// import testchainClientPlugin from '@makerdao/dai-plugin-testchain';
 import configPlugin from '@makerdao/dai-plugin-config';
 
-export default async function createMaker(network = 'mainnet', testchainId) {
+export default async function createMaker(
+  network = 'mainnet',
+  testchainConfigId
+) {
   let gasPrice = 6 * 10 ** 9; // default to 6 Gwei gas price
   try {
     // check ethgasstation for gas price info
@@ -19,43 +21,27 @@ export default async function createMaker(network = 'mainnet', testchainId) {
     );
   }
 
-  // let testChainConfig = {};
-  // if (testchainId) {
-  //   testChainConfig = testchainClientPlugin(testchainId);
-  //   console.log('Gov Dashbaord testchainconfig', testChainConfig);
-  // }
+  const plugins = [
+    trezorPlugin,
+    ledgerPlugin,
+    [governancePlugin, { setContractAddresses: true }]
+  ];
 
-  // const makerConfig = {
-  //   plugins: [trezorPlugin, ledgerPlugin, governancePlugin],
-  //   autoAuthenticate: true,
-  //   log: false,
-  // web3: {
-  //   transactionSettings: {
-  //     gasPrice
-  //   }
-  // },
-  //   provider: {
-  //     url: `https://${network}.infura.io/`,
-  //     type: 'HTTP'
-  //   }
-  // };
+  console.log('tcid', testchainConfigId);
+  // Use the config plugin, if we have a testchainConfigId
+  if (testchainConfigId)
+    plugins.push([configPlugin, { testchainId: testchainConfigId }]);
 
+  console.log(plugins);
   return Maker.create('http', {
-    plugins: [
-      trezorPlugin,
-      ledgerPlugin,
-      governancePlugin,
-      // configPlugin,
-      [configPlugin, { testchainId }]
-    ],
+    plugins: plugins,
     autoAuthenticate: true,
     log: false,
     web3: {
       transactionSettings: {
         gasPrice
       }
-    },
-    testchainId
+    }
   });
 }
 
