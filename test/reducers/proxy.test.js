@@ -268,7 +268,7 @@ describe('Proxy Reducer', () => {
 
       await store.dispatch(proxy.approveLink(mockAccounts));
       expect(approveLink).toBeCalledTimes(1);
-      expect(store.getActions().length).toBe(4);
+      expect(store.getActions().length).toBe(5);
       expect(store.getActions()[0]).toEqual({
         type: proxy.APPROVE_LINK_REQUEST
       });
@@ -283,14 +283,13 @@ describe('Proxy Reducer', () => {
         payload: ''
       });
       expect(store.getActions()[3]).toEqual({
+        type: proxy.STORE_PROXY_ADDRESS,
+        payload: mockProxyTx.proxyAddress
+      });
+      expect(store.getActions()[4]).toEqual({
         type: accounts.FETCHING_ACCOUNT_DATA,
         payload: true
       });
-      // TODO: add this action back into the reducer
-      // expect(store.getActions()[4]).toEqual({
-      //   type: proxy.STORE_PROXY_ADDRESS,
-      //   payload: mockProxyTx.proxyAddress
-      // });
     });
 
     test('Approve Link should dispatch FAILURE action when TxMgr calls error', async () => {
