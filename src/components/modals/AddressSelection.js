@@ -8,6 +8,7 @@ import { modalClose } from '../../reducers/modal';
 import { addAccount, setActiveAccount } from '../../reducers/accounts';
 import { AccountTypes } from '../../utils/constants';
 import { cutMiddle, toNum, copyToClipboard } from '../../utils/misc';
+import { addToastWithTimeout, ToastTypes } from '../../reducers/toasts';
 import {
   AddressContainer,
   Table,
@@ -220,6 +221,9 @@ class AddressSelection extends Component {
         })
         .then(account => {
           this.handleAddressConfirmationCallback(account);
+        })
+        .catch(err => {
+          this.props.addToastWithTimeout(ToastTypes.ERROR, err.message);
         });
     });
   }
@@ -299,7 +303,7 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { addAccount, setActiveAccount, modalClose }
+  { addAccount, setActiveAccount, addToastWithTimeout, modalClose }
 )(AddressSelection);
 
 const LedgerLoading = () => (
