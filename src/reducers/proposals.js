@@ -113,8 +113,6 @@ function extractProposals(topics, network) {
       govVote: topic.govVote,
       topicKey: topic.key
     }));
-    //this works:
-    console.log('concat props', acc.concat(proposals));
     return acc.concat(proposals);
   }, []);
 }

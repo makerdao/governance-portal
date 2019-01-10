@@ -58,16 +58,14 @@ const store = createStore();
 
 if (window.web3) {
   window.web3.version.getNetwork(async (err, _netId) => {
-    // if (!testchainConfigId) testchainConfigId = _netId;
     const netId = parseInt(_netId, 10);
-    const networkValid =
-      netId !== 1 && netId !== 42
-        ? testchainConfigId && parseInt(testchainConfigId, 10) !== netId
-          ? false
-          : true
-        : true;
-    if (!networkValid) store.dispatch(wrongNetwork());
-    else {
+
+    if (
+      (!testchainConfigId && netId !== 1 && netId !== 42) ||
+      (testchainConfigId && parseInt(testchainConfigId, 10) !== netId)
+    ) {
+      store.dispatch(wrongNetwork());
+    } else {
       const network = netIdToName(netId);
       const maker = (window.maker = await createMaker(
         network,

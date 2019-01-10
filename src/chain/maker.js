@@ -21,28 +21,40 @@ export default async function createMaker(
     );
   }
 
-  const plugins = [
-    trezorPlugin,
-    ledgerPlugin,
-    [governancePlugin, { setContractAddresses: true }]
-  ];
-
-  console.log('tcid', testchainConfigId);
-  // Use the config plugin, if we have a testchainConfigId
-  if (testchainConfigId)
-    plugins.push([configPlugin, { testchainId: testchainConfigId }]);
-
-  console.log(plugins);
-  return Maker.create('http', {
-    plugins: plugins,
+  let config = {
+    plugins: [trezorPlugin, ledgerPlugin, governancePlugin],
     autoAuthenticate: true,
     log: false,
     web3: {
       transactionSettings: {
         gasPrice
       }
+    },
+    provider: {
+      url: `https://${network}.infura.io/`,
+      type: 'HTTP'
     }
-  });
+  };
+
+  // Use the config plugin, if we have a testchainConfigId
+  if (testchainConfigId) {
+    config = {
+      plugins: [
+        trezorPlugin,
+        ledgerPlugin,
+        [governancePlugin, { setContractAddresses: false }],
+        [configPlugin, { testchainId: testchainConfigId }]
+      ],
+      autoAuthenticate: true,
+      log: false,
+      web3: {
+        transactionSettings: {
+          gasPrice
+        }
+      }
+    };
+  }
+  return Maker.create('http', config);
 }
 
 export { ETH, MKR };
