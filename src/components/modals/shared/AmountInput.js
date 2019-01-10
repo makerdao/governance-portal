@@ -1,10 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import ReactGA from 'react-ga';
-
 import {
-  StyledTop,
-  StyledTitle,
-  StyledBlurb,
   InputLabels,
   ValueLabel,
   EndButton,
@@ -13,33 +9,26 @@ import {
   FlexRowEnd
 } from './styles';
 import Input from '../../Input';
-import Transaction from './Transaction';
 import { countDecimals, formatRound, toSlug } from '../../../utils/misc';
 
 export default class AmountInput extends Component {
   constructor(props) {
     super(props);
-    this.state = { amount: '' };
-    this.maxSelected = false;
+    this.state = {
+      amount: ''
+    };
   }
 
   componentDidMount() {
-    if (this.props.reset !== false) this.props.clearProxyState();
     ReactGA.modalview(toSlug(this.props.title || 'amount-input'));
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.txSent !== this.props.txSent) this.setState({ amount: '' });
-  }
-
   setAmount = event => {
-    this.maxSelected = false;
     this.setState({ amount: event.target.value });
   };
 
   setMaxAmount = () => {
-    this.maxSelected = true;
-    this.setState({ amount: this.props.balance });
+    this.setState({ amount: this.props.maxAmount });
   };
 
   handleKeyPress = event => {
@@ -47,52 +36,28 @@ export default class AmountInput extends Component {
   };
 
   submit(amount) {
-    const { action, maxAction, balance } = this.props;
-    if (!amount || isNaN(Number(amount)) || Number(amount) > balance) {
+    const { onSubmit, maxAmount } = this.props;
+    if (
+      !amount ||
+      isNaN(Number(amount)) ||
+      Number(amount) > maxAmount ||
+      Number(amount) === 0
+    ) {
       window.alert('Please enter a valid amount');
-    } else if (this.maxSelected) {
-      maxAction(amount);
     } else {
-      action(amount);
+      onSubmit(amount);
     }
   }
 
   render() {
-    const {
-      txHash,
-      txSent,
-      confirming,
-      network,
-      modalClose,
-      title,
-      blurb,
-      amountLabel,
-      account,
-      balance,
-      buttonLabel,
-      txPurpose,
-      skip
-    } = this.props;
-    if (txSent)
-      return (
-        <Transaction
-          lastCard
-          {...{ txHash, txPurpose, confirming, network, account }}
-          nextStep={() => modalClose()}
-        />
-      );
-
+    const { amountLabel, maxAmount, buttonLabel, onCancel } = this.props;
     return (
       <Fragment>
-        <StyledTop>
-          <StyledTitle>{title}</StyledTitle>
-        </StyledTop>
-        <StyledBlurb>{blurb}</StyledBlurb>
         <InputLabels>
           <div>Enter MKR amount</div>
           <div>
-            <ValueLabel>{amountLabel}</ValueLabel> {formatRound(balance, 6)}
-            {countDecimals(balance) > 5 ? '...' : ''} MKR
+            <ValueLabel>{amountLabel}</ValueLabel> {formatRound(maxAmount, 6)}
+            {countDecimals(maxAmount) > 5 ? '...' : ''} MKR
           </div>
         </InputLabels>
         <Input
@@ -104,7 +69,7 @@ export default class AmountInput extends Component {
           button={<GreyLink onClick={this.setMaxAmount}>Set max</GreyLink>}
         />
         <FlexRowEnd>
-          <Skip mr={24} mt={24} onClick={() => skip()}>
+          <Skip mr={24} mt={24} onClick={onCancel}>
             Skip this step
           </Skip>
           <EndButton onClick={() => this.submit(this.state.amount)}>

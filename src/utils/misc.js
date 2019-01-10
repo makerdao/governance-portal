@@ -162,7 +162,7 @@ export const parseError = error => {
  * @param  {String} b
  * @return {Boolean}
  */
-export const eq = (a, b) => a.toLowerCase() === b.toLowerCase();
+export const eq = (a, b) => (a && a.toLowerCase()) === (b && b.toLowerCase());
 
 /**
  * @desc takes an object with properties that might be promises and returns a promise of that object with resolved properties

@@ -1,75 +1,24 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import ReactMarkdown from 'react-markdown';
-
 import {
-  StyledTop,
-  StyledTitle,
-  StyledBlurb,
-  FlexRowEnd,
-  Skip,
-  EndButton
-} from '../shared/styles';
+  Box,
+  Text,
+  Grid,
+  Card,
+  Button,
+  Flex,
+  Overflow,
+  Link
+} from '@makerdao/ui-components';
 
-const LegalContent = styled.div`
-  align-self: center;
-  overflow: scroll;
-  height: 316px;
-  width: 524px;
-  font-size: 15px;
-  color: #48495f;
-  padding-right: 22px;
-  padding-left: 22px;
-`;
+const containerWidth = '54.8rem';
+const termsMaxHeight = '30rem';
 
-const LegalBlurb = styled(StyledBlurb)`
-  align-self: center;
-  text-align: center;
-  font-size: 17px;
-  width: 480px;
-  margin-bottom: 16px;
-`;
-
-const TOS = ({ nextStep, modalClose }) => (
-  <Fragment>
-    <StyledTop>
-      <StyledTitle>Terms of Service</StyledTitle>
-    </StyledTop>
-    <LegalBlurb>
-      To vote in Maker governance, you'll need to agree to the Terms of Service
-      below.
-    </LegalBlurb>
-    <LegalContent>
-      <ReactMarkdown className="legal-markdown" skipHtml={true} source={text} />
-    </LegalContent>
-    <FlexRowEnd>
-      <Skip
-        mr={24}
-        mt={24}
-        onClick={() => {
-          modalClose();
-        }}
-      >
-        Cancel
-      </Skip>
-      <EndButton
-        slim
-        onClick={() => {
-          nextStep();
-        }}
-      >
-        I agree
-      </EndButton>
-    </FlexRowEnd>
-  </Fragment>
-);
-
-const text = `
-#### Terms of Service
-
+const terms = `
 #### 1. Acceptance of Terms
 Please read these Terms of Use (the “Terms” or “Terms of Use”) carefully before using the Service. By using or otherwise accessing the Service, or clicking to accept or agree to these Terms where that option is made available, you (1) agree that you have read and understand these Terms (2) accept and agree to these Terms and (3) any additional terms, rules and conditions of participation issued from time-to-time. If you do not agree to the Terms, then you may not access or use the Content or Service.
-MKR is a cryptographic governance token used in the Dai System and Software, which is an autonomous system of smart contracts on the Ethereum Blockchain (the “Open Source Software”), that permits, among other things, the generation of Dai. Dai is a cryptocurrency intended to maintain low-volatility against other assets. MKR token holders may use their MKR to collectively govern certain rules of use of the Open Source Software, including participation in voting over some key aspects of the Open Source Software or the MakerDAO project (the “Voting”). Any MKR token holder may participate in any Voting by independently interacting with the relevant smart contracts within the Open Source Software (the “Voting Contracts”). Some members and developers of the MakerDAO community and its Open Source Software (collectively the “MakerDAO Volunteers”) have provided you with a user interface, including the one available at https://vote.makerdao.com and via other tools (the “Site”) — which includes text, images, audio, code and other materials (collectively, the “Content”) and all of the features, and services provided. The Site, the Voting Contracts, and any other features, tools, materials, the Open Source Software, or other services offered from time to time are referred to here as the “Service”.  This agreement (the “Agreement”) between you and the MakerDAO Volunteers (“we”, “us”, “our”) sets out your rights to access and use of and any of the Services provided by us.  
+MKR is a cryptographic governance token used in the Dai System and Software, which is an autonomous system of smart contracts on the Ethereum Blockchain (the “Open Source Software”), that permits, among other things, the generation of Dai. Dai is a cryptocurrency intended to maintain low-volatility against other assets. MKR token holders may use their MKR to collectively govern certain rules of use of the Open Source Software, including participation in voting over some key aspects of the Open Source Software or the MakerDAO project (the “Voting”). Any MKR token holder may participate in any Voting by independently interacting with the relevant smart contracts within the Open Source Software (the “Voting Contracts”). Some members and developers of the MakerDAO community and its Open Source Software (collectively the “MakerDAO Volunteers”) have provided you with a user interface, including the one available at https://vote.makerdao.com and via other tools (the “Site”) — which includes text, images, audio, code and other materials (collectively, the “Content”) and all of the features, and services provided. The Site, the Voting Contracts, and any other features, tools, materials, the Open Source Software, or other services offered from time to time are referred to here as the “Service”.  This agreement (the “Agreement”) between you and the MakerDAO Volunteers (“we”, “us”, “our”) sets out your rights to access and use of and any of the Services provided by us.
 Note however, that while the Voting Contracts and the Site are intended to serve as a convenient way to participate in Voting, both are experimental prototypes and the use of either of them involves a high degree of risk. There are numerous ways the Voting Contracts, the Open Source Software and Service could fail in an unexpected way, resulting in the total and absolute loss of all of your funds, including MKR and other cryptocurrency, tokens or digital assets.
 
 #### 2. Modification of Terms of Use
@@ -79,7 +28,7 @@ You hereby represent and warrant that you are fully able and competent to enter 
 The Dai System and Software and Voting Contracts are global and by accessing the Content or Service, you are representing and warranting that you are of the legal age of majority in your jurisdiction as is required to access such Service and Content and enter into arrangements as provided by the Service. You further represent that you are otherwise legally permitted to use the service in your jurisdiction including owning cryptographic tokens of value and interacting with the Service or Content in any way. You further represent you are responsible for ensuring compliance with the laws of your jurisdiction and acknowledge that MakerDAO or any of the MakerDAO Volunteers (as defined below) is not liable for your compliance with such laws. Finally, you represent and warrant that you will not use the Service for any illegal activity.
 #### 4. Representations, Warranties, and Risks
 #### 4.1. No Representation or Warranty.
-You expressly understand and agree that your use of the Service is at your sole risk. 
+You expressly understand and agree that your use of the Service is at your sole risk.
 (A) ALL PERSONS, ENTITIES, AGENTS, AND VOLUNTEERS INVOLVED WITH THE CREATION OF THE OPEN SOURCE OPEN SOURCE  SOFTWARE, INCLUDING, WITHOUT LIMITATION, THE VOTING CONTRACTS DISPLAYED THROUGH THE SERVICE MAKE AND EXPRESSLY DISCLAIM ALL REPRESENTATIONS AND WARRANTIES, EXPRESS, IMPLIED OR STATUTORY; AND (B) WITH RESPECT TO OPEN SOURCE SOFTWARE, THE DAI SYSTEM AND SOFTWARE, VOTING CONTRACTS, DAI TOKENS AND MKR TOKENS, THE MAKERDAO VOLUNTEERS AND ALL RELATED ENTITIES AND AGENTS SPECIFICALLY DO NOT REPRESENT, WARRANT AND EXPRESSLY DISCLAIM ANY REPRESENTATION OR WARRANTY, EXPRESS, IMPLIED OR STATUTORY, INCLUDING WITHOUT LIMITATION, ANY REPRESENTATIONS OR WARRANTIES OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY, USAGE, SECURITY, SUITABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE, OR AS TO THE WORKMANSHIP OR TECHNICAL CODING THEREOF, OR THE ABSENCE OF ANY DEFECTS THEREIN, WHETHER LATENT OR PATENT. THE MAKERDAO VOLUNTEERS OR ANY RELATED ENTITIES OR AGENTS DO NOT REPRESENT OR WARRANT THAT THE SERVICE AND ANY RELATED INFORMATION ARE ACCURATE, COMPLETE, RELIABLE, CURRENT OR ERROR-FREE.
 #### 4.2. Disclaimer of Fiduciary Duties
 TO THE FULLEST EXTENT PERMITTED BY LAW AND NOTWITHSTANDING ANY OTHER PROVISION OF THIS AGREEMENT OR ANY OTHER AGREEMENT CONTEMPLATED HEREIN OR APPLICABLE PROVISIONS OF LAW OR EQUITY OR OTHERWISE, THE PARTIES HERETO HEREBY AGREE TO ELIMINATE ANY AND ALL FIDUCIARY DUTIES THE MAKERDAO VOLUNTEERS OR ANY RELATED ENTITIES AND AGENTS MAY HAVE TO YOU, OR YOUR AGENTS, AND AFFILIATES, OR THE END USERS OF THE SERVICE, THE SITE OR ITS CONTENT, PROVIDED THAT SUCH EXCLUSION OR LIMITATION OF LIABILITY SHALL NOT EXTEND TO MISAPPROPRIATION OF YOUR ASSETS OR FUNDS, SITE OR CONTENT PROVIDED BY THE MAKERDAO VOLUNTEERS OR ANY RELATED ENTITIES AND AGENTS OR OTHER ACTS OR OMISSIONS THAT CONSTITUTE A BAD FAITH VIOLATION OF THE IMPLIED CONTRACTUAL COVENANT OF GOOD FAITH AND FAIR DEALING.
@@ -153,4 +102,62 @@ Fraud: Activity which operates to defraud MakerDAO, Dai System and Software user
 Intellectual Property Infringement: Engage in transactions involving items that infringe or violate any copyright, trademark, right of publicity or privacy or any other proprietary right under the law, including but not limited to sales, distribution, or access to counterfeit music, movies, software, or other licensed materials without the appropriate authorization from the rights holder; use of MakerDAO intellectual property, name, or logo, including use of MakerDAO trade or service marks, without express consent from MakerDAO or in a manner that otherwise harms MakerDAO; any action that implies an untrue endorsement by or affiliation with MakerDAO.
 `;
 
-export default TOS;
+const TermsWrapper = styled.div`
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+
+  h4 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 5px;
+    color: #48495f;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+`;
+
+const Terms = ({ onCancel, onComplete }) => {
+  return (
+    <Box maxWidth={`${containerWidth}`} m="0 auto">
+      <Grid gridRowGap="m">
+        <Box mb="s" textAlign="center">
+          <h2>Terms of Use</h2>
+        </Box>
+        <Card py="m" px="l">
+          <Overflow y="scroll" height={`${termsMaxHeight}`}>
+            <TermsWrapper>
+              <Text t="p4">
+                <ReactMarkdown skipHtml={true} source={terms} />
+              </Text>
+            </TermsWrapper>
+          </Overflow>
+        </Card>
+        <Text textAlign="center">
+          <p>
+            By clicking 'I agree' you confirm you have read and agree to the
+            terms of service and agree to our{' '}
+            <Link
+              href="https://makerdao.com/privacy/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              privacy policy
+            </Link>
+          </p>
+        </Text>
+        <Flex justifyContent="center">
+          <Button variant="secondary-outline" onClick={onCancel} mr="s">
+            Cancel
+          </Button>
+          <Button onClick={onComplete}>I agree</Button>
+        </Flex>
+      </Grid>
+    </Box>
+  );
+};
+
+export default Terms;

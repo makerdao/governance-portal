@@ -1,65 +1,83 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getActiveAccount, getAccount } from '../../reducers/accounts';
-import {
-  lock as proxyLock,
-  smartStepSkip,
-  clear as clearProxyState
-} from '../../reducers/proxy';
+import { getActiveAccount } from '../../reducers/accounts';
+import { lock } from '../../reducers/proxy';
 import { modalClose } from '../../reducers/modal';
 import AmountInput from './shared/AmountInput';
 import MKRApprove from './MKRApprove';
+import TransactionModal from './shared/InitiateTransaction';
+
+import { StyledTop, StyledTitle, StyledBlurb } from './shared/styles';
 
 const mapStateToProps = state => {
-  const activeAccount = getActiveAccount(state);
-  let linkedAccount;
-  let account;
-  if (activeAccount.proxy.linkedAccount.address) {
-    //if we can get cold address from account store, do that
-    linkedAccount = getAccount(
-      state,
-      activeAccount.proxy.linkedAccount.address
-    );
-    account = activeAccount.proxyRole === 'hot' ? linkedAccount : activeAccount;
-  } else {
-    //if cold account not in account store, get it from the proxy store.  Only should happen if ADD_ACCOUNT calls from refreshAccountDataLink() after approve link is really slow
-    account = getAccount(state, state.proxy.coldAddress);
-  }
+  const account = getActiveAccount(state);
   const balance =
-    activeAccount.proxyRole === 'hot'
-      ? activeAccount.proxy.linkedAccount.mkrBalance
-      : activeAccount.mkrBalance;
+    account.proxyRole === 'hot'
+      ? account.proxy.linkedAccount.mkrBalance
+      : account.mkrBalance;
   return {
     balance,
     account,
     hasInfMkrApproval: account.proxy.hasInfMkrApproval,
     txHash: state.proxy.sendMkrTxHash,
-    confirming: state.proxy.confirmingSendMkr,
-    network: state.metamask.network,
-    title: 'Lock MKR',
-    blurb:
-      'Locking your MKR allows you to vote. The more you lock, the more voting power you have. You can withdraw it at anytime',
-    txPurpose:
-      'This transaction is to lock your MKR. Your funds are safe. You can withdraw them at anytime.',
-    amountLabel: 'MKR balance',
-    buttonLabel: 'Lock MKR',
-    txSent: !!state.proxy.sendMkrAmount
+    txStatus: state.proxy.sendMkrTxStatus
   };
 };
 
 const mapDispatchToProps = {
-  action: proxyLock,
-  maxAction: proxyLock,
+  lock,
+  modalClose
+};
+
+const Lock = ({
+  hasInfMkrApproval,
+  txHash,
+  txStatus,
+  account,
+  lock,
+  balance,
   modalClose,
-  skip: smartStepSkip,
-  clearProxyState
+  ...props
+}) => {
+  if (!hasInfMkrApproval) return <MKRApprove {...props} />;
+
+  return (
+    <TransactionModal
+      txPurpose="This transaction is to lock your MKR. Your funds are safe. You can withdrawn them at anytime"
+      txHash={txHash}
+      txStatus={txStatus}
+      account={account}
+      onComplete={modalClose}
+    >
+      {onNext => {
+        return (
+          <React.Fragment>
+            <StyledTop>
+              <StyledTitle>Lock MKR</StyledTitle>
+            </StyledTop>
+            <StyledBlurb>
+              Locking your MKR allows you to vote. The more you lock the more
+              voting power you have. You can withdraw it at anytime
+            </StyledBlurb>
+            <AmountInput
+              buttonLabel="Lock MKR"
+              amountLabel="MKR balance"
+              maxAmount={balance}
+              skip={modalClose}
+              onSubmit={amount => {
+                lock(amount);
+                onNext();
+              }}
+            />
+          </React.Fragment>
+        );
+      }}
+    </TransactionModal>
+  );
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(({ hasInfMkrApproval, ...props }) => {
-  if (hasInfMkrApproval) return <AmountInput {...props} />;
-  else return <MKRApprove {...props} />;
-});
+)(Lock);

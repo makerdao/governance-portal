@@ -3,6 +3,7 @@ import React, { Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { modalOpen } from '../reducers/modal';
+import { onboardingOpen } from '../reducers/onboarding';
 import { getActiveAccount } from '../reducers/accounts';
 import theme from '../theme';
 import DotSpacer from './DotSpacer';
@@ -20,7 +21,6 @@ import { cutMiddle, firstLetterCapital, formatRound } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
 import Lock from './modals/Lock';
 import Withdraw from './modals/Withdraw';
-import ProxySetup from './modals/ProxySetup';
 
 const fadeIn = keyframes`
 0% {
@@ -76,7 +76,7 @@ const TextButton = styled.span`
   cursor: pointer;
 `;
 
-const WelcomeBanner = ({ modalOpen }) => {
+const WelcomeBanner = ({ onboardingOpen }) => {
   return (
     <Banner>
       <Content>
@@ -98,7 +98,7 @@ const WelcomeBanner = ({ modalOpen }) => {
         textColor={theme.text.darker_default}
         hoverTextColor={theme.text.darker_default}
         activeColor={'grey'}
-        onClick={() => modalOpen(ProxySetup)}
+        onClick={onboardingOpen}
       >
         Set up now
       </Button>
@@ -110,7 +110,14 @@ const Padding = styled.div`
   margin-top: 20px;
 `;
 
-const VoterStatus = ({ account, network, modalOpen, fetching, signaling }) => {
+const VoterStatus = ({
+  account,
+  network,
+  onboardingOpen,
+  modalOpen,
+  fetching,
+  signaling
+}) => {
   if (fetching) {
     return (
       <Padding>
@@ -121,7 +128,7 @@ const VoterStatus = ({ account, network, modalOpen, fetching, signaling }) => {
   if (!account || !account.hasProxy)
     return (
       <FadeIn>
-        <WelcomeBanner modalOpen={modalOpen} />
+        <WelcomeBanner onboardingOpen={onboardingOpen} />
       </FadeIn>
     );
   const { linkedAccount } = account.proxy;
@@ -192,5 +199,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { modalOpen }
+  { modalOpen, onboardingOpen }
 )(VoterStatus);
