@@ -5,7 +5,11 @@ import styled from 'styled-components';
 import { StyledTitle, StyledBlurb, StyledTop } from './shared/styles';
 import Button from '../Button';
 import { modalClose } from '../../reducers/modal';
-import { addAccount, setActiveAccount } from '../../reducers/accounts';
+import {
+  addAccount,
+  setActiveAccount,
+  connectHardwareAccounts
+} from '../../reducers/accounts';
 import { AccountTypes } from '../../utils/constants';
 import { cutMiddle, toNum, copyToClipboard } from '../../utils/misc';
 import { addToastWithTimeout, ToastTypes } from '../../reducers/toasts';
@@ -303,7 +307,13 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { addAccount, setActiveAccount, addToastWithTimeout, modalClose }
+  {
+    addAccount,
+    setActiveAccount,
+    addToastWithTimeout,
+    modalClose,
+    connectHardwareAccounts
+  }
 )(AddressSelection);
 
 const LedgerLoading = () => (

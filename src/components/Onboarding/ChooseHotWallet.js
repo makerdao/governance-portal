@@ -149,7 +149,9 @@ class ChooseHotWallet extends React.Component {
       faqs: faqs.hotWallet,
       availableAccounts: [],
       connecting: false,
-      error: false
+      error: false,
+      accountType: null,
+      isLedgerLive: false
     };
   }
 
@@ -183,38 +185,12 @@ class ChooseHotWallet extends React.Component {
     this.toConfirmWallet();
   };
 
-  connectWallet = async (accountType, options = {}) => {
+  onTrezorSelected = () => {
     this.setState({
-      connecting: true,
-      error: false
+      accountType: AccountTypes.TREZOR,
+      isLedgerLive: false
     });
     this.toSelectMKRBalance();
-    try {
-      const accounts = await this.props.connectHardwareAccounts(
-        accountType,
-        options
-      );
-      const accountsWithBalances = await Promise.all(
-        accounts.map(async account => {
-          return await addMkrAndEthBalance(account);
-        })
-      );
-
-      this.setState({
-        availableAccounts: accountsWithBalances,
-        connecting: false
-      });
-    } catch (err) {
-      console.error(err);
-      this.setState({
-        error: true,
-        connecting: false
-      });
-    }
-  };
-
-  onTrezorSelected = () => {
-    this.connectWallet(AccountTypes.TREZOR);
   };
 
   onLedgerSelected = () => {
@@ -225,11 +201,19 @@ class ChooseHotWallet extends React.Component {
   };
 
   onLedgerLiveSelected = () => {
-    this.connectWallet(AccountTypes.LEDGER, { live: true });
+    this.setState({
+      accountType: AccountTypes.LEDGER,
+      isLedgerLive: true
+    });
+    this.toSelectMKRBalance();
   };
 
   onLedgerLegacySelected = () => {
-    this.connectWallet(AccountTypes.LEDGER, { live: false });
+    this.setState({
+      accountType: AccountTypes.LEDGER,
+      isLedgerLive: false
+    });
+    this.toSelectMKRBalance();
   };
 
   toSelectMKRBalance = () => {
@@ -268,9 +252,8 @@ class ChooseHotWallet extends React.Component {
               onCancel={this.toSelectAWallet}
             />
             <ChooseMKRBalanceStep
-              accounts={this.state.availableAccounts}
-              connecting={this.state.connecting}
-              error={this.state.error}
+              accountType={this.state.accountType}
+              isLedgerLive={this.state.isLedgerLive}
               onAccountSelected={this.onAccountSelected}
               onCancel={this.toSelectAWallet}
             />

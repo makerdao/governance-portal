@@ -29,6 +29,7 @@ import { MKR } from '../chain/maker';
 // and the second path for Legacy is "44'/60'/0'/0/1"
 const LEDGER_LIVE_PATH = "44'/60'/0'";
 const LEDGER_LEGACY_PATH = "44'/60'/0'/0";
+const DEFAULT_ACCOUNTS_PER_PAGE = 5;
 
 const REMOVE_ACCOUNTS = 'accounts/REMOVE_ACCOUNTS';
 export const SET_ACTIVE_ACCOUNT = 'accounts/SET_ACTIVE_ACCOUNT';
@@ -233,8 +234,6 @@ export const connectHardwareAccounts = (
       dispatch({
         type: HARDWARE_ACCOUNTS_CONNECTED,
         payload: {
-          accountType,
-          accounts: accountsWithType,
           onAccountChosen: callback
         }
       });
@@ -246,7 +245,8 @@ export const connectHardwareAccounts = (
       .addAccount({
         type: accountType,
         path: path,
-        accountsLength: 5,
+        accountsOffset: options.offset || 0,
+        accountsLength: options.accountsPerPage || DEFAULT_ACCOUNTS_PER_PAGE,
         choose: onChoose
       })
       .catch(err => {
@@ -264,10 +264,10 @@ export const addHardwareAccount = (address, accountType) => async (
 ) => {
   try {
     const {
-      accounts: { hardwareAccountsAvailable }
+      accounts: { onHardwareAccountChosen }
     } = getState();
 
-    await hardwareAccountsAvailable[accountType].onChosen(null, address);
+    await onHardwareAccountChosen(null, address);
 
     // add hardware account to maker object
     await dispatch(
@@ -278,10 +278,7 @@ export const addHardwareAccount = (address, accountType) => async (
     );
 
     return dispatch({
-      type: HARDWARE_ACCOUNT_CONNECTED,
-      payload: {
-        accountType
-      }
+      type: HARDWARE_ACCOUNT_CONNECTED
     });
   } catch (err) {
     return dispatch({
@@ -315,16 +312,7 @@ const initialState = {
   activeAccount: '',
   fetching: true,
   allAccounts: [],
-  hardwareAccountsAvailable: {
-    [AccountTypes.TREZOR]: {
-      accounts: [],
-      onChosen: () => {}
-    },
-    [AccountTypes.TREZOR]: {
-      accounts: [],
-      onChosen: () => {}
-    }
-  }
+  onHardwareAccountChosen: () => {}
 };
 
 const updateProxyBalance = adding => (state, { payload: amount }) => {
@@ -429,18 +417,16 @@ const accounts = createReducer(initialState, {
   },
   [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),
   [WITHDRAW_MKR_SUCCESS]: updateProxyBalance(false),
-  [HARDWARE_ACCOUNTS_CONNECTING]: state => {
-    return state;
+  [HARDWARE_ACCOUNTS_CONNECTING]: (state, { payload }) => {
+    return {
+      ...state,
+      onHardwareAccountChosen: () => {}
+    };
   },
   [HARDWARE_ACCOUNTS_CONNECTED]: (state, { payload }) => {
     return {
       ...state,
-      hardwareAccountsAvailable: {
-        [payload.accountType]: {
-          accounts: payload.accounts,
-          onChosen: payload.onAccountChosen
-        }
-      }
+      onHardwareAccountChosen: payload.onAccountChosen
     };
   },
   [HARDWARE_ACCOUNTS_ERROR]: state => {
@@ -449,12 +435,7 @@ const accounts = createReducer(initialState, {
   [HARDWARE_ACCOUNT_CONNECTED]: (state, { payload }) => {
     return {
       ...state,
-      hardwareAccountsAvailable: {
-        [payload.accountType]: {
-          accounts: [],
-          onChosen: () => {}
-        }
-      }
+      onHardwareAccountChosen: () => {}
     };
   },
   [HARDWARE_ACCOUNT_ERROR]: state => {

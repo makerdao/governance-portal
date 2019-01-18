@@ -13,7 +13,6 @@ import WalletIcon from './shared/WalletIcon';
 import AccountInfo from './shared/AccountInfo';
 import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
 import faqs from './data/faqs';
-import { addMkrAndEthBalance } from './utils';
 import { HotWalletTag, ColdWalletTag } from './shared/Tags';
 
 import ChooseMKRBalanceStep from './ChooseMKRBalanceStep';
@@ -23,10 +22,7 @@ import linkImg from '../../imgs/onboarding/link.svg';
 import { setColdWallet, resetColdWallet } from '../../reducers/onboarding';
 import { setActiveAccount } from '../../reducers/accounts';
 
-import {
-  connectHardwareAccounts,
-  addHardwareAccount
-} from '../../reducers/accounts';
+import { addHardwareAccount } from '../../reducers/accounts';
 
 const imageWidth = '5rem';
 
@@ -115,7 +111,8 @@ class ChooseColdWallet extends React.Component {
     this.state = {
       step: 0,
       faqs: faqs.coldWallet,
-      availableAccounts: [],
+      accountType: null,
+      isLedgerLive: false,
       connecting: false,
       error: false
     };
@@ -129,36 +126,12 @@ class ChooseColdWallet extends React.Component {
     });
   };
 
-  connectWallet = async (accountType, options = {}) => {
+  onTrezorSelected = async () => {
     this.setState({
-      connecting: true,
-      error: false
+      accountType: AccountTypes.TREZOR,
+      isLedgerLive: false
     });
     this.toSelectMKRBalance();
-    try {
-      const accounts = await this.props.connectHardwareAccounts(
-        accountType,
-        options
-      );
-      const accountsWithBalances = await Promise.all(
-        accounts.map(async account => {
-          return await addMkrAndEthBalance(account);
-        })
-      );
-      this.setState({
-        availableAccounts: accountsWithBalances,
-        connecting: false
-      });
-    } catch (err) {
-      this.setState({
-        connecting: false,
-        error: true
-      });
-    }
-  };
-
-  onTrezorSelected = async () => {
-    this.connectWallet(AccountTypes.TREZOR);
   };
 
   onLedgerSelected = () => {
@@ -169,11 +142,19 @@ class ChooseColdWallet extends React.Component {
   };
 
   onLedgerLiveSelected = () => {
-    this.connectWallet(AccountTypes.LEDGER, { live: true });
+    this.setState({
+      accountType: AccountTypes.LEDGER,
+      isLedgerLive: true
+    });
+    this.toSelectMKRBalance();
   };
 
   onLedgerLegacySelected = () => {
-    this.connectWallet(AccountTypes.LEDGER, { live: false });
+    this.setState({
+      accountType: AccountTypes.LEDGER,
+      isLedgerLive: false
+    });
+    this.toSelectMKRBalance();
   };
 
   toSelectMKRBalance = () => {
@@ -216,9 +197,8 @@ class ChooseColdWallet extends React.Component {
             onCancel={this.toSelectAWallet}
           />
           <ChooseMKRBalanceStep
-            accounts={this.state.availableAccounts}
-            connecting={this.state.connecting}
-            error={this.state.error}
+            accountType={this.state.accountType}
+            isLedgerLive={this.state.isLedgerLive}
             onAccountSelected={this.onAccountSelected}
             onCancel={this.toSelectAWallet}
           />
@@ -240,7 +220,6 @@ export default connect(
     ...state.onboarding
   }),
   {
-    connectHardwareAccounts,
     addHardwareAccount,
     setColdWallet,
     resetColdWallet,

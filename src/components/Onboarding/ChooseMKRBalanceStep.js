@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {
   Grid,
   Box,
@@ -13,13 +14,21 @@ import {
 
 import Loader from '../Loader';
 import OnboardingHeader from './shared/OnboardingHeader';
+import { addMkrAndEthBalance } from './utils';
+import { connectHardwareAccounts } from '../../reducers/accounts';
+
+const ACCOUNTS_PER_PAGE = 5;
 
 class ChooseMKRBalance extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      selectedAddress: null
+      accounts: [],
+      selectedAddress: null,
+      connecting: true,
+      error: false,
+      page: 0
     };
   }
 
@@ -30,13 +39,74 @@ class ChooseMKRBalance extends React.Component {
   };
 
   onConfirm = () => {
-    const account = this.props.accounts.find(
+    const account = this.state.accounts.find(
       account => account.address === this.state.selectedAddress
     );
     this.props.onAccountSelected(account);
   };
 
+  onMoreAccounts = () => {
+    const newPage = this.state.page + 1;
+
+    const hasAlreadyBeenFetched =
+      newPage * ACCOUNTS_PER_PAGE < this.state.accounts.length;
+    this.setState({
+      page: newPage
+    });
+
+    !hasAlreadyBeenFetched && this.fetchAccounts(newPage);
+  };
+
+  onPrevAccounts = () => {
+    this.setState({
+      page: this.state.page - 1
+    });
+  };
+
+  fetchAccounts = async page => {
+    this.setState({
+      connecting: true,
+      error: false
+    });
+
+    try {
+      const accounts = await this.props.connectHardwareAccounts(
+        this.props.accountType,
+        {
+          live: this.props.isLedgerLive,
+          offset: page * ACCOUNTS_PER_PAGE,
+          accountsPerPage: ACCOUNTS_PER_PAGE
+        }
+      );
+      const accountsWithBalances = await Promise.all(
+        accounts.map(addMkrAndEthBalance)
+      );
+
+      this.setState({
+        connecting: false,
+        error: false,
+        accounts: this.state.accounts
+          .slice(0, page * ACCOUNTS_PER_PAGE)
+          .concat(accountsWithBalances)
+          .concat(this.state.accounts.slice((page + 1) * ACCOUNTS_PER_PAGE))
+      });
+    } catch (err) {
+      this.setState({
+        connecting: false,
+        error: true
+      });
+    }
+  };
+
+  async componentDidMount() {
+    this.fetchAccounts(0);
+  }
+
   render() {
+    const accountsToShow = this.state.accounts.slice(
+      this.state.page * ACCOUNTS_PER_PAGE,
+      (this.state.page + 1) * ACCOUNTS_PER_PAGE
+    );
     return (
       <Grid gridRowGap="m">
         <OnboardingHeader
@@ -46,7 +116,7 @@ class ChooseMKRBalance extends React.Component {
         corresponding Ethereum address."
         />
         <Card py="m" px="l">
-          {this.props.error && (
+          {this.state.error && (
             <Flex
               justifyContent="center"
               alignItems="center"
@@ -59,7 +129,7 @@ class ChooseMKRBalance extends React.Component {
               </p>
             </Flex>
           )}
-          {this.props.connecting && !this.props.error && (
+          {this.state.connecting && !this.state.error && (
             <Flex justifyContent="center" alignItems="center">
               <Box style={{ opacity: '0.6' }}>
                 <Loader />
@@ -69,47 +139,64 @@ class ChooseMKRBalance extends React.Component {
               </Box>
             </Flex>
           )}
-          {!this.props.connecting &&
-            !this.props.error &&
-            this.props.accounts.length > 0 && (
-              <Table variant="cozy" width="100%">
-                <thead>
-                  <tr>
-                    <th />
-                    <th>Address</th>
-                    <th>MKR</th>
-                    <th>ETH</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {this.props.accounts.map(account => {
-                    return (
-                      <tr key={account.address}>
-                        <td>
-                          <Box pr="s" fontSize="1.8rem">
-                            <Checkbox
-                              value={account.address}
-                              checked={
-                                this.state.selectedAddress === account.address
-                              }
-                              onChange={() =>
-                                this.selectAddress(account.address)
-                              }
-                            />
-                          </Box>
-                        </td>
-                        <td>
-                          <Link>
-                            <Address full={account.address} shorten />
-                          </Link>
-                        </td>
-                        <td>{account.mkrBalance || '0'} MKR</td>
-                        <td>{account.ethBalance || '0'} ETH</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>
+          {!this.state.connecting &&
+            !this.state.error &&
+            accountsToShow.length > 0 && (
+              <Grid gridRowGap="s">
+                <Table variant="cozy" width="100%">
+                  <thead>
+                    <tr>
+                      <th />
+                      <th>Address</th>
+                      <th>MKR</th>
+                      <th>ETH</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {accountsToShow.map(account => {
+                      return (
+                        <tr key={account.address}>
+                          <td>
+                            <Box pr="s" fontSize="1.8rem">
+                              <Checkbox
+                                value={account.address}
+                                checked={
+                                  this.state.selectedAddress === account.address
+                                }
+                                onChange={() =>
+                                  this.selectAddress(account.address)
+                                }
+                              />
+                            </Box>
+                          </td>
+                          <td>
+                            <Link>
+                              <Address full={account.address} shorten />
+                            </Link>
+                          </td>
+                          <td>{account.mkrBalance || '0'} MKR</td>
+                          <td>{account.ethBalance || '0'} ETH</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+                <Grid gridTemplateColumns="auto auto" gridColumnGap="s">
+                  <Button
+                    variant="secondary-outline"
+                    disabled={this.state.page === 0}
+                    onClick={this.onPrevAccounts}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    variant="secondary-outline"
+                    onClick={this.onMoreAccounts}
+                  >
+                    More
+                  </Button>
+                </Grid>
+              </Grid>
             )}
         </Card>
         <Grid
@@ -133,4 +220,9 @@ class ChooseMKRBalance extends React.Component {
   }
 }
 
-export default ChooseMKRBalance;
+export default connect(
+  state => ({}),
+  {
+    connectHardwareAccounts
+  }
+)(ChooseMKRBalance);
