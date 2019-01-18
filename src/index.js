@@ -60,10 +60,7 @@ if (window.web3) {
   window.web3.version.getNetwork(async (err, _netId) => {
     const netId = parseInt(_netId, 10);
 
-    if (
-      (!testchainConfigId && netId !== 1 && netId !== 42) ||
-      (testchainConfigId && parseInt(testchainConfigId, 10) !== netId)
-    ) {
+    if (!testchainConfigId && netId !== 1 && netId !== 42) {
       store.dispatch(wrongNetwork());
     } else {
       const network = netIdToName(netId);

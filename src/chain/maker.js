@@ -42,7 +42,7 @@ export default async function createMaker(
       plugins: [
         trezorPlugin,
         ledgerPlugin,
-        [governancePlugin, { setContractAddresses: false }],
+        governancePlugin,
         [configPlugin, { testchainId: testchainConfigId }]
       ],
       autoAuthenticate: true,

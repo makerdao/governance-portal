@@ -5,7 +5,7 @@ import * as hat from '../../src/reducers/hat';
 import * as eth from '../../src/reducers/eth';
 import * as accounts from '../../src/reducers/accounts';
 import { getAction } from '../helpers/getAction';
-import { netIdToName } from '../../src/utils/ethereum';
+import * as ethereumUtils from '../../src/utils/ethereum';
 
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -73,6 +73,7 @@ proposals.proposalsInit = jest.fn(() => mockAction);
 hat.hatInit = jest.fn(() => mockAction);
 eth.ethInit = jest.fn(() => mockAction);
 accounts.setActiveAccount = jest.fn(() => mockAction);
+ethereumUtils.netToUri = jest.fn();
 
 // Mock Maker services
 const setProvider = jest.fn();
@@ -265,7 +266,7 @@ describe('async actions', () => {
     expect(setProvider).toBeCalledTimes(1);
     expect(await getAction(store, reducer.UPDATE_NETWORK)).toEqual({
       type: reducer.UPDATE_NETWORK,
-      payload: { network: netIdToName(mockNetId) }
+      payload: { network: ethereumUtils.netIdToName(mockNetId) }
     });
     expect(store.getActions().length).toBe(1);
   });
@@ -292,7 +293,7 @@ describe('async actions', () => {
     });
     expect(await getAction(store, reducer.UPDATE_NETWORK)).toEqual({
       type: reducer.UPDATE_NETWORK,
-      payload: { network: netIdToName(mockNetId) }
+      payload: { network: ethereumUtils.netIdToName(mockNetId) }
     });
     expect(store.getActions().length).toBe(3);
   });
