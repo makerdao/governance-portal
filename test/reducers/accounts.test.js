@@ -396,6 +396,8 @@ describe('Hardware wallets', () => {
 
     const addressesWithTypes = addresses.map(a => ({
       address: a,
+      mkrBalance: 100,
+      ethBalance: 100,
       type: AccountTypes.LEDGER
     }));
     expect(results).toEqual(addressesWithTypes);
