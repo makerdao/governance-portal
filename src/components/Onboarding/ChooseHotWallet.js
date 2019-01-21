@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Grid, Card, Box, Button, Flex } from '@makerdao/ui-components';
 
 import faqs from './data/faqs';
-import { addMkrAndEthBalance } from './utils';
+import { addMkrAndEthBalance } from '../../utils/misc';
 import { AccountTypes } from '../../utils/constants';
 
 import LedgerStep from './LedgerStep';

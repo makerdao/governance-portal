@@ -14,7 +14,6 @@ import {
 
 import Loader from '../Loader';
 import OnboardingHeader from './shared/OnboardingHeader';
-import { addMkrAndEthBalance } from './utils';
 import { connectHardwareAccounts } from '../../reducers/accounts';
 
 const ACCOUNTS_PER_PAGE = 5;
@@ -78,16 +77,13 @@ class ChooseMKRBalance extends React.Component {
           accountsPerPage: ACCOUNTS_PER_PAGE
         }
       );
-      const accountsWithBalances = await Promise.all(
-        accounts.map(addMkrAndEthBalance)
-      );
 
       this.setState({
         connecting: false,
         error: false,
         accounts: this.state.accounts
           .slice(0, page * ACCOUNTS_PER_PAGE)
-          .concat(accountsWithBalances)
+          .concat(accounts)
           .concat(this.state.accounts.slice((page + 1) * ACCOUNTS_PER_PAGE))
       });
     } catch (err) {

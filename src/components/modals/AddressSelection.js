@@ -1,17 +1,15 @@
 import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
-import round from 'lodash.round';
 import styled from 'styled-components';
 import { StyledTitle, StyledBlurb, StyledTop } from './shared/styles';
 import Button from '../Button';
 import { modalClose } from '../../reducers/modal';
 import {
-  addAccount,
   setActiveAccount,
-  connectHardwareAccounts
+  connectHardwareAccounts,
+  addHardwareAccount
 } from '../../reducers/accounts';
-import { AccountTypes } from '../../utils/constants';
-import { cutMiddle, toNum, copyToClipboard } from '../../utils/misc';
+import { cutMiddle, copyToClipboard } from '../../utils/misc';
 import { addToastWithTimeout, ToastTypes } from '../../reducers/toasts';
 import {
   AddressContainer,
@@ -22,7 +20,6 @@ import {
 } from './shared/HotColdTable';
 import { Wrapper, Blurb } from './LedgerType';
 import Loader from '../Loader';
-import { ETH, MKR } from '../../chain/maker';
 import theme from '../../theme';
 
 const CircleNumber = styled.div`
@@ -71,11 +68,10 @@ class AddressSelection extends Component {
     super(props);
 
     this.state = {
-      pickAccount: () => {},
       accounts: [],
       paginationEnabled: true,
       currentPage: 0,
-      selectedIndex: null
+      selectedAddress: null
     };
   }
 
@@ -92,7 +88,7 @@ class AddressSelection extends Component {
     } = this.state;
 
     if (accounts.length === 0) {
-      return <Loading type={this.props.trezor ? 'trezor' : 'ledger'} />;
+      return <Loading type={this.props.accountType} />;
     }
 
     const firstIndex = currentPage * PER_PAGE;
@@ -121,29 +117,33 @@ class AddressSelection extends Component {
               </tr>
             </thead>
             <tbody>
-              {slicedAccounts.map(({ address, eth, mkr, index }) => (
-                <tr key={address}>
-                  <td className="radio">
-                    <input
-                      type="radio"
-                      name="address"
-                      value={index}
-                      checked={index === selectedIndex}
-                      onChange={() => this.setState({ selectedIndex: index })}
-                    />
-                  </td>
-                  <td>{index + 1}</td>
+              {slicedAccounts.map(
+                ({ address, ethBalance, mkrBalance }, index) => (
+                  <tr key={address}>
+                    <td className="radio">
+                      <input
+                        type="radio"
+                        name="address"
+                        value={index}
+                        checked={address === this.state.selectedAddress}
+                        onChange={() =>
+                          this.setState({ selectedAddress: address })
+                        }
+                      />
+                    </td>
+                    <td>{index + firstIndex + 1}</td>
 
-                  <InlineTd title={address}>
-                    {cutMiddle(address, 7, 5)}
-                    <CopyBtn onClick={() => copyToClipboard(address)}>
-                      <CopyBtnIcon />
-                    </CopyBtn>
-                  </InlineTd>
-                  <td>{eth} ETH</td>
-                  <td>{mkr} MKR</td>
-                </tr>
-              ))}
+                    <InlineTd title={address}>
+                      {cutMiddle(address, 7, 5)}
+                      <CopyBtn onClick={() => copyToClipboard(address)}>
+                        <CopyBtnIcon />
+                      </CopyBtn>
+                    </InlineTd>
+                    <td>{ethBalance} ETH</td>
+                    <td>{mkrBalance} MKR</td>
+                  </tr>
+                )
+              )}
             </tbody>
           </Table>
         </AddressContainer>
@@ -200,36 +200,31 @@ class AddressSelection extends Component {
     );
   }
 
-  loadAddresses(page = this.state.currentPage) {
+  async loadAddresses(page = this.state.currentPage) {
     const { accounts } = this.state;
+    const {
+      connectHardwareAccounts,
+      isLedgerLive,
+      accountType,
+      addToastWithTimeout
+    } = this.props;
     const offset = page * PER_PAGE;
 
-    return new Promise(resolve => {
-      window.maker
-        .addAccount({
-          type: this.props.trezor ? 'trezor' : 'ledger',
-          path: this.props.path,
-          accountsLength: PER_PAGE,
-          accountsOffset: offset,
-          choose: async (addresses, callback) => {
-            const addressesWithInfo = await this.getInfo(addresses, offset);
-
-            this.setState(
-              {
-                accounts: accounts.concat(addressesWithInfo),
-                pickAccount: callback
-              },
-              resolve
-            );
-          }
-        })
-        .then(account => {
-          this.handleAddressConfirmationCallback(account);
-        })
-        .catch(err => {
-          this.props.addToastWithTimeout(ToastTypes.ERROR, err.message);
-        });
-    });
+    try {
+      const newAccounts = await connectHardwareAccounts(accountType, {
+        live: isLedgerLive,
+        offset: offset,
+        accountsPerPage: PER_PAGE
+      });
+      this.setState({
+        accounts: accounts
+          .slice(0, offset)
+          .concat(newAccounts)
+          .concat(accounts.slice(offset + PER_PAGE))
+      });
+    } catch (err) {
+      addToastWithTimeout(ToastTypes.ERROR, err.message);
+    }
   }
 
   handleAddressPaginationPrevious = e => {
@@ -265,40 +260,18 @@ class AddressSelection extends Component {
       });
   };
 
-  handleAddressConfirmation = () => {
-    const { accounts, selectedIndex, pickAccount } = this.state;
-    const address = accounts.find(a => a.index === selectedIndex).address;
-    // update maker object
-    pickAccount(null, address);
+  handleAddressConfirmation = async () => {
+    try {
+      await this.props.addHardwareAccount(
+        this.state.selectedAddress,
+        this.props.accountType
+      );
+      await this.props.setActiveAccount(this.state.selectedAddress);
+      this.props.modalClose();
+    } catch (err) {
+      this.props.addToastWithTimeout(ToastTypes.ERROR, err.message);
+    }
   };
-
-  handleAddressConfirmationCallback({ address }) {
-    const { addAccount, setActiveAccount, modalClose, trezor } = this.props;
-    // update UI
-    addAccount({
-      address,
-      type: trezor ? AccountTypes.TREZOR : AccountTypes.LEDGER
-    }).then(() => setActiveAccount(address));
-
-    modalClose();
-  }
-
-  getInfo(addresses, indexOffset) {
-    return Promise.all(
-      Object.keys(addresses).map(async index => ({
-        index: parseInt(indexOffset, 10) + parseInt(index, 10),
-        address: addresses[index],
-        eth: round(
-          await toNum(window.maker.getToken(ETH).balanceOf(addresses[index])),
-          3
-        ),
-        mkr: round(
-          await toNum(window.maker.getToken(MKR).balanceOf(addresses[index])),
-          3
-        )
-      }))
-    );
-  }
 }
 
 const mapStateToProps = state => ({
@@ -308,11 +281,11 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   {
-    addAccount,
     setActiveAccount,
     addToastWithTimeout,
     modalClose,
-    connectHardwareAccounts
+    connectHardwareAccounts,
+    addHardwareAccount
   }
 )(AddressSelection);
 

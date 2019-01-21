@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+import jazzicon from 'jazzicon';
 
 import ClickOutside from './ClickOutside';
 import Loader from './Loader';
@@ -10,10 +11,10 @@ import { numberForAddress } from '../utils/ethereum';
 import arrow from '../imgs/arrow.svg';
 import { fonts, colors, shadows } from '../theme';
 import { getActiveAccount, setActiveAccount } from '../reducers/accounts';
-import jazzicon from 'jazzicon';
 import { modalOpen } from '../reducers/modal';
 import AddressSelection from './modals/AddressSelection';
 import PathSelection from './modals/PathSelection';
+import { AccountTypes } from '../utils/constants';
 
 const StyledArrow = styled.img`
   margin-left: 0.7em;
@@ -202,7 +203,9 @@ class AccountBox extends Component {
             <DropdownRowForLink>
               <ConnectLink
                 onClick={() => {
-                  modalOpen(AddressSelection, { trezor: true });
+                  modalOpen(AddressSelection, {
+                    accountType: AccountTypes.TREZOR
+                  });
                 }}
               >
                 Connect to Trezor

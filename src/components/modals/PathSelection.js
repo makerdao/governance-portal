@@ -3,15 +3,9 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { modalOpen } from '../../reducers/modal';
 import AddressSelection from './AddressSelection';
-import { StyledTitle, StyledTop, StyledBlurb } from './shared/styles';
 import LedgerType from './LedgerType';
-
-// the Ledger subprovider interprets these paths to mean that the last digit is
-// the one that should be incremented.
-// i.e. the second path for Live is "44'/60'/1'/0/0"
-// and the second path for Legacy is "44'/60'/0'/0/1"
-const LEDGER_LIVE_PATH = "44'/60'/0'";
-const LEDGER_LEGACY_PATH = "44'/60'/0'/0";
+import { StyledTitle, StyledTop, StyledBlurb } from './shared/styles';
+import { AccountTypes } from '../../utils/constants';
 
 const CenterBlurb = styled(StyledBlurb)`
   text-align: center;
@@ -42,8 +36,8 @@ const PathSelection = ({ modalOpen }) => {
           modalOpen(
             AddressSelection,
             {
-              ledger: true,
-              path: LEDGER_LIVE_PATH
+              accountType: AccountTypes.LEDGER,
+              isLedgerLive: true
             },
             true
           )
@@ -56,8 +50,8 @@ const PathSelection = ({ modalOpen }) => {
           modalOpen(
             AddressSelection,
             {
-              ledger: true,
-              path: LEDGER_LEGACY_PATH
+              accountType: AccountTypes.LEDGER,
+              isLedgerLive: false
             },
             true
           )

@@ -11,7 +11,8 @@ import {
   subtract,
   toNum,
   promiseRetry,
-  promisedProperties
+  promisedProperties,
+  addMkrAndEthBalance
 } from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
@@ -226,10 +227,14 @@ export const connectHardwareAccounts = (
 
   return new Promise((resolve, reject) => {
     const onChoose = async (addresses, callback) => {
-      const accountsWithType = addresses.map(address => ({
-        address,
-        type: accountType
-      }));
+      const accountsWithType = await Promise.all(
+        addresses.map(address =>
+          addMkrAndEthBalance({
+            address,
+            type: accountType
+          })
+        )
+      );
 
       dispatch({
         type: HARDWARE_ACCOUNTS_CONNECTED,
