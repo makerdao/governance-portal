@@ -143,13 +143,14 @@ class ChooseMKRBalance extends React.Component {
                   <thead>
                     <tr>
                       <th />
+                      <th>#</th>
                       <th>Address</th>
                       <th>MKR</th>
                       <th>ETH</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {accountsToShow.map(account => {
+                    {accountsToShow.map((account, index) => {
                       return (
                         <tr key={account.address}>
                           <td>
@@ -163,6 +164,12 @@ class ChooseMKRBalance extends React.Component {
                                   this.selectAddress(account.address)
                                 }
                               />
+                            </Box>
+                          </td>
+                          <td>
+                            <Box pr="s">
+                              {this.state.page * ACCOUNTS_PER_PAGE +
+                                (index + 1)}
                             </Box>
                           </td>
                           <td>
