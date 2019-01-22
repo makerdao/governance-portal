@@ -2,8 +2,12 @@ import governancePlugin from '@makerdao/dai-plugin-governance';
 import trezorPlugin from '@makerdao/dai-plugin-trezor-web';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 import Maker, { ETH, MKR } from '@makerdao/dai';
+import configPlugin from '@makerdao/dai-plugin-config';
 
-export default async function createMaker(network = 'mainnet') {
+export default async function createMaker(
+  network = 'mainnet',
+  testchainConfigId
+) {
   let gasPrice = 6 * 10 ** 9; // default to 6 Gwei gas price
   try {
     // check ethgasstation for gas price info
@@ -17,7 +21,7 @@ export default async function createMaker(network = 'mainnet') {
     );
   }
 
-  return Maker.create('http', {
+  let config = {
     plugins: [trezorPlugin, ledgerPlugin, governancePlugin],
     autoAuthenticate: true,
     log: false,
@@ -30,7 +34,12 @@ export default async function createMaker(network = 'mainnet') {
       url: `https://${network}.infura.io/`,
       type: 'HTTP'
     }
-  });
+  };
+
+  // Use the config plugin, if we have a testchainConfigId
+  if (testchainConfigId)
+    config.plugins.push([configPlugin, { testchainId: testchainConfigId }]);
+  return Maker.create('http', config);
 }
 
 export { ETH, MKR };
