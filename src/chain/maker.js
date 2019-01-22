@@ -37,23 +37,8 @@ export default async function createMaker(
   };
 
   // Use the config plugin, if we have a testchainConfigId
-  if (testchainConfigId) {
-    config = {
-      plugins: [
-        trezorPlugin,
-        ledgerPlugin,
-        governancePlugin,
-        [configPlugin, { testchainId: testchainConfigId }]
-      ],
-      autoAuthenticate: true,
-      log: false,
-      web3: {
-        transactionSettings: {
-          gasPrice
-        }
-      }
-    };
-  }
+  if (testchainConfigId)
+    config.plugins.push([configPlugin, { testchainId: testchainConfigId }]);
   return Maker.create('http', config);
 }
 
