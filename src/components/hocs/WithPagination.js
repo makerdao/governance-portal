@@ -14,18 +14,18 @@ class WithPagination extends React.Component {
   }
 
   componentDidMount() {
-    this.fetch(0, this.props.numPerPage);
+    this.fetchItems(0, this.props.numPerPage);
   }
 
-  fetch = async page => {
-    const { fetch, numPerPage } = this.props;
+  fetchItems = async page => {
+    const { fetchItems, numPerPage } = this.props;
 
     this.setState({
       loading: true
     });
 
     try {
-      const newItems = await fetch(page, numPerPage);
+      const newItems = await fetchItems(page, numPerPage);
 
       this.setState({
         loading: false,
@@ -50,7 +50,7 @@ class WithPagination extends React.Component {
       newPage * this.props.numPerPage < this.state.items.length;
 
     try {
-      !hasAlreadyBeenFetched && (await this.fetch(newPage));
+      !hasAlreadyBeenFetched && (await this.fetchItems(newPage));
 
       this.setState({
         page: newPage
@@ -68,7 +68,7 @@ class WithPagination extends React.Component {
   };
 
   retry = () => {
-    this.fetch(this.state.page, this.props.numPerPage);
+    this.fetchItems(this.state.page, this.props.numPerPage);
   };
 
   render() {
@@ -93,7 +93,7 @@ class WithPagination extends React.Component {
 WithPagination.propTypes = {
   children: PropTypes.func.isRequired,
   // Function that fetches data given a page and number per page
-  fetch: PropTypes.func.isRequired,
+  fetchItems: PropTypes.func.isRequired,
   numPerPage: PropTypes.number
 };
 

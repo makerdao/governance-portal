@@ -60,7 +60,7 @@ class ChooseMKRBalance extends React.Component {
         />
         <WithPagination
           numPerPage={ACCOUNTS_PER_PAGE}
-          fetch={this.fetchAccounts}
+          fetchItems={this.fetchAccounts}
         >
           {({ page, items, error, loading, onNext, onPrev }) => (
             <Card py="m" px="l">

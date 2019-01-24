@@ -100,7 +100,7 @@ class AddressSelection extends Component {
 
   render() {
     return (
-      <WithPagination fetch={this.fetchAccounts} numPerPage={PER_PAGE}>
+      <WithPagination fetchItems={this.fetchAccounts} numPerPage={PER_PAGE}>
         {({ page, loading, error, items, onNext, onPrev, retry }) => {
           if (loading && items.length <= 0) {
             return <Loading type={this.props.accountType} />;
