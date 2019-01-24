@@ -76,7 +76,7 @@ class AddressSelection extends Component {
     try {
       return await this.props.connectHardwareAccounts(this.props.accountType, {
         live: this.props.isLedgerLive,
-        offset: this.props.offset,
+        offset: page * numPerPage,
         accountsPerPage: numPerPage
       });
     } catch (err) {
