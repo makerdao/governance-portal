@@ -367,16 +367,7 @@ describe('Hardware wallets', () => {
   let store;
 
   const initialState = {
-    hardwareAccountsAvailable: {
-      [AccountTypes.TREZOR]: {
-        accounts: [],
-        onChosen: jest.fn()
-      },
-      [AccountTypes.LEDGER]: {
-        accounts: [],
-        onChosen: jest.fn()
-      }
-    }
+    onHardwareAccountChosen: jest.fn()
   };
 
   beforeEach(() => {
@@ -405,6 +396,8 @@ describe('Hardware wallets', () => {
 
     const addressesWithTypes = addresses.map(a => ({
       address: a,
+      mkrBalance: 100,
+      ethBalance: 100,
       type: AccountTypes.LEDGER
     }));
     expect(results).toEqual(addressesWithTypes);
@@ -415,8 +408,6 @@ describe('Hardware wallets', () => {
     expect(store.getActions()[1]).toEqual({
       type: HARDWARE_ACCOUNTS_CONNECTED,
       payload: {
-        accountType: AccountTypes.LEDGER,
-        accounts: addressesWithTypes,
         onAccountChosen: onAccountChosen
       }
     });
@@ -455,6 +446,7 @@ describe('Hardware wallets', () => {
     expect(window.maker.addAccount).toBeCalledWith({
       type: AccountTypes.LEDGER,
       path: LEDGER_LEGACY_PATH,
+      accountsOffset: expect.any(Number),
       accountsLength: expect.any(Number),
       choose: expect.any(Function)
     });
@@ -475,6 +467,7 @@ describe('Hardware wallets', () => {
       expect.objectContaining({
         type: AccountTypes.LEDGER,
         path: LEDGER_LIVE_PATH,
+        accountsOffset: expect.any(Number),
         accountsLength: expect.any(Number),
         choose: expect.any(Function)
       })
@@ -495,13 +488,14 @@ describe('Hardware wallets', () => {
     expect(window.maker.addAccount).toBeCalledWith(
       expect.objectContaining({
         type: AccountTypes.TREZOR,
+        accountsOffset: expect.any(Number),
         accountsLength: expect.any(Number),
         choose: expect.any(Function)
       })
     );
   });
 
-  test('HARDWARE_ACCOUNTS_CONNECTED adds the accounts and callback to that account type', () => {
+  test('HARDWARE_ACCOUNTS_CONNECTED adds the callback', () => {
     const someAddress = '0xdeadbeef';
     const callback = () => {};
     const accounts = [
@@ -513,19 +507,14 @@ describe('Hardware wallets', () => {
     const action = {
       type: HARDWARE_ACCOUNTS_CONNECTED,
       payload: {
-        accounts,
-        accountType: AccountTypes.TREZOR,
         onAccountChosen: callback
       }
     };
     const newState = reducer(initialState, action);
-    expect(newState.hardwareAccountsAvailable[AccountTypes.TREZOR]).toEqual({
-      accounts,
-      onChosen: callback
-    });
+    expect(newState.onHardwareAccountChosen).toEqual(callback);
   });
 
-  test('HARDWARE_ACCOUNT_CONNECTED clears the accounts and callback for that account type', () => {
+  test('HARDWARE_ACCOUNT_CONNECTED clears the callback for hardware accounts', () => {
     const action = {
       type: HARDWARE_ACCOUNT_CONNECTED,
       payload: {
@@ -537,34 +526,21 @@ describe('Hardware wallets', () => {
     const newState = reducer(
       {
         ...initialState,
-        hardwareAccountsAvailable: {
-          ...initialState.hardwareAccountsAvailable,
-          [AccountTypes.TREZOR]: {
-            accounts: [{ type: AccountTypes.TREZOR, address: '0x' }],
-            onChosen: oldCallback
-          }
-        }
+        onHardwareAccountChosen: oldCallback
       },
       action
     );
 
-    expect(
-      newState.hardwareAccountsAvailable[AccountTypes.TREZOR].accounts
-    ).toEqual([]);
-    expect(
-      newState.hardwareAccountsAvailable[AccountTypes.TREZOR].onChosen
-    ).not.toBe(oldCallback);
+    expect(newState.onHardwareAccountChosen).not.toBe(oldCallback);
   });
 
   each([[AccountTypes.TREZOR], [AccountTypes.LEDGER]]).describe(
     'When a hardware wallet is chosen',
     async accountType => {
       test('it is added to the maker object', async () => {
-        store
-          .getState()
-          .accounts.hardwareAccountsAvailable[
-            accountType
-          ].onChosen.mockResolvedValue();
+        store.getState().accounts.onHardwareAccountChosen = jest
+          .fn()
+          .mockResolvedValue();
 
         await addHardwareAccount(someAddress, accountType)(
           store.dispatch,
@@ -572,21 +548,15 @@ describe('Hardware wallets', () => {
         );
 
         expect(
-          store.getState().accounts.hardwareAccountsAvailable[accountType]
-            .onChosen
+          store.getState().accounts.onHardwareAccountChosen
         ).toBeCalledTimes(1);
         expect(
-          store.getState().accounts.hardwareAccountsAvailable[accountType]
-            .onChosen
+          store.getState().accounts.onHardwareAccountChosen
         ).toBeCalledWith(null, someAddress);
       });
 
       test('it fires the appropriate actions', async () => {
-        store
-          .getState()
-          .accounts.hardwareAccountsAvailable[
-            accountType
-          ].onChosen.mockResolvedValue();
+        store.getState().accounts.onHardwareAccountChosen.mockResolvedValue();
 
         await addHardwareAccount(someAddress, accountType)(
           store.dispatch,
@@ -603,10 +573,7 @@ describe('Hardware wallets', () => {
               })
             },
             {
-              type: HARDWARE_ACCOUNT_CONNECTED,
-              payload: {
-                accountType
-              }
+              type: HARDWARE_ACCOUNT_CONNECTED
             }
           ])
         );
@@ -615,9 +582,7 @@ describe('Hardware wallets', () => {
       test('it fires an error when maker callback fails', async () => {
         store
           .getState()
-          .accounts.hardwareAccountsAvailable[
-            accountType
-          ].onChosen.mockRejectedValue('some err');
+          .accounts.onHardwareAccountChosen.mockRejectedValue('some err');
 
         await addHardwareAccount(someAddress, accountType)(
           store.dispatch,
