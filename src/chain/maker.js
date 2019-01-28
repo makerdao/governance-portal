@@ -3,6 +3,8 @@ import trezorPlugin from '@makerdao/dai-plugin-trezor-web';
 import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 import Maker, { ETH, MKR } from '@makerdao/dai';
 
+export const INFURA_PROJECT_ID = '912c79d091a74c6a8c0938c3bd2319a0';
+
 export default async function createMaker(network = 'mainnet') {
   let gasPrice = 6 * 10 ** 9; // default to 6 Gwei gas price
   try {
@@ -27,7 +29,7 @@ export default async function createMaker(network = 'mainnet') {
       }
     },
     provider: {
-      url: `https://${network}.infura.io/`,
+      url: `https://${network}.infura.io/v3/${INFURA_PROJECT_ID}`,
       type: 'HTTP'
     }
   });

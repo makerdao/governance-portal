@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 import takeLast from 'ramda/src/takeLast';
+import { INFURA_PROJECT_ID } from '../chain/maker';
 
 BigNumber.config({ DECIMAL_PLACES: 18, ROUNDING_MODE: 1 });
 
@@ -127,11 +128,11 @@ export const netNameToId = name => {
 export const netToUri = network => {
   switch (network) {
     case 'kovan':
-      return `https://${network}.infura.io/`;
+      return `https://${network}.infura.io/v3/${INFURA_PROJECT_ID}`;
     case 'ganache':
       return 'http://127.0.0.1:2000/';
     default:
-      return 'https://mainnet.infura.io/';
+      return `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID}`;
   }
 };
 
