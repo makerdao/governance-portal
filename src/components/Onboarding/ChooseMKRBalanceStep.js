@@ -43,10 +43,10 @@ class ChooseMKRBalance extends React.Component {
   };
 
   onConfirm = () => {
-    const account = this.state.accounts.find(
-      account => account.address === this.state.selectedAddress
-    );
-    this.props.onAccountSelected(account);
+    this.props.onAccountSelected({
+      address: this.state.selectedAddress,
+      type: this.props.accountType
+    });
   };
 
   render() {
