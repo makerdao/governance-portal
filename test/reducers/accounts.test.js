@@ -497,7 +497,7 @@ describe('Hardware wallets', () => {
 
   test('HARDWARE_ACCOUNTS_CONNECTED adds the callback', () => {
     const someAddress = '0xdeadbeef';
-    const callback = () => {};
+    const callback = jest.fn();
     const accounts = [
       {
         type: AccountTypes.TREZOR,
