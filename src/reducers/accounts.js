@@ -169,25 +169,21 @@ export const updateAccount = account => ({
   payload: account
 });
 
-export const setActiveAccount = (address, isMetamask) => async (
-  dispatch,
-  getState
-) => {
-  // if we haven't seen this account before, fetch its data and add it to the
-  // Maker instance
-  if (isMetamask && !getAccount(getState(), address)) {
-    try {
-      await window.maker
-        .service('accounts')
-        .addAccount({ type: AccountTypes.METAMASK });
-      await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
-    } catch (error) {
-      // This error occurs when user rejects provider access in MetaMask
-      console.error('Error adding account', error);
-      return dispatch({ type: NO_METAMASK_ACCOUNTS });
-    }
-  }
+export const addMetamaskAccount = address => async (dispatch, getState) => {
+  // Only add new accounts that we haven't seen before
+  if (getAccount(getState(), address)) return;
 
+  try {
+    await window.maker
+      .service('accounts')
+      .addAccount({ type: AccountTypes.METAMASK });
+    return dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
+  } catch (error) {
+    dispatch({ type: NO_METAMASK_ACCOUNTS });
+  }
+};
+
+export const setActiveAccount = address => async (dispatch, getState) => {
   const state = getState();
 
   try {
@@ -206,7 +202,7 @@ export const setActiveAccount = (address, isMetamask) => async (
       }
     });
   } catch (err) {
-    return dispatch({ type: NO_METAMASK_ACCOUNTS });
+    // Do nothing.
   }
 };
 

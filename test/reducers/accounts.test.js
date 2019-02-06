@@ -10,8 +10,12 @@ import reducer, {
   HARDWARE_ACCOUNTS_CONNECTING,
   HARDWARE_ACCOUNTS_CONNECTED,
   HARDWARE_ACCOUNTS_ERROR,
+  SET_ACTIVE_ACCOUNT,
+  NO_METAMASK_ACCOUNTS,
   addAccount,
   updateAccount,
+  setActiveAccount,
+  addMetamaskAccount,
   connectHardwareAccounts,
   connectHardwareAccount,
   addHardwareAccount
@@ -48,7 +52,7 @@ const defaults = {
   }
 };
 
-const setupMocks = (opts = defaults) => {
+const setupMocks = (opts = defaults, services = {}) => {
   const balanceOf = jest.fn().mockReturnValue(
     Promise.resolve({
       toBigNumber: () => ({ toFixed: () => opts.balance })
@@ -85,8 +89,14 @@ const setupMocks = (opts = defaults) => {
       : {}
   });
 
-  const service = jest.fn().mockReturnValue({
-    getVoteProxy
+  const service = jest.fn().mockImplementation(service => {
+    const allServices = {
+      voteProxy: {
+        getVoteProxy
+      },
+      ...services
+    };
+    return allServices[service];
   });
 
   window.maker = {
@@ -296,6 +306,147 @@ const state = {
     }
   ]
 };
+
+describe('setActiveAccount', () => {
+  let store;
+  let useAccountWithAddress;
+  let addAccount;
+  const existingAccount = {
+    address: '0xexistingaccount'
+  };
+
+  beforeEach(() => {
+    store = mockStore({
+      accounts: {
+        activeAccount: '',
+        allAccounts: [existingAccount]
+      },
+      onboarding: {
+        hotWallet: undefined,
+        coldWallet: undefined
+      }
+    });
+
+    useAccountWithAddress = jest.fn();
+    addAccount = jest.fn();
+
+    window.maker = {
+      useAccountWithAddress,
+      service: jest.fn().mockReturnValue({
+        useAccountWithAddress,
+        addAccount
+      })
+    };
+  });
+
+  test('it should call useAccountWithAddress on the maker object', async () => {
+    await setActiveAccount(existingAccount.address)(
+      store.dispatch,
+      store.getState
+    );
+
+    expect(useAccountWithAddress).toBeCalledWith(existingAccount.address);
+  });
+
+  test('it fires the appropriate actions', async () => {
+    await setActiveAccount(existingAccount.address)(
+      store.dispatch,
+      store.getState
+    );
+
+    expect(store.getActions().length).toEqual(1);
+    expect(store.getActions()[0]).toEqual({
+      type: SET_ACTIVE_ACCOUNT,
+      payload: {
+        newAccount: existingAccount,
+        onboardingColdAddress: undefined,
+        onboardingHotAddress: undefined
+      }
+    });
+  });
+
+  test('when the account fails to be added, it does not do anything', async () => {
+    window.maker.useAccountWithAddress = jest
+      .fn()
+      .mockImplementation(() => throw 'Does not exist');
+
+    await setActiveAccount('0xdoesnotexist')(store.dispatch, store.getState);
+
+    expect(window.maker.useAccountWithAddress).toBeCalledWith('0xdoesnotexist');
+    expect(store.getActions().length).toEqual(0);
+  });
+});
+
+describe('addMetamaskAccount', () => {
+  let store;
+  let useAccountWithAddress;
+  let addAccount;
+
+  const existingAccount = {
+    address: '0xexistingaccount'
+  };
+  beforeEach(() => {
+    useAccountWithAddress = jest.fn();
+    addAccount = jest.fn();
+    setupMocks(defaults, {
+      accounts: {
+        useAccountWithAddress,
+        addAccount
+      }
+    });
+    store = mockStore({
+      accounts: {
+        activeAccount: '',
+        allAccounts: [existingAccount]
+      }
+    });
+
+    window.maker = {
+      ...window.maker,
+      useAccountWithAddress
+    };
+  });
+
+  it('does not do anything if the account has already been added', async () => {
+    await addMetamaskAccount(existingAccount.address)(
+      store.dispatch,
+      store.getState
+    );
+
+    expect(store.getActions().length).toEqual(0);
+  });
+
+  it('adds the new account', async () => {
+    const newAddress = '0xNewAddress';
+
+    await addMetamaskAccount(newAddress)(store.dispatch, store.getState);
+
+    expect(addAccount).toHaveBeenCalledWith({ type: AccountTypes.METAMASK });
+    expect(store.getActions()[1]).toEqual({
+      type: ADD_ACCOUNT,
+      payload: expect.objectContaining({
+        address: newAddress
+      })
+    });
+  });
+
+  it('dispatches NO_METAMASK_ACCOUNTS if adding the account fails', async () => {
+    addAccount = jest.fn().mockRejectedValue('Oops');
+    setupMocks(defaults, {
+      accounts: {
+        useAccountWithAddress,
+        addAccount
+      }
+    });
+
+    await addMetamaskAccount('0xanything')(store.dispatch, store.getState);
+
+    expect(addAccount).toHaveBeenCalledWith({ type: AccountTypes.METAMASK });
+    expect(store.getActions()[0]).toEqual({
+      type: NO_METAMASK_ACCOUNTS
+    });
+  });
+});
 
 test('locking updates account values', () => {
   const action = { type: SEND_MKR_TO_PROXY_SUCCESS, payload: '1.4' };

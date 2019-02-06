@@ -189,6 +189,7 @@ describe('async actions', () => {
     await store.dispatch(reducer.init(network));
 
     expect(accounts.setActiveAccount).toBeCalledTimes(2);
+    expect(accounts.addMetamaskAccount).toBeCalledTimes(2);
     expect(store.getActions()[0]).toEqual({
       type: reducer.CONNECT_REQUEST
     });
@@ -205,11 +206,11 @@ describe('async actions', () => {
       payload: mockDefaultAccount
     });
     // Since our mock store doesn't get updated, initWeb3Accounts will update address again
-    expect(store.getActions()[9]).toEqual({
+    expect(store.getActions()[10]).toEqual({
       type: reducer.UPDATE_ADDRESS,
       payload: mockDefaultAccount
     });
-    expect(store.getActions().length).toBe(11);
+    expect(store.getActions().length).toBe(13);
   });
 
   test('initWeb3Accounts and update address with web3 default address', async () => {
@@ -217,6 +218,7 @@ describe('async actions', () => {
     await store.dispatch(reducer.initWeb3Accounts());
 
     expect(accounts.setActiveAccount).toBeCalledTimes(1);
+    expect(accounts.addMetamaskAccount).toBeCalledTimes(1);
     expect(await getAction(store, reducer.UPDATE_ADDRESS)).toEqual({
       type: reducer.UPDATE_ADDRESS,
       payload: mockDefaultAccount
@@ -271,6 +273,7 @@ describe('async actions', () => {
     await store.dispatch(reducer.pollForMetamaskChanges());
 
     expect(accounts.setActiveAccount).toBeCalledTimes(1);
+    expect(accounts.addMetamaskAccount).toBeCalledTimes(1);
     expect(await getAction(store, reducer.UPDATE_ADDRESS)).toEqual({
       type: reducer.UPDATE_ADDRESS,
       payload: mockDefaultAccount
@@ -279,6 +282,6 @@ describe('async actions', () => {
       type: reducer.UPDATE_NETWORK,
       payload: { network: ethereumUtils.netIdToName(mockNetId) }
     });
-    expect(store.getActions().length).toBe(3);
+    expect(store.getActions().length).toBe(4);
   });
 });
