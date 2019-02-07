@@ -4,6 +4,8 @@ import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 import Maker, { ETH, MKR } from '@makerdao/dai';
 import configPlugin from '@makerdao/dai-plugin-config';
 
+import { netToUri } from '../utils/ethereum';
+
 export default async function createMaker(
   network = 'mainnet',
   testchainConfigId
@@ -31,7 +33,7 @@ export default async function createMaker(
       }
     },
     provider: {
-      url: `https://${network}.infura.io/`,
+      url: netToUri(network),
       type: 'HTTP'
     }
   };
