@@ -930,6 +930,34 @@
     web3 "1.0.0-beta.34"
     web3-provider-engine makerdao/provider-engine#kovan-fix-dist
 
+"@makerdao/dai@^0.11.2":
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.11.2.tgz#16ebe444dc52b3392da7b79e8e168359c367d3f1"
+  integrity sha512-ZxixO/UAe63PuEBPjV8dTcz4qqdM50S1OAIzX/IwsiKCDdoRoIpvcrRuUBav6NAy5ZC4B19wQ8liyqgWSZLVWg==
+  dependencies:
+    "@makerdao/services-core" "^0.9.4"
+    babel-plugin-module-resolver "^3.1.1"
+    babel-plugin-transform-decorators-legacy "^1.3.5"
+    babel-runtime "^6.26.0"
+    bignumber.js "^7.2.1"
+    chalk "^2.4.1"
+    debug "^3.1.0"
+    ethers "^3.0.15"
+    ethers-web3-bridge "0.0.1"
+    eventemitter2 "^5.0.1"
+    invariant "^2.2.2"
+    lodash "^4.17.10"
+    lodash.intersection "^4.4.0"
+    lodash.isequal "^4.5.0"
+    lodash.merge "^4.6.1"
+    lodash.times "^4.3.2"
+    lodash.uniq "^4.5.0"
+    lodash.values "^4.3.0"
+    promise-props "^1.0.0"
+    toposort "^2.0.2"
+    web3 "1.0.0-beta.34"
+    web3-provider-engine makerdao/provider-engine#kovan-fix-dist
+
 "@makerdao/services-core@^0.9.4":
   version "0.9.4"
   resolved "https://registry.yarnpkg.com/@makerdao/services-core/-/services-core-0.9.4.tgz#b89c43c31a8fb435e09f6cc4e8acf92b9ffc06c4"
@@ -12216,7 +12244,7 @@ web3-net@1.0.0-beta.35:
     web3-core-method "1.0.0-beta.35"
     web3-utils "1.0.0-beta.35"
 
-web3-provider-engine@14.0.4, "web3-provider-engine@github:makerdao/provider-engine#kovan-fix-dist", web3-provider-engine@makerdao/provider-engine#kovan-fix-dist:
+web3-provider-engine@14.0.4, web3-provider-engine@makerdao/provider-engine#kovan-fix-dist:
   version "14.0.4"
   resolved "https://codeload.github.com/makerdao/provider-engine/tar.gz/7c4b187809f156409473246de15dc595e1fe3356"
   dependencies:

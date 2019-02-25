@@ -128,14 +128,14 @@ export const netNameToId = name => {
 export const netToUri = network => {
   switch (network) {
     case 'kovan':
-      return `https://${network}.infura.io/`;
+      return `https://${network}.infura.io/v3/${INFURA_PROJECT_ID}`;
     case 'ganache': {
       const currentProvider = window.maker.service('accounts').getProvider();
       const rpcUrl = currentProvider._providers[1].rpcUrl;
       return rpcUrl ? rpcUrl : 'http://127.0.0.1:2000/';
     }
     default:
-      return 'https://mainnet.infura.io/';
+      return `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID}`;
   }
 };
 

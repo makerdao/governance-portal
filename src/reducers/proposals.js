@@ -116,18 +116,13 @@ const formatStringToPascal = kebob => {
 };
 
 const updateSourceForTestnet = topics => {
-  const cInfo = window.maker.service('smartContract')._getAllContractInfo();
-  console.log('smart contracts from sdk', cInfo);
+  const contracts = window.maker.service('smartContract')._getAllContractInfo();
 
   topics.map(topic => {
     topic.proposals.map(proposal => {
-      // console.log('proposals', proposal);
       const formattedPropKey = formatStringToPascal(proposal.key);
-      if (formattedPropKey in cInfo) {
-        proposal.source = cInfo[formattedPropKey][0].address;
-      } else {
-        proposal.source = '0x0000000000000000000000000000000000000000';
-      }
+      if (formattedPropKey in contracts)
+        proposal.source = contracts[formattedPropKey][0].address;
     });
   });
 
@@ -136,10 +131,7 @@ const updateSourceForTestnet = topics => {
 
 function extractProposals(topics, network) {
   // if we're using a testnet, overwrite proposal source with provided ganache addresses.
-  if (network === 'ganache') {
-    const newTopics = updateSourceForTestnet(topics);
-    console.log('new topics', newTopics);
-  }
+  if (network === 'ganache') updateSourceForTestnet(topics);
 
   return topics.reduce((acc, topic) => {
     const proposals = topic.proposals.map(({ source, ...otherProps }) => ({
