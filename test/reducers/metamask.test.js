@@ -76,6 +76,9 @@ accounts.setActiveAccount = jest.fn(() => mockAction);
 
 // Mock Maker services
 const setProvider = jest.fn();
+const getProvider = jest.fn(() => ({
+  _providers: ['mockA', 'mockB']
+}));
 const mockService = name => {
   if (name === 'web3') {
     return {
@@ -84,6 +87,7 @@ const mockService = name => {
       }
     };
   }
+  if (name === 'accounts') return { getProvider };
 };
 const defaultFunctions = {
   service: jest.fn(mockService)

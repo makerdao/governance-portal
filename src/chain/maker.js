@@ -6,8 +6,6 @@ import configPlugin from '@makerdao/dai-plugin-config';
 
 import { netToUri } from '../utils/ethereum';
 
-export const INFURA_PROJECT_ID = '912c79d091a74c6a8c0938c3bd2319a0';
-
 export default async function createMaker(
   network = 'mainnet',
   testchainConfigId
