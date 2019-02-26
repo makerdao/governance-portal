@@ -77,17 +77,33 @@ export const checkNetwork = () => async (dispatch, getState) => {
   }
 };
 
+let triedEnabling = false;
+
 export const initWeb3Accounts = () => async (dispatch, getState) => {
   const {
     metamask: { activeAddress },
     accounts: { fetching }
   } = getState();
-  if (window.web3 && window.web3.eth.defaultAccount) {
+
+  async function useAddress() {
     const address = window.web3.eth.defaultAccount;
     if (address !== activeAddress) {
       dispatch(updateAddress(address));
       await dispatch(addMetamaskAccount(address));
       await dispatch(setActiveAccount(address, true));
+    }
+  }
+
+  if (window.web3 && window.web3.eth.defaultAccount) {
+    await useAddress();
+  } else if (window.ethereum && !triedEnabling) {
+    triedEnabling = true;
+    try {
+      await window.ethereum.enable();
+      await useAddress();
+    } catch (err) {
+      dispatch({ type: NO_METAMASK_ACCOUNTS });
+      dispatch(notAvailable());
     }
   } else if (fetching && !activeAddress) {
     dispatch({ type: NO_METAMASK_ACCOUNTS });

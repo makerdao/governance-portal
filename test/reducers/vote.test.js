@@ -132,8 +132,7 @@ describe('Vote Reducer', () => {
 
       await store.dispatch(reducer.sendVote(mockProposalAddress));
 
-      jest.advanceTimersByTime(1500);
-      done();
+      jest.runAllTimers();
 
       expect(store.getActions().length).toBe(8);
       expect(voteExec).toBeCalledTimes(1);
@@ -169,6 +168,8 @@ describe('Vote Reducer', () => {
       expect(initApprovalsFetch).toBeCalledTimes(1);
       expect(voteTallyInit).toBeCalledTimes(1);
       expect(hatInit).toBeCalledTimes(1);
+
+      done();
     });
 
     test('send vote should dispatch FAILURE action when TxMgr calls error', async () => {
@@ -235,8 +236,7 @@ describe('Vote Reducer', () => {
 
       await store.dispatch(reducer.withdrawVote());
 
-      jest.advanceTimersByTime(1500);
-      done();
+      jest.runAllTimers();
 
       expect(store.getActions().length).toBe(8);
       expect(voteExec).toBeCalledTimes(1);
@@ -270,6 +270,8 @@ describe('Vote Reducer', () => {
       expect(initApprovalsFetch).toBeCalledTimes(1);
       expect(voteTallyInit).toBeCalledTimes(1);
       expect(hatInit).toBeCalledTimes(1);
+
+      done();
     });
 
     test('withdraw vote should dispatch FAILURE action when TxMgr calls error', async () => {
