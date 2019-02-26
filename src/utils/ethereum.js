@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js';
 import takeLast from 'ramda/src/takeLast';
-import { INFURA_PROJECT_ID } from '../chain/maker';
 
 BigNumber.config({ DECIMAL_PLACES: 18, ROUNDING_MODE: 1 });
+export const INFURA_PROJECT_ID = '912c79d091a74c6a8c0938c3bd2319a0';
 
 export const WEI = 1;
 export const GWEI = 1000000000;
