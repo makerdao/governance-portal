@@ -108,7 +108,7 @@ const fetchTopics = async network => {
 
 // Actions ------------------------------------------------
 
-const formatStringToPascal = kebob => {
+const formatStringToConstantCase = kebob => {
   return kebob
     .split('-')
     .join('_')
@@ -120,7 +120,7 @@ const updateSourceForTestnet = topics => {
 
   topics.map(topic => {
     topic.proposals.map(proposal => {
-      const formattedPropKey = formatStringToPascal(proposal.key);
+      const formattedPropKey = formatStringToConstantCase(proposal.key);
       if (formattedPropKey in contracts)
         proposal.source = contracts[formattedPropKey][0].address;
     });
