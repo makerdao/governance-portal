@@ -89,21 +89,21 @@ const fetchNetwork = async (url, network) => {
 const fetchTopics = async network => {
   // If we're running a testchain, we want the kovan topics, and we'll overwrite the addresses later
   if (network === 'ganache') {
-    return await fetchNetwork(staging, 'kovan');
+    return fetchNetwork(staging, 'kovan');
   }
   if (process.env.REACT_APP_GOV_BACKEND === 'mock') {
-    return await fetchMock(network);
+    return fetchMock(network);
   }
 
   if (process.env.REACT_APP_GOV_BACKEND === 'local') {
-    return await fetchNetwork(local, network);
+    return fetchNetwork(local, network);
   }
 
   if (process.env.REACT_APP_GOV_BACKEND === 'staging') {
-    return await fetchNetwork(staging, network);
+    return fetchNetwork(staging, network);
   }
 
-  return await fetchNetwork(prod, network);
+  return fetchNetwork(prod, network);
 };
 
 // Actions ------------------------------------------------
