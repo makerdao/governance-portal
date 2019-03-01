@@ -141,7 +141,7 @@ const Timeline = ({
                     })
                   }
                 >
-                  {eq(votingFor, hat.address)
+                  {votingFor.includes(hat.address.toLowerCase())
                     ? 'Withdraw vote'
                     : 'Vote for no change'}
                 </Button>
@@ -194,7 +194,7 @@ const Timeline = ({
                         })
                       }
                     >
-                      {eq(votingFor, proposal.source)
+                      {votingFor.includes(proposal.source.toLowerCase())
                         ? 'Withdraw vote'
                         : 'Vote for this Proposal'}
                     </Button>

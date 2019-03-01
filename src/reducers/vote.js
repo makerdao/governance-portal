@@ -35,7 +35,7 @@ const handleTx = ({
   txObject,
   acctType,
   activeAccount,
-  proposalAddress = ''
+  proposalAddresses = []
 }) =>
   new Promise(resolve => {
     const txMgr = window.maker.service('transactionManager');
@@ -63,7 +63,7 @@ const handleTx = ({
           acctType === 'ledger' || acctType === 'trezor' ? 5000 : 2000
         ); // there is no science here
 
-        updateVotingFor(dispatch, getState, activeAccount, proposalAddress);
+        updateVotingFor(dispatch, getState, activeAccount, proposalAddresses);
         resolve();
       },
       error: (_, err) => {
@@ -83,12 +83,12 @@ const updateVotingFor = (
   dispatch,
   getState,
   activeAccount,
-  proposalAddress
+  proposalAddresses
 ) => {
   // update accounts in our store w/ newly voted proposal
   const updatedActiveAcc = {
     ...activeAccount,
-    votingFor: proposalAddress
+    votingFor: proposalAddresses
   };
   dispatch({ type: UPDATE_ACCOUNT, payload: updatedActiveAcc });
   const linkedAccount = getAccount(
@@ -98,7 +98,7 @@ const updateVotingFor = (
   if (!linkedAccount) return;
   const updatedLinkedAcc = {
     ...linkedAccount,
-    votingFor: proposalAddress
+    votingFor: proposalAddresses
   };
   dispatch({ type: UPDATE_ACCOUNT, payload: updatedLinkedAcc });
 };
@@ -109,9 +109,37 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
     throw new Error('must have account active');
   dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
 
+  const { hat, proposals } = getState();
+
+  const governancePollAddresses = proposals
+    .filter(({ govVote }) => govVote)
+    .map(({ source }) => source);
+
+  const hatAddress = hat.address;
+  const currentlyVotingForHat = activeAccount.votingFor.includes(
+    hatAddress.toLowerCase()
+  );
+  const castingVoteInGovernancePoll = governancePollAddresses
+    .map(address => address.toLowerCase())
+    .includes(proposalAddress.toLowerCase());
+  const castingVoteForHat =
+    hatAddress.toLowerCase() === proposalAddress.toLowerCase();
+
+  const slate = [];
+  if (
+    currentlyVotingForHat &&
+    castingVoteInGovernancePoll &&
+    !castingVoteForHat
+  )
+    slate.push(hatAddress);
+
+  slate.push(proposalAddress);
+
+  console.log(slate);
+
   const voteExec = window.maker
     .service('voteProxy')
-    .voteExec(activeAccount.proxy.address, [proposalAddress]);
+    .voteExec(activeAccount.proxy.address, slate);
 
   return handleTx({
     prefix: 'VOTE',
@@ -120,7 +148,7 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
     txObject: voteExec,
     acctType: activeAccount.type,
     activeAccount,
-    proposalAddress
+    proposalAddresses: slate
   });
 };
 
