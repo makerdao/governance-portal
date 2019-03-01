@@ -33,7 +33,7 @@ class Vote extends Component {
   render() {
     const { proposal } = this.props;
     const { proxy, votingFor } = this.props.activeAccount;
-    const alreadyVotingFor = votingFor.includes(proposal.address);
+    const alreadyVotingFor = votingFor.includes(proposal.address.toLowerCase());
     switch (this.props.voteProgress) {
       case 'confirm':
       default:

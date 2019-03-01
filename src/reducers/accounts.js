@@ -50,7 +50,7 @@ export function getActiveVotingFor(state) {
     !activeAccount.hasProxy ||
     !(activeAccount.proxy.votingPower > 0)
   )
-    return '';
+    return [];
   return activeAccount.votingFor;
 }
 
@@ -83,7 +83,9 @@ export const addAccounts = accounts => async dispatch => {
             fn: () => voteProxy.getVotedProposalAddresses()
           })
         )
-        .then(addresses => addresses.map(address => address.toLowerCase()));
+        .then(addresses =>
+          (addresses || []).map(address => address.toLowerCase())
+        );
       proxyRole =
         voteProxy.getColdAddress() === account.address ? 'cold' : 'hot';
     }

@@ -2,6 +2,7 @@ import ReactGA from 'react-ga';
 
 import { createReducer } from '../utils/redux';
 import { parseError } from '../utils/misc';
+import { sortBytesArray } from '../utils/ethereum';
 import { getAccount, UPDATE_ACCOUNT } from './accounts';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { voteTallyInit } from './tally';
@@ -135,11 +136,9 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
 
   slate.push(proposalAddress);
 
-  console.log(slate);
-
   const voteExec = window.maker
     .service('voteProxy')
-    .voteExec(activeAccount.proxy.address, slate);
+    .voteExec(activeAccount.proxy.address, sortBytesArray(slate));
 
   return handleTx({
     prefix: 'VOTE',
