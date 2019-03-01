@@ -88,7 +88,10 @@ class Vote extends Component {
                   marginTop: '18px'
                 }}
               >
-                <Button slim onClick={() => this.props.withdrawVote()}>
+                <Button
+                  slim
+                  onClick={() => this.props.withdrawVote(proposal.address)}
+                >
                   Confirm
                 </Button>
               </div>

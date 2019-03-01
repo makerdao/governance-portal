@@ -64,7 +64,12 @@ const handleTx = ({
           acctType === 'ledger' || acctType === 'trezor' ? 5000 : 2000
         ); // there is no science here
 
-        updateVotingFor(dispatch, getState, activeAccount, proposalAddresses);
+        updateVotingFor(
+          dispatch,
+          getState,
+          activeAccount,
+          proposalAddresses.map(address => address.toLowerCase())
+        );
         resolve();
       },
       error: (_, err) => {
@@ -151,24 +156,29 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
   });
 };
 
-export const withdrawVote = () => (dispatch, getState) => {
+export const withdrawVote = proposalAddress => (dispatch, getState) => {
   const activeAccount = getAccount(getState(), window.maker.currentAddress());
   if (!activeAccount || !activeAccount.hasProxy)
     throw new Error('must have account active');
 
   dispatch({ type: WITHDRAW_REQUEST });
 
-  const voteExecNone = window.maker
+  const filteredSlate = activeAccount.votingFor.filter(
+    address => address.toLowerCase() === proposalAddress.toLowerCase()
+  );
+
+  const voteExec = window.maker
     .service('voteProxy')
-    .voteExec(activeAccount.proxy.address, []);
+    .voteExec(activeAccount.proxy.address, sortBytesArray(filteredSlate));
 
   return handleTx({
     prefix: 'WITHDRAW',
     dispatch,
     getState,
-    txObject: voteExecNone,
+    txObject: voteExec,
     acctType: activeAccount.type,
-    activeAccount
+    activeAccount,
+    filteredSlate
   });
 };
 
