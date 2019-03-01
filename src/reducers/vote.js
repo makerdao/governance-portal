@@ -178,7 +178,7 @@ export const withdrawVote = proposalAddress => (dispatch, getState) => {
     txObject: voteExec,
     acctType: activeAccount.type,
     activeAccount,
-    filteredSlate
+    proposalAddresses: filteredSlate
   });
 };
 
