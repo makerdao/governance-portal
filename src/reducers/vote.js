@@ -164,7 +164,7 @@ export const withdrawVote = proposalAddress => (dispatch, getState) => {
   dispatch({ type: WITHDRAW_REQUEST });
 
   const filteredSlate = activeAccount.votingFor.filter(
-    address => address.toLowerCase() === proposalAddress.toLowerCase()
+    address => address.toLowerCase() !== proposalAddress.toLowerCase()
   );
 
   const voteExec = window.maker
