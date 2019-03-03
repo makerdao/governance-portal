@@ -39,7 +39,8 @@
     "cover": "jest --coverage",
     "eject": "react-scripts eject",
     "precommit": "lint-staged",
-    "remove-sourcemaps": "rm -rf build/static/js/*.map"
+    "remove-sourcemaps": "rm -rf build/static/js/*.map",
+    "postinstall": "node postinstall.js"
   },
   "lint-staged": {
     "*.{js,json}": [
