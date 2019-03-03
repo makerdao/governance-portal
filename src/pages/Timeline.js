@@ -67,6 +67,7 @@ const StyledTopicCard = styled(Card)`
   padding-top: 30px;
   padding-left: 30px;
   padding-right: 30px;
+  margin-bottom: 50px;
 `;
 
 const Tag = styled.p`
@@ -97,7 +98,7 @@ const Timeline = ({
   const otherProposals = proposals.filter(
     ({ source }) => !eq(source, hat.address)
   );
-
+  otherProposals.sort((a, b) => b.end_timestamp - a.end_timestamp);
   const topicKeys = [];
 
   otherProposals.forEach(({ topicKey }) => {
