@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ReactGA from 'react-ga';
 
-import { add, eq, subtract, formatRound } from '../../../utils/misc';
+import { add, subtract, formatRound } from '../../../utils/misc';
 import Button from '../../Button';
 import WithTally from '../../hocs/WithTally';
 import { getActiveAccount } from '../../../reducers/accounts';
@@ -33,7 +33,7 @@ class Vote extends Component {
   render() {
     const { proposal } = this.props;
     const { proxy, votingFor } = this.props.activeAccount;
-    const alreadyVotingFor = eq(votingFor, proposal.address);
+    const alreadyVotingFor = votingFor.includes(proposal.address.toLowerCase());
     switch (this.props.voteProgress) {
       case 'confirm':
       default:
@@ -88,7 +88,10 @@ class Vote extends Component {
                   marginTop: '18px'
                 }}
               >
-                <Button slim onClick={() => this.props.withdrawVote()}>
+                <Button
+                  slim
+                  onClick={() => this.props.withdrawVote(proposal.address)}
+                >
                   Confirm
                 </Button>
               </div>

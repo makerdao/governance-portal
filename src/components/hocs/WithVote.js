@@ -1,13 +1,18 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { toSlug, eq } from '../../utils/misc';
+import { toSlug } from '../../utils/misc';
 
 // this thing takes a proposal address and returns its name if it's one of our proposals
-const WithVote = ({ children, proposalAddress, proposals = [], signaling }) => {
+const WithVote = ({
+  children,
+  proposalAddresses,
+  proposals = [],
+  signaling
+}) => {
   const proposal = proposals
     .filter(({ govVote }) => govVote === !!signaling)
-    .find(({ source }) => eq(source, proposalAddress));
+    .find(({ source }) => proposalAddresses.includes(source.toLowerCase()));
   if (proposal !== undefined)
     return children({
       proposalTitle: proposal.title,
