@@ -100,7 +100,7 @@ const Timeline = ({
 
   const topicKeys = [];
 
-  otherProposals.map(({ topicKey }) => {
+  otherProposals.forEach(({ topicKey }) => {
     if (!topicKeys.includes(topicKey)) topicKeys.push(topicKey);
   });
 
@@ -162,82 +162,11 @@ const Timeline = ({
             </Card.Element>
           </StyledCard>
         )}
-        {!signaling
-          ? otherProposals.map(proposal => (
-              <StyledCard key={proposal.key}>
-                <Card.Element key={proposal.title} height={164}>
-                  <ProposalDetails>
-                    <Link to={`/${toSlug(proposal.title)}`}>
-                      <SubHeading>{proposal.title}</SubHeading>
-                    </Link>
-                    <Body
-                      dangerouslySetInnerHTML={{
-                        __html: proposal.proposal_blurb
-                      }}
-                    />
-                    {!signaling && !!proposal.end_approvals ? (
-                      <div>
-                        <Tag>{`Executed on ${formatDate(
-                          proposal.end_timestamp
-                        )} with ${formatRound(
-                          proposal.end_approvals
-                        )} MKR`}</Tag>
-                      </div>
-                    ) : !signaling &&
-                      hat.approvals < approvals.approvals[proposal.source] ? (
-                      <div>
-                        <Tag>Available for execution</Tag>
-                      </div>
-                    ) : null}
-                    {proposal.active && signaling ? (
-                      <Timer
-                        endTimestamp={proposal.end_timestamp}
-                        small
-                        mb="-6"
-                      />
-                    ) : null}
-                  </ProposalDetails>
-                  <div>
-                    {proposal.active || !signaling ? (
-                      <Fragment>
-                        <Button
-                          disabled={
-                            !canVote || (!proposal.active && proposal.govVote)
-                          }
-                          loading={fetching}
-                          onClick={() =>
-                            modalOpen(Vote, {
-                              proposal: {
-                                address: proposal.source,
-                                title: proposal.title
-                              }
-                            })
-                          }
-                        >
-                          {votingFor.includes(proposal.source.toLowerCase())
-                            ? 'Withdraw vote'
-                            : 'Vote for this Proposal'}
-                        </Button>
-                        <br />
-                        <TillHat candidate={proposal.source} />
-                      </Fragment>
-                    ) : (
-                      <ClosedStatus
-                        topicKey={proposal.topicKey}
-                        proposalAddress={proposal.source}
-                      />
-                    )}
-                  </div>
-                </Card.Element>
-              </StyledCard>
-            ))
-          : null}
-        {!signaling
-          ? null
-          : topicKeys.map(topicKey => (
+        {signaling
+          ? topicKeys.map(topicKey => (
               <StyledTopicCard key={topicKey}>
                 {otherProposals.map(proposal =>
-                  signaling && topicKey === proposal.topicKey ? (
+                  topicKey === proposal.topicKey ? (
                     <StyledCard key={proposal.key}>
                       <Card.Element key={proposal.title} height={164}>
                         <ProposalDetails>
@@ -249,17 +178,8 @@ const Timeline = ({
                               __html: proposal.proposal_blurb
                             }}
                           />
-                          {!signaling && !!proposal.end_approvals ? (
-                            <div>
-                              <Tag>{`Executed on ${formatDate(
-                                proposal.end_timestamp
-                              )} with ${formatRound(
-                                proposal.end_approvals
-                              )} MKR`}</Tag>
-                            </div>
-                          ) : !signaling &&
-                            hat.approvals <
-                              approvals.approvals[proposal.source] ? (
+                          {hat.approvals <
+                          approvals.approvals[proposal.source] ? (
                             <div>
                               <Tag>Available for execution</Tag>
                             </div>
@@ -273,7 +193,7 @@ const Timeline = ({
                           ) : null}
                         </ProposalDetails>
                         <div>
-                          {proposal.active || !signaling ? (
+                          {proposal.active ? (
                             <Fragment>
                               <Button
                                 disabled={
@@ -311,6 +231,59 @@ const Timeline = ({
                   ) : null
                 )}
               </StyledTopicCard>
+            ))
+          : otherProposals.map(proposal => (
+              <StyledCard key={proposal.key}>
+                <Card.Element key={proposal.title} height={164}>
+                  <ProposalDetails>
+                    <Link to={`/${toSlug(proposal.title)}`}>
+                      <SubHeading>{proposal.title}</SubHeading>
+                    </Link>
+                    <Body
+                      dangerouslySetInnerHTML={{
+                        __html: proposal.proposal_blurb
+                      }}
+                    />
+                    {!!proposal.end_approvals ? (
+                      <div>
+                        <Tag>{`Executed on ${formatDate(
+                          proposal.end_timestamp
+                        )} with ${formatRound(
+                          proposal.end_approvals
+                        )} MKR`}</Tag>
+                      </div>
+                    ) : hat.approvals < approvals.approvals[proposal.source] ? (
+                      <div>
+                        <Tag>Available for execution</Tag>
+                      </div>
+                    ) : null}
+                  </ProposalDetails>
+                  <div>
+                    <Fragment>
+                      <Button
+                        disabled={
+                          !canVote || (!proposal.active && proposal.govVote)
+                        }
+                        loading={fetching}
+                        onClick={() =>
+                          modalOpen(Vote, {
+                            proposal: {
+                              address: proposal.source,
+                              title: proposal.title
+                            }
+                          })
+                        }
+                      >
+                        {votingFor.includes(proposal.source.toLowerCase())
+                          ? 'Withdraw vote'
+                          : 'Vote for this Proposal'}
+                      </Button>
+                      <br />
+                      <TillHat candidate={proposal.source} />
+                    </Fragment>
+                  </div>
+                </Card.Element>
+              </StyledCard>
             ))}
       </RiseUp>
     </Fragment>
