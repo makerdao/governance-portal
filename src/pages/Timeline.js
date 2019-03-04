@@ -103,11 +103,19 @@ const Timeline = ({
     ({ source }) => !eq(source, hat.address)
   );
   otherProposals.sort((a, b) => b.end_timestamp - a.end_timestamp);
-  const topicInfo = [];
 
-  otherProposals.forEach(({ topicKey, topicTitle }) => {
-    if (!topicInfo.includes(topicKey)) topicInfo.push({ topicKey, topicTitle });
-  });
+  const topicInfo = otherProposals.reduce((accumulator, current) => {
+    if (!accumulator.find(({ topicKey }) => topicKey === current.topicKey)) {
+      return [
+        ...accumulator,
+        {
+          topicKey: current.topicKey,
+          topicTitle: current.topicTitle
+        }
+      ];
+    }
+    return accumulator;
+  }, []);
 
   return (
     <Fragment>
