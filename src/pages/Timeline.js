@@ -43,6 +43,10 @@ const SubHeading = styled.p`
   position: relative;
 `;
 
+const TopicSubHeading = styled(SubHeading)`
+  margin-bottom: 30px;
+`;
+
 const Body = styled.p`
   font-size: 16px;
   line-height: 26px;
@@ -99,11 +103,19 @@ const Timeline = ({
     ({ source }) => !eq(source, hat.address)
   );
   otherProposals.sort((a, b) => b.end_timestamp - a.end_timestamp);
-  const topicKeys = [];
 
-  otherProposals.forEach(({ topicKey }) => {
-    if (!topicKeys.includes(topicKey)) topicKeys.push(topicKey);
-  });
+  const topicInfo = otherProposals.reduce((accumulator, current) => {
+    if (!accumulator.find(({ topicKey }) => topicKey === current.topicKey)) {
+      return [
+        ...accumulator,
+        {
+          topicKey: current.topicKey,
+          topicTitle: current.topicTitle
+        }
+      ];
+    }
+    return accumulator;
+  }, []);
 
   return (
     <Fragment>
@@ -164,8 +176,9 @@ const Timeline = ({
           </StyledCard>
         )}
         {signaling
-          ? topicKeys.map(topicKey => (
+          ? topicInfo.map(({ topicKey, topicTitle }) => (
               <StyledTopicCard key={topicKey}>
+                <TopicSubHeading>{topicTitle}</TopicSubHeading>
                 {otherProposals.map(proposal =>
                   topicKey === proposal.topicKey ? (
                     <StyledCard key={proposal.key}>
