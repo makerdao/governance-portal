@@ -39,11 +39,13 @@ class InitiateLink extends React.Component {
     ) {
       this.toGrantPermissions();
     } else {
+      console.log('toInitiateLink1');
       this.toInitiateLink();
     }
   }
 
   toInitiateLink = priority => {
+    console.log('toInitiateLink2');
     this.props.initiateLink({
       hot: this.props.hotWallet,
       cold: this.props.coldWallet

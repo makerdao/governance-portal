@@ -23,6 +23,8 @@ class ChooseMKRBalance extends React.Component {
   constructor(props) {
     super(props);
 
+    console.log('choosemkr props', props);
+
     this.state = {
       selectedAddress: null
     };

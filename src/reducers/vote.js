@@ -65,6 +65,7 @@ const handleTx = ({
         ); // there is no science here
 
         updateVotingFor(dispatch, getState, activeAccount, proposalAddress);
+        console.log('vote success', activeAccount, proposalAddress);
         resolve();
       },
       error: (_, err) => {
@@ -102,6 +103,25 @@ const updateVotingFor = (
     votingFor: proposalAddress
   };
   dispatch({ type: UPDATE_ACCOUNT, payload: updatedLinkedAcc });
+};
+
+export const sendVoteDirect = proposalAddress => (dispatch, getState) => {
+  const activeAccount = getAccount(getState(), window.maker.currentAddress());
+  if (!activeAccount) throw new Error('must have account active');
+  dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
+
+  const voteExec = window.maker.service('chief').vote([proposalAddress]);
+  const acctType = 'direct';
+
+  return handleTx({
+    prefix: 'VOTE',
+    dispatch,
+    getState,
+    txObject: voteExec,
+    acctType,
+    activeAccount,
+    proposalAddress
+  });
 };
 
 export const sendVote = proposalAddress => (dispatch, getState) => {

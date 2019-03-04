@@ -154,6 +154,12 @@ const Introduction = ({ show, onClose, onLinkedWallet }) => {
             />
             <WalletCard
               onClick={onLinkedWallet}
+              imgSrc={metamask}
+              title="Vote directly using Metamask."
+              subtitle="Vote with the active account selected in Metamask."
+            />
+            <WalletCard
+              onClick={onLinkedWallet}
               imgSrc={paperWallet}
               title="Vote with a paper wallet"
               subtitle="Voting using your paper wallet."
