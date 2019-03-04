@@ -176,8 +176,8 @@ const Timeline = ({
           </StyledCard>
         )}
         {signaling
-          ? topicInfo.map(({ topicKey, topicTitle }, i) => (
-              <StyledTopicCard key={`${topicKey},${i}`}>
+          ? topicInfo.map(({ topicKey, topicTitle }) => (
+              <StyledTopicCard key={topicKey}>
                 <TopicSubHeading>{topicTitle}</TopicSubHeading>
                 {otherProposals.map(proposal =>
                   topicKey === proposal.topicKey ? (
