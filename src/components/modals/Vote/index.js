@@ -43,6 +43,8 @@ class Vote extends Component {
       modalClose
     } = this.props;
     const { proxy, votingFor } = activeAccount;
+    // TODO this has votingFor correctly set
+    console.log('voting for in index', votingFor);
     const alreadyVotingFor = eq(votingFor, proposal.address);
 
     return (

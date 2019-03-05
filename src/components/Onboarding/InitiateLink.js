@@ -12,7 +12,8 @@ import {
   breakLink,
   initiateLink,
   approveLink,
-  mkrApproveProxy
+  mkrApproveProxy,
+  mkrApproveSingleWallet
 } from '../../reducers/proxy';
 
 import { getAccount } from '../../reducers/accounts';
@@ -37,6 +38,9 @@ class InitiateLink extends React.Component {
       this.props.coldWallet.hasProxy &&
       !this.props.coldWallet.proxy.hasInfMkrApproval
     ) {
+      this.toGrantPermissions();
+    } else if (this.props.skipProxy) {
+      // TODO probably don't need this else if any more
       this.toGrantPermissions();
     } else {
       console.log('toInitiateLink1');
@@ -68,9 +72,12 @@ class InitiateLink extends React.Component {
   };
 
   toGrantPermissions = () => {
+    const step = this.props.skipProxy ? 3 : 2;
     const pollForProxyInformation = () => {
       if (this.props.coldWallet.proxy && this.props.coldWallet.proxy.address) {
         this.props.mkrApproveProxy();
+      } else if (this.props.skipProxy) {
+        this.props.mkrApproveSingleWallet();
       } else {
         setTimeout(pollForProxyInformation, 100);
       }
@@ -79,7 +86,7 @@ class InitiateLink extends React.Component {
     setTimeout(pollForProxyInformation, 100);
 
     this.setState({
-      step: 2,
+      step,
       faqs: faqs.grantHotWalletPermissions
     });
   };
@@ -142,6 +149,15 @@ class InitiateLink extends React.Component {
               onRetry={this.toGrantPermissions}
               onNext={onComplete}
             />
+            <SignTransactionStep
+              title="Single wallet permissions"
+              subtitle="Single wallet"
+              walletProvider={'coldWallet.type'}
+              status={mkrApproveProxyTxStatus}
+              tx={mkrApproveProxyTxHash}
+              onRetry={this.toGrantPermissions}
+              onNext={onComplete}
+            />
           </Stepper>
         </div>
       </TwoColumnSidebarLayout>
@@ -151,14 +167,16 @@ class InitiateLink extends React.Component {
 
 export default connect(
   ({ proxy, onboarding, ...state }) => ({
-    hotWallet: getAccount(state, onboarding.hotWallet.address),
-    coldWallet: getAccount(state, onboarding.coldWallet.address),
+    hotWallet: getAccount(state, window.maker.currentAddress()),
+    coldWallet: getAccount(state, window.maker.currentAddress()),
+    skipProxy: onboarding.skipProxy,
     ...proxy
   }),
   {
     breakLink,
     initiateLink,
     approveLink,
-    mkrApproveProxy
+    mkrApproveProxy,
+    mkrApproveSingleWallet
   }
 )(InitiateLink);

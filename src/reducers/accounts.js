@@ -72,11 +72,13 @@ export function getActiveVotingFor(state) {
 
 export function activeCanVote(state) {
   const activeAccount = getActiveAccount(state);
-  return (
-    activeAccount &&
-    activeAccount.hasProxy &&
-    parseFloat(activeAccount.proxy.votingPower) > 0
-  );
+  //TODO you know what to do
+  return true;
+  // return (
+  //   activeAccount &&
+  //   activeAccount.hasProxy &&
+  //   parseFloat(activeAccount.proxy.votingPower) > 0
+  // );
 }
 
 // Actions ------------------------------------------------

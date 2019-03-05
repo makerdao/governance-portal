@@ -81,7 +81,8 @@ const ConfirmWalletStep = ({
   account,
   connecting,
   onConfirm,
-  onCancel
+  onCancel,
+  onSkipProxy
 }) => {
   return (
     <Grid gridRowGap="l" alignContent="start">
@@ -131,6 +132,9 @@ const ConfirmWalletStep = ({
       >
         <Button variant="secondary-outline" onClick={onCancel}>
           Change wallet
+        </Button>
+        <Button variant="secondary-outline" onClick={onSkipProxy}>
+          Skip Proxy Setup
         </Button>
         <Button disabled={!account || connecting} onClick={onConfirm}>
           Confirm voting wallet
@@ -262,6 +266,7 @@ class ChooseHotWallet extends React.Component {
               connecting={this.state.connecting}
               onConfirm={this.props.onComplete}
               onCancel={this.toSelectAWallet}
+              onSkipProxy={this.props.onSkipProxy}
             />
           </Stepper>
         </div>

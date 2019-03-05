@@ -181,6 +181,24 @@ export const lock = value => async (dispatch, getState) => {
   }).then(success => success && dispatch(initApprovalsFetch()));
 };
 
+// TODO can this be merged with lock?
+export const chiefLock = value => async (dispatch, getState) => {
+  console.log('chieflock');
+  if (value === 0) return;
+
+  const lock = window.maker.service('chief').lock(value);
+
+  dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
+
+  return handleTx({
+    prefix: 'SEND_MKR_TO_PROXY', //TODO new actions for single wallet?
+    dispatch,
+    txObject: lock,
+    successPayload: value,
+    acctType: 'single'
+  }).then(success => success && dispatch(initApprovalsFetch()));
+};
+
 export const free = value => (dispatch, getState) => {
   if (value <= 0) return;
   const account = getAccount(getState(), window.maker.currentAddress());
@@ -220,6 +238,31 @@ export const breakLink = () => (dispatch, getState) => {
     acctType: currentAccount.type
   }).then(success => {
     success && dispatch(addAccounts(accountsToRefresh));
+  });
+};
+
+export const mkrApproveSingleWallet = () => (dispatch, getState) => {
+  const {
+    onboarding: { skipProxy }
+  } = getState();
+  console.log('skipp ', skipProxy);
+  const account = getAccount(getState(), window.maker.currentAddress());
+  const currentAddress = window.maker.currentAddress();
+  console.log('currentAccount, whats type?', account);
+
+  const token = window.maker.getToken(MKR);
+  console.log('token', token);
+  // TODO fix hardcoded chief address
+  const giveProxyAllowance = window.maker
+    .getToken(MKR)
+    .approveUnlimited('0xbbffc76e94b34f72d96d054b31f6424249c1337d');
+
+  dispatch({ type: MKR_APPROVE_REQUEST });
+  return handleTx({
+    prefix: 'MKR_APPROVE',
+    dispatch,
+    txObject: giveProxyAllowance,
+    acctType: 'single' // TODO add this to account types?
   });
 };
 

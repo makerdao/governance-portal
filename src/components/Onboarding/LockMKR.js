@@ -21,7 +21,7 @@ import OnboardingHeader from './shared/OnboardingHeader';
 import WalletIcon from './shared/WalletIcon';
 import SignTransactionStep from './shared/SignTransactionStep';
 import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
-import { lock } from '../../reducers/proxy';
+import { lock, chiefLock } from '../../reducers/proxy';
 import { getAccount } from '../../reducers/accounts';
 import { ColdWalletTag, VotingContractTag } from './shared/Tags';
 import { Label } from '../../utils/typography';
@@ -56,7 +56,12 @@ class LockMKR extends React.Component {
   };
 
   toLockMKR = () => {
-    this.props.lock(parseFloat(this.state.votingMKR));
+    //TODO just handle this in the reducer
+    if (this.props.skipProxy) {
+      this.props.chiefLock(parseFloat(this.state.votingMKR));
+    } else {
+      this.props.lock(parseFloat(this.state.votingMKR));
+    }
     this.setState({
       step: 2,
       faqs: faqs.lockMKR
@@ -265,11 +270,13 @@ class LockMKR extends React.Component {
 
 export default connect(
   ({ onboarding, proxy, ...state }) => ({
-    hotWallet: getAccount(state, onboarding.hotWallet.address),
-    coldWallet: getAccount(state, onboarding.coldWallet.address),
+    hotWallet: getAccount(state, window.maker.currentAddress()),
+    coldWallet: getAccount(state, window.maker.currentAddress()),
+    skipProxy: onboarding.skipProxy,
     ...proxy
   }),
   {
-    lock
+    lock,
+    chiefLock
   }
 )(LockMKR);

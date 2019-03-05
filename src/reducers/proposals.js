@@ -99,7 +99,9 @@ const fetchTopics = async network => {
     return await fetchNetwork(staging, network);
   }
 
-  return await fetchNetwork(prod, network);
+  // TODO set this back
+  return await fetchNetwork(local, network);
+  // return await fetchNetwork(prod, network);
 };
 
 // Actions ------------------------------------------------

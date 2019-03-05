@@ -6,6 +6,7 @@ import {
   onboardingClose,
   onboardingNextStep,
   onboardingPrevStep,
+  onboardingSkipProxy,
   setOnboardingState,
   OnboardingStates
 } from '../../reducers/onboarding';
@@ -42,6 +43,7 @@ const Onboarding = ({
   onboardingClose,
   onboardingNextStep,
   onboardingPrevStep,
+  onboardingSkipProxy,
   setOnboardingState,
   setHotWallet
 }) => {
@@ -81,7 +83,10 @@ const Onboarding = ({
           onComplete={onboardingNextStep}
         />
 
-        <ChooseHotWallet onComplete={onboardingNextStep} />
+        <ChooseHotWallet
+          onComplete={onboardingNextStep}
+          onSkipProxy={onboardingSkipProxy}
+        />
         <ChooseColdWallet
           onComplete={onboardingNextStep}
           onCancel={onboardingPrevStep}
@@ -110,6 +115,7 @@ export default connect(
     setOnboardingState,
     onboardingClose,
     onboardingNextStep,
-    onboardingPrevStep
+    onboardingPrevStep,
+    onboardingSkipProxy
   }
 )(Onboarding);

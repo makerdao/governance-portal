@@ -39,8 +39,9 @@ You are now ready to impact the system."
 
 export default connect(
   ({ onboarding, ...state }) => ({
-    hotWallet: getAccount(state, onboarding.hotWallet.address),
-    coldWallet: getAccount(state, onboarding.coldWallet.address)
+    hotWallet: getAccount(state, window.maker.currentAddress()),
+    coldWallet: getAccount(state, window.maker.currentAddress()),
+    skipProxy: onboarding.skipProxy
   }),
   {}
 )(StartVoting);

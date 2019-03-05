@@ -158,7 +158,7 @@ class ChooseColdWallet extends React.Component {
       accountType: AccountTypes.METAMASK,
       skipVoteProxy: true
     });
-    this.toSelectMKRBalance();
+    this.jumpToStep();
   };
 
   onLedgerLiveSelected = () => {
@@ -180,6 +180,13 @@ class ChooseColdWallet extends React.Component {
   toSelectMKRBalance = () => {
     this.setState({
       step: 2,
+      faqs: faqs.selectMKRBalance
+    });
+  };
+
+  jumpToStep = () => {
+    this.setState({
+      step: 5,
       faqs: faqs.selectMKRBalance
     });
   };

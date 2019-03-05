@@ -65,6 +65,8 @@ const handleTx = ({
         ); // there is no science here
 
         updateVotingFor(dispatch, getState, activeAccount, proposalAddress);
+        // TODO here active account does not have voting for yet, but prop addresss
+        // is correct
         console.log('vote success', activeAccount, proposalAddress);
         resolve();
       },
@@ -87,6 +89,8 @@ const updateVotingFor = (
   activeAccount,
   proposalAddress
 ) => {
+  // we have the correct prop adddress here
+  console.log('updateVOtingFor', activeAccount, proposalAddress);
   // update accounts in our store w/ newly voted proposal
   const updatedActiveAcc = {
     ...activeAccount,
@@ -152,15 +156,21 @@ export const withdrawVote = () => (dispatch, getState) => {
 
   dispatch({ type: WITHDRAW_REQUEST });
 
+  const {
+    onboarding: { skipProxy }
+  } = getState();
+
   const voteExecNone = window.maker
     .service('voteProxy')
     .voteExec(activeAccount.proxy.address, []);
+
+  const voteNoneSingleWallet = window.maker.service('chief').vote([]);
 
   return handleTx({
     prefix: 'WITHDRAW',
     dispatch,
     getState,
-    txObject: voteExecNone,
+    txObject: skipProxy ? voteNoneSingleWallet : voteExecNone,
     acctType: activeAccount.type,
     activeAccount
   });

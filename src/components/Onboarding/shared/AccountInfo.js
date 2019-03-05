@@ -6,6 +6,8 @@ import WalletIcon from './WalletIcon';
 const walletIconSize = '2.7rem';
 const walletIconContainerWidth = '3rem';
 
+const type = 'LEDGER';
+
 const AccountInfo = ({ account, tag, ...props }) => (
   <Card p="m" gridColumn="1/3" {...props}>
     <Grid
@@ -18,7 +20,7 @@ const AccountInfo = ({ account, tag, ...props }) => (
     >
       <Flex justifyContent="center">
         <WalletIcon
-          provider={account.type}
+          provider={type}
           style={{ maxWidth: walletIconSize, maxHeight: walletIconSize }}
         />
       </Flex>

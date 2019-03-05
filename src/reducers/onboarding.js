@@ -12,6 +12,7 @@ const ONBOARDING_TO_STEP = 'onboarding/ONBOARDING_TO_STEP';
 const ONBOARDING_SET_HOT_WALLET = 'onboarding/ONBOARDING_SET_HOT_WALLET';
 const ONBOARDING_SET_COLD_WALLET = 'onboarding/ONBOARDING_SET_COLD_WALLET';
 const ONBOARDING_SET_STATE = 'onboarding/ONBOARDING_SET_STATE';
+const ONBOARDING_SKIP_PROXY = 'onboarding/ONBOARDING_SKIP_PROXY';
 
 export const OnboardingStates = {
   INTRODUCTION: 'introduction',
@@ -42,6 +43,13 @@ export const onboardingNextStep = () => ({
 
 export const onboardingPrevStep = () => ({
   type: ONBOARDING_PREV_STEP
+});
+
+export const onboardingSkipProxy = () => ({
+  type: ONBOARDING_SKIP_PROXY,
+  payload: {
+    skipProxy: true
+  }
 });
 
 export const setHotWallet = account => ({
@@ -105,6 +113,11 @@ const onboarding = createReducer(initialState, {
   [ONBOARDING_PREV_STEP]: state => ({
     ...state,
     step: state.step - 1
+  }),
+  [ONBOARDING_SKIP_PROXY]: (state, { payload }) => ({
+    ...state,
+    step: state.step + 2,
+    skipProxy: payload.skipProxy
   }),
   [ONBOARDING_SET_STATE]: (state, { payload }) => ({
     ...state,
