@@ -151,7 +151,10 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
 
 export const withdrawVote = () => (dispatch, getState) => {
   const activeAccount = getAccount(getState(), window.maker.currentAddress());
-  if (!activeAccount || !activeAccount.hasProxy)
+  if (
+    !activeAccount ||
+    (!activeAccount.hasProxy && !activeAccount.singleWallet)
+  )
     throw new Error('must have account active');
 
   dispatch({ type: WITHDRAW_REQUEST });
@@ -160,17 +163,24 @@ export const withdrawVote = () => (dispatch, getState) => {
     onboarding: { skipProxy }
   } = getState();
 
+  console.log('skip proxy', skipProxy);
+  console.log('activeAccount.singleWallet', activeAccount.singleWallet);
+
   const voteExecNone = window.maker
     .service('voteProxy')
     .voteExec(activeAccount.proxy.address, []);
 
   const voteNoneSingleWallet = window.maker.service('chief').vote([]);
 
+  const txObject = activeAccount.singleWallet
+    ? voteNoneSingleWallet
+    : voteExecNone;
+
   return handleTx({
     prefix: 'WITHDRAW',
     dispatch,
     getState,
-    txObject: skipProxy ? voteNoneSingleWallet : voteExecNone,
+    txObject,
     acctType: activeAccount.type,
     activeAccount
   });

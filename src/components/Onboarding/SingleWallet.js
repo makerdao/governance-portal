@@ -16,7 +16,7 @@ import {
   mkrApproveSingleWallet
 } from '../../reducers/proxy';
 
-import { getAccount } from '../../reducers/accounts';
+import { getAccount, addSingleWalletAccount } from '../../reducers/accounts';
 
 class InitiateLink extends React.Component {
   constructor(props) {
@@ -45,7 +45,6 @@ class InitiateLink extends React.Component {
       // TODO probably don't need this else if any more
       this.toGrantPermissions();
     } else {
-      console.log('toInitiateLink1');
       this.toGrantPermissions();
     }
   }
@@ -72,21 +71,11 @@ class InitiateLink extends React.Component {
       faqs: faqs.approveLink
     });
   };
-
+  // TODO use addAccoutn from accounts.js
   toGrantPermissions = () => {
     console.log('props in single wallet', this.props);
-    const step = this.state.useSingleWallet ? 3 : 2;
-    const pollForProxyInformation = () => {
-      if (this.props.coldWallet.proxy && this.props.coldWallet.proxy.address) {
-        this.props.mkrApproveProxy();
-      } else if (this.state.useSingleWallet) {
-        this.props.mkrApproveSingleWallet();
-      } else {
-        setTimeout(pollForProxyInformation, 100);
-      }
-    };
-
-    setTimeout(pollForProxyInformation, 100);
+    const step = 3;
+    this.props.mkrApproveSingleWallet();
 
     this.setState({
       step,

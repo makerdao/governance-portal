@@ -92,6 +92,9 @@ const Timeline = ({
   const otherProposals = proposals.filter(
     ({ source }) => !eq(source, hat.address)
   );
+  console.log('voting for', votingFor);
+  console.log('signaling', signaling);
+  console.log('canVote', canVote);
 
   return (
     <Fragment>
@@ -217,6 +220,11 @@ const Timeline = ({
 };
 
 const reduxProps = ({ proposals, accounts, hat, approvals }, { signaling }) => {
+  console.log('accounts', accounts);
+  console.log(
+    'getActiveVotingFor({ accounts }',
+    getActiveVotingFor({ accounts })
+  );
   return {
     hat,
     approvals,

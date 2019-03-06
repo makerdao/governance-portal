@@ -2,7 +2,12 @@ import ReactGA from 'react-ga';
 
 import { createReducer } from '../utils/redux';
 import { parseError } from '../utils/misc';
-import { getAccount, addAccounts, SET_ACTIVE_ACCOUNT } from './accounts';
+import {
+  getAccount,
+  addAccounts,
+  addSingleWalletAccount,
+  SET_ACTIVE_ACCOUNT
+} from './accounts';
 import { initApprovalsFetch } from './approvals';
 import { AccountTypes, TransactionStatus } from '../utils/constants';
 import { addToastWithTimeout, ToastTypes } from './toasts';
@@ -115,7 +120,9 @@ function useHotAccount(state) {
 function useColdAccount(state) {
   const account = getAccount(state, window.maker.currentAddress());
 
-  if (state.onboarding.coldWallet.address !== account.address) {
+  if (account.singleWallet) {
+    return true;
+  } else if (state.onboarding.coldWallet.address !== account.address) {
     window.maker.useAccountWithAddress(state.onboarding.coldWallet.address);
   }
   return true;
@@ -166,9 +173,14 @@ export const lock = value => async (dispatch, getState) => {
   if (value === 0) return;
   if (!useColdAccount(getState())) return;
   const account = getAccount(getState(), window.maker.currentAddress());
+
   const lock = window.maker
     .service('voteProxy')
     .lock(account.proxy.address, value);
+
+  const chiefLock = window.maker.service('chief').lock(value);
+
+  const txObject = account.singleWallet ? chiefLock : lock;
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
 
@@ -203,15 +215,21 @@ export const free = value => (dispatch, getState) => {
   if (value <= 0) return;
   const account = getAccount(getState(), window.maker.currentAddress());
 
+  console.log('account in free component', account);
+
   const free = window.maker
     .service('voteProxy')
     .free(account.proxy.address, value);
+
+  const chiefFree = window.maker.service('chief').free(value);
+
+  const txObject = account.singleWallet ? chiefFree : free;
 
   dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
   return handleTx({
     prefix: 'WITHDRAW_MKR',
     dispatch,
-    txObject: free,
+    txObject,
     successPayload: value,
     acctType: account.type
   }).then(success => success && dispatch(initApprovalsFetch()));
@@ -247,7 +265,7 @@ export const mkrApproveSingleWallet = () => (dispatch, getState) => {
   } = getState();
   console.log('skipp ', skipProxy);
   const account = getAccount(getState(), window.maker.currentAddress());
-  const currentAddress = window.maker.currentAddress();
+  // const currentAddress = window.maker.currentAddress();
   console.log('currentAccount, whats type?', account);
 
   // TODO fix hardcoded chief address
@@ -261,7 +279,7 @@ export const mkrApproveSingleWallet = () => (dispatch, getState) => {
     dispatch,
     txObject: giveProxyAllowance,
     acctType: account.type
-  });
+  }).then(success => success && dispatch(addSingleWalletAccount(account)));
 };
 
 export const mkrApproveProxy = () => (dispatch, getState) => {

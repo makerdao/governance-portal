@@ -61,9 +61,10 @@ export function getActiveAccount(state) {
 
 export function getActiveVotingFor(state) {
   const activeAccount = getActiveAccount(state);
+  console.log('active account in getActiveVogting for', activeAccount);
   if (
     !activeAccount ||
-    !activeAccount.hasProxy ||
+    (!activeAccount.hasProxy && !activeAccount.singleWallet) ||
     !(activeAccount.proxy.votingPower > 0)
   )
     return '';
@@ -72,13 +73,11 @@ export function getActiveVotingFor(state) {
 
 export function activeCanVote(state) {
   const activeAccount = getActiveAccount(state);
-  //TODO you know what to do
-  return true;
-  // return (
-  //   activeAccount &&
-  //   activeAccount.hasProxy &&
-  //   parseFloat(activeAccount.proxy.votingPower) > 0
-  // );
+  return (
+    activeAccount &&
+    (activeAccount.hasProxy || activeAccount.singleWallet) &&
+    parseFloat(activeAccount.proxy.votingPower) > 0
+  );
 }
 
 // Actions ------------------------------------------------
@@ -157,8 +156,79 @@ export const addAccounts = accounts => async dispatch => {
   dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
 };
 
+export const addSingleWalletAccount = account => async dispatch => {
+  dispatch({ type: FETCHING_ACCOUNT_DATA, payload: true });
+
+  const chiefAddress = '0xbbffc76e94b34f72d96d054b31f6424249c1337d'; //kovan
+
+  console.log('addsinglewallet acct', account);
+
+  const mkrToken = window.maker.getToken(MKR);
+  const chiefService = window.maker.service('chief');
+
+  const currProposal = (async () => {
+    // NOTE for now we just take the first address in the slate since we're
+    // assuming that they're only voting for one in the frontend. This
+    // should be changed if that changes
+    const votedSlate = await chiefService.getVotedSlate(account.address);
+    console.log('voted slate', votedSlate);
+    const addresses = await chiefService.getSlateAddresses(votedSlate);
+    console.log('voted slate addresses', addresses);
+    return addresses[0] || '';
+  })();
+
+  //TODO Fix this atrocity
+  const vp = chiefService
+    .getNumDeposits(account.address)
+    .then(deposits => toNum(deposits));
+  const votingPower = await vp;
+
+  console.log('voting vp', votingPower);
+
+  const ha = mkrToken
+    .allowance(account.address, chiefAddress)
+    .then(val => val.eq(MAX_UINT_ETH_BN));
+
+  const hasInfMkrApproval = await ha;
+
+  console.log('hasInfMkrApproval', hasInfMkrApproval);
+
+  const _payload = {
+    ...account,
+    address: account.address,
+    mkrBalance: toNum(
+      promiseRetry({ fn: () => mkrToken.balanceOf(account.address) })
+    ),
+    hasProxy: false,
+    singleWallet: true,
+    proxyRole: '',
+    votingFor: currProposal,
+    proxy: {
+      votingPower,
+      address: account.address,
+      hasInfMkrApproval,
+      linkedAccount: ''
+    }
+  };
+
+  console.log('payload before shipping off', _payload);
+
+  try {
+    const payload = await promisedProperties(_payload);
+    dispatch({ type: ADD_ACCOUNT, payload });
+  } catch (e) {
+    console.error('failed to add account', e);
+  }
+
+  dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
+};
+
 export const addAccount = account => async dispatch => {
-  return await dispatch(addAccounts([account]));
+  // return await dispatch(addAccounts([account]));
+  return await dispatch(addSingleWalletAccount(account));
+};
+export const addSingleWallet = account => async dispatch => {
+  return await dispatch(addSingleWalletAccount(account));
 };
 
 export const removeAccounts = accounts => ({
