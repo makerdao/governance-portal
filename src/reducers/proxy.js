@@ -250,8 +250,6 @@ export const mkrApproveSingleWallet = () => (dispatch, getState) => {
   const currentAddress = window.maker.currentAddress();
   console.log('currentAccount, whats type?', account);
 
-  const token = window.maker.getToken(MKR);
-  console.log('token', token);
   // TODO fix hardcoded chief address
   const giveProxyAllowance = window.maker
     .getToken(MKR)
@@ -262,7 +260,7 @@ export const mkrApproveSingleWallet = () => (dispatch, getState) => {
     prefix: 'MKR_APPROVE',
     dispatch,
     txObject: giveProxyAllowance,
-    acctType: 'single' // TODO add this to account types?
+    acctType: account.type
   });
 };
 

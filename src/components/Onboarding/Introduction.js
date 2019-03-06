@@ -79,7 +79,7 @@ const WalletCard = props => {
   );
 };
 
-const Introduction = ({ show, onClose, onLinkedWallet }) => {
+const Introduction = ({ show, onClose, onLinkedWallet, onSingleWallet }) => {
   return (
     <Container show={show} height="100%" position="fixed">
       <Grid
@@ -153,7 +153,7 @@ const Introduction = ({ show, onClose, onLinkedWallet }) => {
               subtitle="We support Metamask, Ledger and Trezor."
             />
             <WalletCard
-              onClick={onLinkedWallet}
+              onClick={onSingleWallet}
               imgSrc={metamask}
               title="Vote directly using Metamask."
               subtitle="Vote with the active account selected in Metamask."

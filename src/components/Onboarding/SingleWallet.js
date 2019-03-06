@@ -24,12 +24,13 @@ class InitiateLink extends React.Component {
 
     this.state = {
       step: 0,
-      faqs: []
+      faqs: [],
+      useSingleWallet: true
     };
   }
 
   componentDidMount() {
-    console.log('this.props look at testprop', this.props);
+    console.log('SINGLE WALLET', this.props);
     if (
       this.props.coldWallet.hasProxy &&
       this.props.coldWallet.proxy.hasInfMkrApproval
@@ -40,12 +41,12 @@ class InitiateLink extends React.Component {
       !this.props.coldWallet.proxy.hasInfMkrApproval
     ) {
       this.toGrantPermissions();
-    } else if (this.props.skipProxy) {
+    } else if (this.state.useSingleWallet) {
       // TODO probably don't need this else if any more
       this.toGrantPermissions();
     } else {
       console.log('toInitiateLink1');
-      this.toInitiateLink();
+      this.toGrantPermissions();
     }
   }
 
@@ -73,11 +74,12 @@ class InitiateLink extends React.Component {
   };
 
   toGrantPermissions = () => {
-    const step = this.props.skipProxy ? 3 : 2;
+    console.log('props in single wallet', this.props);
+    const step = this.state.useSingleWallet ? 3 : 2;
     const pollForProxyInformation = () => {
       if (this.props.coldWallet.proxy && this.props.coldWallet.proxy.address) {
         this.props.mkrApproveProxy();
-      } else if (this.props.skipProxy) {
+      } else if (this.state.useSingleWallet) {
         this.props.mkrApproveSingleWallet();
       } else {
         setTimeout(pollForProxyInformation, 100);
@@ -93,7 +95,7 @@ class InitiateLink extends React.Component {
   };
 
   render() {
-    console.log('3-InitiateLink state', this.state);
+    console.log('3-SingleWallet state', this.state);
     const {
       hotWallet,
       coldWallet,

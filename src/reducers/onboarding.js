@@ -17,6 +17,7 @@ const ONBOARDING_SKIP_PROXY = 'onboarding/ONBOARDING_SKIP_PROXY';
 export const OnboardingStates = {
   INTRODUCTION: 'introduction',
   SETUP_LINKED_WALLET: 'linked',
+  SETUP_SINGLE_WALLET: 'single',
   FINISHED: 'finished'
 };
 
@@ -116,7 +117,7 @@ const onboarding = createReducer(initialState, {
   }),
   [ONBOARDING_SKIP_PROXY]: (state, { payload }) => ({
     ...state,
-    step: state.step + 2,
+    step: state.step + 4,
     skipProxy: payload.skipProxy
   }),
   [ONBOARDING_SET_STATE]: (state, { payload }) => ({

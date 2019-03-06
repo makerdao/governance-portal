@@ -19,6 +19,19 @@ import LockMKR from './LockMKR';
 import StartVoting from './StartVoting';
 
 import { OnboardingFullScreen, Box } from '@makerdao/ui-components';
+import SingleWallet from './SingleWallet';
+
+const stepsLinkedWallet = [
+  'Terms of use',
+  'Select Voting Wallet',
+  'Select MKR Balance',
+  'Initiate Link',
+  'Lock MKR',
+  'Start Voting'
+];
+
+//TODO add grant approvals here?
+const stepsSingleWallet = ['Terms of use', 'Lock MKR', 'Start Voting'];
 
 const Background = styled(Box)`
   opacity: 0;
@@ -47,6 +60,7 @@ const Onboarding = ({
   setOnboardingState,
   setHotWallet
 }) => {
+  console.log('state at index.js', state);
   return (
     <Background
       show={open}
@@ -64,25 +78,32 @@ const Onboarding = ({
         onLinkedWallet={() =>
           setOnboardingState(OnboardingStates.SETUP_LINKED_WALLET)
         }
+        onSingleWallet={() =>
+          setOnboardingState(OnboardingStates.SETUP_SINGLE_WALLET)
+        }
       />
       <OnboardingFullScreen
         step={step}
-        show={open && state === OnboardingStates.SETUP_LINKED_WALLET}
+        show={
+          open &&
+          (state === OnboardingStates.SETUP_LINKED_WALLET ||
+            state === OnboardingStates.SETUP_SINGLE_WALLET)
+        }
         onClose={onboardingClose}
-        steps={[
-          'Terms of use',
-          'Select Voting Wallet',
-          'Select MKR Balance',
-          'Initiate Link',
-          'Lock MKR',
-          'Start Voting'
-        ]}
+        steps={
+          state === OnboardingStates.SETUP_SINGLE_WALLET
+            ? stepsSingleWallet
+            : stepsLinkedWallet
+        }
       >
         <Terms
           onCancel={() => setOnboardingState(OnboardingStates.INTRODUCTION)}
           onComplete={onboardingNextStep}
         />
-
+        <SingleWallet
+          onComplete={onboardingSkipProxy}
+          onCancel={onboardingPrevStep}
+        />
         <ChooseHotWallet
           onComplete={onboardingNextStep}
           onSkipProxy={onboardingSkipProxy}
