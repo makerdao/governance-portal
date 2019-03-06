@@ -174,13 +174,12 @@ export const lock = value => async (dispatch, getState) => {
   if (!useColdAccount(getState())) return;
   const account = getAccount(getState(), window.maker.currentAddress());
 
-  const lock = window.maker
-    .service('voteProxy')
-    .lock(account.proxy.address, value);
-
-  const chiefLock = window.maker.service('chief').lock(value);
-
-  const txObject = account.singleWallet ? chiefLock : lock;
+  let lock;
+  if (account.singleWallet) {
+    lock = window.maker.service('chief').lock(value);
+  } else {
+    lock = window.maker.service('voteProxy').lock(account.proxy.address, value);
+  }
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
 
@@ -215,21 +214,18 @@ export const free = value => (dispatch, getState) => {
   if (value <= 0) return;
   const account = getAccount(getState(), window.maker.currentAddress());
 
-  console.log('account in free component', account);
-
-  const free = window.maker
-    .service('voteProxy')
-    .free(account.proxy.address, value);
-
-  const chiefFree = window.maker.service('chief').free(value);
-
-  const txObject = account.singleWallet ? chiefFree : free;
+  let free;
+  if (account.singleWallet) {
+    free = window.maker.service('chief').free(value);
+  } else {
+    free = window.maker.service('voteProxy').free(account.proxy.address, value);
+  }
 
   dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
   return handleTx({
     prefix: 'WITHDRAW_MKR',
     dispatch,
-    txObject,
+    txObject: free,
     successPayload: value,
     acctType: account.type
   }).then(success => success && dispatch(initApprovalsFetch()));
