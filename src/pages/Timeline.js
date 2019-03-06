@@ -138,6 +138,7 @@ const Timeline = ({
                     __html: hatProposal.proposal_blurb
                   }}
                 />
+                <Link to={`/${toSlug(hatProposal.title)}`}>Read more...</Link>
                 <div>
                   {!!hatProposal.end_approvals ? (
                     <Tag>{`Executed on ${formatDate(
@@ -192,6 +193,9 @@ const Timeline = ({
                               __html: proposal.proposal_blurb
                             }}
                           />
+                          <Link to={`/${toSlug(proposal.title)}`}>
+                            Read more...
+                          </Link>
                           {hat.approvals <
                           approvals.approvals[proposal.source] ? (
                             <div>
@@ -258,6 +262,7 @@ const Timeline = ({
                         __html: proposal.proposal_blurb
                       }}
                     />
+                    <Link to={`/${toSlug(proposal.title)}`}>Read more...</Link>
                     {!!proposal.end_approvals ? (
                       <div>
                         <Tag>{`Executed on ${formatDate(
