@@ -859,12 +859,12 @@
   dependencies:
     events "^3.0.0"
 
-"@makerdao/dai-plugin-governance@^0.3.5":
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.3.5.tgz#e0f8c3ea141801498ef9e7102d55b43eaa6d2b34"
-  integrity sha512-kp+LBiVccL+wCz6p2vrYlxi2Qqvo2wi6OKkVFnpk6O9YPyDN5z4Z8xLQe9E9JZW+3WGtgF7tqYMwJJwSnqKZaA==
+"@makerdao/dai-plugin-governance@^0.3.11":
+  version "0.3.11"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.3.11.tgz#75695939bf8f59f28bd6db223c40ccc6377a2819"
+  integrity sha512-w+P3+JqYP1p2rU+IGfAqQd/6Hx+cFp+RwgVY3UfGrrhWBQI+nxTrBFFLoE3VSgfdr9/fdG9W7+V07Ay/s3PTgg==
   dependencies:
-    "@makerdao/dai" "^0.9.10"
+    "@makerdao/dai" "0.9.10"
     babel-runtime "^6.26.0"
     ramda "^0.25.0"
     web3-utils "^1.0.0-beta.36"
@@ -894,7 +894,7 @@
     trezor-connect "^6.0.4"
     web3-provider-engine "14.0.4"
 
-"@makerdao/dai@^0.9.10":
+"@makerdao/dai@0.9.10", "@makerdao/dai@^0.9.10":
   version "0.9.10"
   resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.9.10.tgz#d5efb0f868131a58beaf9283a449d88de69196dd"
   integrity sha512-XbW3cx1P3rx2dZkDCJG/bMPM+kBKlGbLf9cpqWSxdL+BEwFylpmXePSNEjAcUKvpBLoDnUslCsOtqfRAP8IhNA==

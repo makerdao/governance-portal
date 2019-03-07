@@ -298,9 +298,26 @@ export const mkrApproveProxy = () => (dispatch, getState) => {
     //if proxy address not stored in accounts yet, then it should be in proxy store
     proxyAddress = getState().proxy.proxyAddress;
   }
-  const giveProxyAllowance = window.maker
-    .getToken(MKR)
-    .approveUnlimited(proxyAddress);
+  const mkrtoken = window.maker.service('smartContract').getToken('MCD_GOV');
+
+  const options = {};
+
+  const giveProxyAllowance = mkrtoken.approve(proxyAddress, -1, {
+    metadata: {
+      action: {
+        name: 'approve',
+        spender: proxyAddress,
+        allowance: Number.MAX_SAFE_INTEGER,
+        allowing: true,
+        unlimited: true
+      }
+    },
+    ...options
+  });
+
+  // const giveProxyAllowance = window.maker
+  //   .getToken(MKR)
+  //   .approveUnlimited(proxyAddress);
 
   dispatch({ type: MKR_APPROVE_REQUEST });
   return handleTx({
