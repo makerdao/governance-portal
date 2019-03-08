@@ -221,7 +221,7 @@ describe('async actions', () => {
       type: reducer.UPDATE_ADDRESS,
       payload: mockDefaultAccount
     });
-    expect(store.getActions().length).toBe(3);
+    expect(store.getActions().length).toBe(2);
   });
 
   test('initWeb3Accounts with no accounts should dispatch NO_METAMASK_ACCOUNTS and NOT_AVAILABLE if we are currently fetching', async () => {
