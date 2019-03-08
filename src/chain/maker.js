@@ -23,7 +23,7 @@ export default async function createMaker(
   }
 
   return Maker.create('http', {
-    plugins: [trezorPlugin, ledgerPlugin, governancePlugin],
+    plugins: [trezorPlugin, ledgerPlugin, [governancePlugin, { network }]],
     autoAuthenticate: true,
     log: false,
     web3: {
