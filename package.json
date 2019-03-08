@@ -6,8 +6,8 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^3.1.0",
-    "@makerdao/dai": "^0.9.10",
-    "@makerdao/dai-plugin-governance": "^0.3.5",
+    "@makerdao/dai": "^0.11.4",
+    "@makerdao/dai-plugin-governance": "0.4.0-rc1",
     "@makerdao/dai-plugin-ledger-web": "^0.9.7",
     "@makerdao/dai-plugin-trezor-web": "^0.9.5",
     "@makerdao/ui-components": "1.0.0-alpha.29",
