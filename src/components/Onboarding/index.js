@@ -31,7 +31,12 @@ const stepsLinkedWallet = [
 ];
 
 //TODO add grant approvals here?
-const stepsSingleWallet = ['Terms of use', 'Lock MKR', 'Start Voting'];
+const stepsSingleWallet = [
+  'Terms of use',
+  'Grant Approval',
+  'Lock MKR',
+  'Start Voting'
+];
 
 const Background = styled(Box)`
   opacity: 0;

@@ -57,15 +57,6 @@ const SelectAWalletStep = ({
         buttonText="Connect"
         onNext={onLedgerSelected}
       />
-      <ButtonCard
-        icon={
-          <WalletIcon provider="metamask" style={{ maxWidth: iconWidth }} />
-        }
-        title="Vote with Hot Wallet"
-        subtitle="Skip adding a cold wallet and vote directly with Metamask."
-        buttonText="Skip"
-        onNext={onMetamaskSelected}
-      />
       <Flex justifyContent="right">
         <Button variant="secondary-outline" onClick={onCancel}>
           Change hot wallet
@@ -152,15 +143,6 @@ class ChooseColdWallet extends React.Component {
     });
   };
 
-  onMetamaskSelected = () => {
-    console.log('on mm selected');
-    this.setState({
-      accountType: AccountTypes.METAMASK,
-      skipVoteProxy: true
-    });
-    this.jumpToStep();
-  };
-
   onLedgerLiveSelected = () => {
     this.setState({
       accountType: AccountTypes.LEDGER,
@@ -184,22 +166,11 @@ class ChooseColdWallet extends React.Component {
     });
   };
 
-  jumpToStep = () => {
-    this.setState({
-      step: 5,
-      faqs: faqs.selectMKRBalance
-    });
-  };
-
   onAccountSelected = async account => {
-    if (this.props.skipVoteProxy) {
-      console.log('props to see', this.props);
-      this.props.setActiveAccount(this.props.coldWallet.address);
-    } else {
-      await this.props.addHardwareAccount(account.address, account.type);
-      this.props.setColdWallet(account);
-      this.props.setActiveAccount(this.props.coldWallet.address);
-    }
+    await this.props.addHardwareAccount(account.address, account.type);
+    this.props.setColdWallet(account);
+    this.props.setActiveAccount(this.props.coldWallet.address);
+
     this.toConfirmWallet();
   };
 
@@ -221,7 +192,6 @@ class ChooseColdWallet extends React.Component {
           <SelectAWalletStep
             onTrezorSelected={this.onTrezorSelected}
             onLedgerSelected={this.onLedgerSelected}
-            onMetamaskSelected={this.onMetamaskSelected}
             onCancel={this.props.onCancel}
           />
           <LedgerStep
@@ -234,7 +204,6 @@ class ChooseColdWallet extends React.Component {
             isLedgerLive={this.state.isLedgerLive}
             onAccountSelected={this.onAccountSelected}
             onCancel={this.toSelectAWallet}
-            skipVoteProxy={this.state.skipVoteProxy}
           />
           <ConfirmWalletStep
             hotWallet={this.props.hotWallet}
