@@ -224,9 +224,22 @@ export const addSingleWalletAccount = account => async dispatch => {
 };
 
 export const addAccount = account => async dispatch => {
-  // return await dispatch(addAccounts([account]));
-  return await dispatch(addSingleWalletAccount(account));
+  const { hasProxy } = await window.maker
+    .service('voteProxy')
+    .getVoteProxy(account.address);
+
+  const numDeposits = await window.maker
+    .service('chief')
+    .getNumDeposits(account.address);
+
+  // if we don't have a vote proxy, but we have locked MKR, we must be voting with a single wallet
+  if (!hasProxy && numDeposits.toNumber() > 0) {
+    return await dispatch(addSingleWalletAccount(account));
+  } else {
+    return await dispatch(addAccounts([account]));
+  }
 };
+
 export const addSingleWallet = account => async dispatch => {
   return await dispatch(addSingleWalletAccount(account));
 };
