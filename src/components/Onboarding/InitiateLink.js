@@ -151,15 +151,6 @@ class InitiateLink extends React.Component {
               onRetry={this.toGrantPermissions}
               onNext={onComplete}
             />
-            <SignTransactionStep
-              title="Single wallet permissions"
-              subtitle="Single wallet"
-              walletProvider={'coldWallet.type'}
-              status={mkrApproveProxyTxStatus}
-              tx={mkrApproveProxyTxHash}
-              onRetry={this.toGrantPermissions}
-              onNext={onComplete}
-            />
           </Stepper>
         </div>
       </TwoColumnSidebarLayout>
@@ -169,8 +160,15 @@ class InitiateLink extends React.Component {
 
 export default connect(
   ({ proxy, onboarding, ...state }) => ({
-    hotWallet: getAccount(state, window.maker.currentAddress()),
-    coldWallet: getAccount(state, window.maker.currentAddress()),
+    hotWallet: onboarding.skipProxy
+      ? ''
+      : getAccount(state, onboarding.hotWallet.address),
+    coldWallet: onboarding.skipProxy
+      ? ''
+      : getAccount(state, onboarding.coldWallet.address),
+    singleWallet: onboarding.skipProxy
+      ? getAccount(state, onboarding.singleWallet.address)
+      : '',
     skipProxy: onboarding.skipProxy,
     ...proxy
   }),
@@ -178,7 +176,6 @@ export default connect(
     breakLink,
     initiateLink,
     approveLink,
-    mkrApproveProxy,
-    mkrApproveSingleWallet
+    mkrApproveProxy
   }
 )(InitiateLink);

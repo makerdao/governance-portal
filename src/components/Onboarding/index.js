@@ -30,7 +30,7 @@ const stepsLinkedWallet = [
   'Start Voting'
 ];
 
-//TODO add grant approvals here?
+//TODO this approach doesn't really work with the stepper
 const stepsSingleWallet = [
   'Terms of use',
   'Grant Approval',
@@ -109,10 +109,7 @@ const Onboarding = ({
           onComplete={onboardingSkipProxy}
           onCancel={onboardingPrevStep}
         />
-        <ChooseHotWallet
-          onComplete={onboardingNextStep}
-          onSkipProxy={onboardingSkipProxy}
-        />
+        <ChooseHotWallet onComplete={onboardingNextStep} />
         <ChooseColdWallet
           onComplete={onboardingNextStep}
           onCancel={onboardingPrevStep}

@@ -256,6 +256,7 @@ export const breakLink = () => (dispatch, getState) => {
 };
 
 export const mkrApproveSingleWallet = () => (dispatch, getState) => {
+  // TODO this is undefined now:
   const {
     onboarding: { skipProxy }
   } = getState();

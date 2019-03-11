@@ -91,7 +91,8 @@ const initialState = {
   open: false,
   state: OnboardingStates.INTRODUCTION,
   hotWallet: undefined,
-  coldWallet: undefined
+  coldWallet: undefined,
+  singleWallet: undefined
 };
 
 const onboarding = createReducer(initialState, {
@@ -118,7 +119,8 @@ const onboarding = createReducer(initialState, {
   [ONBOARDING_SKIP_PROXY]: (state, { payload }) => ({
     ...state,
     step: state.step + 4,
-    skipProxy: payload.skipProxy
+    skipProxy: payload.skipProxy,
+    singleWallet: payload.account
   }),
   [ONBOARDING_SET_STATE]: (state, { payload }) => ({
     ...state,

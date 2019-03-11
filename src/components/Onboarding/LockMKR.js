@@ -33,11 +33,21 @@ class LockMKR extends React.Component {
   constructor(props) {
     super(props);
 
+    let storageWallet = this.props.coldWallet;
+    let votingWallet = this.props.hotWallet;
+    // if we're not using a proxy, assign hot/cold wallet to the single wallet to keep behavior intact
+    if (this.props.skipProxy) {
+      storageWallet = this.props.singleWallet;
+      votingWallet = this.props.singleWallet;
+    }
+
     this.state = {
       step: 0,
       votingMKR: '',
       error: false,
-      faqs: []
+      faqs: [],
+      storageWallet,
+      votingWallet
     };
   }
 
@@ -87,9 +97,9 @@ class LockMKR extends React.Component {
       error = 'Please enter a valid number';
     } else if (mkr === 0) {
       error = 'Please enter a number greater than zero';
-    } else if (mkr > this.props.coldWallet.mkrBalance) {
+    } else if (mkr > this.state.storageWallet.mkrBalance) {
       error = `The maximum amount of MKR you can lock is ${
-        this.props.coldWallet.mkrBalance
+        this.state.storageWallet.mkrBalance
       }`;
     }
 
@@ -100,18 +110,19 @@ class LockMKR extends React.Component {
 
   setMaxVotingMKR = () => {
     this.setState({
-      votingMKR: this.props.coldWallet.mkrBalance,
+      votingMKR: this.state.storageWallet.mkrBalance,
       error: false
     });
   };
 
   render() {
+    console.log('4-LockMKR state, props', this.state, this.props);
     return (
       <TwoColumnSidebarLayout
         sidebar={
           <Sidebar
-            hotWallet={this.props.hotWallet}
-            coldWallet={this.props.coldWallet}
+            hotWallet={this.state.votingWallet}
+            coldWallet={this.state.storageWallet}
             faqs={this.state.faqs}
           />
         }
@@ -131,7 +142,7 @@ class LockMKR extends React.Component {
                 <div>
                   <Label mb="s">Available MKR</Label>
                   <div>
-                    {this.props.coldWallet.mkrBalance} MKR available to vote
+                    {this.state.storageWallet.mkrBalance} MKR available to vote
                   </div>
                 </div>
 
@@ -183,7 +194,7 @@ class LockMKR extends React.Component {
                   >
                     <Box>
                       <WalletIcon
-                        provider={this.props.coldWallet.type}
+                        provider={this.state.storageWallet.type}
                         style={{
                           maxWidth: walletIconSize,
                           maxHeight: walletIconSize
@@ -192,11 +203,14 @@ class LockMKR extends React.Component {
                     </Box>
                     <Box>
                       <Link fontWeight="semibold">
-                        <Address full={this.props.coldWallet.address} shorten />
+                        <Address
+                          full={this.state.storageWallet.address}
+                          shorten
+                        />
                       </Link>
                     </Box>
                     <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
-                      {this.props.coldWallet.mkrBalance} MKR
+                      {this.state.storageWallet.mkrBalance} MKR
                     </Box>
                     <Flex justifyContent="flex-end">
                       <ColdWalletTag />
@@ -248,12 +262,12 @@ class LockMKR extends React.Component {
                   <span>
                     In order to start voting please confirm the Locking of MKR
                     on your cold wallet ending in{' '}
-                    <Link>{this.props.coldWallet.address.slice(-4)}</Link>.
+                    <Link>{this.state.storageWallet.address.slice(-4)}</Link>.
                     <br />
                     You can withdraw your MKR at anytime.
                   </span>
                 }
-                walletProvider={this.props.coldWallet.type}
+                walletProvider={this.state.storageWallet.type}
                 status={this.props.sendMkrTxStatus}
                 tx={this.props.sendMkrTxHash}
                 onNext={this.props.onComplete}
@@ -267,11 +281,18 @@ class LockMKR extends React.Component {
     );
   }
 }
-
+//TODO Best to fetch single wallet details again, or use what's in state?
 export default connect(
   ({ onboarding, proxy, ...state }) => ({
-    hotWallet: getAccount(state, window.maker.currentAddress()),
-    coldWallet: getAccount(state, window.maker.currentAddress()),
+    hotWallet: onboarding.skipProxy
+      ? ''
+      : getAccount(state, onboarding.hotWallet.address),
+    coldWallet: onboarding.skipProxy
+      ? ''
+      : getAccount(state, onboarding.coldWallet.address),
+    singleWallet: onboarding.skipProxy
+      ? getAccount(state, state.accounts.activeAccount)
+      : '',
     skipProxy: onboarding.skipProxy,
     ...proxy
   }),

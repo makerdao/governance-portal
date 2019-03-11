@@ -84,7 +84,7 @@ class InitiateLink extends React.Component {
   };
 
   render() {
-    console.log('3-SingleWallet state', this.state);
+    console.log('3-SingleWallet state', this.state, this.props);
     const {
       hotWallet,
       coldWallet,
@@ -160,9 +160,10 @@ class InitiateLink extends React.Component {
 
 export default connect(
   ({ proxy, onboarding, ...state }) => ({
-    hotWallet: getAccount(state, window.maker.currentAddress()),
-    coldWallet: getAccount(state, window.maker.currentAddress()),
-    skipProxy: onboarding.skipProxy,
+    hotWallet: '',
+    coldWallet: '',
+    singleWallet: getAccount(state, state.accounts.activeAccount),
+    skipProxy: true,
     ...proxy
   }),
   {

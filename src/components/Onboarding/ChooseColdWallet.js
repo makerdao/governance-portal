@@ -25,13 +25,11 @@ import { setActiveAccount } from '../../reducers/accounts';
 import { addHardwareAccount } from '../../reducers/accounts';
 
 const imageWidth = '5rem';
-const iconWidth = '3rem';
 
 const SelectAWalletStep = ({
   active,
   onTrezorSelected,
   onLedgerSelected,
-  onMetamaskSelected,
   onCancel
 }) => {
   return (
@@ -170,7 +168,6 @@ class ChooseColdWallet extends React.Component {
     await this.props.addHardwareAccount(account.address, account.type);
     this.props.setColdWallet(account);
     this.props.setActiveAccount(this.props.coldWallet.address);
-
     this.toConfirmWallet();
   };
 
