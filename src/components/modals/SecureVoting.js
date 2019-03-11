@@ -48,8 +48,12 @@ export const BoxMiddle = styled.span`
 `;
 
 const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
-  if (activeAccount !== undefined && activeAccount.hasProxy) {
-    const { linkedAccount } = activeAccount.proxy;
+  if (
+    activeAccount !== undefined &&
+    (activeAccount.hasProxy || activeAccount.singleWallet)
+  ) {
+    let { linkedAccount } = activeAccount.proxy;
+    if (!linkedAccount) linkedAccount = activeAccount;
     const isColdWallet = activeAccount.proxyRole === 'cold';
     const coldWallet = isColdWallet ? activeAccount : linkedAccount;
     return (

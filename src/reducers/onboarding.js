@@ -150,9 +150,10 @@ const onboarding = createReducer(initialState, {
         // we need access to the cold account to continue set up, so we're done here.
         return { state: OnboardingStates.FINISHED, open: false };
       } else if (
-        newAccount.hasProxy &&
-        newAccount.proxyRole === 'cold' &&
-        newAccount.proxy.hasInfMkrApproval
+        (newAccount.hasProxy &&
+          newAccount.proxyRole === 'cold' &&
+          newAccount.proxy.hasInfMkrApproval) ||
+        (newAccount.singleWallet && newAccount.proxy.hasInfMkrApproval)
       ) {
         // we don't rely on onboarding for depositing MKR.
         return { state: OnboardingStates.FINISHED, open: false };
