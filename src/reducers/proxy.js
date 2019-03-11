@@ -18,6 +18,7 @@ import {
   WITHDRAW_MKR_SUCCESS,
   MKR_APPROVE_SUCCESS
 } from './sharedProxyConstants';
+import { MCD_ADM } from '@makerdao/dai-plugin-governance/src/utils/constants';
 
 // Constants ----------------------------------------------
 
@@ -266,9 +267,14 @@ export const mkrApproveSingleWallet = () => (dispatch, getState) => {
   console.log('currentAccount, whats type?', account);
 
   // TODO fix hardcoded chief address
+  // new kovan chief: 0xac68fda94c432144dfda527b0a32cefbff3fac09
+  const chiefAddress = window.maker
+    .service('smartContract')
+    .getContractAddressByName(MCD_ADM);
+
   const giveProxyAllowance = window.maker
     .getToken(MKR)
-    .approveUnlimited('0xbbffc76e94b34f72d96d054b31f6424249c1337d');
+    .approveUnlimited(chiefAddress);
 
   dispatch({ type: MKR_APPROVE_REQUEST });
   return handleTx({
