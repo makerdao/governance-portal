@@ -24,7 +24,11 @@ export default async function createMaker(
   }
 
   let config = {
-    plugins: [trezorPlugin, ledgerPlugin, governancePlugin],
+    plugins: [
+      trezorPlugin,
+      ledgerPlugin,
+      [governancePlugin, { network, mcd: !!testchainConfigId }]
+    ],
     autoAuthenticate: true,
     log: false,
     web3: {

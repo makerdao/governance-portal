@@ -168,6 +168,11 @@ export const validTxString = txString => /^0x([A-Fa-f0-9]{64})$/.test(txString);
 export const validAddressString = addressString =>
   /^0x([A-Fa-f0-9]{40})$/.test(addressString);
 
+export const sortBytesArray = _array =>
+  [..._array].sort((a, b) => {
+    return BigNumber(a.toLowerCase()).gt(BigNumber(b.toLowerCase())) ? 1 : -1;
+  });
+
 /**
  * @desc get etherescan address link
  * @param  {String} address

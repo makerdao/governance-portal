@@ -1,14 +1,14 @@
 {
   "name": "maker-governance-dashboard",
   "description": "The primary interface for dai governance.",
-  "version": "0.2.0",
+  "version": "0.2.1-rc.1",
   "license": "MIT",
   "private": true,
   "dependencies": {
     "@craco/craco": "^3.5.0",
     "@makerdao/dai": "^0.11.4",
     "@makerdao/dai-plugin-config": "^0.0.2",
-    "@makerdao/dai-plugin-governance": "^0.3.8",
+    "@makerdao/dai-plugin-governance": "0.4.1",
     "@makerdao/dai-plugin-ledger-web": "^0.9.7",
     "@makerdao/dai-plugin-trezor-web": "^0.9.5",
     "@makerdao/ui-components": "1.0.0-alpha.29",

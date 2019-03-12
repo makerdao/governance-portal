@@ -4,7 +4,7 @@ import styled, { keyframes } from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import { isNil, isEmpty } from 'ramda';
 
-import { toSlug, eq } from '../utils/misc';
+import { toSlug } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
 import Vote from '../components/modals/Vote';
 import Button from '../components/Button';
@@ -215,7 +215,7 @@ function Proposal({
                   })
                 }
               >
-                {eq(votingFor, proposal.source)
+                {votingFor.includes(proposal.source.toLowerCase())
                   ? 'Withdraw vote'
                   : 'Vote for this Proposal'}
               </Button>

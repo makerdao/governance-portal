@@ -66,7 +66,7 @@ export function getActiveVotingFor(state) {
     !activeAccount.hasProxy ||
     !(activeAccount.proxy.votingPower > 0)
   )
-    return '';
+    return [];
   return activeAccount.votingFor;
 }
 
