@@ -16,7 +16,7 @@ import {
   mkrApproveSingleWallet
 } from '../../reducers/proxy';
 
-import { getAccount, addSingleWalletAccount } from '../../reducers/accounts';
+import { getAccount } from '../../reducers/accounts';
 
 class InitiateLink extends React.Component {
   constructor(props) {
@@ -24,61 +24,20 @@ class InitiateLink extends React.Component {
 
     this.state = {
       step: 0,
-      faqs: [],
-      useSingleWallet: true
+      faqs: []
     };
   }
 
   componentDidMount() {
     console.log('SINGLE WALLET', this.props);
-    if (
-      this.props.coldWallet.hasProxy &&
-      this.props.coldWallet.proxy.hasInfMkrApproval
-    ) {
-      this.props.onComplete();
-    } else if (
-      this.props.coldWallet.hasProxy &&
-      !this.props.coldWallet.proxy.hasInfMkrApproval
-    ) {
-      this.toGrantPermissions();
-    } else if (this.state.useSingleWallet) {
-      // TODO probably don't need this else if any more
-      this.toGrantPermissions();
-    } else {
-      this.toGrantPermissions();
-    }
+    this.toGrantPermissions();
   }
 
-  toInitiateLink = priority => {
-    console.log('toInitiateLink2');
-    this.props.initiateLink({
-      hot: this.props.hotWallet,
-      cold: this.props.coldWallet
-    });
-    this.setState({
-      step: 0,
-      faqs: []
-    });
-  };
-
-  toApproveLink = priority => {
-    this.props.approveLink({
-      hot: this.props.hotWallet,
-      cold: this.props.coldWallet
-    });
-    this.setState({
-      step: 1,
-      faqs: faqs.approveLink
-    });
-  };
-  // TODO use addAccoutn from accounts.js
   toGrantPermissions = () => {
     console.log('props in single wallet', this.props);
-    const step = 3;
     this.props.mkrApproveSingleWallet();
 
     this.setState({
-      step,
       faqs: faqs.grantHotWalletPermissions
     });
   };
@@ -89,10 +48,6 @@ class InitiateLink extends React.Component {
       hotWallet,
       coldWallet,
       singleWallet,
-      initiateLinkTxHash,
-      initiateLinkTxStatus,
-      approveLinkTxHash,
-      approveLinkTxStatus,
       mkrApproveProxyTxHash,
       mkrApproveProxyTxStatus,
       onComplete
@@ -101,7 +56,7 @@ class InitiateLink extends React.Component {
       <TwoColumnSidebarLayout
         sidebar={
           <Sidebar
-            faqs={[]}
+            faqs={this.state.faqs}
             singleWallet={singleWallet}
             hotWallet={hotWallet}
             coldWallet={coldWallet}
@@ -111,47 +66,9 @@ class InitiateLink extends React.Component {
         <div>
           <Stepper step={this.state.step}>
             <SignTransactionStep
-              title={`Sign ${nicelyFormatWalletProvider(
-                coldWallet.type
-              )} transaction`}
-              subtitle={`To proceed with setting up your voting contract,
-      please sign the transaction in ${nicelyFormatWalletProvider(
-        coldWallet.type
-      )}.`}
-              walletProvider={coldWallet.type}
-              status={initiateLinkTxStatus}
-              tx={initiateLinkTxHash}
-              onNext={this.toApproveLink}
-              onRetry={this.toInitiateLink}
-              onCancel={this.toChooseTransactionPriority}
-            />
-            <SignTransactionStep
-              title={`Sign ${nicelyFormatWalletProvider(
-                hotWallet.type
-              )} transaction`}
-              subtitle={`To proceed with setting up your voting contract,
-      please sign the transaction in ${nicelyFormatWalletProvider(
-        hotWallet.type
-      )}.`}
-              walletProvider={hotWallet.type}
-              status={approveLinkTxStatus}
-              tx={approveLinkTxHash}
-              onRetry={this.toApproveLink}
-              onNext={this.toGrantPermissions}
-            />
-            <SignTransactionStep
-              title="Grant hot wallet permissions"
-              subtitle="Give your voting contract permission so that your hot wallet can vote with your MKR"
-              walletProvider={coldWallet.type}
-              status={mkrApproveProxyTxStatus}
-              tx={mkrApproveProxyTxHash}
-              onRetry={this.toGrantPermissions}
-              onNext={onComplete}
-            />
-            <SignTransactionStep
-              title="Single wallet permissions"
-              subtitle="Single wallet"
-              walletProvider={'coldWallet.type'}
+              title="Grant your wallet permissions"
+              subtitle="Give the voting contract permission so that your wallet can vote with your MKR"
+              walletProvider={singleWallet.type}
               status={mkrApproveProxyTxStatus}
               tx={mkrApproveProxyTxHash}
               onRetry={this.toGrantPermissions}
@@ -169,7 +86,7 @@ export default connect(
     hotWallet: '',
     coldWallet: '',
     singleWallet: getAccount(state, state.accounts.activeAccount),
-    skipProxy: true,
+    skipProxy: onboarding.skipProxy,
     ...proxy
   }),
   {
