@@ -7,6 +7,7 @@ import {
   onboardingNextStep,
   onboardingPrevStep,
   onboardingSkipProxy,
+  onboardingToStep,
   setOnboardingState,
   OnboardingStates
 } from '../../reducers/onboarding';
@@ -38,6 +39,8 @@ const stepsSingleWallet = [
   'Start Voting'
 ];
 
+const chooseHotWalletStepId = 2;
+
 const Background = styled(Box)`
   opacity: 0;
   pointer-events: none;
@@ -62,6 +65,7 @@ const Onboarding = ({
   onboardingNextStep,
   onboardingPrevStep,
   onboardingSkipProxy,
+  onboardingToStep,
   setOnboardingState,
   setHotWallet
 }) => {
@@ -103,7 +107,11 @@ const Onboarding = ({
       >
         <Terms
           onCancel={() => setOnboardingState(OnboardingStates.INTRODUCTION)}
-          onComplete={onboardingNextStep}
+          onComplete={
+            state === OnboardingStates.SETUP_SINGLE_WALLET
+              ? onboardingNextStep
+              : () => onboardingToStep(chooseHotWalletStepId)
+          }
         />
         <SingleWallet
           onComplete={onboardingSkipProxy}
@@ -139,6 +147,7 @@ export default connect(
     onboardingClose,
     onboardingNextStep,
     onboardingPrevStep,
-    onboardingSkipProxy
+    onboardingSkipProxy,
+    onboardingToStep
   }
 )(Onboarding);

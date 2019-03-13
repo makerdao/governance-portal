@@ -119,8 +119,8 @@ const onboarding = createReducer(initialState, {
   [ONBOARDING_SKIP_PROXY]: (state, { payload }) => ({
     ...state,
     step: state.step + 4,
-    skipProxy: payload.skipProxy,
-    singleWallet: payload.account
+    skipProxy: payload.skipProxy
+    // singleWallet: payload.account
   }),
   [ONBOARDING_SET_STATE]: (state, { payload }) => ({
     ...state,
