@@ -88,6 +88,7 @@ class InitiateLink extends React.Component {
     const {
       hotWallet,
       coldWallet,
+      singleWallet,
       initiateLinkTxHash,
       initiateLinkTxStatus,
       approveLinkTxHash,
@@ -99,7 +100,12 @@ class InitiateLink extends React.Component {
     return (
       <TwoColumnSidebarLayout
         sidebar={
-          <Sidebar faqs={[]} hotWallet={hotWallet} coldWallet={coldWallet} />
+          <Sidebar
+            faqs={[]}
+            singleWallet={singleWallet}
+            hotWallet={hotWallet}
+            coldWallet={coldWallet}
+          />
         }
       >
         <div>

@@ -166,9 +166,9 @@ export default connect(
     coldWallet: onboarding.skipProxy
       ? ''
       : getAccount(state, onboarding.coldWallet.address),
-    singleWallet: onboarding.skipProxy
-      ? getAccount(state, onboarding.singleWallet.address)
-      : '',
+    // singleWallet: onboarding.skipProxy
+    //   ? getAccount(state, onboarding.singleWallet.address)
+    //   : '',
     skipProxy: onboarding.skipProxy,
     ...proxy
   }),

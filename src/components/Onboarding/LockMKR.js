@@ -23,7 +23,11 @@ import SignTransactionStep from './shared/SignTransactionStep';
 import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
 import { lock, chiefLock } from '../../reducers/proxy';
 import { getAccount } from '../../reducers/accounts';
-import { ColdWalletTag, VotingContractTag } from './shared/Tags';
+import {
+  ColdWalletTag,
+  VotingContractTag,
+  SingleWalletTag
+} from './shared/Tags';
 import { Label } from '../../utils/typography';
 
 const inputWidth = '33.4rem';
@@ -37,6 +41,7 @@ class LockMKR extends React.Component {
     let votingWallet = this.props.hotWallet;
     // if we're not using a proxy, assign hot/cold wallet to the single wallet to keep behavior intact
     if (this.props.skipProxy) {
+      console.log('this.props.singlewallet', this.props.singleWallet);
       storageWallet = this.props.singleWallet;
       votingWallet = this.props.singleWallet;
     }
@@ -121,8 +126,9 @@ class LockMKR extends React.Component {
       <TwoColumnSidebarLayout
         sidebar={
           <Sidebar
-            hotWallet={this.state.votingWallet}
-            coldWallet={this.state.storageWallet}
+            hotWallet={this.props.hotWallet}
+            coldWallet={this.props.coldWallet}
+            singleWallet={this.props.singleWallet}
             faqs={this.state.faqs}
           />
         }
@@ -213,7 +219,11 @@ class LockMKR extends React.Component {
                       {this.state.storageWallet.mkrBalance} MKR
                     </Box>
                     <Flex justifyContent="flex-end">
-                      <ColdWalletTag />
+                      {this.props.singleWallet ? (
+                        <SingleWalletTag />
+                      ) : (
+                        <ColdWalletTag />
+                      )}
                     </Flex>
                   </Grid>
                 </Card>
@@ -261,8 +271,9 @@ class LockMKR extends React.Component {
                 subtitle={
                   <span>
                     In order to start voting please confirm the Locking of MKR
-                    on your cold wallet ending in{' '}
-                    <Link>{this.state.storageWallet.address.slice(-4)}</Link>.
+                    on your {this.props.skipProxy ? '' : 'cold'} wallet ending
+                    in <Link>{this.state.storageWallet.address.slice(-4)}</Link>
+                    .
                     <br />
                     You can withdraw your MKR at anytime.
                   </span>
