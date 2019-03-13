@@ -5,7 +5,7 @@ import * as hat from '../../src/reducers/hat';
 import * as eth from '../../src/reducers/eth';
 import * as accounts from '../../src/reducers/accounts';
 import { getAction } from '../helpers/getAction';
-import { netIdToName } from '../../src/utils/ethereum';
+import * as ethereumUtils from '../../src/utils/ethereum';
 
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -73,24 +73,12 @@ proposals.proposalsInit = jest.fn(() => mockAction);
 hat.hatInit = jest.fn(() => mockAction);
 eth.ethInit = jest.fn(() => mockAction);
 accounts.setActiveAccount = jest.fn(() => mockAction);
+accounts.addMetamaskAccount = jest.fn(() => mockAction);
+ethereumUtils.netToUri = jest.fn();
 
 // Mock Maker services
-const setProvider = jest.fn();
-const getProvider = jest.fn(() => ({
-  _providers: ['mockA', 'mockB']
-}));
-const mockService = name => {
-  if (name === 'web3') {
-    return {
-      _web3: {
-        setProvider: setProvider
-      }
-    };
-  }
-  if (name === 'accounts') return { getProvider };
-};
 const defaultFunctions = {
-  service: jest.fn(mockService)
+  service: jest.fn(() => {})
 };
 
 describe('actions', () => {
@@ -143,17 +131,16 @@ describe('async actions', () => {
   });
   beforeEach(() => {
     store = mockStore(initialState);
+    clearWeb3Mock();
   });
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   test('init with valid network, but no web3 accounts', async () => {
-    clearWeb3Mock();
     const network = 'mainnet';
     await store.dispatch(reducer.init(network));
 
-    expect(setProvider).toBeCalledTimes(1);
     expect(tally.voteTallyInit).toBeCalledTimes(1);
     expect(proposals.proposalsInit).toBeCalledTimes(1);
     expect(proposals.proposalsInit).toBeCalledWith(network);
@@ -180,7 +167,6 @@ describe('async actions', () => {
   });
 
   test.skip('init with an invalid network, and no web3 accounts', async () => {
-    clearWeb3Mock();
     const network = 'invalidNet';
     await store.dispatch(reducer.init(network));
 
@@ -202,7 +188,6 @@ describe('async actions', () => {
 
     await store.dispatch(reducer.init(network));
 
-    expect(setProvider).toBeCalledTimes(1);
     expect(accounts.setActiveAccount).toBeCalledTimes(2);
     expect(store.getActions()[0]).toEqual({
       type: reducer.CONNECT_REQUEST
@@ -240,7 +225,6 @@ describe('async actions', () => {
   });
 
   test('initWeb3Accounts with no accounts should dispatch NO_METAMASK_ACCOUNTS and NOT_AVAILABLE if we are currently fetching', async () => {
-    clearWeb3Mock();
     store.getState().metamask.activeAddress = '';
     await store.dispatch(reducer.initWeb3Accounts());
 
@@ -254,7 +238,6 @@ describe('async actions', () => {
   });
 
   test('initWeb3Accounts with no accounts should dispatch nothing when not fetching accounts', async () => {
-    clearWeb3Mock();
     store.getState().metamask.activeAddress = '';
     store.getState().accounts.fetching = false;
     await store.dispatch(reducer.initWeb3Accounts());
@@ -262,14 +245,14 @@ describe('async actions', () => {
     expect(store.getActions().length).toBe(0);
   });
 
-  test('checkNetwork dispatches UPDATE_NETWORK and web3.setProvider when receiving a new network', async () => {
+  test('checkNetwork dispatches UPDATE_NETWORK and reloads the page when receiving a new network', async () => {
     mockWeb3();
     await store.dispatch(reducer.checkNetwork());
 
-    expect(setProvider).toBeCalledTimes(1);
+    expect(window.location.reload).toBeCalledTimes(1);
     expect(await getAction(store, reducer.UPDATE_NETWORK)).toEqual({
       type: reducer.UPDATE_NETWORK,
-      payload: { network: netIdToName(mockNetId) }
+      payload: { network: ethereumUtils.netIdToName(mockNetId) }
     });
     expect(store.getActions().length).toBe(1);
   });
@@ -279,7 +262,6 @@ describe('async actions', () => {
     store.getState().metamask.network = 'ganache';
     await store.dispatch(reducer.checkNetwork());
 
-    expect(setProvider).toBeCalledTimes(0);
     expect(store.getActions().length).toBe(0);
   });
 
@@ -289,14 +271,13 @@ describe('async actions', () => {
     await store.dispatch(reducer.pollForMetamaskChanges());
 
     expect(accounts.setActiveAccount).toBeCalledTimes(1);
-    expect(setProvider).toBeCalledTimes(1);
     expect(await getAction(store, reducer.UPDATE_ADDRESS)).toEqual({
       type: reducer.UPDATE_ADDRESS,
       payload: mockDefaultAccount
     });
     expect(await getAction(store, reducer.UPDATE_NETWORK)).toEqual({
       type: reducer.UPDATE_NETWORK,
-      payload: { network: netIdToName(mockNetId) }
+      payload: { network: ethereumUtils.netIdToName(mockNetId) }
     });
     expect(store.getActions().length).toBe(3);
   });

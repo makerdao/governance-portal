@@ -50,7 +50,7 @@ export function getActiveVotingFor(state) {
     !activeAccount.hasProxy ||
     !(activeAccount.proxy.votingPower > 0)
   )
-    return '';
+    return [];
   return activeAccount.votingFor;
 }
 
@@ -74,20 +74,18 @@ export const addAccounts = accounts => async dispatch => {
       .service('voteProxy')
       .getVoteProxy(account.address);
 
-    let currProposal = Promise.resolve('');
+    let currProposal = Promise.resolve([]);
     let proxyRole = '';
     if (hasProxy) {
-      currProposal = currProposal.then(() =>
-        // NOTE for now we just take the first address in the slate since we're
-        // assuming that they're only voting for one in the frontend. This
-        // should be changed if that changes
-        (async () => {
-          const addresses = await promiseRetry({
+      currProposal = currProposal
+        .then(() =>
+          promiseRetry({
             fn: () => voteProxy.getVotedProposalAddresses()
-          });
-          return addresses[0] || '';
-        })()
-      );
+          })
+        )
+        .then(addresses =>
+          (addresses || []).map(address => address.toLowerCase())
+        );
       proxyRole =
         voteProxy.getColdAddress() === account.address ? 'cold' : 'hot';
     }

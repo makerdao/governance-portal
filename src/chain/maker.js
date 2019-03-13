@@ -24,11 +24,11 @@ export default async function createMaker(
   }
   // if  we have a teschain id, do NOT allow the gov plugin to load contracts
 
-  let config = {
+  const config = {
     plugins: [
       trezorPlugin,
       ledgerPlugin,
-      [governancePlugin, { bypassContracts: !!testchainConfigId }]
+      [governancePlugin, { network, mcd: !!testchainConfigId }]
     ],
     autoAuthenticate: true,
     log: false,
@@ -38,7 +38,7 @@ export default async function createMaker(
       }
     },
     provider: {
-      url: network === 'ganache' ? '' : netToUri(network),
+      url: netToUri(network),
       type: 'HTTP'
     }
   };

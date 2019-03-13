@@ -158,9 +158,12 @@ const VoterStatus = ({ account, network, modalOpen, fetching, signaling }) => {
           </Fragment>
         )}
         <br />
-        {account.votingFor && account.proxy.votingPower > 0 ? (
+        {account.votingFor.length > 0 && account.proxy.votingPower > 0 ? (
           <Fragment>
-            <WithVote proposalAddress={account.votingFor} signaling={signaling}>
+            <WithVote
+              proposalAddresses={account.votingFor}
+              signaling={signaling}
+            >
               {({ proposalTitle, proposalSlug, noVote }) =>
                 noVote ? (
                   'Currently not voting'

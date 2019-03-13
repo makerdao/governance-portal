@@ -1,6 +1,6 @@
 import { createReducer } from '../utils/redux';
 import { setActiveAccount, NO_METAMASK_ACCOUNTS } from './accounts';
-import { netIdToName, netToUri } from '../utils/ethereum';
+import { netIdToName } from '../utils/ethereum';
 import { ethInit } from './eth';
 import { voteTallyInit } from './tally';
 import { proposalsInit } from './proposals';
@@ -64,8 +64,10 @@ export const checkNetwork = () => async (dispatch, getState) => {
       } = getState();
       const newNetwork = netIdToName(netId);
       if (newNetwork !== network) {
+        // When we remove the reload, we want to remember to update the network.
+        // Dispatch kept here to prevent silly errors in the future.
         dispatch(updateNetwork(newNetwork));
-        window.maker.service('web3')._web3.setProvider(netToUri(newNetwork));
+        window.location.reload();
       }
     });
   }
@@ -114,7 +116,6 @@ export const init = (network = 'mainnet') => async dispatch => {
   dispatch(connectSuccess(network));
   dispatch(updateNetwork(network));
 
-  window.maker.service('web3')._web3.setProvider(netToUri(network));
   await dispatch(initWeb3Accounts());
 
   dispatch(voteTallyInit());

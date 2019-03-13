@@ -2,13 +2,13 @@ import BigNumber from 'bignumber.js';
 import takeLast from 'ramda/src/takeLast';
 
 BigNumber.config({ DECIMAL_PLACES: 18, ROUNDING_MODE: 1 });
+export const INFURA_PROJECT_ID = '912c79d091a74c6a8c0938c3bd2319a0';
 
 export const WEI = 1;
 export const GWEI = 1000000000;
 export const ETHER = 1000000000000000000;
 export const MAX_UINT = `0x${Array(64 + 1).join('f')}`;
 export const MAX_UINT_ETH_BN = BigNumber(MAX_UINT).shiftedBy(-18);
-export const INFURA_PROJECT_ID = '912c79d091a74c6a8c0938c3bd2319a0';
 
 /**
  * @desc pad string to specific width and padding
@@ -167,6 +167,11 @@ export const validTxString = txString => /^0x([A-Fa-f0-9]{64})$/.test(txString);
  */
 export const validAddressString = addressString =>
   /^0x([A-Fa-f0-9]{40})$/.test(addressString);
+
+export const sortBytesArray = _array =>
+  [..._array].sort((a, b) => {
+    return BigNumber(a.toLowerCase()).gt(BigNumber(b.toLowerCase())) ? 1 : -1;
+  });
 
 /**
  * @desc get etherescan address link

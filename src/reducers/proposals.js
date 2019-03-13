@@ -139,7 +139,8 @@ function extractProposals(topics, network) {
       source: source.startsWith('{') ? JSON.parse(source)[network] : source,
       active: topic.active,
       govVote: topic.govVote,
-      topicKey: topic.key
+      topicKey: topic.key,
+      topicTitle: topic.topic
     }));
     return acc.concat(proposals);
   }, []);
