@@ -7,7 +7,7 @@
   "dependencies": {
     "@craco/craco": "^3.5.0",
     "@makerdao/dai": "^0.11.4",
-    "@makerdao/dai-plugin-config": "^0.0.2",
+    "@makerdao/dai-plugin-config": "^0.0.3",
     "@makerdao/dai-plugin-governance": "0.4.1",
     "@makerdao/dai-plugin-ledger-web": "^0.9.7",
     "@makerdao/dai-plugin-trezor-web": "^0.9.5",
@@ -48,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/helper-create-class-features-plugin": "^7.3.4",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/plugin-proposal-decorators": "^7.1.2",
     "@babel/plugin-proposal-export-namespace-from": "^7.0.0",

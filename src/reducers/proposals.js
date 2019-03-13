@@ -87,24 +87,53 @@ const fetchNetwork = async (url, network) => {
 // dispatch
 
 const fetchTopics = async network => {
-  if (process.env.REACT_APP_GOV_BACKEND === 'mock' || network === 'ganache') {
-    return await fetchMock(network);
+  if (process.env.REACT_APP_GOV_BACKEND === 'mock') {
+    return fetchMock(network);
+  }
+
+  // If we're running a testchain, we want the kovan topics, and we'll overwrite the addresses later
+  if (network === 'ganache') {
+    return fetchNetwork(staging, 'kovan');
   }
 
   if (process.env.REACT_APP_GOV_BACKEND === 'local') {
-    return await fetchNetwork(local, network);
+    return fetchNetwork(local, network);
   }
 
   if (process.env.REACT_APP_GOV_BACKEND === 'staging') {
-    return await fetchNetwork(staging, network);
+    return fetchNetwork(staging, network);
   }
 
-  return await fetchNetwork(prod, network);
+  return fetchNetwork(prod, network);
 };
 
 // Actions ------------------------------------------------
 
+const formatStringToConstantCase = kebob => {
+  return kebob
+    .split('-')
+    .join('_')
+    .toUpperCase();
+};
+
+const updateSourceForTestnet = topics => {
+  const contracts = window.maker.service('smartContract')._getAllContractInfo();
+
+  topics.map(topic => {
+    topic.proposals.map(proposal => {
+      const formattedPropKey = formatStringToConstantCase(proposal.key);
+      if (formattedPropKey in contracts)
+        proposal.source = contracts[formattedPropKey][0].address;
+    });
+  });
+
+  return topics;
+};
+
 function extractProposals(topics, network) {
+  // if we're using a testnet, overwrite proposal source with provided ganache addresses.
+  if (network === 'ganache') updateSourceForTestnet(topics);
+
   return topics.reduce((acc, topic) => {
     const proposals = topic.proposals.map(({ source, ...otherProps }) => ({
       ...otherProps,

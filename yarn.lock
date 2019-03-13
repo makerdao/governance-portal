@@ -87,6 +87,7 @@
 "@babel/helper-create-class-features-plugin@^7.3.0", "@babel/helper-create-class-features-plugin@^7.3.4":
   version "7.3.4"
   resolved "https://registry.yarnpkg.com/@babel/helper-create-class-features-plugin/-/helper-create-class-features-plugin-7.3.4.tgz#092711a7a3ad8ea34de3e541644c2ce6af1f6f0c"
+  integrity sha512-uFpzw6L2omjibjxa8VGZsJUPL5wJH0zzGKpoz0ccBkzIa6C8kWNUbiBmQ0rgOKWlHJ6qzmfa6lTiGchiV8SC+g==
   dependencies:
     "@babel/helper-function-name" "^7.1.0"
     "@babel/helper-member-expression-to-functions" "^7.0.0"
@@ -334,6 +335,7 @@
 "@babel/plugin-syntax-decorators@^7.2.0":
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-decorators/-/plugin-syntax-decorators-7.2.0.tgz#c50b1b957dcc69e4b1127b65e1c33eef61570c1b"
+  integrity sha512-38QdqVoXdHUQfTpZo3rQwqQdWtCn5tMv4uV6r2RMfTqNBuv4ZBhz79SfaQWKTVmxHjeFv/DnXVC/+agHCklYWA==
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0"
 
@@ -835,7 +837,15 @@
     globals "^11.1.0"
     lodash "^4.17.11"
 
-"@babel/types@^7.0.0", "@babel/types@^7.1.6", "@babel/types@^7.2.0", "@babel/types@^7.2.2", "@babel/types@^7.3.0", "@babel/types@^7.3.4":
+"@babel/types@^7.0.0", "@babel/types@^7.1.6":
+  version "7.1.6"
+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.1.6.tgz#0adb330c3a281348a190263aceb540e10f04bcce"
+  dependencies:
+    esutils "^2.0.2"
+    lodash "^4.17.10"
+    to-fast-properties "^2.0.0"
+
+"@babel/types@^7.2.0", "@babel/types@^7.2.2", "@babel/types@^7.3.0", "@babel/types@^7.3.4":
   version "7.3.4"
   resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.3.4.tgz#bf482eaeaffb367a28abbf9357a94963235d90ed"
   dependencies:
@@ -895,9 +905,10 @@
     babel-runtime "^6.26.0"
     bignumber.js "^8.1.1"
 
-"@makerdao/dai-plugin-config@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-config/-/dai-plugin-config-0.0.2.tgz#6396d135b6e6403be17e5bb71f69afaf3fd794bf"
+"@makerdao/dai-plugin-config@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-config/-/dai-plugin-config-0.0.3.tgz#4a6309c3f5acc5562e2fac40a79e1829daa655a5"
+  integrity sha512-wtteR5T0nAhfOfpS56o0NsHX4kb8cOw7ONDbqREO3jFt8FK6ihg9czTmZiq9PWS0GPgiBdmIJZEdyLf0r0ZK4w==
   dependencies:
     babel-runtime "^6.26.0"
     ramda "^0.26.1"
@@ -9374,6 +9385,7 @@ ramda@^0.25.0:
 ramda@^0.26, ramda@^0.26.0, ramda@^0.26.1:
   version "0.26.1"
   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.26.1.tgz#8d41351eb8111c55353617fc3bbffad8e4d35d06"
+  integrity sha512-hLWjpy7EnsDBb0p+Z3B7rPi3GDeRG5ZtiI33kJhTt+ORCd38AbAIjB/9zRIUoeTbE/AVX5ZkU7m6bznsvrf8eQ==
 
 randexp@0.4.6:
   version "0.4.6"
@@ -9976,7 +9988,7 @@ require-main-filename@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/require-main-filename/-/require-main-filename-1.0.1.tgz#97f717b69d48784f5f526a6c5aa8ffdda055a4d1"
 
-requirejs-config-file@^3.0.0:
+requirejs-config-file@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/requirejs-config-file/-/requirejs-config-file-3.1.1.tgz#ccb8efbe2301c24ac0cf34dd3f3c862741750f5c"
   integrity sha512-dGob5UZE5Mvy2Es1Zi6SBbbSDTu8zAQOUSXB5piAEBx9evS2BD2IzPlbj+TMU0/bX5HU6fUK/b7L2wspZlJS0A==
