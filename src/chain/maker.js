@@ -22,8 +22,6 @@ export default async function createMaker(
       `Gas price fetch failed. Defaulting to ${gasPrice / 10 ** 9} Gwei.`
     );
   }
-  // if  we have a teschain id, do NOT allow the gov plugin to load contracts
-
   const config = {
     plugins: [
       trezorPlugin,
@@ -38,7 +36,7 @@ export default async function createMaker(
       }
     },
     provider: {
-      url: netToUri(network),
+      url: testchainConfigId ? '' : netToUri(network),
       type: 'HTTP'
     }
   };
@@ -48,6 +46,7 @@ export default async function createMaker(
     delete config.provider;
     config.plugins.push([configPlugin, { testchainId: testchainConfigId }]);
   }
+
   return Maker.create('http', config);
 }
 
