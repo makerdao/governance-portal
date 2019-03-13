@@ -129,8 +129,6 @@ export const netToUri = network => {
   switch (network) {
     case 'kovan':
       return `https://${network}.infura.io/v3/${INFURA_PROJECT_ID}`;
-    case 'ganache':
-      return 'http://127.0.0.1:2000/';
     default:
       return `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID}`;
   }

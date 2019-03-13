@@ -936,6 +936,14 @@
     babel-runtime "^6.26.0"
     bignumber.js "^8.1.1"
 
+"@makerdao/dai-plugin-config@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-config/-/dai-plugin-config-0.0.3.tgz#4a6309c3f5acc5562e2fac40a79e1829daa655a5"
+  integrity sha512-wtteR5T0nAhfOfpS56o0NsHX4kb8cOw7ONDbqREO3jFt8FK6ihg9czTmZiq9PWS0GPgiBdmIJZEdyLf0r0ZK4w==
+  dependencies:
+    babel-runtime "^6.26.0"
+    ramda "^0.26.1"
+
 "@makerdao/dai-plugin-governance@0.4.1":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.4.1.tgz#4d16bd92b16b8fe8b1c4464b14c214740a0f8b6b"
@@ -9670,6 +9678,11 @@ ramda@^0.25.0:
 ramda@^0.26.0:
   version "0.26.0"
   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.26.0.tgz#3cbe059f5c18fbc0eb86f2396ab1f8320705424c"
+
+ramda@^0.26.1:
+  version "0.26.1"
+  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.26.1.tgz#8d41351eb8111c55353617fc3bbffad8e4d35d06"
+  integrity sha512-hLWjpy7EnsDBb0p+Z3B7rPi3GDeRG5ZtiI33kJhTt+ORCd38AbAIjB/9zRIUoeTbE/AVX5ZkU7m6bznsvrf8eQ==
 
 randexp@0.4.6:
   version "0.4.6"

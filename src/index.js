@@ -29,13 +29,24 @@ const currTheme = {
   }
 };
 
+const params = new URL(window.location).searchParams;
+let testchainConfigId = params.get('testchain_id');
 const store = createStore();
 
-if (window.web3) {
+if (testchainConfigId) {
+  const network = 'ganache';
+  const maker = async () => {
+    window.maker = await createMaker(network, testchainConfigId);
+    await maker.authenticate();
+    store.dispatch(init(network));
+  };
+} else if (window.web3) {
   window.web3.version.getNetwork(async (err, _netId) => {
     const netId = parseInt(_netId, 10);
-    if (netId !== 1 && netId !== 42) store.dispatch(wrongNetwork());
-    else {
+
+    if (netId !== 1 && netId !== 42) {
+      store.dispatch(wrongNetwork());
+    } else {
       const network = netIdToName(netId);
       const maker = (window.maker = await createMaker(network));
       await maker.authenticate();
