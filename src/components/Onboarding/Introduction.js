@@ -13,10 +13,7 @@ import { H1, H3 } from '../../utils/typography';
 
 import metamask from '../../imgs/metamask.svg';
 import time from '../../imgs/onboarding/time.svg';
-import wallets from '../../imgs/onboarding/wallets.svg';
 import eth from '../../imgs/onboarding/eth.svg';
-import commandLine from '../../imgs/onboarding/command-line.svg';
-import paperWallet from '../../imgs/onboarding/paper-wallet.svg';
 import rightArrow from '../../imgs/onboarding/right-arrow.svg';
 
 const Container = styled(Box)`
@@ -112,16 +109,10 @@ const Introduction = ({ show, onClose, onLinkedWallet, onSingleWallet }) => {
                 subtitle="The total time to complete the contract set up is 5 minutes depending on transaction confirmation times."
               />
 
-              <img src={wallets} alt="" />
-              <Instructions
-                title="You will need access to your wallets"
-                subtitle="You will need access to both your hot and cold wallets to confirm the transactions."
-              />
-
               <img src={eth} alt="" />
               <Instructions
                 title="You will need to pay ETH gas costs"
-                subtitle="You will need to confirm 4 transactions which costs an estimated total of $3.30 USD."
+                subtitle="You will need to submit up to 4 transactions."
               />
             </Grid>
           </Box>
@@ -157,18 +148,6 @@ const Introduction = ({ show, onClose, onLinkedWallet, onSingleWallet }) => {
               imgSrc={metamask}
               title="Vote with a single wallet"
               subtitle="Vote with the active account selected in Metamask."
-            />
-            <WalletCard
-              onClick={onLinkedWallet}
-              imgSrc={paperWallet}
-              title="Vote with a paper wallet"
-              subtitle="Voting using your paper wallet."
-            />
-            <WalletCard
-              onClick={onLinkedWallet}
-              imgSrc={commandLine}
-              title="Vote using command line"
-              subtitle="Vote directly with command line."
             />
           </Grid>
         </Flex>
