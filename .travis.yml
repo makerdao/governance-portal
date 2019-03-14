@@ -16,8 +16,8 @@ before_script:
 script:
   - yarn cover
   - codecov
-before_deploy:
   - yarn build
+before_deploy:
   - npm install now --no-save
 deploy:
   - provider: script
