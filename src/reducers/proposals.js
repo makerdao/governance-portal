@@ -119,13 +119,13 @@ const formatStringToConstantCase = kebob => {
 const updateSourceForTestnet = topics => {
   const contracts = window.maker.service('smartContract')._getAllContractInfo();
 
-  topics.map(topic => {
-    topic.proposals.map(proposal => {
+  for (const topic of topics) {
+    for (const proposal of topic.proposals) {
       const formattedPropKey = formatStringToConstantCase(proposal.key);
       if (formattedPropKey in contracts)
         proposal.source = contracts[formattedPropKey][0].address;
-    });
-  });
+    }
+  }
 
   return topics;
 };
