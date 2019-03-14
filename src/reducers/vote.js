@@ -157,8 +157,12 @@ export const sendVoteDirect = proposalAddress => (dispatch, getState) => {
 
 export const sendVote = proposalAddress => (dispatch, getState) => {
   const activeAccount = getAccount(getState(), window.maker.currentAddress());
-  if (!activeAccount || !activeAccount.hasProxy)
+  if (
+    !activeAccount ||
+    (!activeAccount.hasProxy && !activeAccount.singleWallet)
+  )
     throw new Error('must have account active');
+
   dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
 
   const { hat, proposals } = getState();
@@ -187,9 +191,14 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
 
   slate.push(proposalAddress);
 
-  const voteExec = window.maker
-    .service('voteProxy')
-    .voteExec(activeAccount.proxy.address, sortBytesArray(slate));
+  let voteExec;
+  if (activeAccount.singleWallet) {
+    voteExec = window.maker.service('chief').vote(sortBytesArray(slate));
+  } else {
+    voteExec = window.maker
+      .service('voteProxy')
+      .voteExec(activeAccount.proxy.address, sortBytesArray(slate));
+  }
 
   return handleTx({
     prefix: 'VOTE',

@@ -249,46 +249,41 @@ const Sidebar = ({
                   </Flex>
                 </React.Fragment>
               )}
-            {singleWallet &&
-              singleWallet.hasProxy &&
-              singleWallet.proxy.hasInfMkrApproval && (
-                <React.Fragment>
-                  <ConnectingLine
-                    gridColumn="1"
-                    gridRow="3/span 3"
-                    lineStyle="dotted"
-                  />
-                  <Box gridRow="4" height={connectingLineHeight} />
-                  <IconBackground gridColumn="1" gridRow="5">
-                    <img src={logo} alt="" />
-                  </IconBackground>
-                  <Flex justifyContent="center" flexDirection="column">
-                    <DataLabel>STORED MKR</DataLabel>
-                    <div>
-                      <Text t="p2" fontWeight="semibold">
-                        {singleWallet.proxy.votingPower || 0} MKR
-                      </Text>
-                    </div>
-                    <SubtitleDataLabel>
-                      {mkrApproveProxyTxHash &&
-                        mkrApproveProxyTxStatus === TransactionStatus.MINED && (
-                          <p>
-                            APPROVED ON CW{' '}
-                            <GreyTag>
-                              TX{' '}
-                              <Link>
-                                <Address
-                                  veryShort
-                                  full={mkrApproveProxyTxHash}
-                                />
-                              </Link>
-                            </GreyTag>
-                          </p>
-                        )}
-                    </SubtitleDataLabel>
-                  </Flex>
-                </React.Fragment>
-              )}
+            {singleWallet && singleWallet.proxy.hasInfMkrApproval && (
+              <React.Fragment>
+                <ConnectingLine
+                  gridColumn="1"
+                  gridRow="1/span 3"
+                  lineStyle="dotted"
+                />
+                <Box gridRow="2" height={connectingLineHeight} />
+                <IconBackground gridColumn="1" gridRow="3">
+                  <img src={logo} alt="" />
+                </IconBackground>
+                <Flex justifyContent="center" flexDirection="column">
+                  <DataLabel>STORED MKR</DataLabel>
+                  <div>
+                    <Text t="p2" fontWeight="semibold">
+                      {singleWallet.proxy.votingPower || 0} MKR
+                    </Text>
+                  </div>
+                  <SubtitleDataLabel>
+                    {mkrApproveProxyTxHash &&
+                      mkrApproveProxyTxStatus === TransactionStatus.MINED && (
+                        <p>
+                          APPROVED ON CW{' '}
+                          <GreyTag>
+                            TX{' '}
+                            <Link>
+                              <Address veryShort full={mkrApproveProxyTxHash} />
+                            </Link>
+                          </GreyTag>
+                        </p>
+                      )}
+                  </SubtitleDataLabel>
+                </Flex>
+              </React.Fragment>
+            )}
           </Grid>
         )}
         <div>

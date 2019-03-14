@@ -9,10 +9,16 @@ import Sidebar from './shared/Sidebar';
 
 const containerWidth = '44rem';
 
-const StartVoting = ({ onComplete, hotWallet, coldWallet }) => {
+const StartVoting = ({ onComplete, hotWallet, coldWallet, singleWallet }) => {
   return (
     <TwoColumnSidebarLayout
-      sidebar={<Sidebar hotWallet={hotWallet} coldWallet={coldWallet} />}
+      sidebar={
+        <Sidebar
+          hotWallet={hotWallet}
+          coldWallet={coldWallet}
+          singleWallet={singleWallet}
+        />
+      }
       sidebarPosition="left"
     >
       <Grid gridRowGap="l" maxWidth={`${containerWidth}`}>

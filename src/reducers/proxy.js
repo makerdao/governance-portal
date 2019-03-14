@@ -180,14 +180,14 @@ export const lock = value => async (dispatch, getState) => {
   if (!useColdAccount(getState())) return;
   const account = getAccount(getState(), window.maker.currentAddress());
 
+  dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
+
   let lock;
   if (account.singleWallet) {
     lock = window.maker.service('chief').lock(value);
   } else {
     lock = window.maker.service('voteProxy').lock(account.proxy.address, value);
   }
-
-  dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
 
   return handleTx({
     prefix: 'SEND_MKR_TO_PROXY',

@@ -53,7 +53,7 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
     (activeAccount.hasProxy || activeAccount.singleWallet)
   ) {
     let { linkedAccount } = activeAccount.proxy;
-    if (!linkedAccount) linkedAccount = activeAccount;
+    if (activeAccount.singleWallet) linkedAccount = activeAccount;
     const isColdWallet = activeAccount.proxyRole === 'cold';
     const coldWallet = isColdWallet ? activeAccount : linkedAccount;
     return (
@@ -93,7 +93,7 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
         </PaddedFlexContainer>
         <EndButton
           slim
-          disabled={!isColdWallet}
+          disabled={!isColdWallet && !activeAccount.singleWallet}
           onClick={() => {
             modalOpen(Lock);
           }}
@@ -101,16 +101,20 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
           Top-up voting contract
         </EndButton>
         <FlexRowEnd>
-          <Skip
-            mr={10}
-            mt={13}
-            onClick={() => {
-              modalOpen(BreakLink, {}, true);
-            }}
-          >
-            Break wallet link
-          </Skip>
-          <LineSpacer> | </LineSpacer>
+          {activeAccount.hasProxy && (
+            <Fragment>
+              <Skip
+                mr={10}
+                mt={13}
+                onClick={() => {
+                  modalOpen(BreakLink, {}, true);
+                }}
+              >
+                Break wallet link
+              </Skip>
+              <LineSpacer> | </LineSpacer>
+            </Fragment>
+          )}
           <Skip ml={10} mr={0} mt={13} onClick={() => modalOpen(Withdraw)}>
             Withdraw from voting contract
           </Skip>

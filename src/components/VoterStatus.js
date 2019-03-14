@@ -196,7 +196,7 @@ const VoterStatus = ({
         </SmallMediumText>
       ) : (
         <SmallMediumText>
-          <Strong>{'Active wallet:'}</Strong> Available for voting{' '}
+          <Strong>{'Active wallet:'}</Strong> In voting contract{' '}
           <Black>{formatRound(account.proxy.votingPower, 4)} MKR</Black>{' '}
           {Number(account.mkrBalance) > 0 && (
             <TextButton onClick={() => modalOpen(Lock)}>Top-up</TextButton>

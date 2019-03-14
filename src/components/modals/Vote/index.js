@@ -10,7 +10,6 @@ import { getActiveAccount } from '../../../reducers/accounts';
 import { modalClose } from '../../../reducers/modal';
 import {
   sendVote,
-  sendVoteDirect,
   withdrawVote,
   clear as voteClear
 } from '../../../reducers/vote';
@@ -189,7 +188,7 @@ class Vote extends Component {
                   <Button
                     slim
                     onClick={() => {
-                      this.props.sendVoteDirect(proposal.address);
+                      this.props.sendVote(proposal.address);
                       onNext();
                     }}
                   >
@@ -208,7 +207,7 @@ class Vote extends Component {
 Vote.propTypes = {
   voteTxHash: PropTypes.string,
   voteTxStatus: PropTypes.string,
-  sendVoteDirect: PropTypes.func,
+  sendVote: PropTypes.func,
   proposal: PropTypes.object
 };
 
@@ -224,5 +223,5 @@ export default connect(
     voteTxHash: state.vote.txHash,
     voteTxStatus: state.vote.txStatus
   }),
-  { modalClose, sendVoteDirect, voteClear, withdrawVote }
+  { modalClose, sendVote, voteClear, withdrawVote }
 )(Vote);
