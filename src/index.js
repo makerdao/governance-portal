@@ -35,11 +35,11 @@ const store = createStore();
 
 if (testchainConfigId) {
   const network = 'ganache';
-  const maker = async () => {
+  (async () => {
     window.maker = await createMaker(network, testchainConfigId);
-    await maker.authenticate();
+    await window.maker.authenticate();
     store.dispatch(init(network));
-  };
+  })();
 } else if (window.web3) {
   window.web3.version.getNetwork(async (err, _netId) => {
     const netId = parseInt(_netId, 10);
