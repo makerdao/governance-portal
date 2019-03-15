@@ -16,7 +16,7 @@ import {
   iouApproveSingleWallet
 } from '../../reducers/proxy';
 
-import { getAccount } from '../../reducers/accounts';
+import { getAccount, addSingleWalletAccount } from '../../reducers/accounts';
 
 class SingleWalletApprovals extends React.Component {
   constructor(props) {
@@ -28,11 +28,13 @@ class SingleWalletApprovals extends React.Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { hasInfIouApproval, hasInfMkrApproval } = this.props.singleWallet;
 
-    if (hasInfIouApproval && hasInfMkrApproval) this.props.onComplete();
-    else if (hasInfMkrApproval && !hasInfIouApproval)
+    if (hasInfIouApproval && hasInfMkrApproval) {
+      await this.props.addSingleWalletAccount(this.props.singleWallet);
+      this.props.onComplete();
+    } else if (hasInfMkrApproval && !hasInfIouApproval)
       this.toGrantIouPermissions();
     else this.toGrantMkrPermissions();
   }
@@ -113,6 +115,7 @@ export default connect(
     approveLink,
     mkrApproveProxy,
     mkrApproveSingleWallet,
-    iouApproveSingleWallet
+    iouApproveSingleWallet,
+    addSingleWalletAccount
   }
 )(SingleWalletApprovals);
