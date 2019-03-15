@@ -22,7 +22,6 @@ import {
 } from './sharedProxyConstants';
 import { MAX_UINT_ETH_BN } from '../utils/ethereum';
 import { MKR } from '../chain/maker';
-import { consolidateStreamedStyles } from 'styled-components';
 
 // Constants ----------------------------------------------
 
