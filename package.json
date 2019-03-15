@@ -6,7 +6,7 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^3.5.0",
-    "@makerdao/dai": "^0.11.4",
+    "@makerdao/dai": "^0.13.0",
     "@makerdao/dai-plugin-config": "^0.0.3",
     "@makerdao/dai-plugin-governance": "0.4.1",
     "@makerdao/dai-plugin-ledger-web": "^0.9.7",
