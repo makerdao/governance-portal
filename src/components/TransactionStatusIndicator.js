@@ -4,6 +4,8 @@ import { Box, Flex, Grid, Text, Address, Link } from '@makerdao/ui-components';
 
 import WalletIcon from './Onboarding/shared/WalletIcon';
 import { TransactionStatus } from '../utils/constants';
+import { ethScanLink } from '../utils/ethereum';
+import { connect } from 'react-redux';
 
 const load = keyframes`
   0% {
@@ -36,7 +38,13 @@ const spinnerSize = '15.5rem';
 const spinnerInternalSize = '14rem';
 const iconSize = '5.3rem';
 
-const TransactionStatusIndicator = ({ provider, status, tx, ...props }) => {
+const TransactionStatusIndicator = ({
+  provider,
+  status,
+  tx,
+  network,
+  ...props
+}) => {
   return (
     <Grid alignItems="center" justifyItems="center" {...props}>
       <Flex
@@ -127,7 +135,7 @@ const TransactionStatusIndicator = ({ provider, status, tx, ...props }) => {
                 lineHeight="1.2rem"
               >
                 TX{' '}
-                <Link>
+                <Link target="_blank" href={ethScanLink(tx, network)}>
                   <Address full={tx} veryShort />
                 </Link>
               </Text>
@@ -139,4 +147,6 @@ const TransactionStatusIndicator = ({ provider, status, tx, ...props }) => {
   );
 };
 
-export default TransactionStatusIndicator;
+export default connect(state => ({ network: state.metamask.network }))(
+  TransactionStatusIndicator
+);
