@@ -22,6 +22,7 @@ import {
 } from './sharedProxyConstants';
 import { MAX_UINT_ETH_BN } from '../utils/ethereum';
 import { MKR } from '../chain/maker';
+import { consolidateStreamedStyles } from 'styled-components';
 
 // Constants ----------------------------------------------
 
@@ -193,7 +194,7 @@ export const addSingleWalletAccount = account => async dispatch => {
 
   const votingPower = (await chiefService.getNumDeposits(
     account.address
-  )).toFixed();
+  )).toNumber();
 
   const hasInfMkrApproval = (await mkrToken.allowance(
     account.address,

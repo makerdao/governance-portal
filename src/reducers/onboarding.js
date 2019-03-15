@@ -46,9 +46,10 @@ export const onboardingPrevStep = () => ({
   type: ONBOARDING_PREV_STEP
 });
 
-export const onboardingSkipProxy = () => ({
+export const onboardingSkipProxy = ({ step }) => ({
   type: ONBOARDING_SKIP_PROXY,
   payload: {
+    step,
     skipProxy: true
   }
 });
@@ -118,7 +119,7 @@ const onboarding = createReducer(initialState, {
   }),
   [ONBOARDING_SKIP_PROXY]: (state, { payload }) => ({
     ...state,
-    step: state.step + 4,
+    step: payload.step,
     skipProxy: payload.skipProxy
     // singleWallet: payload.account
   }),
