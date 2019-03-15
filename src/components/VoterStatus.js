@@ -116,7 +116,8 @@ const VoterStatus = ({
   onboardingOpen,
   modalOpen,
   fetching,
-  signaling
+  signaling,
+  onboardingState
 }) => {
   if (fetching) {
     return (
@@ -125,7 +126,12 @@ const VoterStatus = ({
       </Padding>
     );
   }
-  if (!account || (!account.hasProxy && !account.singleWallet))
+  if (
+    !account ||
+    (!account.hasProxy &&
+      !account.singleWallet &&
+      onboardingState !== 'finished')
+  )
     return (
       <FadeIn>
         <WelcomeBanner onboardingOpen={onboardingOpen} />
@@ -257,7 +263,8 @@ const VoterStatus = ({
 const mapStateToProps = state => ({
   account: getActiveAccount(state),
   network: state.metamask.network,
-  fetching: state.accounts.fetching
+  fetching: state.accounts.fetching,
+  onboardingState: state.onboarding.state
 });
 
 export default connect(
