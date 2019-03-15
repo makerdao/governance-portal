@@ -110,51 +110,6 @@ const updateVotingFor = (
   dispatch({ type: UPDATE_ACCOUNT, payload: updatedLinkedAcc });
 };
 
-export const sendVoteDirect = proposalAddress => (dispatch, getState) => {
-  const activeAccount = getAccount(getState(), window.maker.currentAddress());
-  if (!activeAccount) throw new Error('must have account active');
-  dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
-
-  const { hat, proposals } = getState();
-  const governancePollAddresses = proposals
-    .filter(({ govVote }) => govVote)
-    .map(({ source }) => source);
-
-  const hatAddress = hat.address;
-  const currentlyVotingForHat = activeAccount.votingFor.includes(
-    hatAddress.toLowerCase()
-  );
-  const castingVoteInGovernancePoll = governancePollAddresses
-    .map(address => address.toLowerCase())
-    .includes(proposalAddress.toLowerCase());
-  const castingVoteForHat =
-    hatAddress.toLowerCase() === proposalAddress.toLowerCase();
-
-  const acctType = 'direct';
-
-  const slate = [];
-  if (
-    currentlyVotingForHat &&
-    castingVoteInGovernancePoll &&
-    !castingVoteForHat
-  )
-    slate.push(hatAddress);
-
-  slate.push(proposalAddress);
-
-  const voteExec = window.maker.service('chief').vote(slate);
-
-  return handleTx({
-    prefix: 'VOTE',
-    dispatch,
-    getState,
-    txObject: voteExec,
-    acctType,
-    activeAccount,
-    proposalAddresses: slate
-  });
-};
-
 export const sendVote = proposalAddress => (dispatch, getState) => {
   const activeAccount = getAccount(getState(), window.maker.currentAddress());
   if (
