@@ -77,6 +77,7 @@ const WalletCard = props => {
 };
 
 const Introduction = ({ show, onClose, onLinkedWallet, onSingleWallet }) => {
+  console.log('introduction show', show);
   return (
     <Container show={show} height="100%" position="fixed">
       <Grid
