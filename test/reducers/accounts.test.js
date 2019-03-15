@@ -89,11 +89,15 @@ const setupMocks = (opts = defaults, services = {}) => {
       : {}
   });
 
+  const getContractAddressByName = jest.fn();
+
   const service = jest.fn().mockImplementation(service => {
     const allServices = {
       voteProxy: {
         getVoteProxy
       },
+      chief: { getNumDeposits: () => '0' },
+      smartContract: { getContractAddressByName },
       ...services
     };
     return allServices[service];
@@ -113,7 +117,7 @@ describe('Add Account', () => {
     });
   });
 
-  test('should add an account enriched with information', async () => {
+  test.only('should add an account enriched with information', async () => {
     setupMocks({
       balance: 200.2,
       hasInfMkrApproval: false,
@@ -129,6 +133,7 @@ describe('Add Account', () => {
 
     await addAccount({ address: hotAddress })(store.dispatch, store.getState);
 
+    console.log(store.getActions());
     expect(window.maker.getToken).toBeCalledWith(MKR);
     expect(store.getActions().length).toBe(3);
     expect(store.getActions()[0]).toEqual({

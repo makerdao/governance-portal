@@ -86,6 +86,7 @@ export function activeCanVote(state) {
 export const addAccounts = accounts => async dispatch => {
   dispatch({ type: FETCHING_ACCOUNT_DATA, payload: true });
 
+  console.log('add acconts', accounts);
   for (let account of accounts) {
     const mkrToken = window.maker.getToken(MKR);
     const { hasProxy, voteProxy } = await window.maker
@@ -162,6 +163,7 @@ export const addAccounts = accounts => async dispatch => {
           }
     };
 
+    console.log('payload', _payload);
     try {
       const payload = await promisedProperties(_payload);
       dispatch({ type: ADD_ACCOUNT, payload });
@@ -243,9 +245,12 @@ export const addAccount = account => async dispatch => {
     .getNumDeposits(account.address);
 
   // if we don't have a vote proxy, but we have locked MKR, we must be voting with a single wallet
+  console.log('numdeps', numDeposits);
   if (!hasProxy && numDeposits.toNumber() > 0) {
+    console.log('addsingle');
     return await dispatch(addSingleWalletAccount(account));
   } else {
+    console.log('add proxy account');
     return await dispatch(addAccounts([account]));
   }
 };
