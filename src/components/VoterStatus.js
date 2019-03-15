@@ -116,8 +116,7 @@ const VoterStatus = ({
   onboardingOpen,
   modalOpen,
   fetching,
-  signaling,
-  onboardingState
+  signaling
 }) => {
   if (fetching) {
     return (
@@ -126,23 +125,7 @@ const VoterStatus = ({
       </Padding>
     );
   }
-  console.log('account (should be false)', !account);
-  console.log(
-    'participating (should be false, false)',
-    !account.hasProxy,
-    !account.singleWallet
-  );
-  console.log(
-    'onboardingState (should be false)',
-    onboardingState !== 'finished',
-    onboardingState
-  );
-  if (
-    !account ||
-    (!account.hasProxy &&
-      !account.singleWallet &&
-      onboardingState !== 'finished')
-  )
+  if (!account || (!account.hasProxy && !account.singleWallet))
     return (
       <FadeIn>
         <WelcomeBanner onboardingOpen={onboardingOpen} />
@@ -274,8 +257,7 @@ const VoterStatus = ({
 const mapStateToProps = state => ({
   account: getActiveAccount(state),
   network: state.metamask.network,
-  fetching: state.accounts.fetching,
-  onboardingState: state.onboarding.state
+  fetching: state.accounts.fetching
 });
 
 export default connect(

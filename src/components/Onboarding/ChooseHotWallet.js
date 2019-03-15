@@ -175,9 +175,6 @@ class ChooseHotWallet extends React.Component {
       if (!metamaskAccount) {
         setTimeout(checkMetamaskWallet, 500);
       } else {
-        // TODO this would be a good place to set new state properties
-        // for single wallet flow
-        // also I think we want to set account type here
         this.props.setHotWallet(await addMkrAndEthBalance(metamaskAccount));
         this.setState({
           connecting: false
@@ -240,7 +237,6 @@ class ChooseHotWallet extends React.Component {
   };
 
   render() {
-    console.log('2-ChooseHotWallet state', this.state);
     return (
       <TwoColumnSidebarLayout sidebar={<Sidebar faqs={this.state.faqs} />}>
         <div>

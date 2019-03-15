@@ -62,7 +62,7 @@ export function getActiveAccount(state) {
 
 export function getActiveVotingFor(state) {
   const activeAccount = getActiveAccount(state);
-  console.log('active account in getActiveVogting for', activeAccount);
+
   if (
     !activeAccount ||
     (!activeAccount.hasProxy && !activeAccount.singleWallet) ||
@@ -180,8 +180,6 @@ export const addSingleWalletAccount = account => async dispatch => {
     .service('smartContract')
     .getContractAddressByName('CHIEF');
 
-  console.log('addsinglewallet acct', account);
-
   const mkrToken = window.maker.getToken(MKR);
   const chiefService = window.maker.service('chief');
 
@@ -225,8 +223,6 @@ export const addSingleWalletAccount = account => async dispatch => {
     }
   };
 
-  console.log('payload before shipping off', _payload);
-
   try {
     const payload = await promisedProperties(_payload);
     dispatch({ type: ADD_ACCOUNT, payload });
@@ -252,10 +248,6 @@ export const addAccount = account => async dispatch => {
   } else {
     return await dispatch(addAccounts([account]));
   }
-};
-
-export const addSingleWallet = account => async dispatch => {
-  return await dispatch(addSingleWalletAccount(account));
 };
 
 export const removeAccounts = accounts => ({

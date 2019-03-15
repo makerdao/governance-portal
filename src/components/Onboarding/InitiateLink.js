@@ -12,8 +12,7 @@ import {
   breakLink,
   initiateLink,
   approveLink,
-  mkrApproveProxy,
-  mkrApproveSingleWallet
+  mkrApproveProxy
 } from '../../reducers/proxy';
 
 import { getAccount } from '../../reducers/accounts';
@@ -29,7 +28,6 @@ class InitiateLink extends React.Component {
   }
 
   componentDidMount() {
-    console.log('this.props look at testprop', this.props);
     if (
       this.props.coldWallet.hasProxy &&
       this.props.coldWallet.proxy.hasInfMkrApproval
@@ -40,17 +38,12 @@ class InitiateLink extends React.Component {
       !this.props.coldWallet.proxy.hasInfMkrApproval
     ) {
       this.toGrantPermissions();
-    } else if (this.props.skipProxy) {
-      // TODO probably don't need this else if any more
-      this.toGrantPermissions();
     } else {
-      console.log('toInitiateLink1');
       this.toInitiateLink();
     }
   }
 
   toInitiateLink = priority => {
-    console.log('toInitiateLink2');
     this.props.initiateLink({
       hot: this.props.hotWallet,
       cold: this.props.coldWallet
@@ -73,12 +66,9 @@ class InitiateLink extends React.Component {
   };
 
   toGrantPermissions = () => {
-    const step = this.props.skipProxy ? 3 : 2;
     const pollForProxyInformation = () => {
       if (this.props.coldWallet.proxy && this.props.coldWallet.proxy.address) {
         this.props.mkrApproveProxy();
-      } else if (this.props.skipProxy) {
-        this.props.mkrApproveSingleWallet();
       } else {
         setTimeout(pollForProxyInformation, 100);
       }
@@ -87,13 +77,12 @@ class InitiateLink extends React.Component {
     setTimeout(pollForProxyInformation, 100);
 
     this.setState({
-      step,
+      step: 2,
       faqs: faqs.grantHotWalletPermissions
     });
   };
 
   render() {
-    console.log('3-InitiateLink state', this.state);
     const {
       hotWallet,
       coldWallet,
@@ -160,16 +149,8 @@ class InitiateLink extends React.Component {
 
 export default connect(
   ({ proxy, onboarding, ...state }) => ({
-    hotWallet: onboarding.skipProxy
-      ? ''
-      : getAccount(state, onboarding.hotWallet.address),
-    coldWallet: onboarding.skipProxy
-      ? ''
-      : getAccount(state, onboarding.coldWallet.address),
-    // singleWallet: onboarding.skipProxy
-    //   ? getAccount(state, onboarding.singleWallet.address)
-    //   : '',
-    skipProxy: onboarding.skipProxy,
+    hotWallet: getAccount(state, onboarding.hotWallet.address),
+    coldWallet: getAccount(state, onboarding.coldWallet.address),
     ...proxy
   }),
   {

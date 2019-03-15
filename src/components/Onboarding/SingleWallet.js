@@ -6,7 +6,6 @@ import Stepper from './shared/Stepper';
 import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
 import SignTransactionStep from './shared/SignTransactionStep';
 import faqs from './data/faqs';
-import { nicelyFormatWalletProvider } from './utils';
 
 import {
   breakLink,

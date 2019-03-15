@@ -21,7 +21,7 @@ import OnboardingHeader from './shared/OnboardingHeader';
 import WalletIcon from './shared/WalletIcon';
 import SignTransactionStep from './shared/SignTransactionStep';
 import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
-import { lock, chiefLock } from '../../reducers/proxy';
+import { lock } from '../../reducers/proxy';
 import { getAccount } from '../../reducers/accounts';
 import {
   ColdWalletTag,
@@ -41,7 +41,6 @@ class LockMKR extends React.Component {
     let votingWallet = this.props.hotWallet;
     // if we're not using a proxy, assign hot/cold wallet to the single wallet to keep behavior intact
     if (this.props.skipProxy) {
-      console.log('this.props.singlewallet', this.props.singleWallet);
       storageWallet = this.props.singleWallet;
       votingWallet = this.props.singleWallet;
     }
@@ -71,12 +70,7 @@ class LockMKR extends React.Component {
   };
 
   toLockMKR = () => {
-    //TODO just handle this in the reducer
-    if (this.props.skipProxy) {
-      this.props.chiefLock(parseFloat(this.state.votingMKR));
-    } else {
-      this.props.lock(parseFloat(this.state.votingMKR));
-    }
+    this.props.lock(parseFloat(this.state.votingMKR));
     this.setState({
       step: 2,
       faqs: faqs.lockMKR
@@ -292,7 +286,7 @@ class LockMKR extends React.Component {
     );
   }
 }
-//TODO Best to fetch single wallet details again, or use what's in state?
+
 export default connect(
   ({ onboarding, proxy, ...state }) => ({
     hotWallet: onboarding.skipProxy
@@ -308,7 +302,6 @@ export default connect(
     ...proxy
   }),
   {
-    lock,
-    chiefLock
+    lock
   }
 )(LockMKR);
