@@ -2,6 +2,7 @@ import ReactGA from 'react-ga';
 
 import { createReducer } from '../utils/redux';
 import { parseError } from '../utils/misc';
+import { sortBytesArray } from '../utils/ethereum';
 import { getAccount, UPDATE_ACCOUNT } from './accounts';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { voteTallyInit } from './tally';
@@ -36,7 +37,7 @@ const handleTx = ({
   txObject,
   acctType,
   activeAccount,
-  proposalAddress = ''
+  proposalAddresses = []
 }) =>
   new Promise(resolve => {
     const txMgr = window.maker.service('transactionManager');
@@ -64,10 +65,12 @@ const handleTx = ({
           acctType === 'ledger' || acctType === 'trezor' ? 5000 : 2000
         ); // there is no science here
 
-        updateVotingFor(dispatch, getState, activeAccount, proposalAddress);
-        // TODO here active account does not have voting for yet, but prop addresss
-        // is correct
-        console.log('vote success', activeAccount, proposalAddress);
+        updateVotingFor(
+          dispatch,
+          getState,
+          activeAccount,
+          proposalAddresses.map(address => address.toLowerCase())
+        );
         resolve();
       },
       error: (_, err) => {
@@ -87,14 +90,12 @@ const updateVotingFor = (
   dispatch,
   getState,
   activeAccount,
-  proposalAddress
+  proposalAddresses
 ) => {
-  // we have the correct prop adddress here
-  console.log('updateVOtingFor', activeAccount, proposalAddress);
   // update accounts in our store w/ newly voted proposal
   const updatedActiveAcc = {
     ...activeAccount,
-    votingFor: proposalAddress
+    votingFor: proposalAddresses
   };
   dispatch({ type: UPDATE_ACCOUNT, payload: updatedActiveAcc });
   const linkedAccount = getAccount(
@@ -104,7 +105,7 @@ const updateVotingFor = (
   if (!linkedAccount) return;
   const updatedLinkedAcc = {
     ...linkedAccount,
-    votingFor: proposalAddress
+    votingFor: proposalAddresses
   };
   dispatch({ type: UPDATE_ACCOUNT, payload: updatedLinkedAcc });
 };
@@ -114,8 +115,34 @@ export const sendVoteDirect = proposalAddress => (dispatch, getState) => {
   if (!activeAccount) throw new Error('must have account active');
   dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
 
-  const voteExec = window.maker.service('chief').vote([proposalAddress]);
+  const { hat, proposals } = getState();
+  const governancePollAddresses = proposals
+    .filter(({ govVote }) => govVote)
+    .map(({ source }) => source);
+
+  const hatAddress = hat.address;
+  const currentlyVotingForHat = activeAccount.votingFor.includes(
+    hatAddress.toLowerCase()
+  );
+  const castingVoteInGovernancePoll = governancePollAddresses
+    .map(address => address.toLowerCase())
+    .includes(proposalAddress.toLowerCase());
+  const castingVoteForHat =
+    hatAddress.toLowerCase() === proposalAddress.toLowerCase();
+
   const acctType = 'direct';
+
+  const slate = [];
+  if (
+    currentlyVotingForHat &&
+    castingVoteInGovernancePoll &&
+    !castingVoteForHat
+  )
+    slate.push(hatAddress);
+
+  slate.push(proposalAddress);
+
+  const voteExec = window.maker.service('chief').vote(slate);
 
   return handleTx({
     prefix: 'VOTE',
@@ -124,7 +151,7 @@ export const sendVoteDirect = proposalAddress => (dispatch, getState) => {
     txObject: voteExec,
     acctType,
     activeAccount,
-    proposalAddress
+    proposalAddresses: slate
   });
 };
 
@@ -134,9 +161,35 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
     throw new Error('must have account active');
   dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
 
+  const { hat, proposals } = getState();
+
+  const governancePollAddresses = proposals
+    .filter(({ govVote }) => govVote)
+    .map(({ source }) => source);
+
+  const hatAddress = hat.address;
+  const currentlyVotingForHat = activeAccount.votingFor.includes(
+    hatAddress.toLowerCase()
+  );
+  const castingVoteInGovernancePoll = governancePollAddresses
+    .map(address => address.toLowerCase())
+    .includes(proposalAddress.toLowerCase());
+  const castingVoteForHat =
+    hatAddress.toLowerCase() === proposalAddress.toLowerCase();
+
+  const slate = [];
+  if (
+    currentlyVotingForHat &&
+    castingVoteInGovernancePoll &&
+    !castingVoteForHat
+  )
+    slate.push(hatAddress);
+
+  slate.push(proposalAddress);
+
   const voteExec = window.maker
     .service('voteProxy')
-    .voteExec(activeAccount.proxy.address, [proposalAddress]);
+    .voteExec(activeAccount.proxy.address, sortBytesArray(slate));
 
   return handleTx({
     prefix: 'VOTE',
@@ -145,11 +198,11 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
     txObject: voteExec,
     acctType: activeAccount.type,
     activeAccount,
-    proposalAddress
+    proposalAddresses: slate
   });
 };
 
-export const withdrawVote = () => (dispatch, getState) => {
+export const withdrawVote = proposalAddress => (dispatch, getState) => {
   const activeAccount = getAccount(getState(), window.maker.currentAddress());
   if (
     !activeAccount ||
@@ -159,30 +212,29 @@ export const withdrawVote = () => (dispatch, getState) => {
 
   dispatch({ type: WITHDRAW_REQUEST });
 
-  const {
-    onboarding: { skipProxy }
-  } = getState();
+  const filteredSlate = activeAccount.votingFor.filter(
+    address => address.toLowerCase() !== proposalAddress.toLowerCase()
+  );
 
-  console.log('skip proxy', skipProxy);
-  console.log('activeAccount.singleWallet', activeAccount.singleWallet);
-
-  const voteExecNone = window.maker
-    .service('voteProxy')
-    .voteExec(activeAccount.proxy.address, []);
-
-  const voteNoneSingleWallet = window.maker.service('chief').vote([]);
-
-  const txObject = activeAccount.singleWallet
-    ? voteNoneSingleWallet
-    : voteExecNone;
+  let voteExec;
+  if (activeAccount.singleWallet) {
+    voteExec = window.maker
+      .service('chief')
+      .vote(sortBytesArray(filteredSlate));
+  } else {
+    voteExec = window.maker
+      .service('voteProxy')
+      .voteExec(activeAccount.proxy.address, sortBytesArray(filteredSlate));
+  }
 
   return handleTx({
     prefix: 'WITHDRAW',
     dispatch,
     getState,
-    txObject,
+    txObject: voteExec,
     acctType: activeAccount.type,
-    activeAccount
+    activeAccount,
+    proposalAddresses: filteredSlate
   });
 };
 

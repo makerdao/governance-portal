@@ -118,7 +118,6 @@ const VoterStatus = ({
   fetching,
   signaling
 }) => {
-  console.log('account in voterstatus', account);
   if (fetching) {
     return (
       <Padding>
@@ -174,7 +173,7 @@ const VoterStatus = ({
           {account.votingFor && account.proxy.votingPower > 0 ? (
             <Fragment>
               <WithVote
-                proposalAddress={account.votingFor}
+                proposalAddresses={account.votingFor}
                 signaling={signaling}
               >
                 {({ proposalTitle, proposalSlug, noVote }) =>
@@ -228,7 +227,7 @@ const VoterStatus = ({
           {account.votingFor && account.proxy.votingPower > 0 ? (
             <Fragment>
               <WithVote
-                proposalAddress={account.votingFor}
+                proposalAddresses={account.votingFor}
                 signaling={signaling}
               >
                 {({ proposalTitle, proposalSlug, noVote }) =>

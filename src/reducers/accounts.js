@@ -67,7 +67,7 @@ export function getActiveVotingFor(state) {
     (!activeAccount.hasProxy && !activeAccount.singleWallet) ||
     !(activeAccount.proxy.votingPower > 0)
   )
-    return '';
+    return [];
   return activeAccount.votingFor;
 }
 
@@ -96,15 +96,19 @@ export const addAccounts = accounts => async dispatch => {
         ? 'cold'
         : 'hot'
       : '';
-    const currProposal = hasProxy
-      ? (async () => {
-          // NOTE for now we just take the first address in the slate since we're
-          // assuming that they're only voting for one in the frontend. This
-          // should be changed if that changes
-          const addresses = await voteProxy.getVotedProposalAddresses();
-          return addresses[0] || '';
-        })()
-      : '';
+
+    let currProposal = Promise.resolve([]);
+    if (hasProxy) {
+      currProposal = currProposal
+        .then(() =>
+          promiseRetry({
+            fn: () => voteProxy.getVotedProposalAddresses()
+          })
+        )
+        .then(addresses =>
+          (addresses || []).map(address => address.toLowerCase())
+        );
+    }
 
     const linkedAccountData = async () => {
       const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
@@ -167,14 +171,9 @@ export const addSingleWalletAccount = account => async dispatch => {
   const chiefService = window.maker.service('chief');
 
   const currProposal = (async () => {
-    // NOTE for now we just take the first address in the slate since we're
-    // assuming that they're only voting for one in the frontend. This
-    // should be changed if that changes
-    const votedSlate = await chiefService.getVotedSlate(account.address);
-    console.log('voted slate', votedSlate);
-    const addresses = await chiefService.getSlateAddresses(votedSlate);
-    console.log('voted slate addresses', addresses);
-    return addresses[0] || '';
+    const _slate = await chiefService.getVotedSlate(account.address);
+    const slateAddresses = await chiefService.getSlateAddresses(_slate);
+    return (slateAddresses || []).map(address => address.toLowerCase());
   })();
 
   //TODO Fix this atrocity

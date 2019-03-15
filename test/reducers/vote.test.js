@@ -19,12 +19,16 @@ const ADD_TOAST = 'toast/ADD_TOAST';
 const mockAction = { type: 'MOCK_ACTION' };
 
 // Mock state setup
-const initialState = {};
+const initialState = {
+  hat: { address: '0xaBc' },
+  proposals: ['propA', 'propB']
+};
 const mockCurrentAddress = '0xf00CA';
 
 const mockProposalAddress = 'mockProposalAddress';
 const activeAccount = {
   hasProxy: true,
+  votingFor: [mockProposalAddress],
   proxy: {
     linkedAccount: {
       address: 'mockLinkedAccountAddress'
@@ -153,14 +157,14 @@ describe('Vote Reducer', () => {
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
-          votingFor: mockProposalAddress
+          votingFor: [mockProposalAddress.toLowerCase()]
         }
       });
       expect(store.getActions()[4]).toEqual({
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
-          votingFor: mockProposalAddress
+          votingFor: [mockProposalAddress.toLowerCase()]
         }
       });
 
@@ -213,7 +217,7 @@ describe('Vote Reducer', () => {
       expect.assertions(2);
 
       try {
-        await store.dispatch(reducer.withdrawVote());
+        await store.dispatch(reducer.withdrawVote(mockProposalAddress));
       } catch (err) {
         expect(err.message).toEqual('must have account active');
         expect(err instanceof Error).toBeTruthy();
@@ -234,7 +238,7 @@ describe('Vote Reducer', () => {
       hat.hatInit = hatInit;
       voteExec.mockClear();
 
-      await store.dispatch(reducer.withdrawVote());
+      await store.dispatch(reducer.withdrawVote(mockProposalAddress));
 
       jest.runAllTimers();
 
@@ -255,14 +259,14 @@ describe('Vote Reducer', () => {
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
-          votingFor: ''
+          votingFor: []
         }
       });
       expect(store.getActions()[4]).toEqual({
         type: accounts.UPDATE_ACCOUNT,
         payload: {
           ...activeAccount,
-          votingFor: ''
+          votingFor: []
         }
       });
 
@@ -277,7 +281,7 @@ describe('Vote Reducer', () => {
     test('withdraw vote should dispatch FAILURE action when TxMgr calls error', async () => {
       // Setup mock Tx manager to return an error
       defaultFunctions.service = jest.fn(mockServiceError);
-      await store.dispatch(reducer.withdrawVote());
+      await store.dispatch(reducer.withdrawVote(mockProposalAddress));
 
       expect(store.getActions().length).toBe(3);
       expect(store.getActions()[0]).toEqual({

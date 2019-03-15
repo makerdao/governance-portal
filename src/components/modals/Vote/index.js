@@ -43,9 +43,9 @@ class Vote extends Component {
       modalClose
     } = this.props;
     const { proxy, votingFor } = activeAccount;
-    // TODO this has votingFor correctly set
+
     console.log('voting for in index', votingFor);
-    const alreadyVotingFor = eq(votingFor, proposal.address);
+    const alreadyVotingFor = votingFor.includes(proposal.address.toLowerCase());
 
     return (
       <TransactionModal
@@ -116,7 +116,7 @@ class Vote extends Component {
                   <Button
                     slim
                     onClick={() => {
-                      this.props.withdrawVote();
+                      this.props.withdrawVote(proposal.address);
                       onNext();
                     }}
                   >

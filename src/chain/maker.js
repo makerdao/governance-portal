@@ -22,9 +22,12 @@ export default async function createMaker(
       `Gas price fetch failed. Defaulting to ${gasPrice / 10 ** 9} Gwei.`
     );
   }
-
-  let config = {
-    plugins: [trezorPlugin, ledgerPlugin, governancePlugin],
+  const config = {
+    plugins: [
+      trezorPlugin,
+      ledgerPlugin,
+      [governancePlugin, { network, mcd: !!testchainConfigId }]
+    ],
     autoAuthenticate: true,
     log: false,
     web3: {
@@ -33,14 +36,17 @@ export default async function createMaker(
       }
     },
     provider: {
-      url: netToUri(network),
+      url: testchainConfigId ? '' : netToUri(network),
       type: 'HTTP'
     }
   };
 
   // Use the config plugin, if we have a testchainConfigId
-  if (testchainConfigId)
+  if (testchainConfigId) {
+    delete config.provider;
     config.plugins.push([configPlugin, { testchainId: testchainConfigId }]);
+  }
+
   return Maker.create('http', config);
 }
 

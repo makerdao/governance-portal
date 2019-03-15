@@ -129,11 +129,6 @@ export const netToUri = network => {
   switch (network) {
     case 'kovan':
       return `https://${network}.infura.io/v3/${INFURA_PROJECT_ID}`;
-    case 'ganache': {
-      const currentProvider = window.maker.service('accounts').getProvider();
-      const rpcUrl = currentProvider._providers[1].rpcUrl;
-      return rpcUrl ? rpcUrl : 'http://127.0.0.1:2000/';
-    }
     default:
       return `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID}`;
   }
@@ -167,6 +162,11 @@ export const validTxString = txString => /^0x([A-Fa-f0-9]{64})$/.test(txString);
  */
 export const validAddressString = addressString =>
   /^0x([A-Fa-f0-9]{40})$/.test(addressString);
+
+export const sortBytesArray = _array =>
+  [..._array].sort((a, b) => {
+    return BigNumber(a.toLowerCase()).gt(BigNumber(b.toLowerCase())) ? 1 : -1;
+  });
 
 /**
  * @desc get etherescan address link
