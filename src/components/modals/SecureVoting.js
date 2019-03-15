@@ -60,7 +60,7 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
         </JustifiedFlexContainer>
         <PaddedFlexContainer>
           <BoxLeft>
-            <VoteImpactHeading>Total MKR Balance</VoteImpactHeading>
+            <VoteImpactHeading>Total MKR balance</VoteImpactHeading>
             <MkrAmt>
               {formatRound(
                 Number(coldWallet.mkrBalance) +
@@ -74,7 +74,7 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
             <MkrAmt>{formatRound(activeAccount.proxy.votingPower, 4)}</MkrAmt>
           </BoxMiddle>
           <BoxRight>
-            <VoteImpactHeading> LinkedAddress </VoteImpactHeading>
+            <VoteImpactHeading> Linked address </VoteImpactHeading>
             <FlexContainer>
               <MkrAmt noSuffix> {cutMiddle(linkedAccount.address)} </MkrAmt>
               <a
