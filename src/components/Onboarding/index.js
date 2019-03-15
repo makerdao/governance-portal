@@ -70,9 +70,7 @@ const Onboarding = ({ open, step, state, ...props }) => {
       />
       {state === OnboardingStates.SETUP_LINKED_WALLET ? (
         <ProxyOnboarding step={step} open={open} onboarding={onboardingProps} />
-      ) : null}
-
-      {state === OnboardingStates.SETUP_SINGLE_WALLET ? (
+      ) : state === OnboardingStates.SETUP_SINGLE_WALLET ? (
         <SingleWalletOnboarding
           step={step}
           open={open}
