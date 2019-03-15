@@ -95,6 +95,7 @@
 "@babel/helper-create-class-features-plugin@^7.3.0", "@babel/helper-create-class-features-plugin@^7.3.4":
   version "7.3.4"
   resolved "https://registry.yarnpkg.com/@babel/helper-create-class-features-plugin/-/helper-create-class-features-plugin-7.3.4.tgz#092711a7a3ad8ea34de3e541644c2ce6af1f6f0c"
+  integrity sha512-uFpzw6L2omjibjxa8VGZsJUPL5wJH0zzGKpoz0ccBkzIa6C8kWNUbiBmQ0rgOKWlHJ6qzmfa6lTiGchiV8SC+g==
   dependencies:
     "@babel/helper-function-name" "^7.1.0"
     "@babel/helper-member-expression-to-functions" "^7.0.0"
@@ -375,6 +376,7 @@
 "@babel/plugin-syntax-decorators@^7.2.0":
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-decorators/-/plugin-syntax-decorators-7.2.0.tgz#c50b1b957dcc69e4b1127b65e1c33eef61570c1b"
+  integrity sha512-38QdqVoXdHUQfTpZo3rQwqQdWtCn5tMv4uV6r2RMfTqNBuv4ZBhz79SfaQWKTVmxHjeFv/DnXVC/+agHCklYWA==
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0"
 
@@ -998,6 +1000,7 @@
 "@makerdao/currency@^0.9.0", "@makerdao/currency@^0.9.3":
   version "0.9.3"
   resolved "https://registry.yarnpkg.com/@makerdao/currency/-/currency-0.9.3.tgz#27510303771506b4b64998ce3b15c39b2d558fd9"
+  integrity sha512-WNf8x+aJBErpj/PAzcr91PseQ3P9/f34Hey+qvndWEQ+LAr7LOWgcpTMryLZK1f2rn/k2zBcuWSbwe4XkrxRhA==
   dependencies:
     babel-runtime "^6.26.0"
     bignumber.js "^8.1.1"
@@ -1005,13 +1008,15 @@
 "@makerdao/dai-plugin-config@^0.0.3":
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-config/-/dai-plugin-config-0.0.3.tgz#4a6309c3f5acc5562e2fac40a79e1829daa655a5"
+  integrity sha512-wtteR5T0nAhfOfpS56o0NsHX4kb8cOw7ONDbqREO3jFt8FK6ihg9czTmZiq9PWS0GPgiBdmIJZEdyLf0r0ZK4w==
   dependencies:
     babel-runtime "^6.26.0"
     ramda "^0.26.1"
 
-"@makerdao/dai-plugin-governance@0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.4.1.tgz#4d16bd92b16b8fe8b1c4464b14c214740a0f8b6b"
+"@makerdao/dai-plugin-governance@^0.5.1":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.5.1.tgz#718f9fd204697b2233c9d734a57f527c4a3ea692"
+  integrity sha512-aORPELFfev+dZF6xHFUta+Ye7cgSIodF7qbAOySAPSX5vJcwtRN/funXmHMzqYYgvpK143rrZjcZ91CjTJVp+Q==
   dependencies:
     "@makerdao/currency" "^0.9.3"
     "@makerdao/services-core" "^0.9.4"
@@ -1035,6 +1040,7 @@
 "@makerdao/dai-plugin-trezor-web@^0.9.5":
   version "0.9.5"
   resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-trezor-web/-/dai-plugin-trezor-web-0.9.5.tgz#9253b23d0e9b75edebdca07438e7c0692aeebbe2"
+  integrity sha512-T7e3WGuBTa4C9lh0x/rRGLPWRvHxSP+kE2hMz+eaflJrIA4YEe4LjKRSO8dxzo8/176419PWrp5ZC9TRTaz/Dw==
   dependencies:
     babel-runtime "^6.26.0"
     ethereumjs-tx "^1.3.6"
@@ -1046,6 +1052,7 @@
 "@makerdao/dai@^0.13.0":
   version "0.13.0"
   resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.13.0.tgz#7f7177b3d6fd004ca6fd94628f0e8e704848fb2e"
+  integrity sha512-0zXuWN7OEkH2QsNE1Ns/3897VPzutYTuEave4JtboXRvUKb48GG2xYt5vXPy4mfViUFakK4UtqtOhbI5LIcIlA==
   dependencies:
     "@babel/runtime" "^7.3.4"
     "@makerdao/currency" "^0.9.0"
@@ -1791,7 +1798,7 @@ async-eventemitter@^0.2.2:
   dependencies:
     async "^2.4.0"
 
-async-eventemitter@ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c:
+"async-eventemitter@github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c":
   version "0.2.3"
   resolved "https://codeload.github.com/ahultgren/async-eventemitter/tar.gz/fa06e39e56786ba541c180061dbf2c0a5bbf951c"
   dependencies:
@@ -2120,13 +2127,6 @@ babel-plugin-syntax-async-functions@^6.8.0:
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-async-functions/-/babel-plugin-syntax-async-functions-6.13.0.tgz#cad9cad1191b5ad634bf30ae0872391e0647be95"
   integrity sha1-ytnK0RkbWtY0vzCuCHI5HgZHvpU=
 
-
-babel-plugin-syntax-decorators@^6.1.18:
-  version "6.13.0"
-  resolved "https://registry.yarnpkg.com/babel-plugin-syntax-decorators/-/babel-plugin-syntax-decorators-6.13.0.tgz#312563b4dbde3cc806cee3e416cceeaddd11ac0b"
-  integrity sha1-MSVjtNvePMgGzuPkFszurd0RrAs=
-
-
 babel-plugin-syntax-exponentiation-operator@^6.8.0:
   version "6.13.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-exponentiation-operator/-/babel-plugin-syntax-exponentiation-operator-6.13.0.tgz#9ee7e8337290da95288201a6a57f4170317830de"
@@ -2155,17 +2155,6 @@ babel-plugin-transform-async-to-generator@^6.22.0:
     babel-helper-remap-async-to-generator "^6.24.1"
     babel-plugin-syntax-async-functions "^6.8.0"
     babel-runtime "^6.22.0"
-
-
-babel-plugin-transform-decorators-legacy@^1.3.5:
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/babel-plugin-transform-decorators-legacy/-/babel-plugin-transform-decorators-legacy-1.3.5.tgz#0e492dffa0edd70529072887f8aa86d4dd8b40a1"
-  integrity sha512-jYHwjzRXRelYQ1uGm353zNzf3QmtdCfvJbuYTZ4gKveK7M9H1fs3a5AKdY1JUDl0z97E30ukORW1dzhWvsabtA==
-  dependencies:
-    babel-plugin-syntax-decorators "^6.1.18"
-    babel-runtime "^6.2.0"
-    babel-template "^6.3.0"
-
 
 babel-plugin-transform-es2015-arrow-functions@^6.22.0:
   version "6.22.0"
@@ -2603,6 +2592,7 @@ bignumber.js@^7.2.1:
 bignumber.js@^8.0.1, bignumber.js@^8.1.1:
   version "8.1.1"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-8.1.1.tgz#4b072ae5aea9c20f6730e4e5d529df1271c4d885"
+  integrity sha512-QD46ppGintwPGuL1KqmwhR0O+N2cZUg8JG/VzwI2e28sM9TqHjQB10lI4QAaMHVbLzwVLLAwEglpKPViWX+5NQ==
 
 binary-extensions@^1.0.0:
   version "1.13.0"
@@ -3014,9 +3004,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000844, caniuse-lite@^1.0.30000918, caniuse-lite@^1.0.30000929, caniuse-lite@^1.0.30000939, caniuse-lite@^1.0.30000947:
-  version "1.0.30000947"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000947.tgz#c30305e9701449c22e97f4e9837cea3d76aa3273"
-  integrity sha512-ubgBUfufe5Oi3W1+EHyh2C3lfBIEcZ6bTuvl5wNOpIuRB978GF/Z+pQ7pGGUpeYRB0P+8C7i/3lt6xkeu2hwnA==
+  version "1.0.30000948"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000948.tgz#793ed7c28fe664856beb92b43fc013fc22b81633"
+  integrity sha512-Lw4y7oz1X5MOMZm+2IFaSISqVVQvUuD+ZUSfeYK/SlYiMjkHN/eJ2PDfJehW5NA6JjrxYSSnIWfwjeObQMEjFQ==
 
 capture-exit@^1.2.0:
   version "1.2.0"
@@ -5143,6 +5133,7 @@ eventemitter3@^3.0.0:
 events@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/events/-/events-1.1.1.tgz#9ebdb7635ad099c70dcc4c2a1f5004288e8bd924"
+  integrity sha1-nr23Y1rQmccNzEwqH1AEKI6L2SQ=
 
 events@^3.0.0:
   version "3.0.0"
@@ -8826,9 +8817,9 @@ nan@2.10.0:
   integrity sha512-bAdJv7fBLhWC+/Bls0Oza+mvTaNQtP+1RyhhhvD95pgUJz6XM5IzgmxOkItJ9tkoCiplvAnXI1tNmmUD/eScyA==
 
 nan@^2.0.8, nan@^2.2.1, nan@^2.3.3, nan@^2.9.2:
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.13.0.tgz#7bdfc27dd3c060c46e60b62c72b74012d1a4cd68"
-  integrity sha512-5DDQvN0luhXdut8SCwzm/ZuAX2W+fwhqNzfq7CZ+OJzQ6NwpcqmIGyLD1R8MEt7BeErzcsI0JLr4pND2pNp2Cw==
+  version "2.13.1"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.13.1.tgz#a15bee3790bde247e8f38f1d446edcdaeb05f2dd"
+  integrity sha512-I6YB/YEuDeUZMmhscXKxGgZlFnhsn5y0hgOZBadkzfTRrZBtJDZeg6eQf7PYMIEclwmorTKK8GztsyOUSVBREA==
 
 nano-json-stream-parser@^0.1.2:
   version "0.1.2"
@@ -10691,6 +10682,7 @@ ramda@^0.25.0:
 ramda@^0.26, ramda@^0.26.0, ramda@^0.26.1:
   version "0.26.1"
   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.26.1.tgz#8d41351eb8111c55353617fc3bbffad8e4d35d06"
+  integrity sha512-hLWjpy7EnsDBb0p+Z3B7rPi3GDeRG5ZtiI33kJhTt+ORCd38AbAIjB/9zRIUoeTbE/AVX5ZkU7m6bznsvrf8eQ==
 
 randexp@0.4.6:
   version "0.4.6"
@@ -11366,6 +11358,7 @@ require-main-filename@^1.0.1:
 requirejs-config-file@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/requirejs-config-file/-/requirejs-config-file-3.1.1.tgz#ccb8efbe2301c24ac0cf34dd3f3c862741750f5c"
+  integrity sha512-dGob5UZE5Mvy2Es1Zi6SBbbSDTu8zAQOUSXB5piAEBx9evS2BD2IzPlbj+TMU0/bX5HU6fUK/b7L2wspZlJS0A==
   dependencies:
     esprima "^4.0.0"
     fs-extra "^5.0.0"
@@ -11418,10 +11411,10 @@ resolve@1.1.7:
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.1.7.tgz#203114d82ad2c5ed9e8e0411b3932875e889e97b"
   integrity sha1-IDEU2CrSxe2ejgQRs5ModeiJ6Xs=
 
-
-resolve@1.10.0, resolve@^1.10.0, resolve@^1.3.2, resolve@^1.4.0, resolve@^1.5.0, resolve@^1.6.0, resolve@^1.8.1, resolve@^1.9.0, resolve@~1.10.0:
+resolve@1.10.0, resolve@^1.10.0, resolve@^1.3.2, resolve@^1.5.0, resolve@^1.6.0, resolve@^1.8.1, resolve@^1.9.0, resolve@~1.10.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.10.0.tgz#3bdaaeaf45cc07f375656dfd2e54ed0810b101ba"
+  integrity sha512-3sUr9aq5OfSg2S9pNtPA9hL1FVEAjvfOC4leW0SNf/mpnaakz2a9femSd6LqAww2RaFctwyf1lCqnTHuF1rxDg==
   dependencies:
     path-parse "^1.0.6"
 
@@ -12776,6 +12769,7 @@ traverse-chain@~0.1.0:
 trezor-connect@^6.0.4:
   version "6.0.5"
   resolved "https://registry.yarnpkg.com/trezor-connect/-/trezor-connect-6.0.5.tgz#fcaf0b11cbec656cdef81feb42660929488326f4"
+  integrity sha512-U5D8bEkGCBFCwT3zg4WAQUUBfkG9sDhumTY2Mgj2VN+TrRwkrP7nFyK4d0XRzt4ZsLJxBAT/Qg4/ZKqKh0a+wg==
   dependencies:
     babel-runtime "^6.26.0"
     events "^1.1.1"
@@ -13470,7 +13464,7 @@ web3-net@1.0.0-beta.34:
     web3-core-method "1.0.0-beta.34"
     web3-utils "1.0.0-beta.34"
 
-web3-provider-engine@14.0.4, web3-provider-engine@makerdao/provider-engine#kovan-fix-dist:
+web3-provider-engine@14.0.4, "web3-provider-engine@github:makerdao/provider-engine#kovan-fix-dist":
   version "14.0.4"
   resolved "https://codeload.github.com/makerdao/provider-engine/tar.gz/7c4b187809f156409473246de15dc595e1fe3356"
   dependencies:

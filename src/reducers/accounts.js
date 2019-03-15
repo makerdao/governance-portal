@@ -17,7 +17,8 @@ import {
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
-  MKR_APPROVE_SUCCESS
+  MKR_APPROVE_SUCCESS,
+  IOU_APPROVE_SUCCESS
 } from './sharedProxyConstants';
 import { MAX_UINT_ETH_BN } from '../utils/ethereum';
 import { MKR } from '../chain/maker';
@@ -110,6 +111,10 @@ export const addAccounts = accounts => async dispatch => {
         );
     }
 
+    const chiefAddress = window.maker
+      .service('smartContract')
+      .getContractAddressByName('CHIEF');
+
     const linkedAccountData = async () => {
       const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
       const linkedAddress =
@@ -132,6 +137,13 @@ export const addAccounts = accounts => async dispatch => {
       hasProxy,
       proxyRole: proxyRole,
       votingFor: currProposal,
+      hasInfMkrApproval: mkrToken
+        .allowance(account.address, chiefAddress)
+        .then(val => val.eq(MAX_UINT_ETH_BN)),
+      hasInfIouApproval: window.maker
+        .getToken('IOU')
+        .allowance(account.address, chiefAddress)
+        .then(val => val.eq(MAX_UINT_ETH_BN)),
       proxy: hasProxy
         ? promisedProperties({
             address: voteProxy.getProxyAddress(),
@@ -144,6 +156,7 @@ export const addAccounts = accounts => async dispatch => {
         : {
             address: '',
             votingPower: 0,
+            hasInfIouApproval: false,
             hasInfMkrApproval: false,
             linkedAccount: {}
           }
@@ -163,7 +176,9 @@ export const addAccounts = accounts => async dispatch => {
 export const addSingleWalletAccount = account => async dispatch => {
   dispatch({ type: FETCHING_ACCOUNT_DATA, payload: true });
 
-  const chiefAddress = '0xbbffc76e94b34f72d96d054b31f6424249c1337d'; //kovan
+  const chiefAddress = window.maker
+    .service('smartContract')
+    .getContractAddressByName('CHIEF');
 
   console.log('addsinglewallet acct', account);
 
@@ -176,36 +191,36 @@ export const addSingleWalletAccount = account => async dispatch => {
     return (slateAddresses || []).map(address => address.toLowerCase());
   })();
 
-  //TODO Fix this atrocity
-  const vp = chiefService
-    .getNumDeposits(account.address)
-    .then(deposits => toNum(deposits));
-  const votingPower = await vp;
+  const votingPower = (await chiefService.getNumDeposits(
+    account.address
+  )).toFixed();
 
-  console.log('voting vp', votingPower);
+  const hasInfMkrApproval = (await mkrToken.allowance(
+    account.address,
+    chiefAddress
+  )).eq(MAX_UINT_ETH_BN);
 
-  const ha = mkrToken
-    .allowance(account.address, chiefAddress)
-    .then(val => val.eq(MAX_UINT_ETH_BN));
-
-  const hasInfMkrApproval = await ha;
-
-  console.log('hasInfMkrApproval', hasInfMkrApproval);
+  const hasInfIouApproval = (await window.maker
+    .getToken('IOU')
+    .allowance(account.address, chiefAddress)).eq(MAX_UINT_ETH_BN);
 
   const _payload = {
     ...account,
     address: account.address,
-    mkrBalance: toNum(
-      promiseRetry({ fn: () => mkrToken.balanceOf(account.address) })
-    ),
+    mkrBalance: promiseRetry({
+      fn: async () => (await mkrToken.balanceOf(account.address)).toFixed()
+    }),
     hasProxy: false,
     singleWallet: true,
     proxyRole: '',
     votingFor: currProposal,
+    hasInfMkrApproval,
+    hasInfIouApproval,
     proxy: {
       votingPower,
       address: account.address,
       hasInfMkrApproval,
+      hasInfIouApproval,
       linkedAccount: ''
     }
   };
@@ -486,14 +501,36 @@ const accounts = createReducer(initialState, {
     ...state,
     fetching: false
   }),
-  [MKR_APPROVE_SUCCESS]: state => {
+  [MKR_APPROVE_SUCCESS]: (state, { payload }) => {
+    const account = getAccount(
+      { accounts: state },
+      window.maker.currentAddress()
+    );
+
+    const updatedAccount =
+      payload === 'single-wallet'
+        ? {
+            ...account,
+            hasInfMkrApproval: true
+          }
+        : {
+            ...account,
+            proxy: { ...account.proxy, hasInfMkrApproval: true }
+          };
+
+    return {
+      ...state,
+      allAccounts: withUpdatedAccount(state.allAccounts, updatedAccount)
+    };
+  },
+  [IOU_APPROVE_SUCCESS]: state => {
     const account = getAccount(
       { accounts: state },
       window.maker.currentAddress()
     );
     const updatedAccount = {
       ...account,
-      proxy: { ...account.proxy, hasInfMkrApproval: true }
+      hasInfIouApproval: true
     };
     return {
       ...state,

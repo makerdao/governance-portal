@@ -13,32 +13,40 @@ import {
   initiateLink,
   approveLink,
   mkrApproveProxy,
-  mkrApproveSingleWallet
+  mkrApproveSingleWallet,
+  iouApproveSingleWallet
 } from '../../reducers/proxy';
 
 import { getAccount } from '../../reducers/accounts';
 
-class InitiateLink extends React.Component {
+class SingleWalletApprovals extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       step: 0,
-      faqs: []
+      faqs: faqs.grantHotWalletPermissions
     };
   }
 
   componentDidMount() {
-    console.log('SINGLE WALLET', this.props);
-    this.toGrantPermissions();
+    const { hasInfIouApproval, hasInfMkrApproval } = this.props.singleWallet;
+
+    if (hasInfIouApproval && hasInfMkrApproval) this.props.onComplete();
+    else if (hasInfMkrApproval && !hasInfIouApproval)
+      this.toGrantIouPermissions();
+    else this.toGrantMkrPermissions();
   }
 
-  toGrantPermissions = () => {
-    console.log('props in single wallet', this.props);
+  toGrantMkrPermissions = () => {
     this.props.mkrApproveSingleWallet();
+  };
+
+  toGrantIouPermissions = () => {
+    this.props.iouApproveSingleWallet();
 
     this.setState({
-      faqs: faqs.grantHotWalletPermissions
+      step: 1
     });
   };
 
@@ -50,6 +58,8 @@ class InitiateLink extends React.Component {
       singleWallet,
       mkrApproveProxyTxHash,
       mkrApproveProxyTxStatus,
+      iouApproveProxyTxStatus,
+      iouApproveProxyTxHash,
       onComplete
     } = this.props;
     return (
@@ -66,11 +76,20 @@ class InitiateLink extends React.Component {
         <div>
           <Stepper step={this.state.step}>
             <SignTransactionStep
-              title="Grant your wallet permissions"
-              subtitle="Give the voting contract permission so that your wallet can vote with your MKR"
+              title="Grant permissions"
+              subtitle="Give the governance contract transfer allowances for your MKR tokens"
               walletProvider={singleWallet.type}
               status={mkrApproveProxyTxStatus}
               tx={mkrApproveProxyTxHash}
+              onRetry={this.toGrantMkrPermissions}
+              onNext={this.toGrantIouPermissions}
+            />
+            <SignTransactionStep
+              title="Grant permissions"
+              subtitle="Give the governance contract transfer allowances for your IOU tokens"
+              walletProvider={singleWallet.type}
+              status={iouApproveProxyTxStatus}
+              tx={iouApproveProxyTxHash}
               onRetry={this.toGrantPermissions}
               onNext={onComplete}
             />
@@ -94,6 +113,7 @@ export default connect(
     initiateLink,
     approveLink,
     mkrApproveProxy,
-    mkrApproveSingleWallet
+    mkrApproveSingleWallet,
+    iouApproveSingleWallet
   }
-)(InitiateLink);
+)(SingleWalletApprovals);

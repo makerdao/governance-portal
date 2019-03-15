@@ -16,7 +16,8 @@ import { MKR } from '../chain/maker';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
-  MKR_APPROVE_SUCCESS
+  MKR_APPROVE_SUCCESS,
+  IOU_APPROVE_SUCCESS
 } from './sharedProxyConstants';
 
 // Constants ----------------------------------------------
@@ -41,7 +42,12 @@ export const MKR_APPROVE_REQUEST = 'proxy/MKR_APPROVE_REQUEST';
 export const MKR_APPROVE_STATUS_UPDATE = 'proxy/MKR_APPROVE_STATUS_UPDATE';
 export const MKR_APPROVE_SENT = 'proxy/MKR_APPROVE_SENT';
 
+export const IOU_APPROVE_REQUEST = 'proxy/IOU_APPROVE_REQUEST';
+export const IOU_APPROVE_STATUS_UPDATE = 'proxy/IOU_APPROVE_STATUS_UPDATE';
+export const IOU_APPROVE_SENT = 'proxy/IOU_APPROVE_SENT';
+
 export const MKR_APPROVE_FAILURE = 'proxy/MKR_APPROVE_FAILURE';
+export const IOU_APPROVE_FAILURE = 'proxy/IOU_APPROVE_FAILURE';
 
 export const WITHDRAW_MKR_REQUEST = 'proxy/WITHDRAW_MKR_REQUEST';
 export const WITHDRAW_MKR_SENT = 'proxy/WITHDRAW_MKR_SENT';
@@ -256,22 +262,15 @@ export const breakLink = () => (dispatch, getState) => {
 };
 
 export const mkrApproveSingleWallet = () => (dispatch, getState) => {
-  // TODO this is undefined now:
-  const {
-    onboarding: { skipProxy }
-  } = getState();
-  console.log('skipp ', skipProxy);
   const account = getAccount(getState(), window.maker.currentAddress());
   // const currentAddress = window.maker.currentAddress();
   console.log('currentAccount, whats type?', account);
 
-  // TODO fix hardcoded chief address
-  // new kovan chief: 0xac68fda94c432144dfda527b0a32cefbff3fac09
   const chiefAddress = window.maker
     .service('smartContract')
     .getContractAddressByName('CHIEF');
 
-  const giveProxyAllowance = window.maker
+  const giveChiefAllowance = window.maker
     .getToken(MKR)
     .approveUnlimited(chiefAddress);
 
@@ -279,7 +278,28 @@ export const mkrApproveSingleWallet = () => (dispatch, getState) => {
   return handleTx({
     prefix: 'MKR_APPROVE',
     dispatch,
-    txObject: giveProxyAllowance,
+    txObject: giveChiefAllowance,
+    acctType: account.type,
+    successPayload: 'single-wallet'
+  }).then(success => success && dispatch(addSingleWalletAccount(account)));
+};
+
+export const iouApproveSingleWallet = () => (dispatch, getState) => {
+  const account = getAccount(getState(), window.maker.currentAddress());
+
+  const chiefAddress = window.maker
+    .service('smartContract')
+    .getContractAddressByName('CHIEF');
+
+  const giveChiefAllowance = window.maker
+    .getToken('IOU')
+    .approveUnlimited(chiefAddress);
+
+  dispatch({ type: IOU_APPROVE_REQUEST });
+  return handleTx({
+    prefix: 'IOU_APPROVE',
+    dispatch,
+    txObject: giveChiefAllowance,
     acctType: account.type
   }).then(success => success && dispatch(addSingleWalletAccount(account)));
 };
@@ -317,6 +337,7 @@ const initialState = {
   initiateLinkTxStatus: TransactionStatus.NOT_STARTED,
   approveLinkTxStatus: TransactionStatus.NOT_STARTED,
   mkrApproveProxyTxStatus: TransactionStatus.NOT_STARTED,
+  iouApproveProxyTxStatus: TransactionStatus.NOT_STARTED,
   sendMkrTxStatus: TransactionStatus.NOT_STARTED,
   withdrawMkrTxStatus: TransactionStatus.NOT_STARTED,
   breakLinkTxStatus: TransactionStatus.NOT_STARTED
@@ -406,6 +427,25 @@ const proxy = createReducer(initialState, {
   [MKR_APPROVE_FAILURE]: state => ({
     ...state,
     mkrApproveProxyTxStatus: TransactionStatus.ERROR
+  }),
+  // IOU Approve Chief ------------------------------
+  [IOU_APPROVE_REQUEST]: state => ({
+    ...state,
+    iouApproveProxyTxHash: '',
+    iouApproveProxyTxStatus: TransactionStatus.NOT_STARTED
+  }),
+  [IOU_APPROVE_SENT]: (state, { payload }) => ({
+    ...state,
+    iouApproveProxyTxStatus: TransactionStatus.PENDING,
+    iouApproveProxyTxHash: payload.txHash
+  }),
+  [IOU_APPROVE_SUCCESS]: state => ({
+    ...state,
+    iouApproveProxyTxStatus: TransactionStatus.MINED
+  }),
+  [IOU_APPROVE_FAILURE]: state => ({
+    ...state,
+    iouApproveProxyTxStatus: TransactionStatus.ERROR
   }),
   // Withdraw ---------------------------------------
   [WITHDRAW_MKR_REQUEST]: state => ({
