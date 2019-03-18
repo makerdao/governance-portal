@@ -17,12 +17,9 @@ const Step = styled.div`
 `;
 
 const Stepper = ({ step, children }) => {
-  console.log('step', step);
-  console.log('children', children);
   return (
     <React.Fragment>
       {React.Children.map(children, (child, index) => {
-        console.log('step & index', step, index);
         return <Step active={step === index}>{step === index && child}</Step>;
       })}
     </React.Fragment>

@@ -62,7 +62,6 @@ export function getActiveAccount(state) {
 
 export function getActiveVotingFor(state) {
   const activeAccount = getActiveAccount(state);
-
   if (
     !activeAccount ||
     (!activeAccount.hasProxy && !activeAccount.singleWallet) ||

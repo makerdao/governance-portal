@@ -126,9 +126,7 @@ function useHotAccount(state) {
 function useColdAccount(state) {
   const account = getAccount(state, window.maker.currentAddress());
 
-  console.log('single wallet', account.singleWallet);
   if (account.singleWallet) {
-    console.log('single wallet');
     return true;
   } else if (state.onboarding.coldWallet.address !== account.address) {
     window.maker.useAccountWithAddress(state.onboarding.coldWallet.address);
@@ -178,7 +176,6 @@ export const approveLink = ({ hot, cold }) => (dispatch, getState) => {
 };
 
 export const lock = value => async (dispatch, getState) => {
-  console.log('using lock', value);
   if (value === 0) return;
   if (!useColdAccount(getState())) return;
   const account = getAccount(getState(), window.maker.currentAddress());
@@ -248,8 +245,6 @@ export const breakLink = () => (dispatch, getState) => {
 
 export const mkrApproveSingleWallet = () => (dispatch, getState) => {
   const account = getAccount(getState(), window.maker.currentAddress());
-  // const currentAddress = window.maker.currentAddress();
-  console.log('currentAccount, whats type?', account);
 
   const chiefAddress = window.maker
     .service('smartContract')

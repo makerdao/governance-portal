@@ -115,7 +115,6 @@ class LockMKR extends React.Component {
   };
 
   render() {
-    console.log('4-LockMKR state, props', this.state, this.props);
     return (
       <TwoColumnSidebarLayout
         sidebar={
