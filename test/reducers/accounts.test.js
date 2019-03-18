@@ -35,12 +35,15 @@ const coldAddress = '0xCOLD';
 const proxyAddress = '0xPROXY';
 const proposalAddress = '0xPROPOSAL';
 const defaultBalance = 100.0;
+// TODO IOU approval here?
+const hasInfIouApproval = true;
 const hasInfMkrApproval = true;
 const defaultVotingPower = 50.0;
 const hasProxy = true;
 
 const defaults = {
   balance: defaultBalance,
+  hasInfIouApproval,
   hasInfMkrApproval,
   votingPower: defaultVotingPower,
   hasProxy,
@@ -68,7 +71,12 @@ const setupMocks = (opts = defaults, services = {}) => {
 
   const getVotedProposalAddresses = jest
     .fn()
-    .mockReturnValue(opts.proxy.proposalAddresses);
+    .mockImplementation(() => Promise.resolve([proposalAddress]));
+  // const getVotedProposalAddresses = jest
+  //   .fn()
+  //   .mockReturnValue(opts.proxy.proposalAddresses);
+
+  // TODO check if you can use this in the mock chief service
   const getNumDeposits = jest.fn().mockReturnValue({
     toBigNumber: () => ({ toFixed: () => opts.votingPower })
   });
@@ -89,6 +97,12 @@ const setupMocks = (opts = defaults, services = {}) => {
       : {}
   });
 
+  const getNumDepositsChief = jest.fn().mockReturnValue({
+    toNumber: () => 0
+  });
+  const getVotedSlate = jest.fn();
+  const getSlateAddresses = jest.fn();
+
   const getContractAddressByName = jest.fn();
 
   const service = jest.fn().mockImplementation(service => {
@@ -96,7 +110,11 @@ const setupMocks = (opts = defaults, services = {}) => {
       voteProxy: {
         getVoteProxy
       },
-      chief: { getNumDeposits: () => '0' },
+      chief: {
+        getNumDeposits: getNumDepositsChief,
+        getVotedSlate,
+        getSlateAddresses
+      },
       smartContract: { getContractAddressByName },
       ...services
     };
@@ -117,9 +135,10 @@ describe('Add Account', () => {
     });
   });
 
-  test.only('should add an account enriched with information', async () => {
+  test('should add an account enriched with information', async () => {
     setupMocks({
       balance: 200.2,
+      hasInfIouApproval: false,
       hasInfMkrApproval: false,
       votingPower: 3,
       hasProxy: true,
@@ -133,7 +152,7 @@ describe('Add Account', () => {
 
     await addAccount({ address: hotAddress })(store.dispatch, store.getState);
 
-    console.log(store.getActions());
+    expect(window.maker.getToken).toBeCalledWith('IOU');
     expect(window.maker.getToken).toBeCalledWith(MKR);
     expect(store.getActions().length).toBe(3);
     expect(store.getActions()[0]).toEqual({
@@ -144,10 +163,12 @@ describe('Add Account', () => {
       type: ADD_ACCOUNT,
       payload: {
         address: hotAddress,
-        hasProxy: true,
         mkrBalance: 200.2,
+        hasProxy: true,
         proxyRole: 'hot',
-        votingFor: proposalAddress,
+        hasInfIouApproval: false,
+        hasInfMkrApproval: false,
+        votingFor: [proposalAddress.toLowerCase()],
         proxy: {
           address: proxyAddress,
           hasInfMkrApproval: false,
@@ -180,10 +201,11 @@ describe('Add Account', () => {
         address: coldAddress,
         proxyRole: '',
         hasProxy: false,
-        votingFor: '',
+        votingFor: [],
         proxy: expect.objectContaining({
           address: '',
           votingPower: 0,
+          hasInfIouApproval: false,
           hasInfMkrApproval: false,
           linkedAccount: {}
         })
@@ -205,15 +227,23 @@ describe('Add Account', () => {
     });
   });
 
-  test('should return an empty string if not voting for any proposals', async () => {
-    setupMocks(defaults);
+  test.only('should return an empty string if not voting for any proposals', async () => {
+    //IN Progress, trying to mock the getVotedProposalAddresses method
+    // add to below voteproxy mock
+    setupMocks(defaults, {
+      voteProxy: jest.fn().mockImplementation(() => Promise.resolve([]))
+    });
+
+    /**.const getVotedProposalAddresses = jest
+    .fn()
+    .mockImplementation(() => Promise.resolve([proposalAddress])); */
 
     await addAccount({ address: coldAddress })(store.dispatch, store.getState);
 
     expect(store.getActions()[1]).toEqual({
       type: ADD_ACCOUNT,
       payload: expect.objectContaining({
-        votingFor: ''
+        votingFor: []
       })
     });
   });
