@@ -43,7 +43,6 @@ class Vote extends Component {
     } = this.props;
     const { proxy, votingFor } = activeAccount;
 
-    console.log('voting for in index', votingFor);
     const alreadyVotingFor = votingFor.includes(proposal.address.toLowerCase());
 
     return (

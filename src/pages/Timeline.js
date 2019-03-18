@@ -310,11 +310,6 @@ const Timeline = ({
 };
 
 const reduxProps = ({ proposals, accounts, hat, approvals }, { signaling }) => {
-  console.log('accounts', accounts);
-  console.log(
-    'getActiveVotingFor({ accounts }',
-    getActiveVotingFor({ accounts })
-  );
   return {
     hat,
     approvals,

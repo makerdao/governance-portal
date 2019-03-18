@@ -187,10 +187,6 @@ export const withdrawVote = proposalAddress => (dispatch, getState) => {
       .service('chief')
       .vote(sortBytesArray(filteredSlate));
   } else {
-    console.log(
-      'withdraw vote from vote proxy with',
-      sortBytesArray(filteredSlate)
-    );
     voteExec = window.maker
       .service('voteProxy')
       .voteExec(activeAccount.proxy.address, sortBytesArray(filteredSlate));
