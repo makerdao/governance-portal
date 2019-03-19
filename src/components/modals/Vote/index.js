@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ReactGA from 'react-ga';
 
-import { add, eq, subtract, formatRound } from '../../../utils/misc';
+import { add, subtract, formatRound } from '../../../utils/misc';
 import Button from '../../Button';
 import WithTally from '../../hocs/WithTally';
 import { getActiveAccount } from '../../../reducers/accounts';

@@ -87,6 +87,8 @@ export const addAccounts = accounts => async dispatch => {
 
   for (let account of accounts) {
     const mkrToken = window.maker.getToken(MKR);
+    const iouToken = window.maker.getToken('IOU');
+
     const { hasProxy, voteProxy } = await window.maker
       .service('voteProxy')
       .getVoteProxy(account.address);
@@ -139,8 +141,7 @@ export const addAccounts = accounts => async dispatch => {
       hasInfMkrApproval: mkrToken
         .allowance(account.address, chiefAddress)
         .then(val => val.eq(MAX_UINT_ETH_BN)),
-      hasInfIouApproval: window.maker
-        .getToken('IOU')
+      hasInfIouApproval: iouToken
         .allowance(account.address, chiefAddress)
         .then(val => val.eq(MAX_UINT_ETH_BN)),
       proxy: hasProxy
@@ -180,6 +181,8 @@ export const addSingleWalletAccount = account => async dispatch => {
     .getContractAddressByName('CHIEF');
 
   const mkrToken = window.maker.getToken(MKR);
+  const iouToken = window.maker.getToken('IOU');
+
   const chiefService = window.maker.service('chief');
 
   const currProposal = (async () => {
@@ -197,9 +200,10 @@ export const addSingleWalletAccount = account => async dispatch => {
     chiefAddress
   )).eq(MAX_UINT_ETH_BN);
 
-  const hasInfIouApproval = (await window.maker
-    .getToken('IOU')
-    .allowance(account.address, chiefAddress)).eq(MAX_UINT_ETH_BN);
+  const hasInfIouApproval = (await iouToken.allowance(
+    account.address,
+    chiefAddress
+  )).eq(MAX_UINT_ETH_BN);
 
   const _payload = {
     ...account,
