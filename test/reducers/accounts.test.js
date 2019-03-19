@@ -54,7 +54,7 @@ const defaults = {
     hotAddress,
     coldAddress,
     proxyAddress,
-    proposalAddresses: [] // TODO use var?
+    proposalAddresses: []
   }
 };
 
@@ -190,7 +190,6 @@ describe('Add Account with Vote Proxy', () => {
     });
   });
 
-  //TODO this should account for numdeps/single wallet
   test('should return hasProxy false and an empty proxy when there is no proxy and no chief deposits', async () => {
     setupMocks({
       ...defaults,
