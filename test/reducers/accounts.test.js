@@ -75,7 +75,7 @@ const setupMocks = (opts = defaults, services = {}) => {
 
   const getVotedProposalAddresses = jest
     .fn()
-    .mockImplementation(() => Promise.resolve([opts.proxy.proposalAddress]));
+    .mockImplementation(() => Promise.resolve(opts.proxy.proposalAddresses));
   const getNumDeposits = jest.fn().mockReturnValue({
     toBigNumber: () => ({ toFixed: () => opts.votingPower })
   });
@@ -290,7 +290,8 @@ describe('Add Account with Vote Proxy', () => {
     });
   });
 
-  test.only('should return the first proposal if voting for many proposals', async () => {
+  // Since we're allowing multiple proposals, this test can probably be removed
+  test.skip('should return the first proposal if voting for many proposals', async () => {
     const anotherProposalAddress = '0xPROPOSAL_2';
     setupMocks({
       ...defaults,
@@ -325,11 +326,10 @@ describe('Add Account for Single Wallet', () => {
       hasInfIouApproval: false,
       hasInfMkrApproval: false,
       hasProxy: false,
+      proposalAddresses: [proposalAddress],
       proxy: {
         coldAddress,
-        hotAddress,
-        proxyAddress,
-        proposalAddresses: [proposalAddress]
+        hotAddress
       },
       numDepositsChief: 1
     });
@@ -373,7 +373,7 @@ describe('Add Account for Single Wallet', () => {
   });
 
   test('should return an empty array if not voting for any proposals using a single wallet', async () => {
-    setupMocks({ ...defaults, hasProxy: false, getNumDepositsChief: 1 });
+    setupMocks({ ...defaults, hasProxy: false, numDepositsChief: 1 });
 
     await addAccount({ address: singleAddress })(
       store.dispatch,
@@ -410,7 +410,7 @@ describe('Add Account for Single Wallet', () => {
     });
   });
 
-  test.skip('should return the first proposal if voting for many proposals with a single wallet', async () => {
+  test('should return each proposal if voting for many proposals with a single wallet', async () => {
     const anotherProposalAddress = '0xPROPOSAL_2';
     setupMocks({
       ...defaults,
@@ -428,7 +428,9 @@ describe('Add Account for Single Wallet', () => {
     expect(store.getActions()[1]).toEqual({
       type: ADD_ACCOUNT,
       payload: expect.objectContaining({
-        votingFor: [proposalAddress.toLowerCase()]
+        votingFor: [proposalAddress, anotherProposalAddress].map(x =>
+          x.toLowerCase()
+        )
       })
     });
   });

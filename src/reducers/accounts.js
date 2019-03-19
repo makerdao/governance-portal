@@ -107,11 +107,9 @@ export const addAccounts = accounts => async dispatch => {
             fn: () => voteProxy.getVotedProposalAddresses()
           })
         )
-        .then(addresses => {
-          console.log('addresses', addresses);
-
-          return (addresses || []).map(address => address.toLowerCase());
-        });
+        .then(addresses =>
+          (addresses || []).map(address => address.toLowerCase())
+        );
     }
 
     const chiefAddress = window.maker
@@ -189,9 +187,7 @@ export const addSingleWalletAccount = account => async dispatch => {
 
   const currProposal = (async () => {
     const _slate = await chiefService.getVotedSlate(account.address);
-    console.log('_slate', _slate);
     const slateAddresses = await chiefService.getSlateAddresses(_slate);
-    console.log('slateAddresses', slateAddresses);
     return (slateAddresses || []).map(address => address.toLowerCase());
   })();
 
@@ -251,10 +247,8 @@ export const addAccount = account => async dispatch => {
 
   // if we don't have a vote proxy, but we have locked MKR, we must be voting with a single wallet
   if (!hasProxy && numDeposits.toNumber() > 0) {
-    console.log('addsingle account');
     return await dispatch(addSingleWalletAccount(account));
   } else {
-    console.log('add proxy account');
     return await dispatch(addAccounts([account]));
   }
 };
