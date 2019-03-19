@@ -340,6 +340,24 @@ each([
       });
     });
 
+    test.only('set onboarding as finished, if the new account is a single wallet account', () => {
+      const state = initialState;
+
+      const newState = reducer(state, {
+        type: SET_ACTIVE_ACCOUNT,
+        payload: {
+          newAccount: {
+            address: newAccountAddress,
+            hasProxy: false,
+            singleWallet: true,
+            proxy: { hasInfMkrApproval: true }
+          }
+        }
+      });
+
+      expect(newState.state).toEqual(OnboardingStates.FINISHED);
+    });
+
     test('set onboarding as finished, if the new account is a hot account, with a proxy set up', () => {
       const state = initialState;
 
