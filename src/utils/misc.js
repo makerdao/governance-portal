@@ -63,7 +63,6 @@ export const promiseWait = time =>
  * @return {Promise}
  */
 export const promiseRetry = ({ times = 3, fn, delay = 500, args = [] }) => {
-  console.log('fn', fn);
   return fn(...args).catch(err =>
     times > 0
       ? promiseWait(delay).then(() =>
