@@ -182,7 +182,6 @@ export const withdrawVote = proposalAddress => (dispatch, getState) => {
 
   let voteExec;
   if (activeAccount.singleWallet) {
-    console.log('withdraw vote from chief with', sortBytesArray(filteredSlate));
     voteExec = window.maker
       .service('chief')
       .vote(sortBytesArray(filteredSlate));

@@ -52,7 +52,6 @@ class SingleWalletApprovals extends React.Component {
   };
 
   render() {
-    console.log('3-SingleWallet state', this.state, this.props);
     const {
       hotWallet,
       coldWallet,
@@ -91,7 +90,7 @@ class SingleWalletApprovals extends React.Component {
               walletProvider={singleWallet.type}
               status={iouApproveProxyTxStatus}
               tx={iouApproveProxyTxHash}
-              onRetry={this.toGrantPermissions}
+              onRetry={this.toGrantIouPermissions}
               onNext={onComplete}
             />
           </Stepper>
