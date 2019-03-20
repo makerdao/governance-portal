@@ -12,13 +12,11 @@ cache:
 install:
   - yarn install
 before_script:
-  - npm install -g codecov
+  - npm install -g codecov now
 script:
   - yarn cover
   - codecov
   - yarn build
-before_deploy:
-  - npm install now --no-save
 deploy:
   - provider: script
     script: now ./build --token $NOW_TOKEN --team mkr-js-prod -A ../now.json && now alias --token $NOW_TOKEN --team mkr-js-prod
