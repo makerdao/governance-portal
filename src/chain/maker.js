@@ -8,7 +8,8 @@ import { netToUri } from '../utils/ethereum';
 
 export default async function createMaker(
   network = 'mainnet',
-  testchainConfigId
+  testchainConfigId,
+  useMcdKovanContracts
 ) {
   let gasPrice = 6 * 10 ** 9; // default to 6 Gwei gas price
   try {
@@ -26,7 +27,7 @@ export default async function createMaker(
     plugins: [
       trezorPlugin,
       ledgerPlugin,
-      [governancePlugin, { network, mcd: !!testchainConfigId }]
+      [governancePlugin, { network, mcd: useMcdKovanContracts }]
     ],
     autoAuthenticate: true,
     log: false,

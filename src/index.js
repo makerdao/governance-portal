@@ -52,13 +52,21 @@ const currTheme = {
 };
 
 const params = new URL(window.location).searchParams;
-let testchainConfigId = params.get('testchain_id');
+const testchainConfigId = params.get('testchain_id');
+const mcdParam = params.get('mcd');
+let useMcdKovanContracts = false;
+if (mcdParam === 'true') useMcdKovanContracts = true;
+
 const store = createStore();
 
 if (testchainConfigId) {
   const network = 'ganache';
   (async () => {
-    window.maker = await createMaker(network, testchainConfigId);
+    window.maker = await createMaker(
+      network,
+      testchainConfigId,
+      useMcdKovanContracts
+    );
     await window.maker.authenticate();
     store.dispatch(init(network));
   })();
