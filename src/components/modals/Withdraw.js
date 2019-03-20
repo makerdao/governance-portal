@@ -40,6 +40,7 @@ const Withdraw = ({ account, txHash, txStatus, balance, modalClose, free }) => {
             <StyledTop>
               <StyledTitle>Withdraw MKR</StyledTitle>
             </StyledTop>
+            {/* TODO check verbiage from the blurb for singlewallet voting */}
             <StyledBlurb>
               Please select the amount of MKR to withdraw from the voting
               contract. This will be sent back to the designated cold wallet.

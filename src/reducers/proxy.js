@@ -2,7 +2,12 @@ import ReactGA from 'react-ga';
 
 import { createReducer } from '../utils/redux';
 import { parseError } from '../utils/misc';
-import { getAccount, addAccounts, SET_ACTIVE_ACCOUNT } from './accounts';
+import {
+  getAccount,
+  addAccounts,
+  addSingleWalletAccount,
+  SET_ACTIVE_ACCOUNT
+} from './accounts';
 import { initApprovalsFetch } from './approvals';
 import { AccountTypes, TransactionStatus } from '../utils/constants';
 import { addToastWithTimeout, ToastTypes } from './toasts';
@@ -11,7 +16,8 @@ import { MKR } from '../chain/maker';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
-  MKR_APPROVE_SUCCESS
+  MKR_APPROVE_SUCCESS,
+  IOU_APPROVE_SUCCESS
 } from './sharedProxyConstants';
 
 // Constants ----------------------------------------------
@@ -36,7 +42,12 @@ export const MKR_APPROVE_REQUEST = 'proxy/MKR_APPROVE_REQUEST';
 export const MKR_APPROVE_STATUS_UPDATE = 'proxy/MKR_APPROVE_STATUS_UPDATE';
 export const MKR_APPROVE_SENT = 'proxy/MKR_APPROVE_SENT';
 
+export const IOU_APPROVE_REQUEST = 'proxy/IOU_APPROVE_REQUEST';
+export const IOU_APPROVE_STATUS_UPDATE = 'proxy/IOU_APPROVE_STATUS_UPDATE';
+export const IOU_APPROVE_SENT = 'proxy/IOU_APPROVE_SENT';
+
 export const MKR_APPROVE_FAILURE = 'proxy/MKR_APPROVE_FAILURE';
+export const IOU_APPROVE_FAILURE = 'proxy/IOU_APPROVE_FAILURE';
 
 export const WITHDRAW_MKR_REQUEST = 'proxy/WITHDRAW_MKR_REQUEST';
 export const WITHDRAW_MKR_SENT = 'proxy/WITHDRAW_MKR_SENT';
@@ -115,7 +126,9 @@ function useHotAccount(state) {
 function useColdAccount(state) {
   const account = getAccount(state, window.maker.currentAddress());
 
-  if (state.onboarding.coldWallet.address !== account.address) {
+  if (account.singleWallet) {
+    return true;
+  } else if (state.onboarding.coldWallet.address !== account.address) {
     window.maker.useAccountWithAddress(state.onboarding.coldWallet.address);
   }
   return true;
@@ -166,11 +179,15 @@ export const lock = value => async (dispatch, getState) => {
   if (value === 0) return;
   if (!useColdAccount(getState())) return;
   const account = getAccount(getState(), window.maker.currentAddress());
-  const lock = window.maker
-    .service('voteProxy')
-    .lock(account.proxy.address, value);
 
   dispatch({ type: SEND_MKR_TO_PROXY_REQUEST, payload: value });
+
+  let lock;
+  if (account.singleWallet) {
+    lock = window.maker.service('chief').lock(value);
+  } else {
+    lock = window.maker.service('voteProxy').lock(account.proxy.address, value);
+  }
 
   return handleTx({
     prefix: 'SEND_MKR_TO_PROXY',
@@ -185,9 +202,12 @@ export const free = value => (dispatch, getState) => {
   if (value <= 0) return;
   const account = getAccount(getState(), window.maker.currentAddress());
 
-  const free = window.maker
-    .service('voteProxy')
-    .free(account.proxy.address, value);
+  let free;
+  if (account.singleWallet) {
+    free = window.maker.service('chief').free(value);
+  } else {
+    free = window.maker.service('voteProxy').free(account.proxy.address, value);
+  }
 
   dispatch({ type: WITHDRAW_MKR_REQUEST, payload: value });
   return handleTx({
@@ -223,6 +243,47 @@ export const breakLink = () => (dispatch, getState) => {
   });
 };
 
+export const mkrApproveSingleWallet = () => (dispatch, getState) => {
+  const account = getAccount(getState(), window.maker.currentAddress());
+
+  const chiefAddress = window.maker
+    .service('smartContract')
+    .getContractAddressByName('CHIEF');
+
+  const giveChiefAllowance = window.maker
+    .getToken(MKR)
+    .approveUnlimited(chiefAddress);
+
+  dispatch({ type: MKR_APPROVE_REQUEST });
+  return handleTx({
+    prefix: 'MKR_APPROVE',
+    dispatch,
+    txObject: giveChiefAllowance,
+    acctType: account.type,
+    successPayload: 'single-wallet'
+  }).then(success => success && dispatch(addSingleWalletAccount(account)));
+};
+
+export const iouApproveSingleWallet = () => (dispatch, getState) => {
+  const account = getAccount(getState(), window.maker.currentAddress());
+
+  const chiefAddress = window.maker
+    .service('smartContract')
+    .getContractAddressByName('CHIEF');
+
+  const giveChiefAllowance = window.maker
+    .getToken('IOU')
+    .approveUnlimited(chiefAddress);
+
+  dispatch({ type: IOU_APPROVE_REQUEST });
+  return handleTx({
+    prefix: 'IOU_APPROVE',
+    dispatch,
+    txObject: giveChiefAllowance,
+    acctType: account.type
+  }).then(success => success && dispatch(addSingleWalletAccount(account)));
+};
+
 export const mkrApproveProxy = () => (dispatch, getState) => {
   if (!useColdAccount(getState())) return;
   const account = getAccount(getState(), window.maker.currentAddress());
@@ -256,6 +317,7 @@ const initialState = {
   initiateLinkTxStatus: TransactionStatus.NOT_STARTED,
   approveLinkTxStatus: TransactionStatus.NOT_STARTED,
   mkrApproveProxyTxStatus: TransactionStatus.NOT_STARTED,
+  iouApproveProxyTxStatus: TransactionStatus.NOT_STARTED,
   sendMkrTxStatus: TransactionStatus.NOT_STARTED,
   withdrawMkrTxStatus: TransactionStatus.NOT_STARTED,
   breakLinkTxStatus: TransactionStatus.NOT_STARTED
@@ -345,6 +407,25 @@ const proxy = createReducer(initialState, {
   [MKR_APPROVE_FAILURE]: state => ({
     ...state,
     mkrApproveProxyTxStatus: TransactionStatus.ERROR
+  }),
+  // IOU Approve Chief ------------------------------
+  [IOU_APPROVE_REQUEST]: state => ({
+    ...state,
+    iouApproveProxyTxHash: '',
+    iouApproveProxyTxStatus: TransactionStatus.NOT_STARTED
+  }),
+  [IOU_APPROVE_SENT]: (state, { payload }) => ({
+    ...state,
+    iouApproveProxyTxStatus: TransactionStatus.PENDING,
+    iouApproveProxyTxHash: payload.txHash
+  }),
+  [IOU_APPROVE_SUCCESS]: state => ({
+    ...state,
+    iouApproveProxyTxStatus: TransactionStatus.MINED
+  }),
+  [IOU_APPROVE_FAILURE]: state => ({
+    ...state,
+    iouApproveProxyTxStatus: TransactionStatus.ERROR
   }),
   // Withdraw ---------------------------------------
   [WITHDRAW_MKR_REQUEST]: state => ({

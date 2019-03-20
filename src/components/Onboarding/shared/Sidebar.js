@@ -80,6 +80,7 @@ const Sidebar = ({
   network,
   hotWallet,
   coldWallet,
+  singleWallet,
   initiateLinkTxHash,
   approveLinkTxHash,
   mkrApproveProxyTxHash,
@@ -90,8 +91,42 @@ const Sidebar = ({
   return (
     <Card p="m" gridRow="span -1">
       <Grid gridRowGap="l">
-        {(hotWallet || coldWallet) && (
+        {(hotWallet || coldWallet || singleWallet) && (
           <Grid gridTemplateColumns="auto 1fr" gridColumnGap="s">
+            {singleWallet && (
+              <React.Fragment>
+                <IconBackground gridColumn="1" gridRow="1" zIndex="1">
+                  <WalletIcon
+                    provider={singleWallet.type}
+                    style={{ maxWidth: iconSize, maxHeight: iconSize }}
+                  />
+                </IconBackground>
+                <Flex justifyContent="center" flexDirection="column">
+                  <DataLabel>YOUR VOTING WALLET</DataLabel>
+                  <div>
+                    <Link>
+                      <Text t="p2" fontWeight="medium">
+                        <Address shorten full={singleWallet.address} />
+                      </Text>
+                    </Link>
+                  </div>
+                  <SubtitleDataLabel>
+                    {approveLinkTxHash &&
+                      approveLinkTxStatus === TransactionStatus.MINED && (
+                        <Flex>
+                          <p>LINK APPROVED ON HW </p>
+                          <GreyTag>
+                            TX{' '}
+                            <Link>
+                              <Address veryShort full={approveLinkTxHash} />
+                            </Link>
+                          </GreyTag>
+                        </Flex>
+                      )}
+                  </SubtitleDataLabel>
+                </Flex>
+              </React.Fragment>
+            )}
             {hotWallet && (
               <React.Fragment>
                 <IconBackground gridColumn="1" gridRow="1" zIndex="1">
@@ -214,6 +249,41 @@ const Sidebar = ({
                   </Flex>
                 </React.Fragment>
               )}
+            {singleWallet && singleWallet.proxy.hasInfMkrApproval && (
+              <React.Fragment>
+                <ConnectingLine
+                  gridColumn="1"
+                  gridRow="1/span 3"
+                  lineStyle="dotted"
+                />
+                <Box gridRow="2" height={connectingLineHeight} />
+                <IconBackground gridColumn="1" gridRow="3">
+                  <img src={logo} alt="" />
+                </IconBackground>
+                <Flex justifyContent="center" flexDirection="column">
+                  <DataLabel>STORED MKR</DataLabel>
+                  <div>
+                    <Text t="p2" fontWeight="semibold">
+                      {singleWallet.proxy.votingPower || 0} MKR
+                    </Text>
+                  </div>
+                  <SubtitleDataLabel>
+                    {mkrApproveProxyTxHash &&
+                      mkrApproveProxyTxStatus === TransactionStatus.MINED && (
+                        <p>
+                          APPROVED ON CW{' '}
+                          <GreyTag>
+                            TX{' '}
+                            <Link>
+                              <Address veryShort full={mkrApproveProxyTxHash} />
+                            </Link>
+                          </GreyTag>
+                        </p>
+                      )}
+                  </SubtitleDataLabel>
+                </Flex>
+              </React.Fragment>
+            )}
           </Grid>
         )}
         <div>

@@ -112,8 +112,12 @@ const updateVotingFor = (
 
 export const sendVote = proposalAddress => (dispatch, getState) => {
   const activeAccount = getAccount(getState(), window.maker.currentAddress());
-  if (!activeAccount || !activeAccount.hasProxy)
+  if (
+    !activeAccount ||
+    (!activeAccount.hasProxy && !activeAccount.singleWallet)
+  )
     throw new Error('must have account active');
+
   dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
 
   const { hat, proposals } = getState();
@@ -142,9 +146,14 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
 
   slate.push(proposalAddress);
 
-  const voteExec = window.maker
-    .service('voteProxy')
-    .voteExec(activeAccount.proxy.address, sortBytesArray(slate));
+  let voteExec;
+  if (activeAccount.singleWallet) {
+    voteExec = window.maker.service('chief').vote(sortBytesArray(slate));
+  } else {
+    voteExec = window.maker
+      .service('voteProxy')
+      .voteExec(activeAccount.proxy.address, sortBytesArray(slate));
+  }
 
   return handleTx({
     prefix: 'VOTE',
@@ -159,7 +168,10 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
 
 export const withdrawVote = proposalAddress => (dispatch, getState) => {
   const activeAccount = getAccount(getState(), window.maker.currentAddress());
-  if (!activeAccount || !activeAccount.hasProxy)
+  if (
+    !activeAccount ||
+    (!activeAccount.hasProxy && !activeAccount.singleWallet)
+  )
     throw new Error('must have account active');
 
   dispatch({ type: WITHDRAW_REQUEST });
@@ -168,9 +180,17 @@ export const withdrawVote = proposalAddress => (dispatch, getState) => {
     address => address.toLowerCase() !== proposalAddress.toLowerCase()
   );
 
-  const voteExec = window.maker
-    .service('voteProxy')
-    .voteExec(activeAccount.proxy.address, sortBytesArray(filteredSlate));
+  let voteExec;
+  if (activeAccount.singleWallet) {
+    console.log('withdraw vote from chief with', sortBytesArray(filteredSlate));
+    voteExec = window.maker
+      .service('chief')
+      .vote(sortBytesArray(filteredSlate));
+  } else {
+    voteExec = window.maker
+      .service('voteProxy')
+      .voteExec(activeAccount.proxy.address, sortBytesArray(filteredSlate));
+  }
 
   return handleTx({
     prefix: 'WITHDRAW',

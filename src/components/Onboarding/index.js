@@ -6,6 +6,8 @@ import {
   onboardingClose,
   onboardingNextStep,
   onboardingPrevStep,
+  onboardingSkipProxy,
+  onboardingToStep,
   setOnboardingState,
   OnboardingStates
 } from '../../reducers/onboarding';
@@ -18,6 +20,7 @@ import LockMKR from './LockMKR';
 import StartVoting from './StartVoting';
 
 import { OnboardingFullScreen, Box } from '@makerdao/ui-components';
+import SingleWallet from './SingleWallet';
 
 const Background = styled(Box)`
   opacity: 0;
@@ -34,17 +37,16 @@ const Background = styled(Box)`
   `};
 `;
 
-const Onboarding = ({
-  open,
-  step,
-  state,
-  hotWalletAddress,
-  onboardingClose,
-  onboardingNextStep,
-  onboardingPrevStep,
-  setOnboardingState,
-  setHotWallet
-}) => {
+const Onboarding = ({ open, step, state, ...props }) => {
+  const onboardingProps = {
+    close: props.onboardingClose,
+    nextStep: props.onboardingNextStep,
+    prevStep: props.onboardingPrevStep,
+    toStep: props.onboardingToStep,
+    setState: props.setOnboardingState,
+    skipPoxy: props.onboardingSkipProxy
+  };
+
   return (
     <Background
       show={open}
@@ -60,45 +62,88 @@ const Onboarding = ({
         show={open && state === OnboardingStates.INTRODUCTION}
         onClose={onboardingClose}
         onLinkedWallet={() =>
-          setOnboardingState(OnboardingStates.SETUP_LINKED_WALLET)
+          onboardingProps.setState(OnboardingStates.SETUP_LINKED_WALLET)
+        }
+        onSingleWallet={() =>
+          onboardingProps.setState(OnboardingStates.SETUP_SINGLE_WALLET)
         }
       />
-      <OnboardingFullScreen
-        step={step}
-        show={open && state === OnboardingStates.SETUP_LINKED_WALLET}
-        onClose={onboardingClose}
-        steps={[
-          'Terms of use',
-          'Select Voting Wallet',
-          'Select MKR Balance',
-          'Initiate Link',
-          'Lock MKR',
-          'Start Voting'
-        ]}
-      >
-        <Terms
-          onCancel={() => setOnboardingState(OnboardingStates.INTRODUCTION)}
-          onComplete={onboardingNextStep}
+      {state === OnboardingStates.SETUP_LINKED_WALLET ? (
+        <ProxyOnboarding step={step} open={open} onboarding={onboardingProps} />
+      ) : state === OnboardingStates.SETUP_SINGLE_WALLET ? (
+        <SingleWalletOnboarding
+          step={step}
+          open={open}
+          onboarding={onboardingProps}
         />
-
-        <ChooseHotWallet onComplete={onboardingNextStep} />
-        <ChooseColdWallet
-          onComplete={onboardingNextStep}
-          onCancel={onboardingPrevStep}
-        />
-        <InitiateLink
-          onComplete={onboardingNextStep}
-          onCancel={onboardingPrevStep}
-        />
-        <LockMKR onComplete={onboardingNextStep} />
-        <StartVoting
-          onComplete={() => {
-            onboardingClose();
-            setOnboardingState(OnboardingStates.FINISHED);
-          }}
-        />
-      </OnboardingFullScreen>
+      ) : null}
     </Background>
+  );
+};
+
+const ProxyOnboarding = ({ open, step, onboarding }) => {
+  return (
+    <OnboardingFullScreen
+      step={step}
+      show={open}
+      onClose={onboarding.close}
+      steps={[
+        'Terms of use',
+        'Select Voting Wallet',
+        'Select MKR Balance',
+        'Initiate Link',
+        'Lock MKR',
+        'Start Voting'
+      ]}
+    >
+      <Terms
+        onCancel={() => onboarding.setState(OnboardingStates.INTRODUCTION)}
+        onComplete={onboarding.nextStep}
+      />
+      <ChooseHotWallet onComplete={onboarding.nextStep} />
+      <ChooseColdWallet
+        onComplete={onboarding.nextStep}
+        onCancel={onboarding.prevStep}
+      />
+      <InitiateLink
+        onComplete={onboarding.nextStep}
+        onCancel={onboarding.prevStep}
+      />
+      <LockMKR onComplete={onboarding.nextStep} />
+      <StartVoting
+        onComplete={() => {
+          onboarding.close();
+          onboarding.setState(OnboardingStates.FINISHED);
+        }}
+      />
+    </OnboardingFullScreen>
+  );
+};
+
+const SingleWalletOnboarding = ({ open, step, onboarding }) => {
+  return (
+    <OnboardingFullScreen
+      step={step}
+      show={open}
+      onClose={onboarding.close}
+      steps={['Terms of use', 'Grant Approval', 'Lock MKR', 'Start Voting']}
+    >
+      <Terms
+        onCancel={() => onboarding.setState(OnboardingStates.INTRODUCTION)}
+        onComplete={onboarding.nextStep}
+      />
+      <SingleWallet
+        onComplete={() => onboarding.skipPoxy({ step: 2 })}
+        onCancel={onboarding.prevStep}
+      />
+      <LockMKR onComplete={onboarding.nextStep} />
+      <StartVoting
+        onComplete={() => {
+          onboarding.close();
+          onboarding.setState(OnboardingStates.FINISHED);
+        }}
+      />
+    </OnboardingFullScreen>
   );
 };
 
@@ -110,6 +155,8 @@ export default connect(
     setOnboardingState,
     onboardingClose,
     onboardingNextStep,
-    onboardingPrevStep
+    onboardingPrevStep,
+    onboardingSkipProxy,
+    onboardingToStep
   }
 )(Onboarding);

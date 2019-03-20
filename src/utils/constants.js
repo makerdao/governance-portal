@@ -1,7 +1,6 @@
 export const AccountTypes = {
   LEDGER: 'ledger',
   TREZOR: 'trezor',
-  // METAMASK: 'provider'
   METAMASK: 'browser'
 };
 

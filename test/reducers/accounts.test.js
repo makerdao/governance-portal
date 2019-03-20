@@ -33,14 +33,20 @@ const mockStore = configureMockStore(middlewares);
 const hotAddress = '0xHOT';
 const coldAddress = '0xCOLD';
 const proxyAddress = '0xPROXY';
+const singleAddress = '0xSINGLE';
 const proposalAddress = '0xPROPOSAL';
+const proposalAddresses = [];
+const slateAddress = '0xSLATE';
 const defaultBalance = 100.0;
+const hasInfIouApproval = true;
 const hasInfMkrApproval = true;
 const defaultVotingPower = 50.0;
 const hasProxy = true;
+const numDepositsChief = 0;
 
 const defaults = {
   balance: defaultBalance,
+  hasInfIouApproval,
   hasInfMkrApproval,
   votingPower: defaultVotingPower,
   hasProxy,
@@ -55,7 +61,8 @@ const defaults = {
 const setupMocks = (opts = defaults, services = {}) => {
   const balanceOf = jest.fn().mockReturnValue(
     Promise.resolve({
-      toBigNumber: () => ({ toFixed: () => opts.balance })
+      toBigNumber: () => ({ toFixed: () => opts.balance }),
+      toFixed: () => opts.balance
     })
   );
   const allowance = jest.fn().mockResolvedValue({
@@ -68,7 +75,7 @@ const setupMocks = (opts = defaults, services = {}) => {
 
   const getVotedProposalAddresses = jest
     .fn()
-    .mockReturnValue(opts.proxy.proposalAddresses);
+    .mockImplementation(() => Promise.resolve(opts.proxy.proposalAddresses));
   const getNumDeposits = jest.fn().mockReturnValue({
     toBigNumber: () => ({ toFixed: () => opts.votingPower })
   });
@@ -89,11 +96,29 @@ const setupMocks = (opts = defaults, services = {}) => {
       : {}
   });
 
+  const getNumDepositsChief = jest.fn().mockReturnValue({
+    toNumber: () => opts.numDepositsChief
+  });
+  const getVotedSlate = jest
+    .fn()
+    .mockImplementation(() => Promise.resolve(opts.slateAddress));
+  const getSlateAddresses = jest
+    .fn()
+    .mockImplementation(() => Promise.resolve(opts.proposalAddresses));
+
+  const getContractAddressByName = jest.fn();
+
   const service = jest.fn().mockImplementation(service => {
     const allServices = {
       voteProxy: {
         getVoteProxy
       },
+      chief: {
+        getNumDeposits: getNumDepositsChief,
+        getVotedSlate,
+        getSlateAddresses
+      },
+      smartContract: { getContractAddressByName },
       ...services
     };
     return allServices[service];
@@ -105,7 +130,7 @@ const setupMocks = (opts = defaults, services = {}) => {
   };
 };
 
-describe('Add Account', () => {
+describe('Add Account with Vote Proxy', () => {
   let store;
   beforeEach(() => {
     store = mockStore({
@@ -116,6 +141,7 @@ describe('Add Account', () => {
   test('should add an account enriched with information', async () => {
     setupMocks({
       balance: 200.2,
+      hasInfIouApproval: false,
       hasInfMkrApproval: false,
       votingPower: 3,
       hasProxy: true,
@@ -129,6 +155,7 @@ describe('Add Account', () => {
 
     await addAccount({ address: hotAddress })(store.dispatch, store.getState);
 
+    expect(window.maker.getToken).toBeCalledWith('IOU');
     expect(window.maker.getToken).toBeCalledWith(MKR);
     expect(store.getActions().length).toBe(3);
     expect(store.getActions()[0]).toEqual({
@@ -139,10 +166,12 @@ describe('Add Account', () => {
       type: ADD_ACCOUNT,
       payload: {
         address: hotAddress,
-        hasProxy: true,
         mkrBalance: 200.2,
+        hasProxy: true,
         proxyRole: 'hot',
-        votingFor: proposalAddress,
+        hasInfIouApproval: false,
+        hasInfMkrApproval: false,
+        votingFor: [proposalAddress.toLowerCase()],
         proxy: {
           address: proxyAddress,
           hasInfMkrApproval: false,
@@ -161,7 +190,7 @@ describe('Add Account', () => {
     });
   });
 
-  test('should return hasProxy false and an empty proxy when there is no proxy', async () => {
+  test('should return hasProxy false and an empty proxy when there is no proxy and no chief deposits', async () => {
     setupMocks({
       ...defaults,
       hasProxy: false
@@ -175,10 +204,11 @@ describe('Add Account', () => {
         address: coldAddress,
         proxyRole: '',
         hasProxy: false,
-        votingFor: '',
+        votingFor: [],
         proxy: expect.objectContaining({
           address: '',
           votingPower: 0,
+          hasInfIouApproval: false,
           hasInfMkrApproval: false,
           linkedAccount: {}
         })
@@ -200,15 +230,42 @@ describe('Add Account', () => {
     });
   });
 
-  test('should return an empty string if not voting for any proposals', async () => {
-    setupMocks(defaults);
+  test('should return an empty array if not voting for any proposals', async () => {
+    // Override VoteProxy mock with empty voted proposal
+    const getNumDeposits = jest.fn().mockReturnValue({
+      toBigNumber: () => ({ toFixed: () => 0 })
+    });
+    const getColdAddress = jest.fn().mockReturnValue('0xCOLD');
+    const getHotAddress = jest.fn().mockReturnValue('0xHOT');
+    const getProxyAddress = jest.fn().mockReturnValue('0xPROXY');
+
+    const getVotedProposalAddresses = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve([]));
+
+    const getVoteProxy = jest.fn().mockResolvedValue({
+      hasProxy: true,
+      voteProxy: {
+        getVotedProposalAddresses,
+        getNumDeposits,
+        getColdAddress,
+        getHotAddress,
+        getProxyAddress
+      }
+    });
+    setupMocks(defaults, {
+      voteProxy: {
+        getVotedProposalAddresses,
+        getVoteProxy
+      }
+    });
 
     await addAccount({ address: coldAddress })(store.dispatch, store.getState);
 
     expect(store.getActions()[1]).toEqual({
       type: ADD_ACCOUNT,
       payload: expect.objectContaining({
-        votingFor: ''
+        votingFor: []
       })
     });
   });
@@ -227,12 +284,13 @@ describe('Add Account', () => {
     expect(store.getActions()[1]).toEqual({
       type: ADD_ACCOUNT,
       payload: expect.objectContaining({
-        votingFor: proposalAddress
+        votingFor: [proposalAddress.toLowerCase()]
       })
     });
   });
 
-  test('should return the first proposal if voting for many proposals', async () => {
+  // Since we're allowing multiple proposals, this test can probably be removed
+  test.skip('should return the first proposal if voting for many proposals', async () => {
     const anotherProposalAddress = '0xPROPOSAL_2';
     setupMocks({
       ...defaults,
@@ -247,7 +305,131 @@ describe('Add Account', () => {
     expect(store.getActions()[1]).toEqual({
       type: ADD_ACCOUNT,
       payload: expect.objectContaining({
-        votingFor: proposalAddress
+        votingFor: [proposalAddress]
+      })
+    });
+  });
+});
+
+describe('Add Account for Single Wallet', () => {
+  let store;
+  beforeEach(() => {
+    store = mockStore({
+      allAccounts: []
+    });
+  });
+
+  test('should add a single wallet account enriched with information', async () => {
+    setupMocks({
+      balance: 200.2,
+      hasInfIouApproval: false,
+      hasInfMkrApproval: false,
+      hasProxy: false,
+      proposalAddresses: [proposalAddress],
+      proxy: {
+        coldAddress,
+        hotAddress
+      },
+      numDepositsChief: 1
+    });
+
+    await addAccount({ address: singleAddress })(
+      store.dispatch,
+      store.getState
+    );
+
+    expect(window.maker.getToken).toBeCalledWith('IOU');
+    expect(window.maker.getToken).toBeCalledWith(MKR);
+    expect(store.getActions().length).toBe(3);
+    expect(store.getActions()[0]).toEqual({
+      type: FETCHING_ACCOUNT_DATA,
+      payload: true
+    });
+    expect(store.getActions()[1]).toEqual({
+      type: ADD_ACCOUNT,
+      payload: {
+        address: singleAddress,
+        mkrBalance: 200.2,
+        hasProxy: false,
+        singleWallet: true,
+        proxyRole: '',
+        votingFor: [proposalAddress.toLowerCase()],
+        hasInfIouApproval: false,
+        hasInfMkrApproval: false,
+        proxy: {
+          votingPower: 1,
+          address: singleAddress,
+          hasInfMkrApproval: false,
+          hasInfIouApproval: false,
+          linkedAccount: ''
+        }
+      }
+    });
+    expect(store.getActions()[2]).toEqual({
+      type: FETCHING_ACCOUNT_DATA,
+      payload: false
+    });
+  });
+
+  test('should return an empty array if not voting for any proposals using a single wallet', async () => {
+    setupMocks({ ...defaults, hasProxy: false, numDepositsChief: 1 });
+
+    await addAccount({ address: singleAddress })(
+      store.dispatch,
+      store.getState
+    );
+
+    expect(store.getActions()[1]).toEqual({
+      type: ADD_ACCOUNT,
+      payload: expect.objectContaining({
+        votingFor: []
+      })
+    });
+  });
+
+  test('should return the proposal if voting for one proposal with a single wallet', async () => {
+    setupMocks({
+      ...defaults,
+      hasProxy: false,
+      numDepositsChief: 1,
+      slateAddress,
+      proposalAddresses: [proposalAddress]
+    });
+
+    await addAccount({ address: singleAddress })(
+      store.dispatch,
+      store.getState
+    );
+
+    expect(store.getActions()[1]).toEqual({
+      type: ADD_ACCOUNT,
+      payload: expect.objectContaining({
+        votingFor: [proposalAddress.toLowerCase()]
+      })
+    });
+  });
+
+  test('should return each proposal if voting for many proposals with a single wallet', async () => {
+    const anotherProposalAddress = '0xPROPOSAL_2';
+    setupMocks({
+      ...defaults,
+      hasProxy: false,
+      numDepositsChief: 1,
+      slateAddress,
+      proposalAddresses: [proposalAddress, anotherProposalAddress]
+    });
+
+    await addAccount({ address: singleAddress })(
+      store.dispatch,
+      store.getState
+    );
+
+    expect(store.getActions()[1]).toEqual({
+      type: ADD_ACCOUNT,
+      payload: expect.objectContaining({
+        votingFor: [proposalAddress, anotherProposalAddress].map(x =>
+          x.toLowerCase()
+        )
       })
     });
   });

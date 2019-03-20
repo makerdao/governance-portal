@@ -12,10 +12,12 @@ const ONBOARDING_TO_STEP = 'onboarding/ONBOARDING_TO_STEP';
 const ONBOARDING_SET_HOT_WALLET = 'onboarding/ONBOARDING_SET_HOT_WALLET';
 const ONBOARDING_SET_COLD_WALLET = 'onboarding/ONBOARDING_SET_COLD_WALLET';
 const ONBOARDING_SET_STATE = 'onboarding/ONBOARDING_SET_STATE';
+const ONBOARDING_SKIP_PROXY = 'onboarding/ONBOARDING_SKIP_PROXY';
 
 export const OnboardingStates = {
   INTRODUCTION: 'introduction',
   SETUP_LINKED_WALLET: 'linked',
+  SETUP_SINGLE_WALLET: 'single',
   FINISHED: 'finished'
 };
 
@@ -42,6 +44,14 @@ export const onboardingNextStep = () => ({
 
 export const onboardingPrevStep = () => ({
   type: ONBOARDING_PREV_STEP
+});
+
+export const onboardingSkipProxy = ({ step }) => ({
+  type: ONBOARDING_SKIP_PROXY,
+  payload: {
+    step,
+    skipProxy: true
+  }
 });
 
 export const setHotWallet = account => ({
@@ -82,7 +92,8 @@ const initialState = {
   open: false,
   state: OnboardingStates.INTRODUCTION,
   hotWallet: undefined,
-  coldWallet: undefined
+  coldWallet: undefined,
+  singleWallet: undefined
 };
 
 const onboarding = createReducer(initialState, {
@@ -105,6 +116,11 @@ const onboarding = createReducer(initialState, {
   [ONBOARDING_PREV_STEP]: state => ({
     ...state,
     step: state.step - 1
+  }),
+  [ONBOARDING_SKIP_PROXY]: (state, { payload }) => ({
+    ...state,
+    step: payload.step,
+    skipProxy: payload.skipProxy
   }),
   [ONBOARDING_SET_STATE]: (state, { payload }) => ({
     ...state,
@@ -134,9 +150,10 @@ const onboarding = createReducer(initialState, {
         // we need access to the cold account to continue set up, so we're done here.
         return { state: OnboardingStates.FINISHED, open: false };
       } else if (
-        newAccount.hasProxy &&
-        newAccount.proxyRole === 'cold' &&
-        newAccount.proxy.hasInfMkrApproval
+        (newAccount.hasProxy &&
+          newAccount.proxyRole === 'cold' &&
+          newAccount.proxy.hasInfMkrApproval) ||
+        (newAccount.singleWallet && newAccount.proxy.hasInfMkrApproval)
       ) {
         // we don't rely on onboarding for depositing MKR.
         return { state: OnboardingStates.FINISHED, open: false };

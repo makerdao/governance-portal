@@ -30,6 +30,20 @@ export const ColdWalletTag = props => (
   </Box>
 );
 
+export const SingleWalletTag = props => (
+  <Box
+    borderRadius="4px"
+    color="blue"
+    bg="blues.light"
+    fontSize="1.2rem"
+    fontWeight="bold"
+    px="xs"
+    {...props}
+  >
+    <p>YOUR WALLET</p>
+  </Box>
+);
+
 export const VotingContractTag = props => (
   <Box
     borderRadius="4px"

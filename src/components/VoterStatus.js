@@ -116,7 +116,8 @@ const VoterStatus = ({
   onboardingOpen,
   modalOpen,
   fetching,
-  signaling
+  signaling,
+  onboardingState
 }) => {
   if (fetching) {
     return (
@@ -125,7 +126,12 @@ const VoterStatus = ({
       </Padding>
     );
   }
-  if (!account || !account.hasProxy)
+  if (
+    !account ||
+    (!account.hasProxy &&
+      !account.singleWallet &&
+      onboardingState !== 'finished')
+  )
     return (
       <FadeIn>
         <WelcomeBanner onboardingOpen={onboardingOpen} />
@@ -133,62 +139,122 @@ const VoterStatus = ({
     );
   const { linkedAccount } = account.proxy;
   const isColdWallet = account.proxyRole === 'cold';
-  const coldWallet = isColdWallet ? account : linkedAccount;
+  const coldWallet =
+    isColdWallet || account.singleWallet ? account : linkedAccount;
   return (
     <FadeIn>
-      <SmallMediumText>
-        <Strong>{isColdWallet ? 'Cold wallet:' : 'Hot wallet:'}</Strong> In
-        voting contract{' '}
-        <Black>{formatRound(account.proxy.votingPower, 4)} MKR</Black>{' '}
-        {account.proxyRole === 'cold' && Number(account.mkrBalance) > 0 && (
-          <TextButton onClick={() => modalOpen(Lock)}>Top-up</TextButton>
-        )}
-        {account.proxyRole === 'cold' &&
-          Number(account.proxy.votingPower) > 0 && <span> | </span>}
-        {Number(account.proxy.votingPower) > 0 && (
-          <TextButton onClick={() => modalOpen(Withdraw)}>Withdraw</TextButton>
-        )}
-        <DotSpacer />
-        In cold wallet{' '}
-        <Black>{formatRound(coldWallet.mkrBalance, 4)} MKR</Black> <DotSpacer />
-        {linkedAccount.address !== '0x' && (
-          <Fragment>
-            {firstLetterCapital(linkedAccount.proxyRole)} wallet:{' '}
-            {cutMiddle(linkedAccount.address)}{' '}
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href={ethScanLink(linkedAccount.address, network)}
-            >
-              Etherscan
-            </a>
-          </Fragment>
-        )}
-        <br />
-        {account.votingFor.length > 0 && account.proxy.votingPower > 0 ? (
-          <Fragment>
-            <WithVote
-              proposalAddresses={account.votingFor}
-              signaling={signaling}
-            >
-              {({ proposalTitle, proposalSlug, noVote }) =>
-                noVote ? (
-                  'Currently not voting'
-                ) : (
-                  <Fragment>
-                    Currently voting for{' '}
-                    <StyledLink disabled={noVote} to={proposalSlug}>
-                      {proposalTitle}
-                    </StyledLink>
-                  </Fragment>
-                )
-              }
-            </WithVote>
-          </Fragment>
-        ) : (
-          'Currently not voting'
-        )}
-      </SmallMediumText>
+      {!account.singleWallet ? (
+        <SmallMediumText>
+          <Strong>{isColdWallet ? 'Cold wallet:' : 'Hot wallet:'}</Strong> In
+          voting contract{' '}
+          <Black>{formatRound(account.proxy.votingPower, 4)} MKR</Black>{' '}
+          {account.proxyRole === 'cold' && Number(account.mkrBalance) > 0 && (
+            <TextButton onClick={() => modalOpen(Lock)}>Top-up</TextButton>
+          )}
+          {account.proxyRole === 'cold' &&
+            Number(account.proxy.votingPower) > 0 && <span> | </span>}
+          {Number(account.proxy.votingPower) > 0 && (
+            <TextButton onClick={() => modalOpen(Withdraw)}>
+              Withdraw
+            </TextButton>
+          )}
+          <DotSpacer />
+          In cold wallet{' '}
+          <Black>{formatRound(coldWallet.mkrBalance, 4)} MKR</Black>{' '}
+          <DotSpacer />
+          {linkedAccount.address !== '0x' && (
+            <Fragment>
+              {firstLetterCapital(linkedAccount.proxyRole)} wallet:{' '}
+              {cutMiddle(linkedAccount.address)}{' '}
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={ethScanLink(linkedAccount.address, network)}
+              >
+                Etherscan
+              </a>
+            </Fragment>
+          )}
+          <br />
+          {account.votingFor && account.proxy.votingPower > 0 ? (
+            <Fragment>
+              <WithVote
+                proposalAddresses={account.votingFor}
+                signaling={signaling}
+              >
+                {({ proposalTitle, proposalSlug, noVote }) =>
+                  noVote ? (
+                    'Currently not voting'
+                  ) : (
+                    <Fragment>
+                      Currently voting for{' '}
+                      <StyledLink disabled={noVote} to={proposalSlug}>
+                        {proposalTitle}
+                      </StyledLink>
+                    </Fragment>
+                  )
+                }
+              </WithVote>
+            </Fragment>
+          ) : (
+            'Currently not voting'
+          )}
+        </SmallMediumText>
+      ) : (
+        <SmallMediumText>
+          <Strong>{'Active wallet:'}</Strong> In voting contract{' '}
+          <Black>{formatRound(account.proxy.votingPower, 4)} MKR</Black>{' '}
+          {Number(account.mkrBalance) > 0 && (
+            <TextButton onClick={() => modalOpen(Lock)}>Top-up</TextButton>
+          )}
+          {Number(account.proxy.votingPower) > 0 && <span> | </span>}
+          {Number(account.proxy.votingPower) > 0 && (
+            <TextButton onClick={() => modalOpen(Withdraw)}>
+              Withdraw
+            </TextButton>
+          )}
+          <DotSpacer />
+          Remaining wallet balance{' '}
+          <Black>{formatRound(coldWallet.mkrBalance, 4)} MKR</Black>{' '}
+          <DotSpacer />
+          {linkedAccount.address !== '0x' && (
+            <Fragment>
+              This wallet: {cutMiddle(account.address)}{' '}
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={ethScanLink(account.address, network)}
+              >
+                Etherscan
+              </a>
+            </Fragment>
+          )}
+          <br />
+          {account.votingFor && account.proxy.votingPower > 0 ? (
+            <Fragment>
+              <WithVote
+                proposalAddresses={account.votingFor}
+                signaling={signaling}
+              >
+                {({ proposalTitle, proposalSlug, noVote }) =>
+                  noVote ? (
+                    'Currently not voting'
+                  ) : (
+                    <Fragment>
+                      Currently voting for{' '}
+                      <StyledLink disabled={noVote} to={proposalSlug}>
+                        {proposalTitle}
+                      </StyledLink>
+                    </Fragment>
+                  )
+                }
+              </WithVote>
+            </Fragment>
+          ) : (
+            'Currently not voting'
+          )}
+        </SmallMediumText>
+      )}
       <BorderBottom />
     </FadeIn>
   );
@@ -197,7 +263,8 @@ const VoterStatus = ({
 const mapStateToProps = state => ({
   account: getActiveAccount(state),
   network: state.metamask.network,
-  fetching: state.accounts.fetching
+  fetching: state.accounts.fetching,
+  onboardingState: state.onboarding.state
 });
 
 export default connect(

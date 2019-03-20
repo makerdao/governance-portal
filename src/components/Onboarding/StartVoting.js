@@ -9,10 +9,16 @@ import Sidebar from './shared/Sidebar';
 
 const containerWidth = '44rem';
 
-const StartVoting = ({ onComplete, hotWallet, coldWallet }) => {
+const StartVoting = ({ onComplete, hotWallet, coldWallet, singleWallet }) => {
   return (
     <TwoColumnSidebarLayout
-      sidebar={<Sidebar hotWallet={hotWallet} coldWallet={coldWallet} />}
+      sidebar={
+        <Sidebar
+          hotWallet={hotWallet}
+          coldWallet={coldWallet}
+          singleWallet={singleWallet}
+        />
+      }
       sidebarPosition="left"
     >
       <Grid gridRowGap="l" maxWidth={`${containerWidth}`}>
@@ -39,8 +45,16 @@ You are now ready to impact the system."
 
 export default connect(
   ({ onboarding, ...state }) => ({
-    hotWallet: getAccount(state, onboarding.hotWallet.address),
-    coldWallet: getAccount(state, onboarding.coldWallet.address)
+    hotWallet: onboarding.skipProxy
+      ? ''
+      : getAccount(state, onboarding.hotWallet.address),
+    coldWallet: onboarding.skipProxy
+      ? ''
+      : getAccount(state, onboarding.coldWallet.address),
+    singleWallet: onboarding.skipProxy
+      ? getAccount(state, state.accounts.activeAccount)
+      : '',
+    skipProxy: onboarding.skipProxy
   }),
   {}
 )(StartVoting);

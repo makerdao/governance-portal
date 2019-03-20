@@ -65,6 +65,7 @@ const initialState = {
     initiateLinkTxStatus: TransactionStatus.NOT_STARTED,
     approveLinkTxStatus: TransactionStatus.NOT_STARTED,
     mkrApproveProxyTxStatus: TransactionStatus.NOT_STARTED,
+    iouApproveProxyTxStatus: TransactionStatus.NOT_STARTED,
     sendMkrTxStatus: TransactionStatus.NOT_STARTED,
     withdrawMkrTxStatus: TransactionStatus.NOT_STARTED,
     breakLinkTxStatus: TransactionStatus.NOT_STARTED
@@ -537,6 +538,7 @@ describe('Proxy Reducer', () => {
       withdrawMkrTxHash: '',
       breakLinkTxHash: '',
       initiateLinkTxStatus: TransactionStatus.MINED,
+      iouApproveProxyTxStatus: TransactionStatus.NOT_STARTED,
       approveLinkTxStatus: TransactionStatus.ERROR,
       mkrApproveProxyTxStatus: TransactionStatus.NOT_STARTED,
       sendMkrTxStatus: TransactionStatus.NOT_STARTED,
