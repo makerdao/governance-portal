@@ -31,9 +31,7 @@ const currTheme = {
 
 const params = new URL(window.location).searchParams;
 const testchainConfigId = params.get('testchain_id');
-const mcdParam = params.get('mcd');
-let useMcdKovanContracts = false;
-if (mcdParam === 'true') useMcdKovanContracts = true;
+const useMcdKovanContracts = !!params.get('mcd');
 
 const store = createStore();
 
