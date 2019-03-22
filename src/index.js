@@ -40,8 +40,8 @@ if (testchainConfigId) {
   (async () => {
     window.maker = await createMaker(
       network,
-      testchainConfigId,
-      useMcdKovanContracts
+      useMcdKovanContracts,
+      testchainConfigId
     );
     await window.maker.authenticate();
     store.dispatch(init(network));
@@ -54,7 +54,10 @@ if (testchainConfigId) {
       store.dispatch(wrongNetwork());
     } else {
       const network = netIdToName(netId);
-      const maker = (window.maker = await createMaker(network));
+      const maker = (window.maker = await createMaker(
+        network,
+        useMcdKovanContracts
+      ));
       await maker.authenticate();
       store.dispatch(init(network));
     }
