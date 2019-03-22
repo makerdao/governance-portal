@@ -8,8 +8,8 @@ import { netToUri } from '../utils/ethereum';
 
 export default async function createMaker(
   network = 'mainnet',
-  testchainConfigId,
-  useMcdKovanContracts
+  useMcdKovanContracts,
+  testchainConfigId
 ) {
   let gasPrice = 6 * 10 ** 9; // default to 6 Gwei gas price
   try {
