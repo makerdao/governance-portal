@@ -11,11 +11,15 @@ export default async function createMaker(
   useMcdKovanContracts,
   testchainConfigId
 ) {
+  let addressOverrides;
+  if (useMcdKovanContracts)
+    addressOverrides = require('./addresses/kovan-mcd.json');
+
   const config = {
     plugins: [
       trezorPlugin,
       ledgerPlugin,
-      [governancePlugin, { network, mcd: useMcdKovanContracts }]
+      [governancePlugin, { network, addressOverrides }]
     ],
     autoAuthenticate: true,
     log: false,
