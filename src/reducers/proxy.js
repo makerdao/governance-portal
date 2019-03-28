@@ -12,6 +12,7 @@ import { initApprovalsFetch } from './approvals';
 import { AccountTypes, TransactionStatus } from '../utils/constants';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { MKR } from '../chain/maker';
+import { getUrlParam } from '../utils/ethereum';
 
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
@@ -21,6 +22,8 @@ import {
 } from './sharedProxyConstants';
 
 // Constants ----------------------------------------------
+const usingTestchain = !!getUrlParam('testchain_id');
+const CHIEF = usingTestchain ? 'MCD_ADM' : 'CHIEF';
 
 export const INITIATE_LINK_REQUEST = 'proxy/INITIATE_LINK_REQUEST';
 export const INITIATE_LINK_SENT = 'proxy/INITIATE_LINK_SENT';
@@ -248,7 +251,7 @@ export const mkrApproveSingleWallet = () => (dispatch, getState) => {
 
   const chiefAddress = window.maker
     .service('smartContract')
-    .getContractAddressByName('CHIEF');
+    .getContractAddressByName(CHIEF);
 
   const giveChiefAllowance = window.maker
     .getToken(MKR)
@@ -269,7 +272,7 @@ export const iouApproveSingleWallet = () => (dispatch, getState) => {
 
   const chiefAddress = window.maker
     .service('smartContract')
-    .getContractAddressByName('CHIEF');
+    .getContractAddressByName(CHIEF);
 
   const giveChiefAllowance = window.maker
     .getToken('IOU')

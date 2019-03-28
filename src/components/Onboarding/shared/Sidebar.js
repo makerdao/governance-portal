@@ -29,7 +29,8 @@ const contractAddresses = [
   {
     name: 'Voting Contract',
     kovan: '0xbbffc76e94b34f72d96d054b31f6424249c1337d',
-    mainnet: '0x8e2a84d6ade1e7fffee039a35ef5f19f13057152'
+    mainnet: '0x8e2a84d6ade1e7fffee039a35ef5f19f13057152',
+    ganache: '0x189a7fbb0038d4b55bd03840be0b0a38de034089'
   }
 ];
 

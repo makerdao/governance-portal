@@ -20,10 +20,13 @@ import {
   MKR_APPROVE_SUCCESS,
   IOU_APPROVE_SUCCESS
 } from './sharedProxyConstants';
-import { MAX_UINT_ETH_BN } from '../utils/ethereum';
+import { MAX_UINT_ETH_BN, getUrlParam } from '../utils/ethereum';
 import { MKR } from '../chain/maker';
 
 // Constants ----------------------------------------------
+
+const usingTestchain = !!getUrlParam('testchain_id');
+const CHIEF = usingTestchain ? 'MCD_ADM' : 'CHIEF';
 
 // the Ledger subprovider interprets these paths to mean that the last digit is
 // the one that should be incremented.
@@ -114,7 +117,7 @@ export const addAccounts = accounts => async dispatch => {
 
     const chiefAddress = window.maker
       .service('smartContract')
-      .getContractAddressByName('CHIEF');
+      .getContractAddressByName(CHIEF);
 
     const linkedAccountData = async () => {
       const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
@@ -178,7 +181,7 @@ export const addSingleWalletAccount = account => async dispatch => {
 
   const chiefAddress = window.maker
     .service('smartContract')
-    .getContractAddressByName('CHIEF');
+    .getContractAddressByName(CHIEF);
 
   const mkrToken = window.maker.getToken(MKR);
   const iouToken = window.maker.getToken('IOU');
