@@ -8,6 +8,7 @@ import { addToastWithTimeout, ToastTypes } from './toasts';
 import { voteTallyInit } from './tally';
 import { initApprovalsFetch } from './approvals';
 import { hatInit } from './hat';
+import { TransactionStatus } from '../utils/constants';
 
 // Constants ----------------------------------------------
 
@@ -111,8 +112,12 @@ const updateVotingFor = (
 
 export const sendVote = proposalAddress => (dispatch, getState) => {
   const activeAccount = getAccount(getState(), window.maker.currentAddress());
-  if (!activeAccount || !activeAccount.hasProxy)
+  if (
+    !activeAccount ||
+    (!activeAccount.hasProxy && !activeAccount.singleWallet)
+  )
     throw new Error('must have account active');
+
   dispatch({ type: VOTE_REQUEST, payload: { address: proposalAddress } });
 
   const { hat, proposals } = getState();
@@ -141,9 +146,14 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
 
   slate.push(proposalAddress);
 
-  const voteExec = window.maker
-    .service('voteProxy')
-    .voteExec(activeAccount.proxy.address, sortBytesArray(slate));
+  let voteExec;
+  if (activeAccount.singleWallet) {
+    voteExec = window.maker.service('chief').vote(sortBytesArray(slate));
+  } else {
+    voteExec = window.maker
+      .service('voteProxy')
+      .voteExec(activeAccount.proxy.address, sortBytesArray(slate));
+  }
 
   return handleTx({
     prefix: 'VOTE',
@@ -158,7 +168,10 @@ export const sendVote = proposalAddress => (dispatch, getState) => {
 
 export const withdrawVote = proposalAddress => (dispatch, getState) => {
   const activeAccount = getAccount(getState(), window.maker.currentAddress());
-  if (!activeAccount || !activeAccount.hasProxy)
+  if (
+    !activeAccount ||
+    (!activeAccount.hasProxy && !activeAccount.singleWallet)
+  )
     throw new Error('must have account active');
 
   dispatch({ type: WITHDRAW_REQUEST });
@@ -167,9 +180,16 @@ export const withdrawVote = proposalAddress => (dispatch, getState) => {
     address => address.toLowerCase() !== proposalAddress.toLowerCase()
   );
 
-  const voteExec = window.maker
-    .service('voteProxy')
-    .voteExec(activeAccount.proxy.address, sortBytesArray(filteredSlate));
+  let voteExec;
+  if (activeAccount.singleWallet) {
+    voteExec = window.maker
+      .service('chief')
+      .vote(sortBytesArray(filteredSlate));
+  } else {
+    voteExec = window.maker
+      .service('voteProxy')
+      .voteExec(activeAccount.proxy.address, sortBytesArray(filteredSlate));
+  }
 
   return handleTx({
     prefix: 'WITHDRAW',
@@ -186,6 +206,7 @@ export const withdrawVote = proposalAddress => (dispatch, getState) => {
 
 const initialState = {
   proposalAddress: '',
+  txStatus: '',
   confirming: false,
   voteProgress: 'confirm',
   txHash: ''
@@ -195,41 +216,41 @@ const vote = createReducer(initialState, {
   [VOTE_REQUEST]: (state, { payload }) => ({
     ...state,
     proposalAddress: payload.address,
-    voteProgress: 'signTx'
+    txStatus: TransactionStatus.NOT_STARTED,
+    txHash: ''
   }),
   [VOTE_SENT]: (state, { payload }) => ({
     ...state,
-    confirming: true,
+    txStatus: TransactionStatus.PENDING,
     txHash: payload.txHash
   }),
   [VOTE_SUCCESS]: state => ({
     ...state,
     proposalAddress: '',
-    confirming: false
+    txStatus: TransactionStatus.MINED
   }),
   [VOTE_FAILURE]: state => ({
     ...state,
     proposalAddress: '',
-    confirming: false,
-    voteProgress: 'confirm'
+    txStatus: TransactionStatus.ERROR
   }),
   [WITHDRAW_REQUEST]: state => ({
     ...state,
-    voteProgress: 'signTx'
+    txHash: '',
+    txStatus: TransactionStatus.NOT_STARTED
   }),
   [WITHDRAW_SENT]: (state, { payload }) => ({
     ...state,
-    confirming: true,
+    txStatus: TransactionStatus.PENDING,
     txHash: payload.txHash
   }),
   [WITHDRAW_SUCCESS]: state => ({
     ...state,
-    confirming: false
+    txStatus: TransactionStatus.MINED
   }),
   [WITHDRAW_FAILURE]: state => ({
     ...state,
-    confirming: false,
-    voteProgress: 'confirm'
+    txStatus: TransactionStatus.ERROR
   }),
   [CLEAR]: () => ({
     ...initialState

@@ -11,27 +11,44 @@ import {
   subtract,
   toNum,
   promiseRetry,
-  promisedProperties
+  promisedProperties,
+  addMkrAndEthBalance
 } from '../utils/misc';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
-  WITHDRAW_ALL_MKR_SUCCESS,
-  INITIATE_LINK_REQUEST
+  MKR_APPROVE_SUCCESS,
+  IOU_APPROVE_SUCCESS
 } from './sharedProxyConstants';
 import { MAX_UINT_ETH_BN } from '../utils/ethereum';
 import { MKR } from '../chain/maker';
 
 // Constants ----------------------------------------------
 
+// the Ledger subprovider interprets these paths to mean that the last digit is
+// the one that should be incremented.
+// i.e. the second path for Live is "44'/60'/1'/0/0"
+// and the second path for Legacy is "44'/60'/0'/0/1"
+const LEDGER_LIVE_PATH = "44'/60'/0'";
+const LEDGER_LEGACY_PATH = "44'/60'/0'/0";
+const DEFAULT_ACCOUNTS_PER_PAGE = 5;
+
 const REMOVE_ACCOUNTS = 'accounts/REMOVE_ACCOUNTS';
-const SET_ACTIVE_ACCOUNT = 'accounts/SET_ACTIVE_ACCOUNT';
-const FETCHING_ACCOUNT_DATA = 'accounts/FETCHING_ACCOUNT_DATA';
+export const SET_ACTIVE_ACCOUNT = 'accounts/SET_ACTIVE_ACCOUNT';
+export const FETCHING_ACCOUNT_DATA = 'accounts/FETCHING_ACCOUNT_DATA';
 export const UPDATE_ACCOUNT = 'accounts/UPDATE_ACCOUNT';
-const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
+export const ADD_ACCOUNT = 'accounts/ADD_ACCOUNT';
 const SET_UNLOCKED_MKR = 'accounts/SET_UNLOCKED_MKR';
 export const NO_METAMASK_ACCOUNTS = 'accounts/NO_METAMASK_ACCOUNTS';
-const SET_INF_MKR_APPROVAL = 'accounts/SET_INF_MKR_APPROVAL';
+
+export const HARDWARE_ACCOUNTS_CONNECTING =
+  'accounts/HARDWARE_ACCOUNTS_CONNECTING';
+export const HARDWARE_ACCOUNTS_CONNECTED =
+  'accounts/HARDWARE_ACCOUNTS_CONNECTED';
+export const HARDWARE_ACCOUNTS_ERROR = 'accounts/HARDWARE_ACCOUNTS_ERROR';
+
+export const HARDWARE_ACCOUNT_CONNECTED = 'accounts/HARDWARE_ACCOUNT_CONNECTED';
+export const HARDWARE_ACCOUNT_ERROR = 'accounts/HARDWARE_ACCOUNT_ERROR';
 
 // Selectors ----------------------------------------------
 
@@ -47,7 +64,7 @@ export function getActiveVotingFor(state) {
   const activeAccount = getActiveAccount(state);
   if (
     !activeAccount ||
-    !activeAccount.hasProxy ||
+    (!activeAccount.hasProxy && !activeAccount.singleWallet) ||
     !(activeAccount.proxy.votingPower > 0)
   )
     return [];
@@ -58,7 +75,7 @@ export function activeCanVote(state) {
   const activeAccount = getActiveAccount(state);
   return (
     activeAccount &&
-    activeAccount.hasProxy &&
+    (activeAccount.hasProxy || activeAccount.singleWallet) &&
     parseFloat(activeAccount.proxy.votingPower) > 0
   );
 }
@@ -70,12 +87,19 @@ export const addAccounts = accounts => async dispatch => {
 
   for (let account of accounts) {
     const mkrToken = window.maker.getToken(MKR);
+    const iouToken = window.maker.getToken('IOU');
+
     const { hasProxy, voteProxy } = await window.maker
       .service('voteProxy')
       .getVoteProxy(account.address);
 
+    const proxyRole = hasProxy
+      ? voteProxy.getColdAddress() === account.address
+        ? 'cold'
+        : 'hot'
+      : '';
+
     let currProposal = Promise.resolve([]);
-    let proxyRole = '';
     if (hasProxy) {
       currProposal = currProposal
         .then(() =>
@@ -86,9 +110,25 @@ export const addAccounts = accounts => async dispatch => {
         .then(addresses =>
           (addresses || []).map(address => address.toLowerCase())
         );
-      proxyRole =
-        voteProxy.getColdAddress() === account.address ? 'cold' : 'hot';
     }
+
+    const chiefAddress = window.maker
+      .service('smartContract')
+      .getContractAddressByName('CHIEF');
+
+    const linkedAccountData = async () => {
+      const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
+      const linkedAddress =
+        otherRole === 'hot'
+          ? voteProxy.getHotAddress()
+          : voteProxy.getColdAddress();
+      return {
+        proxyRole: otherRole,
+        address: linkedAddress,
+        mkrBalance: await toNum(mkrToken.balanceOf(linkedAddress))
+      };
+    };
+
     const _payload = {
       ...account,
       address: account.address,
@@ -98,39 +138,32 @@ export const addAccounts = accounts => async dispatch => {
       hasProxy,
       proxyRole: proxyRole,
       votingFor: currProposal,
+      hasInfMkrApproval: mkrToken
+        .allowance(account.address, chiefAddress)
+        .then(val => val.eq(MAX_UINT_ETH_BN)),
+      hasInfIouApproval: iouToken
+        .allowance(account.address, chiefAddress)
+        .then(val => val.eq(MAX_UINT_ETH_BN)),
       proxy: hasProxy
         ? promisedProperties({
             address: voteProxy.getProxyAddress(),
             votingPower: toNum(voteProxy.getNumDeposits()),
             hasInfMkrApproval: mkrToken
               .allowance(account.address, voteProxy.getProxyAddress())
-              .then(val => val.eq(MAX_UINT_ETH_BN))
+              .then(val => val.eq(MAX_UINT_ETH_BN)),
+            linkedAccount: linkedAccountData()
           })
-        : { address: '', votingPower: 0, hasInfMkrApproval: false }
+        : {
+            address: '',
+            votingPower: 0,
+            hasInfIouApproval: false,
+            hasInfMkrApproval: false,
+            linkedAccount: {}
+          }
     };
 
-    const fetchLinkedAccountData = async () => {
-      if (hasProxy) {
-        const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
-        const linkedAddress =
-          otherRole === 'hot'
-            ? voteProxy.getHotAddress()
-            : voteProxy.getColdAddress();
-        return {
-          address: linkedAddress,
-          proxyRole: otherRole,
-          mkrBalance: await toNum(
-            promiseRetry({ fn: () => mkrToken.balanceOf(linkedAddress) })
-          )
-        };
-      } else return {};
-    };
     try {
-      const [payload, linkedAccount] = await Promise.all([
-        promisedProperties(_payload),
-        fetchLinkedAccountData()
-      ]);
-      payload.proxy.linkedAccount = linkedAccount;
+      const payload = await promisedProperties(_payload);
       dispatch({ type: ADD_ACCOUNT, payload });
     } catch (e) {
       console.error('failed to add account', e);
@@ -140,8 +173,84 @@ export const addAccounts = accounts => async dispatch => {
   dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
 };
 
+export const addSingleWalletAccount = account => async dispatch => {
+  dispatch({ type: FETCHING_ACCOUNT_DATA, payload: true });
+
+  const chiefAddress = window.maker
+    .service('smartContract')
+    .getContractAddressByName('CHIEF');
+
+  const mkrToken = window.maker.getToken(MKR);
+  const iouToken = window.maker.getToken('IOU');
+
+  const chiefService = window.maker.service('chief');
+
+  const currProposal = (async () => {
+    const _slate = await chiefService.getVotedSlate(account.address);
+    const slateAddresses = await chiefService.getSlateAddresses(_slate);
+    return (slateAddresses || []).map(address => address.toLowerCase());
+  })();
+
+  const votingPower = (await chiefService.getNumDeposits(
+    account.address
+  )).toNumber();
+
+  const hasInfMkrApproval = (await mkrToken.allowance(
+    account.address,
+    chiefAddress
+  )).eq(MAX_UINT_ETH_BN);
+
+  const hasInfIouApproval = (await iouToken.allowance(
+    account.address,
+    chiefAddress
+  )).eq(MAX_UINT_ETH_BN);
+
+  const _payload = {
+    ...account,
+    address: account.address,
+    mkrBalance: promiseRetry({
+      fn: async () => (await mkrToken.balanceOf(account.address)).toFixed()
+    }),
+    hasProxy: false,
+    singleWallet: true,
+    proxyRole: '',
+    votingFor: currProposal,
+    hasInfMkrApproval,
+    hasInfIouApproval,
+    proxy: {
+      votingPower,
+      address: account.address,
+      hasInfMkrApproval,
+      hasInfIouApproval,
+      linkedAccount: ''
+    }
+  };
+
+  try {
+    const payload = await promisedProperties(_payload);
+    dispatch({ type: ADD_ACCOUNT, payload });
+  } catch (e) {
+    console.error('failed to add account', e);
+  }
+
+  dispatch({ type: FETCHING_ACCOUNT_DATA, payload: false });
+};
+
 export const addAccount = account => async dispatch => {
-  return dispatch(addAccounts([account]));
+  const { hasProxy } = await window.maker
+    .service('voteProxy')
+    .getVoteProxy(account.address);
+
+  const numDeposits = await window.maker
+    .service('chief')
+    .getNumDeposits(account.address);
+
+  // if we don't have a vote proxy, but we have locked MKR, we must be voting with a single wallet
+  if (!hasProxy && numDeposits.toNumber() > 0) {
+    return await dispatch(addSingleWalletAccount(account));
+  } else {
+    return await dispatch(addAccounts([account]));
+  }
 };
 
 export const removeAccounts = accounts => ({
@@ -154,40 +263,124 @@ export const updateAccount = account => ({
   payload: account
 });
 
-export const setActiveAccount = (address, isMetamask) => async (
-  dispatch,
-  getState
-) => {
-  // if we haven't seen this account before, fetch its data and add it to the
-  // Maker instance
-  if (
-    isMetamask &&
-    !getState().accounts.allAccounts.find(
-      a => a.address.toLowerCase() === address.toLowerCase()
-    )
-  ) {
-    try {
-      await window.maker.service('accounts').addAccount(address, {
-        type: AccountTypes.METAMASK
-      });
-      await dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
-    } catch (error) {
-      // This error occurs when user rejects provider access in MetaMask
-      console.error('Error adding account', error);
-      return dispatch({ type: NO_METAMASK_ACCOUNTS });
-    }
-  }
+export const addMetamaskAccount = address => async (dispatch, getState) => {
+  // Only add new accounts that we haven't seen before
+  if (getAccount(getState(), address)) return;
+
   try {
-    window.maker.useAccountWithAddress(address);
-    return dispatch({ type: SET_ACTIVE_ACCOUNT, payload: address });
-  } catch (err) {
-    return dispatch({ type: NO_METAMASK_ACCOUNTS });
+    await window.maker
+      .service('accounts')
+      .addAccount({ type: AccountTypes.METAMASK });
+    return dispatch(addAccount({ address, type: AccountTypes.METAMASK }));
+  } catch (error) {
+    dispatch({ type: NO_METAMASK_ACCOUNTS });
   }
 };
 
-export function setInfMkrApproval() {
-  return { type: SET_INF_MKR_APPROVAL };
-}
+export const setActiveAccount = address => async (dispatch, getState) => {
+  const state = getState();
+
+  try {
+    window.maker.useAccountWithAddress(address);
+    return dispatch({
+      type: SET_ACTIVE_ACCOUNT,
+      payload: {
+        newAccount: getAccount(state, address),
+        // unfortunately the only way I can think of (short of redoing the whole proxy store data design)
+        // to make sure the proxy store retains transaction information when you're only toggling between
+        // hot and cold accounts. This is so they can resume onboarding without any issues.
+        onboardingHotAddress:
+          state.onboarding.hotWallet && state.onboarding.hotWallet.address,
+        onboardingColdAddress:
+          state.onboarding.coldWallet && state.onboarding.coldWallet.address
+      }
+    });
+  } catch (err) {
+    // Do nothing.
+  }
+};
+
+export const connectHardwareAccounts = (
+  accountType,
+  options = {}
+) => dispatch => {
+  dispatch({
+    type: HARDWARE_ACCOUNTS_CONNECTING
+  });
+
+  let path;
+  if (accountType === AccountTypes.LEDGER && options.live) {
+    path = LEDGER_LIVE_PATH;
+  } else if (accountType === AccountTypes.LEDGER && !options.live) {
+    path = LEDGER_LEGACY_PATH;
+  }
+
+  return new Promise((resolve, reject) => {
+    const onChoose = async (addresses, callback) => {
+      const accountsWithType = await Promise.all(
+        addresses.map(address =>
+          addMkrAndEthBalance({
+            address,
+            type: accountType
+          })
+        )
+      );
+
+      dispatch({
+        type: HARDWARE_ACCOUNTS_CONNECTED,
+        payload: {
+          onAccountChosen: callback
+        }
+      });
+
+      resolve(accountsWithType);
+    };
+
+    window.maker
+      .addAccount({
+        type: accountType,
+        path: path,
+        accountsOffset: options.offset || 0,
+        accountsLength: options.accountsPerPage || DEFAULT_ACCOUNTS_PER_PAGE,
+        choose: onChoose
+      })
+      .catch(err => {
+        dispatch({
+          type: HARDWARE_ACCOUNTS_ERROR
+        });
+        reject(err);
+      });
+  });
+};
+
+export const addHardwareAccount = (address, accountType) => async (
+  dispatch,
+  getState
+) => {
+  try {
+    const {
+      accounts: { onHardwareAccountChosen }
+    } = getState();
+
+    await onHardwareAccountChosen(null, address);
+
+    // add hardware account to maker object
+    await dispatch(
+      addAccount({
+        address,
+        type: accountType
+      })
+    );
+
+    return dispatch({
+      type: HARDWARE_ACCOUNT_CONNECTED
+    });
+  } catch (err) {
+    return dispatch({
+      type: HARDWARE_ACCOUNT_ERROR
+    });
+  }
+};
 
 // Reducer ------------------------------------------------
 
@@ -210,43 +403,12 @@ const withUpdatedAccount = (accounts, updatedAccount) => {
   );
 };
 
-const fakeColdAccount = {
-  address: '0xbeefed1bedded2dabbed3defaced4decade5feed',
-  proxyRole: 'cold',
-  mkrBalance: 222
-};
-
-const fakeHotAccount = {
-  id: '_',
-  address: '0xbeefed1bedded2dabbed3defaced4decade5dead',
-  type: 'fake',
-  hasProxy: true,
-  proxyRole: 'hot',
-  votingFor: '0xbeefed1bedded2dabbed3defaced4decade5feed',
-  mkrBalance: 333,
-  proxy: {
-    address: '0xproxyfake',
-    votingPower: 111,
-    hasInfMkrApproval: false,
-    linkedAccount: fakeColdAccount
-  }
-};
-
-// eslint-disable-next-line no-unused-vars
-const fakeInitialState = {
-  activeAccount: fakeHotAccount.address,
-  allAccounts: [fakeHotAccount, fakeColdAccount],
-  fetching: false
-};
-
-// eslint-disable-next-line no-unused-vars
-const realInitialState = {
+const initialState = {
   activeAccount: '',
   fetching: true,
-  allAccounts: []
+  allAccounts: [],
+  onHardwareAccountChosen: () => {}
 };
-
-const initialState = realInitialState;
 
 const updateProxyBalance = adding => (state, { payload: amount }) => {
   let account = getActiveAccount({ accounts: state });
@@ -314,14 +476,13 @@ const accounts = createReducer(initialState, {
 
     return {
       ...state,
-      allAccounts: uniqConcat([account], state.allAccounts),
-      activeAccount: account.address
+      allAccounts: uniqConcat([account], state.allAccounts)
     };
   },
-  [SET_ACTIVE_ACCOUNT]: (state, { payload: address }) => ({
+  [SET_ACTIVE_ACCOUNT]: (state, { payload: { newAccount } }) => ({
     ...state,
     allAccounts: state.allAccounts,
-    activeAccount: address
+    activeAccount: newAccount.address
   }),
   [SET_UNLOCKED_MKR]: (state, { payload }) => ({
     ...state,
@@ -335,14 +496,36 @@ const accounts = createReducer(initialState, {
     ...state,
     fetching: false
   }),
-  [SET_INF_MKR_APPROVAL]: state => {
+  [MKR_APPROVE_SUCCESS]: (state, { payload }) => {
+    const account = getAccount(
+      { accounts: state },
+      window.maker.currentAddress()
+    );
+
+    const updatedAccount =
+      payload === 'single-wallet'
+        ? {
+            ...account,
+            hasInfMkrApproval: true
+          }
+        : {
+            ...account,
+            proxy: { ...account.proxy, hasInfMkrApproval: true }
+          };
+
+    return {
+      ...state,
+      allAccounts: withUpdatedAccount(state.allAccounts, updatedAccount)
+    };
+  },
+  [IOU_APPROVE_SUCCESS]: state => {
     const account = getAccount(
       { accounts: state },
       window.maker.currentAddress()
     );
     const updatedAccount = {
       ...account,
-      proxy: { ...account.proxy, hasInfMkrApproval: true }
+      hasInfIouApproval: true
     };
     return {
       ...state,
@@ -351,25 +534,29 @@ const accounts = createReducer(initialState, {
   },
   [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),
   [WITHDRAW_MKR_SUCCESS]: updateProxyBalance(false),
-  [WITHDRAW_ALL_MKR_SUCCESS]: updateProxyBalance(false),
-  [INITIATE_LINK_REQUEST]: (state, { payload }) => {
-    const hotAccount = {
-      ...getAccount({ accounts: state }, payload.hotAddress),
-      proxyRole: 'hot'
-    };
-
-    const coldAccount = {
-      ...getAccount({ accounts: state }, payload.coldAddress),
-      proxyRole: 'cold'
-    };
-
+  [HARDWARE_ACCOUNTS_CONNECTING]: (state, { payload }) => {
     return {
       ...state,
-      allAccounts: withUpdatedAccount(
-        withUpdatedAccount(state.allAccounts, hotAccount),
-        coldAccount
-      )
+      onHardwareAccountChosen: () => {}
     };
+  },
+  [HARDWARE_ACCOUNTS_CONNECTED]: (state, { payload }) => {
+    return {
+      ...state,
+      onHardwareAccountChosen: payload.onAccountChosen
+    };
+  },
+  [HARDWARE_ACCOUNTS_ERROR]: state => {
+    return state;
+  },
+  [HARDWARE_ACCOUNT_CONNECTED]: (state, { payload }) => {
+    return {
+      ...state,
+      onHardwareAccountChosen: () => {}
+    };
+  },
+  [HARDWARE_ACCOUNT_ERROR]: state => {
+    return state;
   }
 });
 

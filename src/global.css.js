@@ -20,7 +20,6 @@ const globalStyles = `
     max-height: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    font-size: 16px;
     line-height: 1.5;
     font-size: 10px;
     color: #53546A;
@@ -268,20 +267,6 @@ const globalStyles = `
     text-transform: lowercase;
     font-variant: small-caps;
     color: #0E1029;
-  }
-  .legal-markdown {
-    font-size: 15px;
-    line-height: 24px;
-    color: #48495F;
-    font-family: ${fonts.family.System};
-  }
-  .legal-markdown h4 {
-    font-size: 16px;
-    line-height: 24px;
-    font-weight: 500;
-    margin-top: 1rem;
-    margin-bottom: 5px;
-    color: #231536;
   }
   `;
 

@@ -5,7 +5,6 @@ import { getActiveAccount } from '../../reducers/accounts';
 import { modalOpen, modalClose } from '../../reducers/modal';
 import { cutMiddle, formatRound } from '../../utils/misc';
 import { ethScanLink } from '../../utils/ethereum';
-import ProxySetup from './ProxySetup';
 import Lock from './Lock';
 import theme from '../../theme';
 import Withdraw from './Withdraw';
@@ -49,8 +48,12 @@ export const BoxMiddle = styled.span`
 `;
 
 const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
-  if (activeAccount !== undefined && activeAccount.hasProxy) {
-    const { linkedAccount } = activeAccount.proxy;
+  if (
+    activeAccount !== undefined &&
+    (activeAccount.hasProxy || activeAccount.singleWallet)
+  ) {
+    let { linkedAccount } = activeAccount.proxy;
+    if (activeAccount.singleWallet) linkedAccount = activeAccount;
     const isColdWallet = activeAccount.proxyRole === 'cold';
     const coldWallet = isColdWallet ? activeAccount : linkedAccount;
     return (
@@ -61,7 +64,7 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
         </JustifiedFlexContainer>
         <PaddedFlexContainer>
           <BoxLeft>
-            <VoteImpactHeading>Total MKR Balance</VoteImpactHeading>
+            <VoteImpactHeading>Total MKR balance</VoteImpactHeading>
             <MkrAmt>
               {formatRound(
                 Number(coldWallet.mkrBalance) +
@@ -75,7 +78,7 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
             <MkrAmt>{formatRound(activeAccount.proxy.votingPower, 4)}</MkrAmt>
           </BoxMiddle>
           <BoxRight>
-            <VoteImpactHeading> LinkedAddress </VoteImpactHeading>
+            <VoteImpactHeading> Linked address </VoteImpactHeading>
             <FlexContainer>
               <MkrAmt noSuffix> {cutMiddle(linkedAccount.address)} </MkrAmt>
               <a
@@ -90,7 +93,7 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
         </PaddedFlexContainer>
         <EndButton
           slim
-          disabled={!isColdWallet}
+          disabled={!isColdWallet && !activeAccount.singleWallet}
           onClick={() => {
             modalOpen(Lock);
           }}
@@ -98,23 +101,27 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
           Top-up voting contract
         </EndButton>
         <FlexRowEnd>
-          <Skip
-            mr={10}
-            mt={13}
-            onClick={() => {
-              modalOpen(BreakLink, {}, true);
-            }}
-          >
-            Break wallet link
-          </Skip>
-          <LineSpacer> | </LineSpacer>
+          {activeAccount.hasProxy && (
+            <Fragment>
+              <Skip
+                mr={10}
+                mt={13}
+                onClick={() => {
+                  modalOpen(BreakLink, {}, true);
+                }}
+              >
+                Break wallet link
+              </Skip>
+              <LineSpacer> | </LineSpacer>
+            </Fragment>
+          )}
           <Skip ml={10} mr={0} mt={13} onClick={() => modalOpen(Withdraw)}>
             Withdraw from voting contract
           </Skip>
         </FlexRowEnd>
       </Fragment>
     );
-  } else return <ProxySetup />;
+  }
 };
 
 export default connect(

@@ -2,6 +2,7 @@ import takeLast from 'ramda/src/takeLast';
 import take from 'ramda/src/take';
 import BigNumber from 'bignumber.js';
 import round from 'lodash.round';
+import { ETH, MKR } from '../chain/maker';
 
 BigNumber.config({ DECIMAL_PLACES: 18, ROUNDING_MODE: 1 });
 
@@ -162,7 +163,7 @@ export const parseError = error => {
  * @param  {String} b
  * @return {Boolean}
  */
-export const eq = (a, b) => a.toLowerCase() === b.toLowerCase();
+export const eq = (a, b) => (a && a.toLowerCase()) === (b && b.toLowerCase());
 
 /**
  * @desc takes an object with properties that might be promises and returns a promise of that object with resolved properties
@@ -217,4 +218,18 @@ export const toBN = val => val.toBigNumber();
 export const toNum = async promise => {
   const val = await promise;
   return val.toBigNumber().toFixed();
+};
+
+export const addMkrAndEthBalance = async account => {
+  return {
+    ...account,
+    ethBalance: round(
+      await toNum(window.maker.getToken(ETH).balanceOf(account.address)),
+      3
+    ),
+    mkrBalance: round(
+      await toNum(window.maker.getToken(MKR).balanceOf(account.address)),
+      3
+    )
+  };
 };

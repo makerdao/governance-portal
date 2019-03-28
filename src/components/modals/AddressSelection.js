@@ -1,13 +1,15 @@
 import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
-import round from 'lodash.round';
+import { Button, Grid } from '@makerdao/ui-components';
 import styled from 'styled-components';
 import { StyledTitle, StyledBlurb, StyledTop } from './shared/styles';
-import Button from '../Button';
 import { modalClose } from '../../reducers/modal';
-import { addAccount, setActiveAccount } from '../../reducers/accounts';
-import { AccountTypes } from '../../utils/constants';
-import { cutMiddle, toNum, copyToClipboard } from '../../utils/misc';
+import {
+  setActiveAccount,
+  connectHardwareAccounts,
+  addHardwareAccount
+} from '../../reducers/accounts';
+import { cutMiddle, copyToClipboard } from '../../utils/misc';
 import { addToastWithTimeout, ToastTypes } from '../../reducers/toasts';
 import {
   AddressContainer,
@@ -16,10 +18,9 @@ import {
   CopyBtn,
   CopyBtnIcon
 } from './shared/HotColdTable';
+import WithPagination from '../hocs/WithPagination';
 import { Wrapper, Blurb } from './LedgerType';
 import Loader from '../Loader';
-import { ETH, MKR } from '../../chain/maker';
-import theme from '../../theme';
 
 const CircleNumber = styled.div`
   width: 32px;
@@ -67,232 +68,139 @@ class AddressSelection extends Component {
     super(props);
 
     this.state = {
-      pickAccount: () => {},
-      accounts: [],
-      paginationEnabled: true,
-      currentPage: 0,
-      selectedIndex: null
+      selectedAddress: null
     };
   }
 
-  componentDidMount() {
-    this.loadAddresses();
-  }
+  fetchAccounts = async (page, numPerPage) => {
+    try {
+      return await this.props.connectHardwareAccounts(this.props.accountType, {
+        live: this.props.isLedgerLive,
+        offset: page * numPerPage,
+        accountsPerPage: numPerPage
+      });
+    } catch (err) {
+      this.props.addToastWithTimeout(ToastTypes.ERROR, err.message);
+      throw err;
+    }
+  };
+
+  handleAddressConfirmation = async () => {
+    try {
+      await this.props.addHardwareAccount(
+        this.state.selectedAddress,
+        this.props.accountType
+      );
+      await this.props.setActiveAccount(this.state.selectedAddress);
+      this.props.modalClose();
+    } catch (err) {
+      this.props.addToastWithTimeout(ToastTypes.ERROR, err.message);
+    }
+  };
 
   render() {
-    const {
-      accounts,
-      selectedIndex,
-      currentPage,
-      paginationEnabled
-    } = this.state;
-
-    if (accounts.length === 0) {
-      return <Loading type={this.props.trezor ? 'trezor' : 'ledger'} />;
-    }
-
-    const firstIndex = currentPage * PER_PAGE;
-    const lastIndex = currentPage * PER_PAGE + PER_PAGE;
-    const slicedAccounts = accounts.slice(firstIndex, lastIndex);
-
     return (
-      <Fragment>
-        <StyledTop>
-          <StyledTitle>Select address</StyledTitle>
-        </StyledTop>
-        <StyledBlurb style={{ textAlign: 'center', marginTop: '14px' }}>
-          Please select which address you would like to open
-        </StyledBlurb>
-        <AddressContainer>
-          <Table>
-            <thead>
-              <tr>
-                <th className="radio">Select</th>
+      <WithPagination fetchItems={this.fetchAccounts} numPerPage={PER_PAGE}>
+        {({ page, loading, error, items, onNext, onPrev, retry }) => {
+          if (loading && items.length <= 0) {
+            return <Loading type={this.props.accountType} />;
+          } else if (error && items.length <= 0) {
+            return <Error type={this.props.accountType} retry={retry} />;
+          } else {
+            return (
+              <Fragment>
+                <StyledTop>
+                  <StyledTitle>Select address</StyledTitle>
+                </StyledTop>
+                <StyledBlurb style={{ textAlign: 'center', marginTop: '14px' }}>
+                  Please select which address you would like to open
+                </StyledBlurb>
+                <AddressContainer>
+                  <Table>
+                    <thead>
+                      <tr>
+                        <th className="radio">Select</th>
 
-                <th>#</th>
+                        <th>#</th>
 
-                <th>Address</th>
-                <th>ETH</th>
-                <th>MKR</th>
-              </tr>
-            </thead>
-            <tbody>
-              {slicedAccounts.map(({ address, eth, mkr, index }) => (
-                <tr key={address}>
-                  <td className="radio">
-                    <input
-                      type="radio"
-                      name="address"
-                      value={index}
-                      checked={index === selectedIndex}
-                      onChange={() => this.setState({ selectedIndex: index })}
-                    />
-                  </td>
-                  <td>{index + 1}</td>
+                        <th>Address</th>
+                        <th>ETH</th>
+                        <th>MKR</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {items.map(
+                        ({ address, ethBalance, mkrBalance }, index) => (
+                          <tr key={address}>
+                            <td className="radio">
+                              <input
+                                type="radio"
+                                name="address"
+                                value={index}
+                                checked={address === this.state.selectedAddress}
+                                onChange={() =>
+                                  this.setState({ selectedAddress: address })
+                                }
+                              />
+                            </td>
+                            <td>{index + page * PER_PAGE + 1}</td>
 
-                  <InlineTd title={address}>
-                    {cutMiddle(address, 7, 5)}
-                    <CopyBtn onClick={() => copyToClipboard(address)}>
-                      <CopyBtnIcon />
-                    </CopyBtn>
-                  </InlineTd>
-                  <td>{eth} ETH</td>
-                  <td>{mkr} MKR</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </AddressContainer>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            marginTop: 10,
-            marginBottom: 20
-          }}
-        >
-          <Button
-            disabled={currentPage < 1 || !paginationEnabled}
-            onClick={this.handleAddressPaginationPrevious}
-            color={'grey'}
-            hoverColor={'grey'}
-            textColor={theme.text.darker_default}
-            hoverTextColor={theme.text.darker_default}
-            activeColor={'grey'}
-            style={{ margin: '0 auto' }}
-          >
-            Back
-          </Button>
-
-          <Button
-            disabled={!paginationEnabled}
-            color={'grey'}
-            hoverColor={'grey'}
-            activeColor={'grey'}
-            textColor={theme.text.darker_default}
-            hoverTextColor={theme.text.darker_default}
-            onClick={this.handleAddressPaginationNext}
-            style={{ margin: '0 auto' }}
-          >
-            More
-          </Button>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            marginTop: '20px',
-            justifyContent: 'flex-end'
-          }}
-        >
-          <Button
-            slim
-            disabled={selectedIndex === null}
-            onClick={this.handleAddressConfirmation}
-          >
-            Unlock Wallet
-          </Button>
-        </div>
-      </Fragment>
-    );
-  }
-
-  loadAddresses(page = this.state.currentPage) {
-    const { accounts } = this.state;
-    const offset = page * PER_PAGE;
-
-    return new Promise(resolve => {
-      window.maker
-        .addAccount({
-          type: this.props.trezor ? 'trezor' : 'ledger',
-          path: this.props.path,
-          accountsLength: PER_PAGE,
-          accountsOffset: offset,
-          choose: async (addresses, callback) => {
-            const addressesWithInfo = await this.getInfo(addresses, offset);
-
-            this.setState(
-              {
-                accounts: accounts.concat(addressesWithInfo),
-                pickAccount: callback
-              },
-              resolve
+                            <InlineTd title={address}>
+                              {cutMiddle(address, 7, 5)}
+                              <CopyBtn onClick={() => copyToClipboard(address)}>
+                                <CopyBtnIcon />
+                              </CopyBtn>
+                            </InlineTd>
+                            <td>{ethBalance} ETH</td>
+                            <td>{mkrBalance} MKR</td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </Table>
+                </AddressContainer>
+                <Grid
+                  mt="s"
+                  mb="s"
+                  gridColumnGap="s"
+                  gridTemplateColumns="1fr 1fr"
+                >
+                  <Button
+                    variant="secondary-outline"
+                    disabled={page < 1 || loading}
+                    loading={loading}
+                    onClick={onPrev}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    variant="secondary-outline"
+                    disabled={loading}
+                    loading={loading}
+                    onClick={onNext}
+                  >
+                    More
+                  </Button>
+                </Grid>
+                <div
+                  style={{
+                    display: 'flex',
+                    marginTop: '20px',
+                    justifyContent: 'flex-end'
+                  }}
+                >
+                  <Button
+                    disabled={this.state.selectedAddress === null}
+                    onClick={this.handleAddressConfirmation}
+                  >
+                    Unlock Wallet
+                  </Button>
+                </div>
+              </Fragment>
             );
           }
-        })
-        .then(account => {
-          this.handleAddressConfirmationCallback(account);
-        })
-        .catch(err => {
-          this.props.addToastWithTimeout(ToastTypes.ERROR, err.message);
-        });
-    });
-  }
-
-  handleAddressPaginationPrevious = e => {
-    this.handleAddressPagination(e, -1);
-  };
-
-  handleAddressPaginationNext = e => {
-    this.handleAddressPagination(e, 1);
-  };
-
-  handleAddressPagination = (e, offset) => {
-    const { currentPage } = this.state;
-    e.preventDefault();
-    const newPage = currentPage + offset;
-
-    Promise.resolve()
-      .then(() => {
-        this.setState({
-          paginationEnabled: false
-        });
-        return this.loadAddresses(newPage);
-      })
-      .then(() => {
-        this.setState({
-          currentPage: newPage,
-          paginationEnabled: true
-        });
-      })
-      .catch(() => {
-        this.setState({
-          paginationEnabled: true
-        });
-      });
-  };
-
-  handleAddressConfirmation = () => {
-    const { accounts, selectedIndex, pickAccount } = this.state;
-    const address = accounts.find(a => a.index === selectedIndex).address;
-    // update maker object
-    pickAccount(null, address);
-  };
-
-  handleAddressConfirmationCallback({ address }) {
-    const { addAccount, setActiveAccount, modalClose, trezor } = this.props;
-    // update UI
-    addAccount({
-      address,
-      type: trezor ? AccountTypes.TREZOR : AccountTypes.LEDGER
-    }).then(() => setActiveAccount(address));
-
-    modalClose();
-  }
-
-  getInfo(addresses, indexOffset) {
-    return Promise.all(
-      Object.keys(addresses).map(async index => ({
-        index: parseInt(indexOffset, 10) + parseInt(index, 10),
-        address: addresses[index],
-        eth: round(
-          await toNum(window.maker.getToken(ETH).balanceOf(addresses[index])),
-          3
-        ),
-        mkr: round(
-          await toNum(window.maker.getToken(MKR).balanceOf(addresses[index])),
-          3
-        )
-      }))
+        }}
+      </WithPagination>
     );
   }
 }
@@ -303,7 +211,13 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { addAccount, setActiveAccount, addToastWithTimeout, modalClose }
+  {
+    setActiveAccount,
+    addToastWithTimeout,
+    modalClose,
+    connectHardwareAccounts,
+    addHardwareAccount
+  }
 )(AddressSelection);
 
 const LedgerLoading = () => (
@@ -362,5 +276,21 @@ const Loading = ({ type }) => (
       <Loader size={40} />
       <Connecting>Connecting...</Connecting>
     </CenteredWrapper>
+  </Fragment>
+);
+
+const Error = ({ type, retry }) => (
+  <Fragment>
+    <StyledTop>
+      <StyledTitle>Connect your {type} wallet</StyledTitle>
+    </StyledTop>
+    <Grid textAlign="center" pt="m" color="makerOrange" gridRowGap="s">
+      <p>There was an error connecting your account.</p>
+      <div>
+        <Button alignSelf="center" onClick={retry}>
+          Retry
+        </Button>
+      </div>
+    </Grid>
   </Fragment>
 );

@@ -11,18 +11,6 @@ export default async function createMaker(
   useMcdKovanContracts,
   testchainConfigId
 ) {
-  let gasPrice = 6 * 10 ** 9; // default to 6 Gwei gas price
-  try {
-    // check ethgasstation for gas price info
-    const res = await fetch('https://ethgasstation.info/json/ethgasAPI.json');
-    const gasData = await res.json();
-    gasPrice = gasData.average * 10 ** 8;
-    gasPrice = gasPrice + 3 * 10 ** 9; // 3 Gwei buffer
-  } catch (err) {
-    console.error(
-      `Gas price fetch failed. Defaulting to ${gasPrice / 10 ** 9} Gwei.`
-    );
-  }
   const config = {
     plugins: [
       trezorPlugin,
@@ -31,11 +19,6 @@ export default async function createMaker(
     ],
     autoAuthenticate: true,
     log: false,
-    web3: {
-      transactionSettings: {
-        gasPrice
-      }
-    },
     provider: {
       url: testchainConfigId ? '' : netToUri(network),
       type: 'HTTP'

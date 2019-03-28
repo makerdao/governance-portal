@@ -19,6 +19,28 @@ import '@makerdao/ui-components/dist/styles/global.css';
 const currTheme = {
   ...theme,
   ...themeDark,
+  colors: {
+    ...themeDark.colors,
+    // onboarding colors. to be replaced soon by presets with ui-components
+    grey: '#868997',
+    greys: {
+      dark: '#48495F',
+      light: '#E8EDEF',
+      veryLight: '#F5F5F5'
+    },
+    red: '#E45432',
+    reds: {
+      light: '#FFE2D9'
+    },
+    green: '#30BD9F',
+    greens: {
+      light: '#C3F5EA'
+    },
+    blue: '#447AFB',
+    blues: {
+      light: '#EAF0FF'
+    }
+  },
   header: {
     ...themeDark.header,
     backgroundColor: theme.text.darker_default

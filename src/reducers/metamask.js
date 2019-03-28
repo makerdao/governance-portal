@@ -1,5 +1,9 @@
 import { createReducer } from '../utils/redux';
-import { setActiveAccount, NO_METAMASK_ACCOUNTS } from './accounts';
+import {
+  setActiveAccount,
+  addMetamaskAccount,
+  NO_METAMASK_ACCOUNTS
+} from './accounts';
 import { netIdToName } from '../utils/ethereum';
 import { ethInit } from './eth';
 import { voteTallyInit } from './tally';
@@ -85,6 +89,7 @@ export const initWeb3Accounts = () => async (dispatch, getState) => {
     const address = window.web3.eth.defaultAccount;
     if (address !== activeAddress) {
       dispatch(updateAddress(address));
+      await dispatch(addMetamaskAccount(address));
       await dispatch(setActiveAccount(address, true));
     }
   }
