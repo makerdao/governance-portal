@@ -900,10 +900,12 @@
     babel-runtime "^6.26.0"
     bignumber.js "^8.1.1"
 
-"@makerdao/dai-plugin-config@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-config/-/dai-plugin-config-0.0.3.tgz#4a6309c3f5acc5562e2fac40a79e1829daa655a5"
+"@makerdao/dai-plugin-config@^0.2.3-rc.1":
+  version "0.2.3-rc.1"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-config/-/dai-plugin-config-0.2.3-rc.1.tgz#4c7e47418af2477f374d3e23dc7151f1e744a068"
+  integrity sha512-RM6bELAhF3ovbQxGsY/4qeMBBxekl8lmLa+SL/s71HrVurUw/1wwSnRlX7MlCB4qwK1BCxIv74UopmNkAnboKQ==
   dependencies:
+    "@makerdao/currency" "^0.9.3"
     babel-runtime "^6.26.0"
     ramda "^0.26.1"
 
@@ -11715,7 +11717,7 @@ web3-net@1.0.0-beta.34:
     web3-core-method "1.0.0-beta.34"
     web3-utils "1.0.0-beta.34"
 
-web3-provider-engine@14.0.4, "web3-provider-engine@github:makerdao/provider-engine#kovan-fix-dist":
+web3-provider-engine@14.0.4, web3-provider-engine@makerdao/provider-engine#kovan-fix-dist:
   version "14.0.4"
   resolved "https://codeload.github.com/makerdao/provider-engine/tar.gz/7c4b187809f156409473246de15dc595e1fe3356"
   dependencies:
