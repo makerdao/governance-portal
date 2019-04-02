@@ -25,6 +25,7 @@ const iconBackgroundSize = '4.3rem';
 const iconSize = '2.3rem';
 const connectingLineHeight = '5rem';
 
+// FIXME: get these from the Maker instance instead of hardcoding
 const contractAddresses = [
   {
     name: 'Voting Contract',
