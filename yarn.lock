@@ -900,10 +900,10 @@
     babel-runtime "^6.26.0"
     bignumber.js "^8.1.1"
 
-"@makerdao/dai-plugin-config@^0.2.3-rc.2":
-  version "0.2.3-rc.2"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-config/-/dai-plugin-config-0.2.3-rc.2.tgz#7490bc36a64bcca58b16e9362073e21e5a6b8d50"
-  integrity sha512-fofRON/pkA4pgCxRkn5GO8r54hlT27ip8FW1NdmVBWUxHjS3ZW1yC3t93opMuElUCuyyIqP4PTa+UolgLYT5hw==
+"@makerdao/dai-plugin-config@^0.2.3-rc.3":
+  version "0.2.3-rc.3"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-config/-/dai-plugin-config-0.2.3-rc.3.tgz#c41fe747522392c37b625b70eae8c058a025dc01"
+  integrity sha512-tmm6lEAzG5mVLKLiyLS/fgvvK1ZkQUQ5vsYL0DqpeeOrypo99+V57s02BgGUE70QeKKWy56g2kby+2lk+Lz4fA==
   dependencies:
     "@makerdao/currency" "^0.9.3"
     babel-runtime "^6.26.0"
