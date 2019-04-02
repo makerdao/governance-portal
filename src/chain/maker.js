@@ -26,14 +26,14 @@ export default async function createMaker(
     const MKR = createCurrency('MKR');
     const IOU = createCurrency('IOU');
     const kovanMcdAddresses = require('./addresses/kovan-mcd.json');
-    const addContracts = {};
-    for (let key in kovanMcdAddresses) {
-      addContracts[key] = {
-        address: {
-          kovan: kovanMcdAddresses[key]
-        }
-      };
-    }
+    const addContracts = Object.keys(kovanMcdAddresses).reduce(
+      (result, key) => {
+        result[key] = { address: { kovan: kovanMcdAddresses[key] } };
+        return result;
+      },
+      {}
+    );
+
     const token = {
       erc20: [
         {

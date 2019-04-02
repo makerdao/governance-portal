@@ -9,10 +9,9 @@ import {
   SET_ACTIVE_ACCOUNT
 } from './accounts';
 import { initApprovalsFetch } from './approvals';
-import { AccountTypes, TransactionStatus } from '../utils/constants';
+import { AccountTypes, TransactionStatus, CHIEF } from '../utils/constants';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { MKR } from '../chain/maker';
-import { getUrlParam } from '../utils/ethereum';
 
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
@@ -22,8 +21,6 @@ import {
 } from './sharedProxyConstants';
 
 // Constants ----------------------------------------------
-const usingTestchain = !!getUrlParam('testchain_id');
-const CHIEF = usingTestchain ? 'MCD_ADM' : 'CHIEF';
 
 export const INITIATE_LINK_REQUEST = 'proxy/INITIATE_LINK_REQUEST';
 export const INITIATE_LINK_SENT = 'proxy/INITIATE_LINK_SENT';

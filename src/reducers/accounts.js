@@ -4,7 +4,7 @@ import pipe from 'ramda/src/pipe';
 import differenceWith from 'ramda/src/differenceWith';
 
 import { createReducer } from '../utils/redux';
-import { AccountTypes } from '../utils/constants';
+import { AccountTypes, CHIEF } from '../utils/constants';
 import {
   add,
   eq,
@@ -20,13 +20,10 @@ import {
   MKR_APPROVE_SUCCESS,
   IOU_APPROVE_SUCCESS
 } from './sharedProxyConstants';
-import { MAX_UINT_ETH_BN, getUrlParam } from '../utils/ethereum';
+import { MAX_UINT_ETH_BN } from '../utils/ethereum';
 import { MKR } from '../chain/maker';
 
 // Constants ----------------------------------------------
-
-const usingTestchain = !!getUrlParam('testchain_id');
-const CHIEF = usingTestchain ? 'MCD_ADM' : 'CHIEF';
 
 // the Ledger subprovider interprets these paths to mean that the last digit is
 // the one that should be incremented.
