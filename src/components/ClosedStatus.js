@@ -73,7 +73,7 @@ const ClosedProposal = ({
 }) => {
   if (approvalFetching)
     return <Loader mr={70} size={20} color="header" background="white" />;
-  if (!eq(proposalAddress, winningProposal.source) || winningProposal === null)
+  if (winningProposal === null || !eq(proposalAddress, winningProposal.source))
     return null;
   return (
     <FadeIn>
