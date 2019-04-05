@@ -19,6 +19,11 @@ export default async function createMaker(
     provider: {
       url: testchainConfigId ? '' : netToUri(network),
       type: 'HTTP'
+    },
+    // NOTE: gas price is temporarily hard coded
+    // dynamic gas prices are currently being set too low
+    gas: {
+      price: 5000000000
     }
   };
 
