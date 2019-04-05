@@ -22,7 +22,8 @@ import {
 } from './sharedProxyConstants';
 import { MAX_UINT_ETH_BN } from '../utils/ethereum';
 import { MKR } from '../chain/maker';
-
+import { netIdToName } from '../utils/ethereum';
+import { proposalsInit } from './proposals';
 // Constants ----------------------------------------------
 
 // the Ledger subprovider interprets these paths to mean that the last digit is
@@ -371,6 +372,12 @@ export const addHardwareAccount = (address, accountType) => async (
         type: accountType
       })
     );
+
+    if (window.web3) {
+      window.web3.version.getNetwork(async (err, netId) => {
+        dispatch(proposalsInit(netIdToName(netId)));
+      });
+    }
 
     return dispatch({
       type: HARDWARE_ACCOUNT_CONNECTED
