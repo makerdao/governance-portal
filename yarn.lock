@@ -900,16 +900,19 @@
     babel-runtime "^6.26.0"
     bignumber.js "^8.1.1"
 
-"@makerdao/dai-plugin-config@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-config/-/dai-plugin-config-0.0.3.tgz#4a6309c3f5acc5562e2fac40a79e1829daa655a5"
+"@makerdao/dai-plugin-config@^0.2.3-rc.3":
+  version "0.2.3-rc.3"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-config/-/dai-plugin-config-0.2.3-rc.3.tgz#c41fe747522392c37b625b70eae8c058a025dc01"
+  integrity sha512-tmm6lEAzG5mVLKLiyLS/fgvvK1ZkQUQ5vsYL0DqpeeOrypo99+V57s02BgGUE70QeKKWy56g2kby+2lk+Lz4fA==
   dependencies:
+    "@makerdao/currency" "^0.9.3"
     babel-runtime "^6.26.0"
     ramda "^0.26.1"
 
-"@makerdao/dai-plugin-governance@0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.5.2.tgz#0b6bfde8d8cab0dee2e4907e459b68a18c562ee7"
+"@makerdao/dai-plugin-governance@^0.5.3":
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.5.3.tgz#384b13057dbd327a595e8ba6e8555d5ef8fc0c55"
+  integrity sha512-osaf2RsO64t/QP6Eji0oTRkbbcGnhW5lUyrAbZgb9kWN9wb9CdtosatYcpfL955Q5A03nIdBrW4Uq9f6XcxtIA==
   dependencies:
     "@makerdao/currency" "^0.9.3"
     "@makerdao/services-core" "^0.9.4"
@@ -940,9 +943,10 @@
     trezor-connect "^7.0.2"
     web3-provider-engine "14.0.4"
 
-"@makerdao/dai@^0.14.0":
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.14.0.tgz#a8918557006f934c79a57e5b28303f8ef6e34f11"
+"@makerdao/dai@^0.15.0":
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.15.0.tgz#17887c5719eca319f2d198a4dc2267c79f833ff1"
+  integrity sha512-YafJfM9qqLti3XB0y/k6Qc9TOZuyVpm2Ljht84XzU+FYdHhgzlPcetvYQ49NYrbYEeD00fmQv56SkpEwrUHXPw==
   dependencies:
     "@babel/runtime" "^7.3.4"
     "@makerdao/currency" "^0.9.0"

@@ -88,6 +88,8 @@ const Tag = styled.p`
   color: ${({ green }) => (green ? '#30BD9F' : '#E45432')};
 `;
 
+const proposalWrapperHeight = 200;
+
 const Timeline = ({
   modalOpen,
   proposals,
@@ -123,7 +125,7 @@ const Timeline = ({
       <RiseUp key={otherProposals.toString()}>
         {signaling || !hatProposal ? null : (
           <StyledCard>
-            <Card.Element height={164}>
+            <Card.Element height={proposalWrapperHeight}>
               <ProposalDetails>
                 <div style={{ display: 'flex' }}>
                   <Link to={`/${toSlug(hatProposal.title)}`}>
@@ -183,7 +185,10 @@ const Timeline = ({
                 {otherProposals.map(proposal =>
                   topicKey === proposal.topicKey ? (
                     <StyledCard key={proposal.key}>
-                      <Card.Element key={proposal.title} height={164}>
+                      <Card.Element
+                        key={proposal.title}
+                        height={proposalWrapperHeight}
+                      >
                         <ProposalDetails>
                           <Link to={`/${toSlug(proposal.title)}`}>
                             <SubHeading>{proposal.title}</SubHeading>
@@ -252,7 +257,10 @@ const Timeline = ({
             ))
           : otherProposals.map(proposal => (
               <StyledCard key={proposal.key}>
-                <Card.Element key={proposal.title} height={164}>
+                <Card.Element
+                  key={proposal.title}
+                  height={proposalWrapperHeight}
+                >
                   <ProposalDetails>
                     <Link to={`/${toSlug(proposal.title)}`}>
                       <SubHeading>{proposal.title}</SubHeading>

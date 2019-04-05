@@ -183,3 +183,8 @@ export const ethScanLink = (string, network = 'mainnet') => {
   // TODO maybe log to raven instead of throwing
   else throw new Error(`Can't create Etherscan link for "${string}"`);
 };
+
+export const getUrlParam = param => {
+  const params = new URL(window.location).searchParams;
+  return params.get(param);
+};

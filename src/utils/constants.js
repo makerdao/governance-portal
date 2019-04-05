@@ -17,3 +17,5 @@ export const TransactionStatus = {
   CONFIRMED: 'confirmed',
   ERROR: 'error'
 };
+
+export const CHIEF = 'CHIEF';

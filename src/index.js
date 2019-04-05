@@ -9,7 +9,7 @@ import createStore from './store';
 import Router from './Routes';
 import createMaker from './chain/maker';
 import { init, wrongNetwork } from './reducers/metamask';
-import { netIdToName } from './utils/ethereum';
+import { netIdToName, getUrlParam } from './utils/ethereum';
 
 import './global.css.js';
 import theme from './theme';
@@ -51,9 +51,8 @@ const currTheme = {
   }
 };
 
-const params = new URL(window.location).searchParams;
-const testchainConfigId = params.get('testchain_id');
-const useMcdKovanContracts = !!params.get('mcd');
+const testchainConfigId = getUrlParam('testchain_id');
+const useMcdKovanContracts = !!getUrlParam('mcd');
 
 const store = createStore();
 

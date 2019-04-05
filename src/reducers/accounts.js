@@ -4,7 +4,7 @@ import pipe from 'ramda/src/pipe';
 import differenceWith from 'ramda/src/differenceWith';
 
 import { createReducer } from '../utils/redux';
-import { AccountTypes } from '../utils/constants';
+import { AccountTypes, CHIEF } from '../utils/constants';
 import {
   add,
   eq,
@@ -114,7 +114,7 @@ export const addAccounts = accounts => async dispatch => {
 
     const chiefAddress = window.maker
       .service('smartContract')
-      .getContractAddressByName('CHIEF');
+      .getContractAddressByName(CHIEF);
 
     const linkedAccountData = async () => {
       const otherRole = proxyRole === 'hot' ? 'cold' : 'hot';
@@ -178,7 +178,7 @@ export const addSingleWalletAccount = account => async dispatch => {
 
   const chiefAddress = window.maker
     .service('smartContract')
-    .getContractAddressByName('CHIEF');
+    .getContractAddressByName(CHIEF);
 
   const mkrToken = window.maker.getToken(MKR);
   const iouToken = window.maker.getToken('IOU');

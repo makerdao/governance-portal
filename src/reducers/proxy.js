@@ -9,7 +9,7 @@ import {
   SET_ACTIVE_ACCOUNT
 } from './accounts';
 import { initApprovalsFetch } from './approvals';
-import { AccountTypes, TransactionStatus } from '../utils/constants';
+import { AccountTypes, TransactionStatus, CHIEF } from '../utils/constants';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { MKR } from '../chain/maker';
 
@@ -248,7 +248,7 @@ export const mkrApproveSingleWallet = () => (dispatch, getState) => {
 
   const chiefAddress = window.maker
     .service('smartContract')
-    .getContractAddressByName('CHIEF');
+    .getContractAddressByName(CHIEF);
 
   const giveChiefAllowance = window.maker
     .getToken(MKR)
@@ -269,7 +269,7 @@ export const iouApproveSingleWallet = () => (dispatch, getState) => {
 
   const chiefAddress = window.maker
     .service('smartContract')
-    .getContractAddressByName('CHIEF');
+    .getContractAddressByName(CHIEF);
 
   const giveChiefAllowance = window.maker
     .getToken('IOU')
