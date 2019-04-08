@@ -126,9 +126,7 @@ function useHotAccount(state) {
 function useColdAccount(state) {
   const account = getAccount(state, window.maker.currentAddress());
 
-  if (account.singleWallet || account.proxyRole === 'cold') {
-    return true;
-  } else if (
+  if (
     state.onboarding.coldWallet &&
     state.onboarding.coldWallet.address !== account.address
   ) {
