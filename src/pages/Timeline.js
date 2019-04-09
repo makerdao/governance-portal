@@ -98,7 +98,8 @@ const Timeline = ({
   votingFor,
   signaling,
   hat,
-  approvals
+  approvals,
+  location
 }) => {
   const hatProposal = proposals.find(({ source }) => eq(source, hat.address));
   const otherProposals = proposals.filter(
@@ -128,7 +129,12 @@ const Timeline = ({
             <Card.Element height={proposalWrapperHeight}>
               <ProposalDetails>
                 <div style={{ display: 'flex' }}>
-                  <Link to={`/${toSlug(hatProposal.title)}`}>
+                  <Link
+                    to={{
+                      pathname: `/${toSlug(hatProposal.title)}`,
+                      search: location.search
+                    }}
+                  >
                     <SubHeading>{hatProposal.title}</SubHeading>
                   </Link>
                   <Tag ml="16" green>
@@ -140,7 +146,14 @@ const Timeline = ({
                     __html: hatProposal.proposal_blurb
                   }}
                 />
-                <Link to={`/${toSlug(hatProposal.title)}`}>Read more...</Link>
+                <Link
+                  to={{
+                    pathname: `/${toSlug(hatProposal.title)}`,
+                    search: location.search
+                  }}
+                >
+                  Read more...
+                </Link>
                 <div>
                   {!!hatProposal.end_approvals ? (
                     <Tag>{`Executed on ${formatDate(
@@ -190,7 +203,12 @@ const Timeline = ({
                         height={proposalWrapperHeight}
                       >
                         <ProposalDetails>
-                          <Link to={`/${toSlug(proposal.title)}`}>
+                          <Link
+                            to={{
+                              pathname: `/${toSlug(proposal.title)}`,
+                              search: location.search
+                            }}
+                          >
                             <SubHeading>{proposal.title}</SubHeading>
                           </Link>
                           <Body
@@ -198,7 +216,12 @@ const Timeline = ({
                               __html: proposal.proposal_blurb
                             }}
                           />
-                          <Link to={`/${toSlug(proposal.title)}`}>
+                          <Link
+                            to={{
+                              pathname: `/${toSlug(proposal.title)}`,
+                              search: location.search
+                            }}
+                          >
                             Read more...
                           </Link>
                           {hat.approvals <
@@ -262,7 +285,12 @@ const Timeline = ({
                   height={proposalWrapperHeight}
                 >
                   <ProposalDetails>
-                    <Link to={`/${toSlug(proposal.title)}`}>
+                    <Link
+                      to={{
+                        pathname: `/${toSlug(proposal.title)}`,
+                        search: location.search
+                      }}
+                    >
                       <SubHeading>{proposal.title}</SubHeading>
                     </Link>
                     <Body
@@ -270,7 +298,14 @@ const Timeline = ({
                         __html: proposal.proposal_blurb
                       }}
                     />
-                    <Link to={`/${toSlug(proposal.title)}`}>Read more...</Link>
+                    <Link
+                      to={{
+                        pathname: `/${toSlug(proposal.title)}`,
+                        search: location.search
+                      }}
+                    >
+                      Read more...
+                    </Link>
                     {!!proposal.end_approvals ? (
                       <div>
                         <Tag>{`Executed on ${formatDate(
@@ -317,14 +352,18 @@ const Timeline = ({
   );
 };
 
-const reduxProps = ({ proposals, accounts, hat, approvals }, { signaling }) => {
+const reduxProps = (
+  { proposals, accounts, hat, approvals },
+  { signaling, location }
+) => {
   return {
     hat,
     approvals,
     proposals: proposals.filter(p => !!p.govVote === !!signaling),
     canVote: activeCanVote({ accounts }),
     fetching: accounts.fetching,
-    votingFor: getActiveVotingFor({ accounts })
+    votingFor: getActiveVotingFor({ accounts }),
+    location
   };
 };
 
