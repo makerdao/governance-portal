@@ -132,7 +132,8 @@ const BaseLayout = ({
   proposalsAvailable,
   accountsFetching,
   wrongNetwork,
-  onboardingState
+  onboardingState,
+  location
 }) => {
   const childrenShouldMount =
     !metamaskFetching && proposalsAvailable && !wrongNetwork;
@@ -155,7 +156,10 @@ const BaseLayout = ({
         <HeaderBottom>
           <HeaderBottomContent>
             <div style={{ display: 'flex', paddingLeft: '2.5rem' }}>
-              <NavLink style={{ color: 'white' }} to="/">
+              <NavLink
+                style={{ color: 'white' }}
+                to={{ pathname: '/', search: location.search }}
+              >
                 Governance
               </NavLink>
               <NetworkNotification style={{ marginLeft: '16px' }}>
@@ -164,10 +168,16 @@ const BaseLayout = ({
             </div>
             <Flex>
               <StyledLinkWrapper>
-                <StyledLink to="/" r={107}>
+                <StyledLink
+                  to={{ pathname: '/', search: location.search }}
+                  r={107}
+                >
                   Executive
                 </StyledLink>
-                <StyledLink to="/polling" r={6}>
+                <StyledLink
+                  to={{ pathname: '/polling', search: location.search }}
+                  r={6}
+                >
                   Polling
                 </StyledLink>
               </StyledLinkWrapper>
@@ -218,13 +228,17 @@ BaseLayout.propTypes = {
   children: PropTypes.node.isRequired
 };
 
-const reduxProps = ({ metamask, proposals, accounts, hat, onboarding }) => ({
+const reduxProps = (
+  { metamask, proposals, accounts, hat, onboarding },
+  { location }
+) => ({
   metamaskFetching: metamask.fetching,
   wrongNetwork: metamask.wrongNetwork,
   network: metamask.network,
   accountsFetching: accounts.fetching,
   proposalsAvailable: proposals.length > 0 && !hat.fetching,
-  onboardingState: onboarding.state
+  onboardingState: onboarding.state,
+  location
 });
 
 export default withRouter(
