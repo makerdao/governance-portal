@@ -60,7 +60,7 @@ const Onboarding = ({ open, step, state, ...props }) => {
     >
       <Introduction
         show={open && state === OnboardingStates.INTRODUCTION}
-        onClose={onboardingClose}
+        onClose={onboardingProps.close}
         onLinkedWallet={() =>
           onboardingProps.setState(OnboardingStates.SETUP_LINKED_WALLET)
         }
