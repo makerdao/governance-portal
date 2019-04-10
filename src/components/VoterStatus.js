@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import React, { Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Link } from 'react-router-dom';
 import { modalOpen } from '../reducers/modal';
 import { onboardingOpen } from '../reducers/onboarding';
 import { getActiveAccount } from '../reducers/accounts';
