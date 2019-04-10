@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import React, { Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Link } from 'react-router-dom';
 import { modalOpen } from '../reducers/modal';
 import { onboardingOpen } from '../reducers/onboarding';
 import { getActiveAccount } from '../reducers/accounts';
@@ -21,6 +20,7 @@ import { cutMiddle, firstLetterCapital, formatRound } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
 import Lock from './modals/Lock';
 import Withdraw from './modals/Withdraw';
+import ExtendedLink from '../components/Onboarding/shared/ExtendedLink';
 
 const fadeIn = keyframes`
 0% {
@@ -53,7 +53,7 @@ const Strong = styled(Black)`
   font-weight: bold;
 `;
 
-const StyledLink = styled(Link)`
+const StyledLink = styled(ExtendedLink)`
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   color: ${({ disabled }) => (disabled ? 'black' : '')};
 `;

@@ -30,8 +30,15 @@ class App extends Component {
           <ErrorBoundary>
             <BaseLayout>
               <Switch>
-                <Route exact path="/" component={Timeline} />
-                <Route path="/polling" render={() => <Timeline signaling />} />
+                <Route
+                  exact
+                  path="/"
+                  render={routeProps => <Timeline {...routeProps} />}
+                />
+                <Route
+                  path="/polling"
+                  render={routeProps => <Timeline signaling {...routeProps} />}
+                />
                 <Route path="/not-found" component={NotFound} />
                 <Route path="/:proposalSlug" component={Proposal} />
               </Switch>

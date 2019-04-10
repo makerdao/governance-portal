@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 
 import VoterStatus from '../components/VoterStatus';
 import Button from '../components/Button';
@@ -14,6 +13,7 @@ import { modalOpen } from '../reducers/modal';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import Vote from '../components/modals/Vote';
 import TillHat from '../components/TillHatMeta';
+import ExtendedLink from '../components/Onboarding/shared/ExtendedLink';
 
 const riseUp = keyframes`
 0% {
@@ -128,9 +128,9 @@ const Timeline = ({
             <Card.Element height={proposalWrapperHeight}>
               <ProposalDetails>
                 <div style={{ display: 'flex' }}>
-                  <Link to={`/${toSlug(hatProposal.title)}`}>
+                  <ExtendedLink to={`/${toSlug(hatProposal.title)}`}>
                     <SubHeading>{hatProposal.title}</SubHeading>
-                  </Link>
+                  </ExtendedLink>
                   <Tag ml="16" green>
                     GOVERNING PROPOSAL
                   </Tag>
@@ -140,7 +140,9 @@ const Timeline = ({
                     __html: hatProposal.proposal_blurb
                   }}
                 />
-                <Link to={`/${toSlug(hatProposal.title)}`}>Read more...</Link>
+                <ExtendedLink to={`/${toSlug(hatProposal.title)}`}>
+                  Read more...
+                </ExtendedLink>
                 <div>
                   {!!hatProposal.end_approvals ? (
                     <Tag>{`Executed on ${formatDate(
@@ -190,17 +192,17 @@ const Timeline = ({
                         height={proposalWrapperHeight}
                       >
                         <ProposalDetails>
-                          <Link to={`/${toSlug(proposal.title)}`}>
+                          <ExtendedLink to={`/${toSlug(proposal.title)}`}>
                             <SubHeading>{proposal.title}</SubHeading>
-                          </Link>
+                          </ExtendedLink>
                           <Body
                             dangerouslySetInnerHTML={{
                               __html: proposal.proposal_blurb
                             }}
                           />
-                          <Link to={`/${toSlug(proposal.title)}`}>
+                          <ExtendedLink to={`/${toSlug(proposal.title)}`}>
                             Read more...
-                          </Link>
+                          </ExtendedLink>
                           {hat.approvals <
                           approvals.approvals[proposal.source] ? (
                             <div>
@@ -262,15 +264,17 @@ const Timeline = ({
                   height={proposalWrapperHeight}
                 >
                   <ProposalDetails>
-                    <Link to={`/${toSlug(proposal.title)}`}>
+                    <ExtendedLink to={`/${toSlug(proposal.title)}`}>
                       <SubHeading>{proposal.title}</SubHeading>
-                    </Link>
+                    </ExtendedLink>
                     <Body
                       dangerouslySetInnerHTML={{
                         __html: proposal.proposal_blurb
                       }}
                     />
-                    <Link to={`/${toSlug(proposal.title)}`}>Read more...</Link>
+                    <ExtendedLink to={`/${toSlug(proposal.title)}`}>
+                      Read more...
+                    </ExtendedLink>
                     {!!proposal.end_approvals ? (
                       <div>
                         <Tag>{`Executed on ${formatDate(
