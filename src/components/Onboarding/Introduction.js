@@ -1,13 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  Box,
-  Grid,
-  Flex,
-  Card,
-  Text,
-  OnboardingMenu
-} from '@makerdao/ui-components';
+import { Box, Grid, Flex, Card, Text } from '@makerdao/ui-components';
+import { OnboardingMenu } from '@makerdao/ui-components-onboarding';
 
 import { H1, H3 } from '../../utils/typography';
 

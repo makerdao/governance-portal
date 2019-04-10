@@ -121,12 +121,11 @@ export const init = (network = 'mainnet') => async dispatch => {
   dispatch(connectSuccess(network));
   dispatch(updateNetwork(network));
 
-  await dispatch(initWeb3Accounts());
-
   dispatch(voteTallyInit());
   dispatch(proposalsInit(network));
   dispatch(hatInit());
   dispatch(ethInit());
+  await dispatch(initWeb3Accounts());
   dispatch(pollForMetamaskChanges());
 };
 

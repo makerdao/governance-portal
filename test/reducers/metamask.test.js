@@ -201,7 +201,7 @@ describe('async actions', () => {
       type: reducer.UPDATE_NETWORK,
       payload: { network }
     });
-    expect(store.getActions()[3]).toEqual({
+    expect(store.getActions()[7]).toEqual({
       type: reducer.UPDATE_ADDRESS,
       payload: mockDefaultAccount
     });

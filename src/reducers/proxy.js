@@ -128,7 +128,10 @@ function useColdAccount(state) {
 
   if (account.singleWallet) {
     return true;
-  } else if (state.onboarding.coldWallet.address !== account.address) {
+  } else if (
+    state.onboarding.coldWallet &&
+    state.onboarding.coldWallet.address !== account.address
+  ) {
     window.maker.useAccountWithAddress(state.onboarding.coldWallet.address);
   }
   return true;

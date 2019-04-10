@@ -19,7 +19,8 @@ import InitiateLink from './InitiateLink';
 import LockMKR from './LockMKR';
 import StartVoting from './StartVoting';
 
-import { OnboardingFullScreen, Box } from '@makerdao/ui-components';
+import { Box } from '@makerdao/ui-components';
+import OnboardingFullScreen from '@makerdao/ui-components-onboarding';
 import SingleWallet from './SingleWallet';
 
 const Background = styled(Box)`
@@ -60,7 +61,7 @@ const Onboarding = ({ open, step, state, ...props }) => {
     >
       <Introduction
         show={open && state === OnboardingStates.INTRODUCTION}
-        onClose={onboardingClose}
+        onClose={onboardingProps.close}
         onLinkedWallet={() =>
           onboardingProps.setState(OnboardingStates.SETUP_LINKED_WALLET)
         }
