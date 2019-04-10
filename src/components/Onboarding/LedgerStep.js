@@ -26,7 +26,7 @@ const LedgerStep = ({ active, onLedgerLive, onLedgerLegacy, onCancel }) => {
             <BreakableText color="grey">
               {
                 // eslint-disable-next-line
-                "44'/60'/0'"
+                "m/44'/x'/0/0"
               }
             </BreakableText>
           </span>
@@ -44,7 +44,7 @@ const LedgerStep = ({ active, onLedgerLive, onLedgerLegacy, onCancel }) => {
             <BreakableText color="grey">
               {
                 // eslint-disable-next-line
-                "44'/60'/0'"
+                "m/44'/60'/0'/x"
               }
             </BreakableText>
           </span>
