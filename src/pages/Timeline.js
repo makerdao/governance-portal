@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 
 import VoterStatus from '../components/VoterStatus';
 import Button from '../components/Button';
@@ -14,6 +13,7 @@ import { modalOpen } from '../reducers/modal';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import Vote from '../components/modals/Vote';
 import TillHat from '../components/TillHatMeta';
+import ExtendedLink from '../components/Onboarding/shared/ExtendedLink';
 
 const riseUp = keyframes`
 0% {
@@ -98,8 +98,7 @@ const Timeline = ({
   votingFor,
   signaling,
   hat,
-  approvals,
-  location
+  approvals
 }) => {
   const hatProposal = proposals.find(({ source }) => eq(source, hat.address));
   const otherProposals = proposals.filter(
@@ -129,14 +128,9 @@ const Timeline = ({
             <Card.Element height={proposalWrapperHeight}>
               <ProposalDetails>
                 <div style={{ display: 'flex' }}>
-                  <Link
-                    to={{
-                      pathname: `/${toSlug(hatProposal.title)}`,
-                      search: location.search
-                    }}
-                  >
+                  <ExtendedLink to={`/${toSlug(hatProposal.title)}`}>
                     <SubHeading>{hatProposal.title}</SubHeading>
-                  </Link>
+                  </ExtendedLink>
                   <Tag ml="16" green>
                     GOVERNING PROPOSAL
                   </Tag>
@@ -146,14 +140,9 @@ const Timeline = ({
                     __html: hatProposal.proposal_blurb
                   }}
                 />
-                <Link
-                  to={{
-                    pathname: `/${toSlug(hatProposal.title)}`,
-                    search: location.search
-                  }}
-                >
+                <ExtendedLink to={`/${toSlug(hatProposal.title)}`}>
                   Read more...
-                </Link>
+                </ExtendedLink>
                 <div>
                   {!!hatProposal.end_approvals ? (
                     <Tag>{`Executed on ${formatDate(
@@ -203,27 +192,17 @@ const Timeline = ({
                         height={proposalWrapperHeight}
                       >
                         <ProposalDetails>
-                          <Link
-                            to={{
-                              pathname: `/${toSlug(proposal.title)}`,
-                              search: location.search
-                            }}
-                          >
+                          <ExtendedLink to={`/${toSlug(proposal.title)}`}>
                             <SubHeading>{proposal.title}</SubHeading>
-                          </Link>
+                          </ExtendedLink>
                           <Body
                             dangerouslySetInnerHTML={{
                               __html: proposal.proposal_blurb
                             }}
                           />
-                          <Link
-                            to={{
-                              pathname: `/${toSlug(proposal.title)}`,
-                              search: location.search
-                            }}
-                          >
+                          <ExtendedLink to={`/${toSlug(proposal.title)}`}>
                             Read more...
-                          </Link>
+                          </ExtendedLink>
                           {hat.approvals <
                           approvals.approvals[proposal.source] ? (
                             <div>
@@ -285,27 +264,17 @@ const Timeline = ({
                   height={proposalWrapperHeight}
                 >
                   <ProposalDetails>
-                    <Link
-                      to={{
-                        pathname: `/${toSlug(proposal.title)}`,
-                        search: location.search
-                      }}
-                    >
+                    <ExtendedLink to={`/${toSlug(proposal.title)}`}>
                       <SubHeading>{proposal.title}</SubHeading>
-                    </Link>
+                    </ExtendedLink>
                     <Body
                       dangerouslySetInnerHTML={{
                         __html: proposal.proposal_blurb
                       }}
                     />
-                    <Link
-                      to={{
-                        pathname: `/${toSlug(proposal.title)}`,
-                        search: location.search
-                      }}
-                    >
+                    <ExtendedLink to={`/${toSlug(proposal.title)}`}>
                       Read more...
-                    </Link>
+                    </ExtendedLink>
                     {!!proposal.end_approvals ? (
                       <div>
                         <Tag>{`Executed on ${formatDate(
@@ -352,18 +321,14 @@ const Timeline = ({
   );
 };
 
-const reduxProps = (
-  { proposals, accounts, hat, approvals },
-  { signaling, location }
-) => {
+const reduxProps = ({ proposals, accounts, hat, approvals }, { signaling }) => {
   return {
     hat,
     approvals,
     proposals: proposals.filter(p => !!p.govVote === !!signaling),
     canVote: activeCanVote({ accounts }),
     fetching: accounts.fetching,
-    votingFor: getActiveVotingFor({ accounts }),
-    location
+    votingFor: getActiveVotingFor({ accounts })
   };
 };
 
