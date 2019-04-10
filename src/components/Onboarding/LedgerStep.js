@@ -26,7 +26,7 @@ const LedgerStep = ({ active, onLedgerLive, onLedgerLegacy, onCancel }) => {
             <BreakableText color="grey">
               {
                 // eslint-disable-next-line
-                "44'/60'/0'/${x}"
+                "44'/60'/0'"
               }
             </BreakableText>
           </span>
@@ -44,7 +44,7 @@ const LedgerStep = ({ active, onLedgerLive, onLedgerLegacy, onCancel }) => {
             <BreakableText color="grey">
               {
                 // eslint-disable-next-line
-                "${purpose}'/${coinType}'/${x}'/0/0"
+                "44'/60'/0'"
               }
             </BreakableText>
           </span>
