@@ -177,9 +177,11 @@ function Proposal({
   accountDataFetching,
   network,
   canVote,
-  votingFor
+  votingFor,
+  isValidRoute
 }) {
-  if (isNil(proposal) || isEmpty(proposal)) return <NotFound />;
+  if (isNil(proposal) || isEmpty(proposal) || !isValidRoute)
+    return <NotFound />;
   const { active, topicKey } = proposal;
   const supporters = voteState[proposal.source.toLowerCase()] || null;
   return (
@@ -293,10 +295,12 @@ function Proposal({
 }
 
 const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
-  const { proposalSlug } = match.params;
+  const { proposalSlug, topicSlug } = match.params;
   const proposal = proposals.find(
     ({ title }) => toSlug(title) === proposalSlug
   );
+  const isValidRoute = proposal && proposal.topicKey === topicSlug;
+
   return {
     proposal,
     voteStateFetching: tally.fetching,
@@ -304,7 +308,8 @@ const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
     accountDataFetching: accounts.fetching,
     canVote: activeCanVote({ accounts }),
     votingFor: getActiveVotingFor({ accounts }),
-    network: metamask.network
+    network: metamask.network,
+    isValidRoute
   };
 };
 

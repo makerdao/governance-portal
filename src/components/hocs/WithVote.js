@@ -17,12 +17,14 @@ const WithVote = ({
     return children({
       proposalTitle: proposal.title,
       noVote: false,
-      proposalSlug: `${toSlug(proposal.title)}`
+      proposalSlug: `${toSlug(proposal.title)}`,
+      topicKey: proposal.topicKey
     });
   return children({
     proposalTitle: '',
     noVote: true,
-    proposalSlug: '----'
+    proposalSlug: '----',
+    topicKey: ''
   });
 };
 

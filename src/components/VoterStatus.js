@@ -182,13 +182,16 @@ const VoterStatus = ({
                 proposalAddresses={account.votingFor}
                 signaling={signaling}
               >
-                {({ proposalTitle, proposalSlug, noVote }) =>
+                {({ proposalTitle, proposalSlug, noVote, topicKey }) =>
                   noVote ? (
                     'Currently not voting'
                   ) : (
                     <Fragment>
                       Currently voting for{' '}
-                      <StyledLink disabled={noVote} to={proposalSlug}>
+                      <StyledLink
+                        disabled={noVote}
+                        to={`/${topicKey}/${proposalSlug}`}
+                      >
                         {proposalTitle}
                       </StyledLink>
                     </Fragment>
@@ -236,13 +239,16 @@ const VoterStatus = ({
                 proposalAddresses={account.votingFor}
                 signaling={signaling}
               >
-                {({ proposalTitle, proposalSlug, noVote }) =>
+                {({ proposalTitle, proposalSlug, noVote, topicKey }) =>
                   noVote ? (
                     'Currently not voting'
                   ) : (
                     <Fragment>
                       Currently voting for{' '}
-                      <StyledLink disabled={noVote} to={proposalSlug}>
+                      <StyledLink
+                        disabled={noVote}
+                        to={`/${topicKey}/${proposalSlug}`}
+                      >
                         {proposalTitle}
                       </StyledLink>
                     </Fragment>
