@@ -294,18 +294,12 @@ function Proposal({
   );
 }
 
-const reduxProps = (
-  { proposals, tally, accounts, metamask },
-  { match, ...other }
-) => {
-  console.log('match', match);
-  // console.log('other', other);
-  console.log('proposals', proposals);
+const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
   const { proposalSlug, topicSlug } = match.params;
   const proposal = proposals.find(
     ({ title }) => toSlug(title) === proposalSlug
   );
-  const isValidRoute = proposal.topicKey === topicSlug;
+  const isValidRoute = proposal && proposal.topicKey === topicSlug;
 
   return {
     proposal,

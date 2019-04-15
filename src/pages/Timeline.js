@@ -106,9 +106,6 @@ const Timeline = ({
   );
   otherProposals.sort((a, b) => b.end_timestamp - a.end_timestamp);
 
-  console.log('all proposals', proposals);
-  console.log('hatproposal', hatProposal);
-  console.log('otherproposals', otherProposals);
   const topicInfo = otherProposals.reduce((accumulator, current) => {
     if (!accumulator.find(({ topicKey }) => topicKey === current.topicKey)) {
       return [
