@@ -106,6 +106,9 @@ const Timeline = ({
   );
   otherProposals.sort((a, b) => b.end_timestamp - a.end_timestamp);
 
+  console.log('all proposals', proposals);
+  console.log('hatproposal', hatProposal);
+  console.log('otherproposals', otherProposals);
   const topicInfo = otherProposals.reduce((accumulator, current) => {
     if (!accumulator.find(({ topicKey }) => topicKey === current.topicKey)) {
       return [
@@ -128,7 +131,9 @@ const Timeline = ({
             <Card.Element height={proposalWrapperHeight}>
               <ProposalDetails>
                 <div style={{ display: 'flex' }}>
-                  <ExtendedLink to={`/${toSlug(hatProposal.title)}`}>
+                  <ExtendedLink
+                    to={`/${hatProposal.topicKey}/${toSlug(hatProposal.title)}`}
+                  >
                     <SubHeading>{hatProposal.title}</SubHeading>
                   </ExtendedLink>
                   <Tag ml="16" green>
@@ -140,7 +145,9 @@ const Timeline = ({
                     __html: hatProposal.proposal_blurb
                   }}
                 />
-                <ExtendedLink to={`/${toSlug(hatProposal.title)}`}>
+                <ExtendedLink
+                  to={`/${hatProposal.topicKey}/${toSlug(hatProposal.title)}`}
+                >
                   Read more...
                 </ExtendedLink>
                 <div>
@@ -192,7 +199,11 @@ const Timeline = ({
                         height={proposalWrapperHeight}
                       >
                         <ProposalDetails>
-                          <ExtendedLink to={`/${toSlug(proposal.title)}`}>
+                          <ExtendedLink
+                            to={`/${proposal.topicKey}/${toSlug(
+                              proposal.title
+                            )}`}
+                          >
                             <SubHeading>{proposal.title}</SubHeading>
                           </ExtendedLink>
                           <Body
@@ -200,7 +211,11 @@ const Timeline = ({
                               __html: proposal.proposal_blurb
                             }}
                           />
-                          <ExtendedLink to={`/${toSlug(proposal.title)}`}>
+                          <ExtendedLink
+                            to={`/${proposal.topicKey}/${toSlug(
+                              proposal.title
+                            )}`}
+                          >
                             Read more...
                           </ExtendedLink>
                           {hat.approvals <
@@ -264,7 +279,9 @@ const Timeline = ({
                   height={proposalWrapperHeight}
                 >
                   <ProposalDetails>
-                    <ExtendedLink to={`/${toSlug(proposal.title)}`}>
+                    <ExtendedLink
+                      to={`/${proposal.topicKey}/${toSlug(proposal.title)}`}
+                    >
                       <SubHeading>{proposal.title}</SubHeading>
                     </ExtendedLink>
                     <Body
@@ -272,7 +289,9 @@ const Timeline = ({
                         __html: proposal.proposal_blurb
                       }}
                     />
-                    <ExtendedLink to={`/${toSlug(proposal.title)}`}>
+                    <ExtendedLink
+                      to={`/${proposal.topicKey}/${toSlug(proposal.title)}`}
+                    >
                       Read more...
                     </ExtendedLink>
                     {!!proposal.end_approvals ? (

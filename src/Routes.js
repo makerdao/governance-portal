@@ -3,7 +3,8 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  withRouter
+  withRouter,
+  Redirect
 } from 'react-router-dom';
 import BaseLayout from './layouts/base';
 import Timeline from './pages/Timeline';
@@ -40,7 +41,15 @@ class App extends Component {
                   render={routeProps => <Timeline signaling {...routeProps} />}
                 />
                 <Route path="/not-found" component={NotFound} />
-                <Route path="/:proposalSlug" component={Proposal} />
+                <Route
+                  exact
+                  path="/:topicSlug"
+                  render={() => <Redirect to="/" />}
+                />
+                <Route
+                  path="/:topicSlug/:proposalSlug"
+                  render={routeProps => <Proposal signaling {...routeProps} />}
+                />
               </Switch>
             </BaseLayout>
           </ErrorBoundary>
