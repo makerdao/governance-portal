@@ -217,7 +217,7 @@ export const toBN = val => val.toBigNumber();
 
 export const toNum = async promise => {
   const val = await promise;
-  return val.toBigNumber().toFixed();
+  return val.toBigNumber().toFixed(4);
 };
 
 export const addMkrAndEthBalance = async account => {

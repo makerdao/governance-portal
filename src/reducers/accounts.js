@@ -125,7 +125,7 @@ export const addAccounts = accounts => async dispatch => {
       return {
         proxyRole: otherRole,
         address: linkedAddress,
-        mkrBalance: await toNum(mkrToken.balanceOf(linkedAddress))
+        mkrBalance: await toNum(await mkrToken.balanceOf(linkedAddress))
       };
     };
 
@@ -208,9 +208,12 @@ export const addSingleWalletAccount = account => async dispatch => {
   const _payload = {
     ...account,
     address: account.address,
-    mkrBalance: promiseRetry({
-      fn: async () => (await mkrToken.balanceOf(account.address)).toFixed()
-    }),
+    // mkrBalance: promiseRetry({
+    //   fn: async () => (await mkrToken.balanceOf(account.address)).toFixed()
+    // }),
+    mkrBalance: toNum(
+      promiseRetry({ fn: () => mkrToken.balanceOf(account.address) })
+    ),
     hasProxy: false,
     singleWallet: true,
     proxyRole: '',
