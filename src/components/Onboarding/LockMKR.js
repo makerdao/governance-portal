@@ -130,8 +130,8 @@ class LockMKR extends React.Component {
           <Grid gridRowGap="l">
             {this.state.step <= 1 && (
               <OnboardingHeader
-                title="Deposit MKR"
-                subtitle="In order to participate in voting, you must deposit MKR
+                title="Lock MKR"
+                subtitle="In order to participate in voting, you must lock your MKR tokens
         into your secure voting contract. The higher the amount, the more impact you’ll have on the system"
               />
             )}
