@@ -208,9 +208,9 @@ export const addSingleWalletAccount = account => async dispatch => {
   const _payload = {
     ...account,
     address: account.address,
-    mkrBalance: promiseRetry({
-      fn: async () => (await mkrToken.balanceOf(account.address)).toFixed()
-    }),
+    mkrBalance: toNum(
+      promiseRetry({ fn: () => mkrToken.balanceOf(account.address) })
+    ),
     hasProxy: false,
     singleWallet: true,
     proxyRole: '',
