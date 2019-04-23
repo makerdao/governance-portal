@@ -7,15 +7,12 @@ import {
   Text,
   Card,
   Link,
-  Table,
   Address
 } from '@makerdao/ui-components';
 
 import NetworkIndicator from '../../NetworkIndicator';
 import { TransactionStatus } from '../../../utils/constants';
-import { ethScanLink } from '../../../utils/ethereum';
 import WalletIcon from './WalletIcon';
-import ExternalLink from './ExternalLink';
 import { DataLabel, SubtitleDataLabel } from '../../../utils/typography';
 import { GreyTag } from './Tags';
 import linkImg from '../../../imgs/onboarding/link.svg';
@@ -26,14 +23,14 @@ const iconSize = '2.3rem';
 const connectingLineHeight = '5rem';
 
 // FIXME: get these from the Maker instance instead of hardcoding
-const contractAddresses = [
-  {
-    name: 'Voting Contract',
-    kovan: '0xbbffc76e94b34f72d96d054b31f6424249c1337d',
-    mainnet: '0x8e2a84d6ade1e7fffee039a35ef5f19f13057152',
-    ganache: '0x189a7fbb0038d4b55bd03840be0b0a38de034089'
-  }
-];
+// const contractAddresses = [
+//   {
+//     name: 'Voting Contract',
+//     kovan: '0xbbffc76e94b34f72d96d054b31f6424249c1337d',
+//     mainnet: '0x8e2a84d6ade1e7fffee039a35ef5f19f13057152',
+//     ganache: '0x189a7fbb0038d4b55bd03840be0b0a38de034089'
+//   }
+// ];
 
 const IconBackground = ({ children, ...props }) => {
   return (
@@ -266,7 +263,7 @@ const Sidebar = ({
                   <DataLabel>STORED MKR</DataLabel>
                   <div>
                     <Text t="p2" fontWeight="semibold">
-                      {singleWallet.proxy.votingPower || 0} MKR
+                      {singleWallet.mkrBalance || 0} MKR
                     </Text>
                   </div>
                   <SubtitleDataLabel>
@@ -290,7 +287,7 @@ const Sidebar = ({
         )}
         <div>
           <NetworkIndicator network={network} mb="xs" fontWeight="medium" />
-          <Box fontSize="1.5rem" color="grey">
+          {/* <Box fontSize="1.5rem" color="grey">
             <Table width="100%" variant="cozy">
               <tbody>
                 {contractAddresses.map(({ name, ...addresses }) => (
@@ -326,7 +323,7 @@ const Sidebar = ({
                 </tr>
               </tbody>
             </Table>
-          </Box>
+          </Box> */}
         </div>
         {(faqs || []).map(faq => {
           return (
