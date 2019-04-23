@@ -131,8 +131,11 @@ class LockMKR extends React.Component {
             {this.state.step <= 1 && (
               <OnboardingHeader
                 title="Lock MKR"
-                subtitle="In order to participate in voting, you must lock your MKR tokens
-        into your secure voting contract. The higher the amount, the more impact you’ll have on the system"
+                subtitle={`In order to participate in voting, you must lock your MKR tokens${
+                  !this.props.singleWallet
+                    ? ' into your secure voting contract.'
+                    : ''
+                }. The higher the amount, the more impact you’ll have on the system`}
               />
             )}
 
@@ -235,9 +238,9 @@ class LockMKR extends React.Component {
                     <Box>
                       <img src={lockImg} alt="" />
                     </Box>
-                    <Box>
+                    {/* <Box>
                       <Link fontWeight="semibold">Address hidden</Link>
-                    </Box>
+                    </Box> */}
                     <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
                       {this.state.votingMKR} MKR
                     </Box>

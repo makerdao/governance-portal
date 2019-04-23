@@ -24,8 +24,11 @@ const StartVoting = ({ onComplete, hotWallet, coldWallet, singleWallet }) => {
       <Grid gridRowGap="l" maxWidth={`${containerWidth}`}>
         <OnboardingHeader
           title="Set up complete!"
-          subtitle="Thank you for setting up your secure voting contract.
-You are now ready to impact the system."
+          subtitle={`${
+            !singleWallet
+              ? 'Thank you for setting up your secure voting contract. '
+              : ''
+          }You are now ready to impact the system.`}
           mt="l"
         />
         <Flex justifyContent="center">
