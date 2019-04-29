@@ -17,7 +17,7 @@ script:
   - yarn cover
   - codecov
   - yarn build
-  - git show --oneline -s > ./build/version.txt
+  - git show --oneline -s > ./build/version.json
 deploy:
   - provider: script
     script: now ./build --token $NOW_TOKEN --team mkr-js-prod -A ../now.json && now alias --token $NOW_TOKEN --team mkr-js-prod
