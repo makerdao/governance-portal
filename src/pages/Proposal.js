@@ -297,7 +297,8 @@ function Proposal({
 const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
   const { proposalSlug, topicSlug } = match.params;
   const proposal = proposals.find(
-    ({ title }) => toSlug(title) === proposalSlug
+    ({ title, topicKey }) =>
+      toSlug(title) === proposalSlug && topicKey === topicSlug
   );
   const isValidRoute = proposal && proposal.topicKey === topicSlug;
 
