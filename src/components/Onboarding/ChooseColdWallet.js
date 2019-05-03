@@ -3,6 +3,7 @@ import { Grid, Box, Button, Flex } from '@makerdao/ui-components';
 import { connect } from 'react-redux';
 
 import { AccountTypes } from '../../utils/constants';
+import { addMkrAndEthBalance } from '../../utils/misc';
 
 import LedgerStep from './LedgerStep';
 import Sidebar from './shared/Sidebar';
@@ -166,7 +167,7 @@ class ChooseColdWallet extends React.Component {
 
   onAccountSelected = async account => {
     await this.props.addHardwareAccount(account.address, account.type);
-    this.props.setColdWallet(account);
+    this.props.setColdWallet(await addMkrAndEthBalance(account));
     this.props.setActiveAccount(this.props.coldWallet.address);
     this.toConfirmWallet();
   };

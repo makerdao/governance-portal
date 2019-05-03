@@ -62,6 +62,7 @@ const Onboarding = ({ open, step, state, ...props }) => {
       <Introduction
         show={open && state === OnboardingStates.INTRODUCTION}
         onClose={onboardingProps.close}
+        activeAccountType={props.activeAccountType}
         onLinkedWallet={() =>
           onboardingProps.setState(OnboardingStates.SETUP_LINKED_WALLET)
         }
@@ -150,7 +151,8 @@ const SingleWalletOnboarding = ({ open, step, onboarding }) => {
 
 export default connect(
   state => ({
-    ...state.onboarding
+    ...state.onboarding,
+    ...state.accounts
   }),
   {
     setOnboardingState,

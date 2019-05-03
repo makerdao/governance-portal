@@ -76,7 +76,7 @@ const TextButton = styled.span`
   cursor: pointer;
 `;
 
-const WelcomeBanner = ({ onboardingOpen }) => {
+const WelcomeBanner = ({ onboardingOpen, activeAccount }) => {
   return (
     <Banner>
       <Content>
@@ -99,6 +99,7 @@ const WelcomeBanner = ({ onboardingOpen }) => {
         hoverTextColor={theme.text.darker_default}
         activeColor={'grey'}
         onClick={onboardingOpen}
+        disabled={!activeAccount}
       >
         Set up now
       </Button>
@@ -134,7 +135,10 @@ const VoterStatus = ({
   )
     return (
       <FadeIn>
-        <WelcomeBanner onboardingOpen={onboardingOpen} />
+        <WelcomeBanner
+          activeAccount={account}
+          onboardingOpen={onboardingOpen}
+        />
       </FadeIn>
     );
   const { linkedAccount } = account.proxy;
