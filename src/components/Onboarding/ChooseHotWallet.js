@@ -223,9 +223,9 @@ class ChooseHotWallet extends React.Component {
     });
   };
 
-  onAccountSelected = account => {
+  onAccountSelected = async account => {
     this.props.addHardwareAccount(account.address, account.type);
-    this.props.setHotWallet(account);
+    this.props.setHotWallet(await addMkrAndEthBalance(account));
     this.toConfirmWallet();
   };
 
