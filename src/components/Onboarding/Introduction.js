@@ -8,6 +8,10 @@ import { H1, H3 } from '../../utils/typography';
 import metamask from '../../imgs/metamask.svg';
 import time from '../../imgs/onboarding/time.svg';
 import eth from '../../imgs/onboarding/eth.svg';
+import ledger from '../../imgs/onboarding/ledger-logomark.svg';
+import trezor from '../../imgs/onboarding/trezor-logomark.svg';
+import linkedWallet from '../../imgs/onboarding/linked-wallet.svg';
+import singleWallet from '../../imgs/onboarding/single-wallet.svg';
 import rightArrow from '../../imgs/onboarding/right-arrow.svg';
 
 const Container = styled(Box)`
@@ -22,6 +26,12 @@ const Container = styled(Box)`
     opacity: 1;
   `};
 `;
+
+const Icons = {
+  browser: metamask,
+  ledger,
+  trezor
+};
 
 const walletIconWidth = '3.4rem';
 const instructionImageWidth = '5.4rem';
@@ -70,7 +80,15 @@ const WalletCard = props => {
   );
 };
 
-const Introduction = ({ show, onClose, onLinkedWallet, onSingleWallet }) => {
+const Introduction = ({
+  show,
+  onClose,
+  onLinkedWallet,
+  onSingleWallet,
+  activeAccountType
+}) => {
+  const walletIcon = Icons[activeAccountType] || singleWallet;
+
   return (
     <Container show={show} height="100%" position="fixed">
       <Grid
@@ -133,13 +151,13 @@ const Introduction = ({ show, onClose, onLinkedWallet, onSingleWallet }) => {
           <Grid gridRowGap="m" gridTemplateColumns="1fr">
             <WalletCard
               onClick={onLinkedWallet}
-              imgSrc={metamask}
+              imgSrc={linkedWallet}
               title="Vote with a linked wallet"
               subtitle="We support Metamask, Ledger and Trezor."
             />
             <WalletCard
               onClick={onSingleWallet}
-              imgSrc={metamask}
+              imgSrc={walletIcon}
               title="Vote with a single wallet"
               subtitle="Vote with the active account selected in Metamask."
             />
