@@ -103,9 +103,13 @@ const WithdrawalPageLink = styled.a`
 
 const HIDE_MIGRATION_BANNER_KEY = 'hide-migration-banner-0.1.0';
 
+const hasHiddenMigrationBanner = JSON.parse(
+  localStorage.getItem(HIDE_MIGRATION_BANNER_KEY)
+);
+
 class MigrationNotificationBanner extends React.Component {
   state = {
-    show: !JSON.parse(localStorage.getItem(HIDE_MIGRATION_BANNER_KEY))
+    show: !hasHiddenMigrationBanner
   };
 
   hide = () => {
@@ -142,8 +146,14 @@ class MigrationNotificationBanner extends React.Component {
               </Flex> */}
               We've made a critical update to the Maker Voting Contract. If
               you've participated in any votes, please visit{' '}
-              <WithdrawalPageLink>migrate.makerdao.com</WithdrawalPageLink> to
-              withdraw your MKR from the old system.
+              <WithdrawalPageLink
+                href="https://migrate.makerdao.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                migrate.makerdao.com
+              </WithdrawalPageLink>{' '}
+              to withdraw your MKR from the old system.
             </BannerContent>
           </BannerBody>
         </Content>

@@ -43,7 +43,7 @@ export default {
     {
       title: 'What am I granting permission to?',
       body:
-        'By granting permissions in this transaction, you are approving that you will be able to Lock MKR in your secure voting contract. You are not relinquishing control of your MKR and can withdraw it at anytime.'
+        'By granting permissions in this transaction, you are allowing your proxy voting contract to lock your MKR. You are not relinquishing control of your MKR and can withdraw it at anytime.'
     }
   ],
   lockMKR: [
