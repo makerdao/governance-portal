@@ -14,6 +14,7 @@ import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import Vote from '../components/modals/Vote';
 import TillHat from '../components/TillHatMeta';
 import ExtendedLink from '../components/Onboarding/shared/ExtendedLink';
+import { Banner, BannerBody, BannerContent } from '../components/Banner';
 
 const riseUp = keyframes`
 0% {
@@ -88,7 +89,78 @@ const Tag = styled.p`
   color: ${({ green }) => (green ? '#30BD9F' : '#E45432')};
 `;
 
+const Content = styled.div`
+  display: flex;
+`;
+
 const proposalWrapperHeight = 200;
+
+const WithdrawalPageLink = styled.a`
+  color: #ffffff;
+  text-decoration: underline;
+  font-weight: bold;
+`;
+
+const HIDE_MIGRATION_BANNER_KEY = 'hide-migration-banner-0.1.0';
+
+const hasHiddenMigrationBanner = JSON.parse(
+  localStorage.getItem(HIDE_MIGRATION_BANNER_KEY)
+);
+
+class MigrationNotificationBanner extends React.Component {
+  state = {
+    show: !hasHiddenMigrationBanner
+  };
+
+  hide = () => {
+    this.setState({ show: false });
+    localStorage.setItem(HIDE_MIGRATION_BANNER_KEY, 'true');
+  };
+
+  render() {
+    if (!this.state.show) return null;
+    return (
+      <Banner
+        backgroundColor="#E8643F"
+        border="none"
+        style={{ position: 'relative' }}
+      >
+        <div
+          onClick={this.hide}
+          style={{
+            color: 'white',
+            position: 'absolute',
+            top: '0px',
+            right: '8px',
+            fontSize: '18px',
+            cursor: 'pointer'
+          }}
+        >
+          ×
+        </div>
+        <Content>
+          <BannerBody color="#FFFFFF">
+            <BannerContent style={{ fontSize: '17px' }}>
+              {/* <Flex>
+                <NotificationIcon />
+              </Flex> */}
+              We've made a critical update to the Maker Voting Contract. If
+              you've participated in any votes, please visit{' '}
+              <WithdrawalPageLink
+                href="https://migrate.makerdao.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                migrate.makerdao.com
+              </WithdrawalPageLink>{' '}
+              to withdraw your MKR from the old system.
+            </BannerContent>
+          </BannerBody>
+        </Content>
+      </Banner>
+    );
+  }
+}
 
 const Timeline = ({
   modalOpen,
@@ -121,6 +193,7 @@ const Timeline = ({
 
   return (
     <Fragment>
+      <MigrationNotificationBanner />
       <VoterStatus signaling={signaling} />
       <RiseUp key={otherProposals.toString()}>
         {signaling || !hatProposal ? null : (
