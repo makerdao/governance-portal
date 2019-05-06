@@ -405,6 +405,7 @@ const withUpdatedAccount = (accounts, updatedAccount) => {
 
 const initialState = {
   activeAccount: '',
+  activeAccountType: '',
   fetching: true,
   allAccounts: [],
   onHardwareAccountChosen: () => {}
@@ -482,7 +483,8 @@ const accounts = createReducer(initialState, {
   [SET_ACTIVE_ACCOUNT]: (state, { payload: { newAccount } }) => ({
     ...state,
     allAccounts: state.allAccounts,
-    activeAccount: newAccount.address
+    activeAccount: newAccount.address,
+    activeAccountType: newAccount.type
   }),
   [SET_UNLOCKED_MKR]: (state, { payload }) => ({
     ...state,
