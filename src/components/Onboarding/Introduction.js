@@ -159,7 +159,7 @@ const Introduction = ({
               onClick={onSingleWallet}
               imgSrc={walletIcon}
               title="Vote with a single wallet"
-              subtitle="Vote with the active account selected in Metamask."
+              subtitle="Vote with the account selected in the accounts dropdown."
             />
           </Grid>
         </Flex>
