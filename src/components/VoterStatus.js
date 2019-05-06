@@ -62,15 +62,6 @@ const Content = styled.div`
   display: flex;
 `;
 
-const BorderBottom = styled.div`
-  height: 1px;
-  background: #dbdddd;
-  position: absolute;
-  top: 228px;
-  left: 0;
-  width: 100%;
-`;
-
 const TextButton = styled.span`
   color: ${theme.text.blue_link};
   cursor: pointer;
@@ -81,7 +72,7 @@ const WelcomeBanner = ({ onboardingOpen, activeAccount }) => {
     <Banner>
       <Content>
         <Flag mr={20} mt="-2" />
-        <BannerBody>
+        <BannerBody whiteSpace="pre">
           <BannerHeader>
             Welcome to the governance voting dashboard
           </BannerHeader>
@@ -265,7 +256,6 @@ const VoterStatus = ({
           )}
         </SmallMediumText>
       )}
-      <BorderBottom />
     </FadeIn>
   );
 };
