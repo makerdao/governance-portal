@@ -28,6 +28,7 @@ class InitiateLink extends React.Component {
   }
 
   componentDidMount() {
+    if (!this.props.hotWallet) return;
     if (
       this.props.coldWallet.hasProxy &&
       this.props.coldWallet.proxy.hasInfMkrApproval
@@ -92,8 +93,15 @@ class InitiateLink extends React.Component {
       approveLinkTxStatus,
       mkrApproveProxyTxHash,
       mkrApproveProxyTxStatus,
-      onComplete
+      onComplete,
+      toStep
     } = this.props;
+
+    if (!hotWallet) {
+      toStep(1);
+      return null;
+    }
+
     return (
       <TwoColumnSidebarLayout
         sidebar={

@@ -125,6 +125,7 @@ export const addAccounts = accounts => async dispatch => {
       return {
         proxyRole: otherRole,
         address: linkedAddress,
+        // type: 'browser',
         mkrBalance: await toNum(mkrToken.balanceOf(linkedAddress))
       };
     };
