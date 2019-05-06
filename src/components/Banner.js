@@ -6,8 +6,9 @@ import theme from '../theme';
 
 export const Banner = styled.div`
   height: 82px;
-  background: #ffffff;
-  border: 1px solid #f77249;
+  background: ${({ backgroundColor }) =>
+    backgroundColor ? backgroundColor : '#ffffff'};
+  ${({ border }) => (border === 'none' ? '' : 'border: 1px solid #f77249;')};
   box-sizing: border-box;
   border-radius: 4px;
   margin: 20px 0px 24px;
@@ -44,16 +45,16 @@ export const Flag = props => (
 
 export const BannerHeader = styled.div`
   font-size: 20px;
-  color: ${theme.text.darker_default};
+  color: ${({ color }) => (color ? color : theme.text.darker_default)};
   font-weight: bold;
   line-height: 1.1em;
   margin-bottom: 0.2em;
 `;
 
 export const BannerBody = styled.div`
-  white-space: pre;
+  white-space: ${({ whiteSpace }) => (whiteSpace ? whiteSpace : '')};
   font-size: 15px;
-  color: #546978;
+  color: ${({ color }) => (color ? color : '#546978')};
   display: flex;
   flex-direction: column;
 `;
