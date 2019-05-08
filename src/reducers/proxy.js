@@ -16,6 +16,7 @@ import { MKR } from '../chain/maker';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
+  WITHDRAW_ALL_MKR_SUCCESS,
   MKR_APPROVE_SUCCESS,
   IOU_APPROVE_SUCCESS
 } from './sharedProxyConstants';
@@ -51,8 +52,11 @@ export const IOU_APPROVE_FAILURE = 'proxy/IOU_APPROVE_FAILURE';
 
 export const WITHDRAW_MKR_REQUEST = 'proxy/WITHDRAW_MKR_REQUEST';
 export const WITHDRAW_MKR_SENT = 'proxy/WITHDRAW_MKR_SENT';
-
 export const WITHDRAW_MKR_FAILURE = 'proxy/WITHDRAW_MKR_FAILURE';
+
+export const WITHDRAW_ALL_MKR_REQUEST = 'proxy/WITHDRAW_ALL_MKR_REQUEST';
+export const WITHDRAW_ALL_MKR_SENT = 'proxy/WITHDRAW_ALL_MKR_SENT';
+export const WITHDRAW_ALL_MKR_FAILURE = 'proxy/WITHDRAW_ALL_MKR_FAILURE';
 
 export const BREAK_LINK_REQUEST = 'proxy/BREAK_LINK_REQUEST';
 export const BREAK_LINK_SENT = 'proxy/BREAK_LINK_SENT';
@@ -69,15 +73,18 @@ const handleTx = ({
   acctType
 }) =>
   new Promise(resolve => {
+    console.log('handleTx');
     const txMgr = window.maker.service('transactionManager');
     txMgr.listen(txObject, {
       pending: tx => {
+        console.log('handleTx pending');
         dispatch({
           type: `proxy/${prefix}_SENT`,
           payload: { txHash: tx.hash }
         });
       },
       mined: async _ => {
+        console.log('handleTx mined');
         dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
         ReactGA.event({
           category: `${prefix} success`,
@@ -87,6 +94,7 @@ const handleTx = ({
         resolve(true);
       },
       error: (_, err) => {
+        console.log('handleTx err', err);
         dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
         dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
         ReactGA.event({
@@ -217,6 +225,29 @@ export const free = value => (dispatch, getState) => {
     prefix: 'WITHDRAW_MKR',
     dispatch,
     txObject: free,
+    successPayload: value,
+    acctType: account.type
+  }).then(success => success && dispatch(initApprovalsFetch()));
+};
+export const freeAll = value => (dispatch, getState) => {
+  console.log('freeAll', value);
+  if (value <= 0) return;
+  const account = getAccount(getState(), window.maker.currentAddress());
+
+  let freeAll;
+  if (account.singleWallet) {
+    console.log('single wallet');
+    freeAll = window.maker.service('chief').free(value);
+  } else {
+    console.log('single wallet');
+    freeAll = window.maker.service('voteProxy').freeAll(account.proxy.address);
+  }
+
+  dispatch({ type: WITHDRAW_ALL_MKR_REQUEST, payload: value });
+  return handleTx({
+    prefix: 'WITHDRAW_ALL_MKR',
+    dispatch,
+    txObject: freeAll,
     successPayload: value,
     acctType: account.type
   }).then(success => success && dispatch(initApprovalsFetch()));
@@ -448,6 +479,25 @@ const proxy = createReducer(initialState, {
   [WITHDRAW_MKR_FAILURE]: state => ({
     ...state,
     withdrawMkrTxStatus: TransactionStatus.ERROR
+  }),
+  // Withdraw All ---------------------------------------
+  [WITHDRAW_ALL_MKR_REQUEST]: state => ({
+    ...state,
+    withdrawAllMkrTxHash: '',
+    withdrawAllMkrTxStatus: TransactionStatus.NOT_STARTED
+  }),
+  [WITHDRAW_ALL_MKR_SENT]: (state, { payload }) => ({
+    ...state,
+    withdrawAllMkrTxStatus: TransactionStatus.PENDING,
+    withdrawAllMkrTxHash: payload.txHash
+  }),
+  [WITHDRAW_ALL_MKR_SUCCESS]: state => ({
+    ...state,
+    withdrawAllMkrTxStatus: TransactionStatus.MINED
+  }),
+  [WITHDRAW_ALL_MKR_FAILURE]: state => ({
+    ...state,
+    withdrawAllMkrTxStatus: TransactionStatus.ERROR
   }),
   // Break Link -------------------------------------
   [BREAK_LINK_REQUEST]: state => ({

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { getActiveAccount } from '../../reducers/accounts';
-import { free } from '../../reducers/proxy';
+import { free, freeAll } from '../../reducers/proxy';
 import { modalClose } from '../../reducers/modal';
 import AmountInput from './shared/AmountInput';
 import TransactionModal from './shared/InitiateTransaction';
@@ -22,10 +22,19 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
   free,
+  freeAll,
   modalClose
 };
 
-const Withdraw = ({ account, txHash, txStatus, balance, modalClose, free }) => {
+const Withdraw = ({
+  account,
+  txHash,
+  txStatus,
+  balance,
+  modalClose,
+  free,
+  freeAll
+}) => {
   return (
     <TransactionModal
       txPurpose="This transaction is to withdraw your MKR back to your cold wallet"
@@ -50,8 +59,14 @@ const Withdraw = ({ account, txHash, txStatus, balance, modalClose, free }) => {
               amountLabel="MKR in voting system"
               maxAmount={balance}
               onCancel={modalClose}
-              onSubmit={amount => {
-                free(amount);
+              onSubmit={(amount, useFreeAll) => {
+                if (useFreeAll) {
+                  console.log('use freeAll');
+                  freeAll(amount);
+                } else {
+                  console.log('use free');
+                  free(amount);
+                }
                 onNext();
               }}
             />
