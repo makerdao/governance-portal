@@ -1,7 +1,7 @@
 {
   "name": "mkr-governance-dashboard",
   "type": "static",
-  "alias": "dai-gov-develop",
+  "alias": "dai-gov-staging",
   "version": 1,
   "static": {
     "rewrites": [

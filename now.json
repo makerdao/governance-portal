@@ -1,7 +1,7 @@
 {
   "version": 2,
   "name": "mkr-governance-dashboard",
-  "alias": "dai-gov-staging",
+  "alias": "dai-gov-develop",
   "builds": [
     {
       "src": "package.json",
@@ -23,9 +23,6 @@
       }
     }
   ],
-  "github": {
-    "autoAlias": false
-  },
   "env": {
     "BLANK_SECRET": "@blank-secret"
   }
