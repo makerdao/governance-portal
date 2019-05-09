@@ -36,6 +36,7 @@
   "scripts": {
     "start": "HTTPS=true NODE_ENV=development craco start",
     "build": "craco build",
+    "now-build": "yarn build",
     "deploy": "yarn build && now ./build -A ../now.json",
     "test": "jest",
     "cover": "jest --coverage",

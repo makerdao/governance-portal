@@ -1,33 +1,32 @@
 {
+  "version": 2,
   "name": "mkr-governance-dashboard",
-  "type": "static",
   "alias": "dai-gov-staging",
-  "version": 1,
-  "static": {
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@now/static-build",
+      "config": { "distDir": "build" }
+    }
+  ],
+  "routes": [
+    { "src": "^/static/(.*)", "dest": "/static/$1" },
+    { "src": "^/favicon.ico", "dest": "/favicon.ico" },
+    { "src": "^/manifest.json", "dest": "/manifest.json" },
+    {
+      "src": "^/(.*)",
+      "dest": "/index.html",
+      "headers": {
+        "X-Frame-Options": "Deny",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-protection": "1; mode=block"
       }
-    ],
-    "headers": [
-      {
-        "source": "**",
-        "headers": [
-          {
-            "key": "X-Frame-Options",
-            "value": "Deny"
-          },
-          {
-            "key": "X-Content-Type-Options",
-            "value": "nosniff"
-          },
-          {
-            "key": "X-XSS-protection",
-            "value": "1; mode=block"
-          }
-        ]
-      }
-    ]
+    }
+  ],
+  "github": {
+    "autoAlias": false
+  },
+  "env": {
+    "BLANK_SECRET": "@blank-secret"
   }
 }
