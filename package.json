@@ -7,7 +7,7 @@
   "dependencies": {
     "@craco/craco": "^3.5.0",
     "@makerdao/dai": "^0.15.1",
-    "@makerdao/dai-plugin-config": "^0.2.3-rc.3",
+    "@makerdao/dai-plugin-config": "^0.2.5-rc.1",
     "@makerdao/dai-plugin-governance": "^0.6.1",
     "@makerdao/dai-plugin-ledger-web": "^0.9.7",
     "@makerdao/dai-plugin-trezor-web": "^0.9.6",
@@ -36,6 +36,7 @@
   "scripts": {
     "start": "HTTPS=true NODE_ENV=development craco start",
     "build": "craco build",
+    "now-build": "yarn build",
     "deploy": "yarn build && now ./build -A ../now.json",
     "test": "jest",
     "cover": "jest --coverage",

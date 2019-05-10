@@ -95,7 +95,7 @@ const Content = styled.div`
 
 const proposalWrapperHeight = 200;
 
-const WithdrawalPageLink = styled.a`
+const BannerLink = styled.a`
   color: #ffffff;
   text-decoration: underline;
   font-weight: bold;
@@ -146,14 +146,31 @@ class MigrationNotificationBanner extends React.Component {
               </Flex> */}
               We've made a critical update to the Maker Voting Contract. If
               you've participated in any votes, please visit{' '}
-              <WithdrawalPageLink
+              <BannerLink
                 href="https://migrate.makerdao.com/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 migrate.makerdao.com
-              </WithdrawalPageLink>{' '}
-              to withdraw your MKR from the old system.
+              </BannerLink>{' '}
+              to withdraw your MKR from the old system. This interface is using
+              the new{' '}
+              <BannerLink
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://etherscan.io/address/0x9ef05f7f6deb616fd37ac3c959a2ddd25a54e4f5"
+              >
+                DSChief
+              </BannerLink>{' '}
+              and{' '}
+              <BannerLink
+                target="_blank"
+                rel="noopener noreferrer"
+                href=" https://etherscan.io/address/0x868ba9aeacA5B73c7C27F3B01588bf4F1339F2bC"
+              >
+                Vote Proxy{' '}
+              </BannerLink>
+              contracts deployed on May 6 2019.
             </BannerContent>
           </BannerBody>
         </Content>
