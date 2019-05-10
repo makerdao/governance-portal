@@ -111,6 +111,7 @@ const VoterStatus = ({
   signaling,
   onboardingState
 }) => {
+  console.log('voter status component, fetching?', fetching);
   if (fetching) {
     return (
       <Padding>

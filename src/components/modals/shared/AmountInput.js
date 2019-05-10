@@ -25,8 +25,11 @@ export default class AmountInput extends Component {
   }
 
   setAmount = event => {
-    // TODO: use freeAll if user inputs the max amount?
-    this.setState({ amount: event.target.value });
+    const useFreeAll =
+      parseFloat(event.target.value) === parseFloat(this.props.maxAmount)
+        ? true
+        : false;
+    this.setState({ amount: event.target.value, useFreeAll });
   };
 
   setMaxAmount = () => {

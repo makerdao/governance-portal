@@ -236,10 +236,8 @@ export const freeAll = value => (dispatch, getState) => {
 
   let freeAll;
   if (account.singleWallet) {
-    console.log('single wallet');
     freeAll = window.maker.service('chief').free(value);
   } else {
-    console.log('single wallet');
     freeAll = window.maker.service('voteProxy').freeAll(account.proxy.address);
   }
 
@@ -483,21 +481,21 @@ const proxy = createReducer(initialState, {
   // Withdraw All ---------------------------------------
   [WITHDRAW_ALL_MKR_REQUEST]: state => ({
     ...state,
-    withdrawAllMkrTxHash: '',
-    withdrawAllMkrTxStatus: TransactionStatus.NOT_STARTED
+    withdrawMkrTxHash: '',
+    withdrawMkrTxStatus: TransactionStatus.NOT_STARTED
   }),
   [WITHDRAW_ALL_MKR_SENT]: (state, { payload }) => ({
     ...state,
-    withdrawAllMkrTxStatus: TransactionStatus.PENDING,
-    withdrawAllMkrTxHash: payload.txHash
+    withdrawMkrTxStatus: TransactionStatus.PENDING,
+    withdrawMkrTxHash: payload.txHash
   }),
   [WITHDRAW_ALL_MKR_SUCCESS]: state => ({
     ...state,
-    withdrawAllMkrTxStatus: TransactionStatus.MINED
+    withdrawMkrTxStatus: TransactionStatus.MINED
   }),
   [WITHDRAW_ALL_MKR_FAILURE]: state => ({
     ...state,
-    withdrawAllMkrTxStatus: TransactionStatus.ERROR
+    withdrawMkrTxStatus: TransactionStatus.ERROR
   }),
   // Break Link -------------------------------------
   [BREAK_LINK_REQUEST]: state => ({
