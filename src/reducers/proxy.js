@@ -16,6 +16,7 @@ import { MKR } from '../chain/maker';
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
+  WITHDRAW_ALL_MKR_SUCCESS,
   MKR_APPROVE_SUCCESS,
   IOU_APPROVE_SUCCESS
 } from './sharedProxyConstants';
@@ -51,8 +52,11 @@ export const IOU_APPROVE_FAILURE = 'proxy/IOU_APPROVE_FAILURE';
 
 export const WITHDRAW_MKR_REQUEST = 'proxy/WITHDRAW_MKR_REQUEST';
 export const WITHDRAW_MKR_SENT = 'proxy/WITHDRAW_MKR_SENT';
-
 export const WITHDRAW_MKR_FAILURE = 'proxy/WITHDRAW_MKR_FAILURE';
+
+export const WITHDRAW_ALL_MKR_REQUEST = 'proxy/WITHDRAW_ALL_MKR_REQUEST';
+export const WITHDRAW_ALL_MKR_SENT = 'proxy/WITHDRAW_ALL_MKR_SENT';
+export const WITHDRAW_ALL_MKR_FAILURE = 'proxy/WITHDRAW_ALL_MKR_FAILURE';
 
 export const BREAK_LINK_REQUEST = 'proxy/BREAK_LINK_REQUEST';
 export const BREAK_LINK_SENT = 'proxy/BREAK_LINK_SENT';
@@ -217,6 +221,26 @@ export const free = value => (dispatch, getState) => {
     prefix: 'WITHDRAW_MKR',
     dispatch,
     txObject: free,
+    successPayload: value,
+    acctType: account.type
+  }).then(success => success && dispatch(initApprovalsFetch()));
+};
+export const freeAll = value => (dispatch, getState) => {
+  if (value <= 0) return;
+  const account = getAccount(getState(), window.maker.currentAddress());
+
+  let freeAll;
+  if (account.singleWallet) {
+    freeAll = window.maker.service('chief').free(value);
+  } else {
+    freeAll = window.maker.service('voteProxy').freeAll(account.proxy.address);
+  }
+
+  dispatch({ type: WITHDRAW_ALL_MKR_REQUEST, payload: value });
+  return handleTx({
+    prefix: 'WITHDRAW_ALL_MKR',
+    dispatch,
+    txObject: freeAll,
     successPayload: value,
     acctType: account.type
   }).then(success => success && dispatch(initApprovalsFetch()));
@@ -446,6 +470,25 @@ const proxy = createReducer(initialState, {
     withdrawMkrTxStatus: TransactionStatus.MINED
   }),
   [WITHDRAW_MKR_FAILURE]: state => ({
+    ...state,
+    withdrawMkrTxStatus: TransactionStatus.ERROR
+  }),
+  // Withdraw All ---------------------------------------
+  [WITHDRAW_ALL_MKR_REQUEST]: state => ({
+    ...state,
+    withdrawMkrTxHash: '',
+    withdrawMkrTxStatus: TransactionStatus.NOT_STARTED
+  }),
+  [WITHDRAW_ALL_MKR_SENT]: (state, { payload }) => ({
+    ...state,
+    withdrawMkrTxStatus: TransactionStatus.PENDING,
+    withdrawMkrTxHash: payload.txHash
+  }),
+  [WITHDRAW_ALL_MKR_SUCCESS]: state => ({
+    ...state,
+    withdrawMkrTxStatus: TransactionStatus.MINED
+  }),
+  [WITHDRAW_ALL_MKR_FAILURE]: state => ({
     ...state,
     withdrawMkrTxStatus: TransactionStatus.ERROR
   }),

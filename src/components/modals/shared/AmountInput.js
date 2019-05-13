@@ -15,7 +15,8 @@ export default class AmountInput extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      amount: ''
+      amount: '',
+      useFreeAll: false
     };
   }
 
@@ -24,11 +25,15 @@ export default class AmountInput extends Component {
   }
 
   setAmount = event => {
-    this.setState({ amount: event.target.value });
+    const useFreeAll =
+      parseFloat(event.target.value) === parseFloat(this.props.maxAmount)
+        ? true
+        : false;
+    this.setState({ amount: event.target.value, useFreeAll });
   };
 
   setMaxAmount = () => {
-    this.setState({ amount: this.props.maxAmount });
+    this.setState({ amount: this.props.maxAmount, useFreeAll: true });
   };
 
   handleKeyPress = event => {
@@ -45,7 +50,7 @@ export default class AmountInput extends Component {
     ) {
       window.alert('Please enter a valid amount');
     } else {
-      onSubmit(amount);
+      onSubmit(amount, this.state.useFreeAll);
     }
   }
 
