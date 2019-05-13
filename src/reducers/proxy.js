@@ -73,18 +73,15 @@ const handleTx = ({
   acctType
 }) =>
   new Promise(resolve => {
-    console.log('handleTx');
     const txMgr = window.maker.service('transactionManager');
     txMgr.listen(txObject, {
       pending: tx => {
-        console.log('handleTx pending');
         dispatch({
           type: `proxy/${prefix}_SENT`,
           payload: { txHash: tx.hash }
         });
       },
       mined: async _ => {
-        console.log('handleTx mined');
         dispatch({ type: `proxy/${prefix}_SUCCESS`, payload: successPayload });
         ReactGA.event({
           category: `${prefix} success`,
@@ -94,7 +91,6 @@ const handleTx = ({
         resolve(true);
       },
       error: (_, err) => {
-        console.log('handleTx err', err);
         dispatch({ type: `proxy/${prefix}_FAILURE`, payload: err });
         dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
         ReactGA.event({
@@ -230,7 +226,6 @@ export const free = value => (dispatch, getState) => {
   }).then(success => success && dispatch(initApprovalsFetch()));
 };
 export const freeAll = value => (dispatch, getState) => {
-  console.log('freeAll', value);
   if (value <= 0) return;
   const account = getAccount(getState(), window.maker.currentAddress());
 

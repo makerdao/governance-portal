@@ -61,10 +61,8 @@ const Withdraw = ({
               onCancel={modalClose}
               onSubmit={(amount, useFreeAll) => {
                 if (useFreeAll) {
-                  console.log('use freeAll');
                   freeAll(amount);
                 } else {
-                  console.log('use free');
                   free(amount);
                 }
                 onNext();
