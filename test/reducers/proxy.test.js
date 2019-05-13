@@ -438,6 +438,61 @@ describe('Proxy Reducer', () => {
       });
     });
   });
+  describe('FreeAll', () => {
+    const mockValue = 5;
+
+    afterAll(() => {
+      defaultFunctions.service = jest.fn(mockService);
+    });
+
+    test('freeAll should not call voteProxyService when value is 0', async () => {
+      await store.dispatch(proxy.freeAll(0));
+      expect(freeAll).not.toBeCalled();
+    });
+
+    test('freeAll should dispatch SENT and SUCCESS actions when TxMgr calls pending and mined respectively', async () => {
+      await store.dispatch(proxy.freeAll(mockValue));
+
+      expect(freeAll).toBeCalledTimes(1);
+      expect(approvals.initApprovalsFetch).toBeCalledTimes(1);
+      expect(store.getActions().length).toBe(4);
+      expect(store.getActions()[0]).toEqual({
+        type: proxy.WITHDRAW_ALL_MKR_REQUEST,
+        payload: mockValue
+      });
+      expect(store.getActions()[1]).toEqual({
+        type: proxy.WITHDRAW_ALL_MKR_SENT,
+        payload: { txHash: testPendingHash }
+      });
+      expect(store.getActions()[2]).toEqual({
+        type: sharedConstants.WITHDRAW_ALL_MKR_SUCCESS,
+        payload: mockValue
+      });
+      expect(store.getActions()[3]).toEqual(mockSuccessAction);
+    });
+
+    test('freeAll should dispatch FAILURE action when TxMgr calls error', async () => {
+      defaultFunctions.service = jest.fn(mockServiceError);
+
+      await store.dispatch(proxy.freeAll(mockValue));
+
+      expect(store.getActions().length).toBe(3);
+      expect(store.getActions()[0]).toEqual({
+        type: proxy.WITHDRAW_ALL_MKR_REQUEST,
+        payload: mockValue
+      });
+      expect(store.getActions()[1]).toEqual({
+        type: proxy.WITHDRAW_ALL_MKR_FAILURE,
+        payload: { message: testErrorMessage }
+      });
+      expect(store.getActions()[2]).toEqual({
+        type: ADD_TOAST,
+        payload: {
+          toast: expect.any(Object)
+        }
+      });
+    });
+  });
 
   describe('Break Link', () => {
     const mockAction = { type: FETCHING_ACCOUNT_DATA, payload: true };
