@@ -17,6 +17,7 @@ import {
 import {
   SEND_MKR_TO_PROXY_SUCCESS,
   WITHDRAW_MKR_SUCCESS,
+  WITHDRAW_ALL_MKR_SUCCESS,
   MKR_APPROVE_SUCCESS,
   IOU_APPROVE_SUCCESS
 } from './sharedProxyConstants';
@@ -536,6 +537,7 @@ const accounts = createReducer(initialState, {
   },
   [SEND_MKR_TO_PROXY_SUCCESS]: updateProxyBalance(true),
   [WITHDRAW_MKR_SUCCESS]: updateProxyBalance(false),
+  [WITHDRAW_ALL_MKR_SUCCESS]: updateProxyBalance(false),
   [HARDWARE_ACCOUNTS_CONNECTING]: (state, { payload }) => {
     return {
       ...state,
