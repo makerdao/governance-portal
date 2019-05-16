@@ -110,7 +110,6 @@ const ProxyOnboarding = ({ open, step, onboarding }) => {
       <InitiateLink
         onComplete={onboarding.nextStep}
         onCancel={onboarding.prevStep}
-        toStep={onboarding.toStep}
       />
       <LockMKR onComplete={onboarding.nextStep} />
       <StartVoting
