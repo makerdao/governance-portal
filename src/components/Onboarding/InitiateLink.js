@@ -6,7 +6,7 @@ import Stepper from './shared/Stepper';
 import TwoColumnSidebarLayout from './shared/TwoColumnSidebarLayout';
 import SignTransactionStep from './shared/SignTransactionStep';
 import faqs from './data/faqs';
-import { nicelyFormatWalletProvider } from './utils';
+import { nicelyFormatWalletProvider, ensureWalletLink } from './utils';
 
 import {
   breakLink,
@@ -84,8 +84,6 @@ class InitiateLink extends React.Component {
 
   render() {
     const {
-      hotWallet,
-      coldWallet,
       initiateLinkTxHash,
       initiateLinkTxStatus,
       approveLinkTxHash,
@@ -94,6 +92,11 @@ class InitiateLink extends React.Component {
       mkrApproveProxyTxStatus,
       onComplete
     } = this.props;
+
+    const { hotWallet, coldWallet } = ensureWalletLink(
+      this.props.hotWallet,
+      this.props.coldWallet
+    );
 
     return (
       <TwoColumnSidebarLayout

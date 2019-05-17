@@ -15,7 +15,6 @@ import AccountBox from '../components/AccountBox';
 import Toasts from '../components/Toasts';
 import NetworkIndicator from '../components/NetworkIndicator';
 import SecureVoting from '../components/modals/SecureVoting';
-import Lock from '../components/modals/Lock';
 
 const StyledLayout = styled.div`
   position: relative;
@@ -133,12 +132,9 @@ const BaseLayout = ({
   proposalsAvailable,
   accountsFetching,
   wrongNetwork,
-  onboarding,
+  onboardingState,
   location
 }) => {
-  const { state: onboardingState, coldWallet } = onboarding;
-  const hasInfMkrApproval = coldWallet && coldWallet.hasInfMkrApproval;
-
   const childrenShouldMount =
     !metamaskFetching && proposalsAvailable && !wrongNetwork;
   const noContentMsg = wrongNetwork ? (
@@ -187,11 +183,6 @@ const BaseLayout = ({
               </StyledLinkWrapper>
               <DimHeaderElement
                 onClick={() => {
-                  if (
-                    !hasInfMkrApproval &&
-                    onboardingState === OnboardingStates.SETUP_LINKED_WALLET
-                  )
-                    return modalOpen(Lock);
                   if (
                     !accountsFetching &&
                     onboardingState !== OnboardingStates.FINISHED
@@ -246,7 +237,7 @@ const reduxProps = (
   network: metamask.network,
   accountsFetching: accounts.fetching,
   proposalsAvailable: proposals.length > 0 && !hat.fetching,
-  onboarding,
+  onboardingState: onboarding.state,
   location
 });
 
