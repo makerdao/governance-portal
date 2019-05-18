@@ -15,3 +15,9 @@ export const nicelyFormatWalletProvider = provider => {
       return 'your wallet';
   }
 };
+
+export const ensureWalletLink = (hotWallet, coldWallet) => {
+  if (coldWallet && !hotWallet) hotWallet = coldWallet.proxy.linkedAccount;
+  if (hotWallet && !coldWallet) coldWallet = hotWallet.proxy.linkedAccount;
+  return { hotWallet, coldWallet };
+};
