@@ -233,3 +233,10 @@ export const addMkrAndEthBalance = async account => {
     )
   };
 };
+
+export const formatStringToConstantCase = kebob => {
+  return kebob
+    .split('-')
+    .join('_')
+    .toUpperCase();
+};
