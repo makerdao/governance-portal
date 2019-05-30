@@ -58,7 +58,7 @@ export default async function createMaker(
     delete config.provider;
     config.plugins.push([
       configPlugin,
-      { testchainId: testchainConfigId, backendEnv: 'dev' }
+      { testchainId: testchainConfigId, backendEnv: 'prod' }
     ]);
   }
 
