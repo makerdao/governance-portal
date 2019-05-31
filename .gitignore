@@ -23,6 +23,7 @@ gov-testchain/node_modules
 .env.production.local
 .vscode
 .yalc
+yalc.lock
 
 npm-debug.log*
 yarn-debug.log*
