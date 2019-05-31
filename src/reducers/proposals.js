@@ -109,21 +109,13 @@ const fetchTopics = async network => {
 
 // Actions ------------------------------------------------
 
-const formatStringToConstantCase = kebob => {
-  return kebob
-    .split('-')
-    .join('_')
-    .toUpperCase();
-};
-
 const updateSourceForTestnet = topics => {
   const contracts = window.maker.service('smartContract')._getAllContractInfo();
 
   for (const topic of topics) {
     for (const proposal of topic.proposals) {
-      const formattedPropKey = formatStringToConstantCase(proposal.key);
-      if (formattedPropKey in contracts)
-        proposal.source = contracts[formattedPropKey][0].address;
+      if (proposal.contract_name in contracts)
+        proposal.source = contracts[proposal.contract_name][0].address;
     }
   }
 

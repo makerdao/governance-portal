@@ -893,17 +893,25 @@
     "@ledgerhq/errors" "^4.45.0"
     events "^3.0.0"
 
-"@makerdao/currency@^0.9.0", "@makerdao/currency@^0.9.3":
+"@makerdao/currency@^0.9.3":
   version "0.9.3"
   resolved "https://registry.yarnpkg.com/@makerdao/currency/-/currency-0.9.3.tgz#27510303771506b4b64998ce3b15c39b2d558fd9"
   dependencies:
     babel-runtime "^6.26.0"
     bignumber.js "^8.1.1"
 
-"@makerdao/dai-plugin-config@^0.2.5-rc.1":
-  version "0.2.5-rc.1"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-config/-/dai-plugin-config-0.2.5-rc.1.tgz#7690473baf73e2cd212dda2c6b05cc9e140a6e20"
-  integrity sha512-8XHiLJKfsZ0firwrx6cyrmlnuIGzUsCfwb+vUfEIvMQdvgUjJyLzAvro/6zF2EQ9V1y8AxykQsI6HmqgADEmNg==
+"@makerdao/currency@^0.9.5":
+  version "0.9.5"
+  resolved "https://registry.yarnpkg.com/@makerdao/currency/-/currency-0.9.5.tgz#ec51811bcb669a669a103bde18b5fcc78b197c72"
+  integrity sha512-XCqsBRoum20DdLyFt1S4acWGY79PcbbIJTkHGfjUd4fN1a4rXC4dVAwnzZBw/fsCutcQLRqxbhdd2sxLvDIKhg==
+  dependencies:
+    babel-runtime "^6.26.0"
+    bignumber.js "^8.1.1"
+
+"@makerdao/dai-plugin-config@^0.2.7-rc.3":
+  version "0.2.7-rc.3"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-config/-/dai-plugin-config-0.2.7-rc.3.tgz#f862a294ef04003fd10787465d95badd10b8fc52"
+  integrity sha512-BbuNx0YenQvhgFPOTSFhF4fIYh0YjBlIWg1lyDdCDz1Sbs0l9kChd9DWnMzoC5nEJTm0iL0hZuxdwM7CT9kr0Q==
   dependencies:
     "@makerdao/currency" "^0.9.3"
     babel-runtime "^6.26.0"
@@ -943,14 +951,15 @@
     trezor-connect "^7.0.2"
     web3-provider-engine "14.0.4"
 
-"@makerdao/dai@^0.15.1":
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.15.1.tgz#c680ebb4f2e64c8876f6465688be0ff39648382d"
-  integrity sha512-vy+zuTfA1lYYLaQH1blMuyyKV9k1CTUV2s18SjIqyHLMBA+Tk6jqFYDEfnC1JVLgDrAzt4/bM5MLtu3QNQ/qtw==
+"@makerdao/dai@^0.16.1":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.16.1.tgz#8555c721a66ed71cac21ed8a4d5a3ea085bbca33"
+  integrity sha512-UAUp87hdrwEpMJh/3VdbqkFJyLeg8R0GKtp45aVPKTdvl5WDmUJfSRMCyLCoYLBVvj5yBMpFrZlDgWFxXXlu1Q==
   dependencies:
     "@babel/runtime" "^7.3.4"
-    "@makerdao/currency" "^0.9.0"
+    "@makerdao/currency" "^0.9.5"
     "@makerdao/services-core" "^0.9.5"
+    assert "^1.4.1"
     bignumber.js "^7.2.1"
     chalk "^2.4.1"
     debug "^3.1.0"
@@ -960,12 +969,6 @@
     invariant "^2.2.2"
     isomorphic-fetch "^2.2.1"
     lodash "^4.17.11"
-    lodash.intersection "^4.4.0"
-    lodash.isequal "^4.5.0"
-    lodash.merge "^4.6.1"
-    lodash.times "^4.3.2"
-    lodash.uniq "^4.5.0"
-    lodash.values "^4.3.0"
     promise-props "^1.0.0"
     toposort "^2.0.2"
     web3 "1.0.0-beta.34"
@@ -1567,6 +1570,14 @@ assert@^1.1.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/assert/-/assert-1.4.1.tgz#99912d591836b5a6f5b345c0f07eefc08fc65d91"
   dependencies:
+    util "0.10.3"
+
+assert@^1.4.1:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/assert/-/assert-1.5.0.tgz#55c109aaf6e0aefdb3dc4b71240c70bf574b18eb"
+  integrity sha512-EDsgawzwoun2CZkCgtxJbv392v4nbk9XDD06zI+kQYoBM/3RBWLlEyJARDOmhAAosBjWACEkKL6S+lIZtcAubA==
+  dependencies:
+    object-assign "^4.1.1"
     util "0.10.3"
 
 assign-symbols@^1.0.0:
@@ -7160,10 +7171,6 @@ lodash.get@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
 
-lodash.intersection@^4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/lodash.intersection/-/lodash.intersection-4.4.0.tgz#0a11ba631d0e95c23c7f2f4cbb9a692ed178e705"
-
 lodash.isequal@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
@@ -7175,10 +7182,6 @@ lodash.isplainobject@^4.0.6:
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
-
-lodash.merge@^4.6.1:
-  version "4.6.1"
-  resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.1.tgz#adc25d9cb99b9391c59624f379fbba60d7111d54"
 
 lodash.mergewith@4.6.1:
   version "4.6.1"
@@ -7208,10 +7211,6 @@ lodash.templatesettings@^4.0.0:
   resolved "https://registry.yarnpkg.com/lodash.templatesettings/-/lodash.templatesettings-4.1.0.tgz#2b4d4e95ba440d915ff08bc899e4553666713316"
   dependencies:
     lodash._reinterpolate "~3.0.0"
-
-lodash.times@^4.3.2:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/lodash.times/-/lodash.times-4.3.2.tgz#3e1f2565c431754d54ab57f2ed1741939285ca1d"
 
 lodash.unescape@4.0.1:
   version "4.0.1"
@@ -11842,9 +11841,10 @@ webidl-conversions@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-4.0.2.tgz#a855980b1f0b6b359ba1d5d9fb39ae941faa63ad"
 
-webpack-bundle-analyzer@^3.0.3:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/webpack-bundle-analyzer/-/webpack-bundle-analyzer-3.1.0.tgz#2f19cbb87bb6d4f3cb4e59cb67c837bd9436e89d"
+webpack-bundle-analyzer@^3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/webpack-bundle-analyzer/-/webpack-bundle-analyzer-3.3.2.tgz#3da733a900f515914e729fcebcd4c40dde71fc6f"
+  integrity sha512-7qvJLPKB4rRWZGjVp5U1KEjwutbDHSKboAl0IfafnrdXMrgC0tOtZbQD6Rw0u4cmpgRN4O02Fc0t8eAT+FgGzA==
   dependencies:
     acorn "^6.0.7"
     acorn-walk "^6.1.1"
