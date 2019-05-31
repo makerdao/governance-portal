@@ -10,7 +10,8 @@ import { netToUri } from '../utils/ethereum';
 export default async function createMaker(
   network = 'mainnet',
   useMcdKovanContracts,
-  testchainConfigId
+  testchainConfigId,
+  backendEnv
 ) {
   const config = {
     plugins: [trezorPlugin, ledgerPlugin, [governancePlugin, { network }]],
@@ -58,7 +59,7 @@ export default async function createMaker(
     delete config.provider;
     config.plugins.push([
       configPlugin,
-      { testchainId: testchainConfigId, backendEnv: 'prod' }
+      { testchainId: testchainConfigId, backendEnv }
     ]);
   }
 

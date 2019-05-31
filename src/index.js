@@ -52,6 +52,7 @@ const currTheme = {
 };
 
 const testchainConfigId = getUrlParam('testchain_id');
+const backendEnv = getUrlParam('backendEnv');
 const useMcdKovanContracts = !!getUrlParam('mcd');
 
 const store = createStore();
@@ -62,7 +63,8 @@ if (testchainConfigId) {
     window.maker = await createMaker(
       network,
       useMcdKovanContracts,
-      testchainConfigId
+      testchainConfigId,
+      backendEnv
     );
     await window.maker.authenticate();
     store.dispatch(init(network));
