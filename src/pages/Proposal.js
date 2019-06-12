@@ -83,7 +83,7 @@ const StyledCenter = styled.div`
   max-width: 720px;
 `;
 
-const ConentWrapper = styled.div`
+const ContentWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -230,7 +230,7 @@ function Proposal({
           )}
         </StyledTop>
       </WhiteBackground>
-      <ConentWrapper>
+      <ContentWrapper>
         <DescriptionCard>
           <ReactMarkdown
             className="markdown"
@@ -256,40 +256,8 @@ function Proposal({
               </Address>
             </Supporter>
           </DetailsCard>
-          {proposal.active ? (
-            <SupporterCard>
-              <CardTitle>Top Supporters</CardTitle>
-              <SupporterWrapper>
-                {supporters ? (
-                  supporters.map(supporter => (
-                    <Supporter key={supporter.address}>
-                      <Detail pct>{supporter.percent}</Detail>
-                      <Address
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href={ethScanLink(supporter.address, network)}
-                      >
-                        {toChecksumAddress(supporter.address)}
-                      </Address>
-                    </Supporter>
-                  ))
-                ) : voteStateFetching ? (
-                  <LoadingWrapper>
-                    <Loader
-                      size={20}
-                      mt={100}
-                      color="header"
-                      background="white"
-                    />
-                  </LoadingWrapper>
-                ) : (
-                  <NoSupporters>No supporters found</NoSupporters>
-                )}
-              </SupporterWrapper>
-            </SupporterCard>
-          ) : null}
         </RightPanels>
-      </ConentWrapper>
+      </ContentWrapper>
     </RiseUp>
   );
 }
