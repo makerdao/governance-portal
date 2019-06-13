@@ -207,7 +207,6 @@ const Timeline = ({
     }
     return accumulator;
   }, []);
-
   return (
     <Fragment>
       <MigrationNotificationBanner />
@@ -219,7 +218,9 @@ const Timeline = ({
               <ProposalDetails>
                 <div style={{ display: 'flex' }}>
                   <ExtendedLink
-                    to={`/${hatProposal.topicKey}/${toSlug(hatProposal.title)}`}
+                    to={`/executive-proposal/${hatProposal.topicKey}/${toSlug(
+                      hatProposal.title
+                    )}`}
                   >
                     <SubHeading>{hatProposal.title}</SubHeading>
                   </ExtendedLink>
@@ -233,7 +234,9 @@ const Timeline = ({
                   }}
                 />
                 <ExtendedLink
-                  to={`/${hatProposal.topicKey}/${toSlug(hatProposal.title)}`}
+                  to={`/executive-proposal/${hatProposal.topicKey}/${toSlug(
+                    hatProposal.title
+                  )}`}
                 >
                   Read more...
                 </ExtendedLink>
@@ -287,9 +290,9 @@ const Timeline = ({
                       >
                         <ProposalDetails>
                           <ExtendedLink
-                            to={`/${proposal.topicKey}/${toSlug(
-                              proposal.title
-                            )}`}
+                            to={`/polling-proposal/${
+                              proposal.topicKey
+                            }/${toSlug(proposal.title)}`}
                           >
                             <SubHeading>{proposal.title}</SubHeading>
                           </ExtendedLink>
@@ -299,9 +302,9 @@ const Timeline = ({
                             }}
                           />
                           <ExtendedLink
-                            to={`/${proposal.topicKey}/${toSlug(
-                              proposal.title
-                            )}`}
+                            to={`/polling-proposal/${
+                              proposal.topicKey
+                            }/${toSlug(proposal.title)}`}
                           >
                             Read more...
                           </ExtendedLink>
@@ -367,7 +370,9 @@ const Timeline = ({
                 >
                   <ProposalDetails>
                     <ExtendedLink
-                      to={`/${proposal.topicKey}/${toSlug(proposal.title)}`}
+                      to={`/$executive-proposal/{proposal.topicKey}/${toSlug(
+                        proposal.title
+                      )}`}
                     >
                       <SubHeading>{proposal.title}</SubHeading>
                     </ExtendedLink>
@@ -377,7 +382,9 @@ const Timeline = ({
                       }}
                     />
                     <ExtendedLink
-                      to={`/${proposal.topicKey}/${toSlug(proposal.title)}`}
+                      to={`/executive-proposal/${proposal.topicKey}/${toSlug(
+                        proposal.title
+                      )}`}
                     >
                       Read more...
                     </ExtendedLink>
