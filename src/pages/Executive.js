@@ -169,7 +169,7 @@ const toChecksumAddress = address => {
   return toChecksumAddress(address);
 };
 
-function Proposal({
+function Executive({
   proposal,
   voteState,
   voteStateFetching,
@@ -256,6 +256,38 @@ function Proposal({
               </Address>
             </Supporter>
           </DetailsCard>
+          {proposal.active ? (
+            <SupporterCard>
+              <CardTitle>Top Supporters</CardTitle>
+              <SupporterWrapper>
+                {supporters ? (
+                  supporters.map(supporter => (
+                    <Supporter key={supporter.address}>
+                      <Detail pct>{supporter.percent}</Detail>
+                      <Address
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={ethScanLink(supporter.address, network)}
+                      >
+                        {toChecksumAddress(supporter.address)}
+                      </Address>
+                    </Supporter>
+                  ))
+                ) : voteStateFetching ? (
+                  <LoadingWrapper>
+                    <Loader
+                      size={20}
+                      mt={100}
+                      color="header"
+                      background="white"
+                    />
+                  </LoadingWrapper>
+                ) : (
+                  <NoSupporters>No supporters found</NoSupporters>
+                )}
+              </SupporterWrapper>
+            </SupporterCard>
+          ) : null}
         </RightPanels>
       </ContentWrapper>
     </RiseUp>
@@ -285,4 +317,4 @@ const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
 export default connect(
   reduxProps,
   { modalOpen }
-)(Proposal);
+)(Executive);
