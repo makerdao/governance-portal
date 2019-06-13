@@ -3,18 +3,18 @@ import { connect } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import { isNil, isEmpty } from 'ramda';
-import { Grid } from '@makerdao/ui-components';
 import arrow from '../imgs/arrow.svg';
 import { toSlug } from '../utils/misc';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import ClickOutside from '../components/ClickOutside';
 import VoterStatus from '../components/VoterStatus';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import NotFound from './NotFound';
 import { modalOpen } from '../reducers/modal';
 import theme, { colors } from '../theme';
 import { cutMiddle } from '../utils/misc';
+import ExternalLink from '../components/Onboarding/shared/ExternalLink';
+import { ethScanLink } from '../utils/ethereum';
 
 const riseUp = keyframes`
 0% {
@@ -133,18 +133,16 @@ const DetailsCardItem = ({ name, value, other }) => (
 const VotingPanel = ({ proposal }) => (
   <React.Fragment>
     <VoteSelection>
-      <ClickOutside>
-        <Button bgColor="white" width="195px">
-          Please choose...
-          <StyledArrow />
-        </Button>
-      </ClickOutside>
+      <Button bgColor="white" width="195px">
+        Please choose...
+        <StyledArrow />
+      </Button>
       <Button
         bgColor="green"
         color="white"
         hoverColor="white"
         width="135px"
-        disabled={proposal.active}
+        disabled={!!proposal.active}
       >
         Vote Now
       </Button>
@@ -192,14 +190,29 @@ function Polling({
             {[
               {
                 name: 'Source',
-                other: <Blue>{cutMiddle(proposal.source, 8, 8)}</Blue>
+                other: (
+                  <ExternalLink
+                    href={ethScanLink(proposal.source, network)}
+                    target="_blank"
+                  >
+                    {cutMiddle(proposal.source, 8, 8)}
+                  </ExternalLink>
+                )
               },
               { name: 'Started', value: '12 Sept 18' },
               { name: 'Duration', value: '3 days' },
-              { name: 'Questions?', other: <Blue>Governance FAQ's</Blue> }
+              {
+                name: 'Questions?',
+                other: (
+                  <ExternalLink href="https://makerdao.com/en/" target="_blank">
+                    Governance FAQ's
+                  </ExternalLink>
+                )
+              }
             ].map((item, i) => (
               <DetailsCardItem key={i} {...item} />
             ))}
+
             <CardTitle>Voting Stats</CardTitle>
             {[
               { name: 'Total votes', value: '200,324.43 MKR' },
@@ -208,6 +221,7 @@ function Polling({
             ].map((item, i) => (
               <DetailsCardItem key={i} {...item} />
             ))}
+
             <CardTitle>Vote breakdown</CardTitle>
             {[
               { name: '17.5%', value: '170,324 MKR (82%)' },
