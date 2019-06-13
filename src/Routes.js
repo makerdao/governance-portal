@@ -49,11 +49,11 @@ class App extends Component {
                 />
                 <Route
                   path="/polling-proposal/:topicSlug/:proposalSlug"
-                  render={routeProps => <Polling signaling {...routeProps} />}
+                  render={routeProps => <Polling {...routeProps} />}
                 />
                 <Route
                   path="/executive-proposal/:topicSlug/:proposalSlug"
-                  render={routeProps => <Executive signaling {...routeProps} />}
+                  render={routeProps => <Executive {...routeProps} />}
                 />
               </Switch>
             </BaseLayout>
