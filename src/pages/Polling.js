@@ -73,18 +73,6 @@ const CardTitle = styled.p`
   margin-bottom: 6px;
 `;
 
-const StyledArrow = styled.img`
-  margin-left: 0.7em;
-  position: relative;
-  top: 1px;
-  cursor: pointer;
-  width: 14px;
-  height: 10px;
-  mask: url(${arrow}) center no-repeat;
-  mask-size: 90%;
-  background-color: rgb(${colors['green']});
-`;
-
 const VoteStatusText = styled.p`
   margin-top: 10px;
   margin-bottom: 35px;
