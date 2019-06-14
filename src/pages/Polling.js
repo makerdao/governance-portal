@@ -15,6 +15,7 @@ import theme, { colors } from '../theme';
 import { cutMiddle } from '../utils/misc';
 import ExternalLink from '../components/Onboarding/shared/ExternalLink';
 import { ethScanLink } from '../utils/ethereum';
+import Dropdown from '../components/Dropdown';
 
 const riseUp = keyframes`
 0% {
@@ -123,6 +124,12 @@ const DetailsCardText = styled.p`
   font-size: 15px;
 `;
 
+const DropdownText = styled.p`
+  margin-left: 20px;
+  margin-right: 20px;
+  color: ${({ color }) => (color ? `rgb(${colors[color]})` : 'black')};
+`;
+
 const DetailsCardItem = ({ name, value, component }) => (
   <DetailsItem>
     <DetailsCardText>{name}</DetailsCardText>
@@ -133,10 +140,14 @@ const DetailsCardItem = ({ name, value, component }) => (
 const VotingPanel = ({ proposal }) => (
   <React.Fragment>
     <VoteSelection>
-      <Button bgColor="white" width="195px">
-        Please choose...
-        <StyledArrow />
-      </Button>
+      <Dropdown
+        color="green"
+        items={['17.5%', '19.5%', 'No change', '14.5%', '15.5%', '16.5%']}
+        renderItem={item => <DropdownText color="green">{item}</DropdownText>}
+        renderRowItem={item => <DropdownText>{item}</DropdownText>}
+        value="Please choose..."
+        onSelect={() => null}
+      />
       <Button
         bgColor="green"
         color="white"
