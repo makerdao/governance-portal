@@ -48,11 +48,11 @@ class App extends Component {
                   render={() => <Redirect to="/" />}
                 />
                 <Route
-                  path="/polling-proposal/:topicSlug/:proposalSlug"
+                  path="/polling-proposal/:pollSlug"
                   render={routeProps => <Polling {...routeProps} />}
                 />
                 <Route
-                  path="/executive-proposal/:topicSlug/:proposalSlug"
+                  path="/executive-proposal/:execSlug"
                   render={routeProps => <Executive {...routeProps} />}
                 />
               </Switch>

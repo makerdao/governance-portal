@@ -123,10 +123,10 @@ const DetailsCardText = styled.p`
   font-size: 15px;
 `;
 
-const DetailsCardItem = ({ name, value, other }) => (
+const DetailsCardItem = ({ name, value, component }) => (
   <DetailsItem>
     <DetailsCardText>{name}</DetailsCardText>
-    {value ? value : other}
+    {value ? value : component}
   </DetailsItem>
 );
 
@@ -148,12 +148,9 @@ const VotingPanel = ({ proposal }) => (
       </Button>
     </VoteSelection>
     <VoteStatusText>
-      <Black>Currently voting:</Black>
-      &nbsp;
-      <Strong>17.5%</Strong>
-      &nbsp;
-      <Black>|</Black>
-      &nbsp; &nbsp;
+      <Black>Currently voting: </Black>
+      <Strong>17.5% </Strong>
+      <Black>| </Black>
       <Blue onClick={() => null}>Withdraw Vote</Blue>
     </VoteStatusText>
   </React.Fragment>
@@ -190,7 +187,7 @@ function Polling({
             {[
               {
                 name: 'Source',
-                other: (
+                component: (
                   <ExternalLink
                     href={ethScanLink(proposal.source, network)}
                     target="_blank"
@@ -203,7 +200,7 @@ function Polling({
               { name: 'Duration', value: '3 days' },
               {
                 name: 'Questions?',
-                other: (
+                component: (
                   <ExternalLink href="https://makerdao.com/en/" target="_blank">
                     Governance FAQ's
                   </ExternalLink>
@@ -241,12 +238,11 @@ function Polling({
 }
 
 const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
-  const { proposalSlug, topicSlug } = match.params;
-  const proposal = proposals.find(
-    ({ title, topicKey }) =>
-      toSlug(title) === proposalSlug && topicKey === topicSlug
-  );
-  const isValidRoute = proposal && proposal.topicKey === topicSlug;
+  const { pollSlug } = match.params;
+  const proposal = proposals.find(({ title }) => {
+    return toSlug(title) === pollSlug;
+  });
+  const isValidRoute = proposal && pollSlug;
 
   return {
     proposal,

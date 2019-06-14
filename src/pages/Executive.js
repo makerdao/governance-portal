@@ -295,12 +295,9 @@ function Executive({
 }
 
 const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
-  const { proposalSlug, topicSlug } = match.params;
-  const proposal = proposals.find(
-    ({ title, topicKey }) =>
-      toSlug(title) === proposalSlug && topicKey === topicSlug
-  );
-  const isValidRoute = proposal && proposal.topicKey === topicSlug;
+  const { execSlug } = match.params;
+  const proposal = proposals.find(({ title }) => toSlug(title) === execSlug);
+  const isValidRoute = proposal && execSlug;
 
   return {
     proposal,
