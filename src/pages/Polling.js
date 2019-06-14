@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import { isNil, isEmpty } from 'ramda';
-import arrow from '../imgs/arrow.svg';
 import { toSlug } from '../utils/misc';
 import Button from '../components/Button';
 import Card from '../components/Card';
