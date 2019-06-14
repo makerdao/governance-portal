@@ -10,6 +10,7 @@ import BaseLayout from './layouts/base';
 import Timeline from './pages/Timeline';
 import Proposal from './pages/Proposal';
 import NotFound from './pages/NotFound';
+import Admin from './pages/Admin';
 import ErrorBoundary from './components/ErrorBoundary';
 
 class ScrollToTopUtil extends Component {
@@ -39,6 +40,10 @@ class App extends Component {
                 <Route
                   path="/polling"
                   render={routeProps => <Timeline signaling {...routeProps} />}
+                />
+                <Route
+                  path="/admin"
+                  render={routeProps => <Admin {...routeProps} />}
                 />
                 <Route path="/not-found" component={NotFound} />
                 <Route
