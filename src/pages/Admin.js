@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Card from '../components/Card';
+import Input from '../components/Input';
 import theme, { colors } from '../theme';
 
 const riseUp = keyframes`
@@ -34,23 +35,34 @@ const RiseUp = styled.div`
   animation: ${riseUp} 0.75s ease-in-out;
 `;
 
-const ContentWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-`;
-
-const RightPanels = styled(Card)`
+const ContentWrapper = styled(Card)`
   display: flex;
   flex-direction: column;
-  width: 400px;
+  align-items: center;
+  padding: 80px 100px;
 `;
 
-const ProposalPanel = styled(Card)`
-  max-width: 650px;
-  padding: 0px 25px 18px 25px;
-  color: #546978;
+const SectionWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 40px;
+`;
+
+const SectionTitle = styled.p`
+  font-size: 22px;
+  color: ${theme.text.darker_default};
+  line-height: normal;
+  font-weight: 500;
+  margin-bottom: 30px;
+`;
+
+const StyledBody = styled.p`
+  width: 150px;
+  text-align: left;
   line-height: 30px;
+  margin-top: 5px;
+  font-size: 17px;
+  color: #546978;
 `;
 
 class Admin extends Component {
@@ -58,11 +70,35 @@ class Admin extends Component {
     return (
       <RiseUp>
         <StyledTop>
-          <StyledTitle>Create Polling Proposal</StyledTitle>
+          <StyledTitle>Create a new Polling proposal</StyledTitle>
         </StyledTop>
         <ContentWrapper>
-          <ProposalPanel>Full proposal goes here</ProposalPanel>
-          <RightPanels>Other input goes here</RightPanels>
+          <SectionTitle>Poll Details</SectionTitle>
+
+          <SectionWrapper>
+            <StyledBody>Title:</StyledBody>
+            <Input />
+          </SectionWrapper>
+
+          <SectionWrapper>
+            <StyledBody>Summary:</StyledBody>
+            <Input />
+          </SectionWrapper>
+
+          <SectionWrapper>
+            <StyledBody>Discussion Link:</StyledBody>
+            <Input />
+          </SectionWrapper>
+
+          <SectionWrapper>
+            <StyledBody>Vote Options:</StyledBody>
+            <Input />
+          </SectionWrapper>
+
+          <SectionWrapper>
+            <StyledBody>Proposal:</StyledBody>
+            <Input />
+          </SectionWrapper>
         </ContentWrapper>
       </RiseUp>
     );
