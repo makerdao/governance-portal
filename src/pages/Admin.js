@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Card from '../components/Card';
-import Input from '../components/Input';
+import Button from '../components/Button';
 import theme, { colors } from '../theme';
-
+import { TextArea, Input } from '@makerdao/ui-components-core';
 const riseUp = keyframes`
 0% {
   opacity: 0;
@@ -66,6 +66,38 @@ const StyledBody = styled.p`
 `;
 
 class Admin extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      pollTitle: '',
+      pollSummary: '',
+      pollLink: '',
+      pollOption: '',
+      pollOptions: [],
+      pollContent: ''
+    };
+  }
+
+  handlePollState = (e, k) => {
+    e.stopPropagation();
+    this.setState({
+      ...this.state,
+      [k]: e.target.value
+    });
+  };
+
+  resetPollState = () => {
+    this.setState({
+      pollTitle: '',
+      pollSummary: '',
+      pollLink: '',
+      pollOption: '',
+      pollOptions: [],
+      pollContent: ''
+    });
+  };
+
   render = () => {
     return (
       <RiseUp>
@@ -77,27 +109,66 @@ class Admin extends Component {
 
           <SectionWrapper>
             <StyledBody>Title:</StyledBody>
-            <Input />
+            <Input
+              width="400px"
+              placeholder="This will be the poll title"
+              value={this.state.pollTitle}
+              onChange={e => this.handlePollState(e, 'pollTitle')}
+            />
           </SectionWrapper>
 
           <SectionWrapper>
             <StyledBody>Summary:</StyledBody>
-            <Input />
+            <Input
+              width="400px"
+              placeholder="Give a short description of what this Poll is for"
+              value={this.state.pollSummary}
+              onChange={e => this.handlePollState(e, 'pollSummary')}
+            />
           </SectionWrapper>
 
           <SectionWrapper>
             <StyledBody>Discussion Link:</StyledBody>
-            <Input />
+            <Input
+              width="400px"
+              placeholder="Link to where this Polling proposal will be discussed"
+              value={this.state.pollLink}
+              onChange={e => this.handlePollState(e, 'pollLink')}
+            />
           </SectionWrapper>
 
           <SectionWrapper>
             <StyledBody>Vote Options:</StyledBody>
-            <Input />
+            <Input
+              width="400px"
+              placeholder="Add the possible voting options"
+              value={this.state.pollOption}
+              onChange={e => this.handlePollState(e, 'pollOption')}
+            />
           </SectionWrapper>
 
           <SectionWrapper>
             <StyledBody>Proposal:</StyledBody>
-            <Input />
+            <TextArea
+              width="600px"
+              height="400px"
+              placeholder="Write (in markdown) the full polling proposal"
+              value={this.state.pollContent}
+              onChange={e => this.handlePollState(e, 'pollContent')}
+            />
+          </SectionWrapper>
+
+          <SectionWrapper>
+            <Button slim>Submit</Button>
+            &nbsp;
+            <Button
+              slim
+              color="grey"
+              hoverColor="grey"
+              onClick={this.resetPollState}
+            >
+              Reset
+            </Button>
           </SectionWrapper>
         </ContentWrapper>
       </RiseUp>
