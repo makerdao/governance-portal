@@ -11,7 +11,8 @@ const StyledButton = styled.button`
   border: none;
   border-style: none;
   box-sizing: border-box;
-  background-color: ${({ theme, bgColor }) => bgColor || theme.generic.white};
+  background-color: ${({ theme, bgColor }) =>
+    bgColor ? `rgb(${colors[bgColor]})` : theme.generic.white};
   color: ${({ color, textColor }) => textColor || `rgb(${colors[color]})`};
   border-radius: 4px;
   border: 2px solid
@@ -20,7 +21,8 @@ const StyledButton = styled.button`
   font-weight: ${fonts.weight.semibold};
   padding: 0 15px;
   height: 40px;
-  width: ${({ wide, slim }) => (wide ? '320px' : slim ? '166px' : '240px')};
+  width: ${({ width, wide, slim }) =>
+    width || (wide ? '320px' : slim ? '166px' : '240px')};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   &:disabled {
     opacity: 0.6;

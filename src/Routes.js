@@ -8,10 +8,11 @@ import {
 } from 'react-router-dom';
 import BaseLayout from './layouts/base';
 import Timeline from './pages/Timeline';
-import Proposal from './pages/Proposal';
 import NotFound from './pages/NotFound';
 import Admin from './pages/Admin';
 import ErrorBoundary from './components/ErrorBoundary';
+import Polling from './pages/Polling';
+import Executive from './pages/Executive';
 
 class ScrollToTopUtil extends Component {
   componentDidUpdate(prevProps) {
@@ -52,8 +53,12 @@ class App extends Component {
                   render={() => <Redirect to="/" />}
                 />
                 <Route
-                  path="/:topicSlug/:proposalSlug"
-                  render={routeProps => <Proposal signaling {...routeProps} />}
+                  path="/polling-proposal/:pollSlug"
+                  render={routeProps => <Polling {...routeProps} />}
+                />
+                <Route
+                  path="/executive-proposal/:execSlug"
+                  render={routeProps => <Executive {...routeProps} />}
                 />
               </Switch>
             </BaseLayout>

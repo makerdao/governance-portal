@@ -83,7 +83,7 @@ const StyledCenter = styled.div`
   max-width: 720px;
 `;
 
-const ConentWrapper = styled.div`
+const ContentWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -169,7 +169,7 @@ const toChecksumAddress = address => {
   return toChecksumAddress(address);
 };
 
-function Proposal({
+function Executive({
   proposal,
   voteState,
   voteStateFetching,
@@ -230,7 +230,7 @@ function Proposal({
           )}
         </StyledTop>
       </WhiteBackground>
-      <ConentWrapper>
+      <ContentWrapper>
         <DescriptionCard>
           <ReactMarkdown
             className="markdown"
@@ -289,18 +289,15 @@ function Proposal({
             </SupporterCard>
           ) : null}
         </RightPanels>
-      </ConentWrapper>
+      </ContentWrapper>
     </RiseUp>
   );
 }
 
 const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
-  const { proposalSlug, topicSlug } = match.params;
-  const proposal = proposals.find(
-    ({ title, topicKey }) =>
-      toSlug(title) === proposalSlug && topicKey === topicSlug
-  );
-  const isValidRoute = proposal && proposal.topicKey === topicSlug;
+  const { execSlug } = match.params;
+  const proposal = proposals.find(({ title }) => toSlug(title) === execSlug);
+  const isValidRoute = proposal && execSlug;
 
   return {
     proposal,
@@ -317,4 +314,4 @@ const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
 export default connect(
   reduxProps,
   { modalOpen }
-)(Proposal);
+)(Executive);
