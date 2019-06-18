@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Card from '../components/Card';
 import Button from '../components/Button';
+import closeImg from '../imgs/close-inline.svg';
 import theme, { colors } from '../theme';
 import { TextArea, Input } from '@makerdao/ui-components-core';
 const riseUp = keyframes`
@@ -65,6 +66,27 @@ const StyledBody = styled.p`
   color: #546978;
 `;
 
+const OptionText = styled.p`
+  text-align: left;
+  line-height: 30px;
+  font-size: 17px;
+  color: #546978;
+`;
+
+const VoteOptionsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-column-gap: 10px;
+  grid-row-gap: 10px;
+`;
+
+const CloseIcon = styled.p`
+  width: 15px;
+  height: 15px;
+  background-color: red;
+  mask: url(${closeImg}) center no-repeat;
+`;
+
 class Admin extends Component {
   constructor(props) {
     super(props);
@@ -72,9 +94,11 @@ class Admin extends Component {
     this.state = {
       pollTitle: '',
       pollSummary: '',
+      pollStart: '',
+      pollEnd: '',
       pollLink: '',
       pollOption: '',
-      pollOptions: [],
+      pollOptions: {},
       pollContent: ''
     };
   }
@@ -87,16 +111,32 @@ class Admin extends Component {
     });
   };
 
+  handlePollVoteOption = () => {
+    if (this.state.pollOption.length) {
+      const opt = this.state.pollOption;
+      const opts = this.state.pollOptions;
+      this.setState({
+        ...this.state,
+        pollOption: '',
+        pollOptions: { ...opts, [Object.values(opts).length + 1]: opt }
+      });
+    }
+  };
+
   resetPollState = () => {
     this.setState({
       pollTitle: '',
       pollSummary: '',
       pollLink: '',
       pollOption: '',
-      pollOptions: [],
+      pollOptions: {},
       pollContent: ''
     });
   };
+
+  componentDidUpdate() {
+    console.log(this.state.pollOptions);
+  }
 
   render = () => {
     return (
@@ -128,22 +168,32 @@ class Admin extends Component {
           </SectionWrapper>
 
           <SectionWrapper>
+            <StyledBody>Poll Start Time:</StyledBody>
+            <Input
+              width="400px"
+              placeholder="Date and Time for the Poll to open"
+              value={this.state.pollStart}
+              onChange={e => this.handlePollState(e, 'pollStart')}
+            />
+          </SectionWrapper>
+
+          <SectionWrapper>
+            <StyledBody>Poll End Time:</StyledBody>
+            <Input
+              width="400px"
+              placeholder="Date and Time for the Poll to close"
+              value={this.state.pollEnd}
+              onChange={e => this.handlePollState(e, 'pollEnd')}
+            />
+          </SectionWrapper>
+
+          <SectionWrapper>
             <StyledBody>Discussion Link:</StyledBody>
             <Input
               width="400px"
               placeholder="Link to where this Polling proposal will be discussed"
               value={this.state.pollLink}
               onChange={e => this.handlePollState(e, 'pollLink')}
-            />
-          </SectionWrapper>
-
-          <SectionWrapper>
-            <StyledBody>Vote Options:</StyledBody>
-            <Input
-              width="400px"
-              placeholder="Add the possible voting options"
-              value={this.state.pollOption}
-              onChange={e => this.handlePollState(e, 'pollOption')}
             />
           </SectionWrapper>
 
@@ -156,6 +206,44 @@ class Admin extends Component {
               value={this.state.pollContent}
               onChange={e => this.handlePollState(e, 'pollContent')}
             />
+          </SectionWrapper>
+
+          <SectionWrapper>
+            <StyledBody>Vote Options:</StyledBody>
+            <Input
+              width="400px"
+              placeholder="Add possible voting options"
+              value={this.state.pollOption}
+              onChange={e => this.handlePollState(e, 'pollOption')}
+            />
+            <Button
+              css={{ alignSelf: 'center', marginLeft: '10px' }}
+              width="190px"
+              onClick={this.handlePollVoteOption}
+            >
+              Add Option
+            </Button>
+          </SectionWrapper>
+
+          <SectionWrapper>
+            <VoteOptionsGrid>
+              {Object.values(this.state.pollOptions).map((opt, idx) => (
+                <Card
+                  key={idx}
+                  css={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    width: '150px',
+                    padding: '10px'
+                  }}
+                >
+                  <CloseIcon />
+                  <OptionText>{opt}</OptionText>
+                </Card>
+              ))}
+            </VoteOptionsGrid>
           </SectionWrapper>
 
           <SectionWrapper>
