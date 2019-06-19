@@ -4,6 +4,7 @@ import Card from '../components/Card';
 import Button from '../components/Button';
 import closeImg from '../imgs/close-inline.svg';
 import theme from '../theme';
+import { generateIPFSHash } from '../utils/ipfs';
 import { TextArea, Input } from '@makerdao/ui-components-core';
 const riseUp = keyframes`
 0% {
@@ -168,9 +169,11 @@ class Admin extends Component {
       this.state.pollSummary
     }\ndiscussion_link: ${this.state.pollLink}\noptions:\n${optsString}---\n`;
     const md = `# Poll: ${this.state.pollTitle}\n\n${this.state.pollContent}`;
+    const ipfsHash = generateIPFSHash(`${yml}${md}`, { encoding: 'ascii' });
     this.setState({
       pollMarkdown: `${yml}${md}`,
-      pollGenerated: true
+      pollGenerated: true,
+      ipfsHash
     });
   };
 
