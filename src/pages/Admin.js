@@ -5,6 +5,7 @@ import Button from '../components/Button';
 import closeImg from '../imgs/close-inline.svg';
 import theme from '../theme';
 import { TextArea, Input } from '@makerdao/ui-components-core';
+import { copyToClipboard } from '../utils/misc';
 const riseUp = keyframes`
 0% {
   opacity: 0;
@@ -114,6 +115,7 @@ class Admin extends Component {
       pollStart: null,
       pollEnd: null,
       pollLink: '',
+      pollRules: '',
       pollOption: '',
       pollOptions: [ABSTAIN, NOCHANGE],
       pollContent: '',
@@ -166,7 +168,9 @@ class Admin extends Component {
     );
     const yml = `---\ntitle: ${this.state.pollTitle}\nsummary: ${
       this.state.pollSummary
-    }\ndiscussion_link: ${this.state.pollLink}\noptions:\n${optsString}---\n`;
+    }\ndiscussion_link: ${this.state.pollLink}\nrules: ${
+      this.state.pollRules
+    }\noptions:\n${optsString}---\n`;
     const md = `# Poll: ${this.state.pollTitle}\n\n${this.state.pollContent}`;
     this.setState({
       pollMarkdown: `${yml}${md}`,
@@ -175,30 +179,33 @@ class Admin extends Component {
   };
 
   render = () => {
+    const {
+      pollTitle,
+      pollSummary,
+      pollStart,
+      pollEnd,
+      pollLink,
+      pollRules,
+      pollOption,
+      pollOptions,
+      pollMarkdown,
+      pollContent,
+      pollGenerated
+    } = this.state;
     const isValidSubmission =
-      !!this.state.pollTitle &&
-      !!this.state.pollSummary &&
-      this.state.pollOptions.length > 2 &&
-      !!this.state.pollContent;
-    // this.pollStart &&
-    // this.pollEnd &&
+      !!pollTitle && !!pollSummary && pollOptions.length > 2 && !!pollContent;
 
     return (
       <Fragment>
-        {this.state.pollGenerated ? (
+        {pollGenerated ? (
           <RiseUp>
             <StyledTop>
               <StyledTitle>Create a new Polling proposal</StyledTitle>
             </StyledTop>
             <ContentWrapper>
-              <Code>{this.state.pollMarkdown}</Code>
+              <Code>{pollMarkdown}</Code>
               <SectionWrapper>
-                <Button
-                  slim
-                  onClick={() =>
-                    navigator.clipboard.writeText(this.state.pollMarkdown)
-                  }
-                >
+                <Button slim onClick={() => copyToClipboard(pollMarkdown)}>
                   Copy
                 </Button>
                 &nbsp;
@@ -229,7 +236,7 @@ class Admin extends Component {
                 <Input
                   width="400px"
                   placeholder="This will be the poll title"
-                  value={this.state.pollTitle}
+                  value={pollTitle}
                   onChange={e => this.handlePollState(e, 'pollTitle')}
                 />
               </SectionWrapper>
@@ -239,7 +246,7 @@ class Admin extends Component {
                 <Input
                   width="400px"
                   placeholder="Give a short description of what this Poll is for"
-                  value={this.state.pollSummary}
+                  value={pollSummary}
                   onChange={e => this.handlePollState(e, 'pollSummary')}
                 />
               </SectionWrapper>
@@ -249,7 +256,7 @@ class Admin extends Component {
                 <Input
                   width="400px"
                   placeholder="Date and Time for the Poll to open"
-                  value={this.state.pollStart}
+                  value={pollStart}
                   onChange={e => this.handlePollState(e, 'pollStart')}
                 />
               </SectionWrapper>
@@ -259,7 +266,7 @@ class Admin extends Component {
                 <Input
                   width="400px"
                   placeholder="Date and Time for the Poll to close"
-                  value={this.state.pollEnd}
+                  value={pollEnd}
                   onChange={e => this.handlePollState(e, 'pollEnd')}
                 />
               </SectionWrapper>
@@ -269,8 +276,18 @@ class Admin extends Component {
                 <Input
                   width="400px"
                   placeholder="Link to where this Polling proposal will be discussed"
-                  value={this.state.pollLink}
+                  value={pollLink}
                   onChange={e => this.handlePollState(e, 'pollLink')}
+                />
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <StyledBody>Poll Rules:</StyledBody>
+                <Input
+                  width="400px"
+                  placeholder=""
+                  value={pollRules}
+                  onChange={e => this.handlePollState(e, 'pollRules')}
                 />
               </SectionWrapper>
 
@@ -280,7 +297,7 @@ class Admin extends Component {
                   width="600px"
                   height="400px"
                   placeholder="Write (in markdown) the full polling proposal"
-                  value={this.state.pollContent}
+                  value={pollContent}
                   onChange={e => this.handlePollState(e, 'pollContent')}
                 />
               </SectionWrapper>
@@ -290,7 +307,7 @@ class Admin extends Component {
                 <Input
                   width="400px"
                   placeholder="Add possible voting options"
-                  value={this.state.pollOption}
+                  value={pollOption}
                   onChange={e => this.handlePollState(e, 'pollOption')}
                   maxLength={25}
                 />
@@ -306,7 +323,7 @@ class Admin extends Component {
               <SectionWrapper>
                 <div css={{ width: '215px' }} />
                 <VoteOptionsGrid>
-                  {this.state.pollOptions.map((opt, idx) => (
+                  {pollOptions.map((opt, idx) => (
                     <Card
                       key={idx}
                       css={{
