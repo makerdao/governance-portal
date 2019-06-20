@@ -100,6 +100,7 @@ const CloseIcon = styled.p`
 const Code = styled.pre`
   font-size: 14px;
   padding: 30px;
+  border: 1px solid black;
 `;
 
 const ABSTAIN = 'Abstain';
@@ -203,8 +204,10 @@ class Admin extends Component {
               <StyledTitle>Create a new Polling proposal</StyledTitle>
             </StyledTop>
             <ContentWrapper>
-              <Code>{pollMarkdown}</Code>
-              <SectionWrapper>
+              <Code css={{ maxWidth: '800px', overflow: 'auto' }}>
+                {pollMarkdown}
+              </Code>
+              <SectionWrapper css={{ marginTop: '20px' }}>
                 <Button slim onClick={() => copyToClipboard(pollMarkdown)}>
                   Copy
                 </Button>
