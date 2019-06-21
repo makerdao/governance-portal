@@ -6,6 +6,7 @@ import closeImg from '../imgs/close-inline.svg';
 import theme from '../theme';
 import { generateIPFSHash } from '../utils/ipfs';
 import { TextArea, Input } from '@makerdao/ui-components-core';
+import { copyToClipboard } from '../utils/misc';
 const riseUp = keyframes`
 0% {
   opacity: 0;
@@ -100,6 +101,7 @@ const CloseIcon = styled.p`
 const Code = styled.pre`
   font-size: 14px;
   padding: 30px;
+  border: 1px solid black;
 `;
 
 const ABSTAIN = 'Abstain';
@@ -110,106 +112,120 @@ class Admin extends Component {
     super(props);
 
     this.state = {
-      pollTitle: '',
-      pollSummary: '',
-      pollStart: null,
-      pollEnd: null,
-      pollLink: '',
-      pollOption: '',
-      pollOptions: [ABSTAIN, NOCHANGE],
-      pollContent: '',
-      pollMarkdown: '',
-      pollGenerated: false
+      poll: {
+        title: '',
+        summary: '',
+        start: null,
+        end: null,
+        link: '',
+        rules: '',
+        option: '',
+        choices: [ABSTAIN, NOCHANGE],
+        content: ''
+      },
+      markdown: '',
+      canBeDeployed: false
     };
   }
 
   handlePollState = (e, k) => {
     e.stopPropagation();
     this.setState({
-      ...this.state,
-      [k]: e.target.value
+      poll: {
+        ...this.state.poll,
+        [k]: e.target.value
+      }
     });
   };
 
   addPollVoteOption = () => {
-    if (this.state.pollOption.length) {
-      const opt = this.state.pollOption;
-      const opts = this.state.pollOptions;
+    const { option, choices } = this.state.poll;
+    if (option.length) {
       this.setState({
-        pollOption: '',
-        pollOptions: [...opts, opt]
+        poll: {
+          ...this.state.poll,
+          option: '',
+          choices: [...choices, option]
+        }
       });
     }
   };
 
   removePollOption = idx => {
-    const opts = this.state.pollOptions.filter((item, index) => index !== idx);
+    const { choices } = this.state.poll;
     this.setState({
-      pollOptions: opts
+      poll: {
+        ...this.state.poll,
+        choices: choices.filter((item, index) => index !== idx)
+      }
     });
   };
 
   resetPollState = () => {
     this.setState({
-      pollTitle: '',
-      pollSummary: '',
-      pollLink: '',
-      pollOption: '',
-      pollOptions: [ABSTAIN, NOCHANGE],
-      pollContent: ''
+      poll: {
+        title: '',
+        summary: '',
+        start: null,
+        end: null,
+        link: '',
+        rules: '',
+        option: '',
+        choices: [ABSTAIN, NOCHANGE],
+        content: ''
+      },
+      markdown: '',
+      canBeDeployed: false
     });
   };
 
-  parseFormToMarkdownString = () => {
-    const optsString = this.state.pollOptions.reduce(
+  parseFormToMarkdownString = async () => {
+    const { choices, title, summary, link, rules, content } = this.state.poll;
+    const choiceString = choices.reduce(
       (acc, opt, idx) => `${acc}   ${idx}: ${opt}\n`,
       ''
     );
-    const yml = `---\ntitle: ${this.state.pollTitle}\nsummary: ${
-      this.state.pollSummary
-    }\ndiscussion_link: ${this.state.pollLink}\noptions:\n${optsString}---\n`;
-    const md = `# Poll: ${this.state.pollTitle}\n\n${this.state.pollContent}`;
-    const ipfsHash = generateIPFSHash(`${yml}${md}`, { encoding: 'ascii' });
+    const yml = `---\ntitle: ${title}\nsummary: ${summary}\ndiscussion_link: ${link}\nrules: ${rules}\noptions:\n${choiceString}---\n`;
+    const md = `# Poll: ${title}\n\n${content}`;
+    const ipfsHash = await generateIPFSHash(`${yml}${md}`, {
+      encoding: 'ascii'
+    });
     this.setState({
-      pollMarkdown: `${yml}${md}`,
-      pollGenerated: true,
-      ipfsHash
+      markdown: `${yml}${md}`,
+      canBeDeployed: true,
+      hash: ipfsHash
     });
   };
 
   render = () => {
+    const { poll, markdown, canBeDeployed } = this.state;
     const isValidSubmission =
-      !!this.state.pollTitle &&
-      !!this.state.pollSummary &&
-      this.state.pollOptions.length > 2 &&
-      !!this.state.pollContent;
-    // this.pollStart &&
-    // this.pollEnd &&
+      !!poll.title &&
+      !!poll.summary &&
+      poll.choices.length > 2 &&
+      !!poll.content;
 
     return (
       <Fragment>
-        {this.state.pollGenerated ? (
+        {canBeDeployed ? (
           <RiseUp>
             <StyledTop>
               <StyledTitle>Create a new Polling proposal</StyledTitle>
             </StyledTop>
             <ContentWrapper>
-              <Code>{this.state.pollMarkdown}</Code>
-              <SectionWrapper>
-                <Button
-                  slim
-                  onClick={() =>
-                    navigator.clipboard.writeText(this.state.pollMarkdown)
-                  }
-                >
+              <Code css={{ maxWidth: '800px', overflow: 'auto' }}>
+                {markdown}
+              </Code>
+              <SectionWrapper css={{ marginTop: '20px' }}>
+                <Button slim onClick={() => copyToClipboard(markdown)}>
                   Copy
                 </Button>
-                &nbsp;
+                {'  '}
                 <Button
                   slim
                   color="grey"
                   hoverColor="grey"
-                  onClick={() => this.setState({ pollGenerated: false })}
+                  onClick={() => this.setState({ canBeDeployed: false })}
                 >
                   Back
                 </Button>
@@ -232,8 +248,8 @@ class Admin extends Component {
                 <Input
                   width="400px"
                   placeholder="This will be the poll title"
-                  value={this.state.pollTitle}
-                  onChange={e => this.handlePollState(e, 'pollTitle')}
+                  value={poll.title}
+                  onChange={e => this.handlePollState(e, 'title')}
                 />
               </SectionWrapper>
 
@@ -242,8 +258,8 @@ class Admin extends Component {
                 <Input
                   width="400px"
                   placeholder="Give a short description of what this Poll is for"
-                  value={this.state.pollSummary}
-                  onChange={e => this.handlePollState(e, 'pollSummary')}
+                  value={poll.summary}
+                  onChange={e => this.handlePollState(e, 'summary')}
                 />
               </SectionWrapper>
 
@@ -252,8 +268,8 @@ class Admin extends Component {
                 <Input
                   width="400px"
                   placeholder="Date and Time for the Poll to open"
-                  value={this.state.pollStart}
-                  onChange={e => this.handlePollState(e, 'pollStart')}
+                  value={poll.start}
+                  onChange={e => this.handlePollState(e, 'start')}
                 />
               </SectionWrapper>
 
@@ -262,8 +278,8 @@ class Admin extends Component {
                 <Input
                   width="400px"
                   placeholder="Date and Time for the Poll to close"
-                  value={this.state.pollEnd}
-                  onChange={e => this.handlePollState(e, 'pollEnd')}
+                  value={poll.end}
+                  onChange={e => this.handlePollState(e, 'end')}
                 />
               </SectionWrapper>
 
@@ -272,8 +288,18 @@ class Admin extends Component {
                 <Input
                   width="400px"
                   placeholder="Link to where this Polling proposal will be discussed"
-                  value={this.state.pollLink}
-                  onChange={e => this.handlePollState(e, 'pollLink')}
+                  value={poll.link}
+                  onChange={e => this.handlePollState(e, 'link')}
+                />
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <StyledBody>Poll Rules:</StyledBody>
+                <Input
+                  width="400px"
+                  placeholder=""
+                  value={poll.rules}
+                  onChange={e => this.handlePollState(e, 'rules')}
                 />
               </SectionWrapper>
 
@@ -283,8 +309,8 @@ class Admin extends Component {
                   width="600px"
                   height="400px"
                   placeholder="Write (in markdown) the full polling proposal"
-                  value={this.state.pollContent}
-                  onChange={e => this.handlePollState(e, 'pollContent')}
+                  value={poll.content}
+                  onChange={e => this.handlePollState(e, 'content')}
                 />
               </SectionWrapper>
 
@@ -293,8 +319,8 @@ class Admin extends Component {
                 <Input
                   width="400px"
                   placeholder="Add possible voting options"
-                  value={this.state.pollOption}
-                  onChange={e => this.handlePollState(e, 'pollOption')}
+                  value={poll.option}
+                  onChange={e => this.handlePollState(e, 'option')}
                   maxLength={25}
                 />
                 <Button
@@ -309,7 +335,7 @@ class Admin extends Component {
               <SectionWrapper>
                 <div css={{ width: '215px' }} />
                 <VoteOptionsGrid>
-                  {this.state.pollOptions.map((opt, idx) => (
+                  {poll.choices.map((opt, idx) => (
                     <Card
                       key={idx}
                       css={{
@@ -340,7 +366,7 @@ class Admin extends Component {
                 >
                   Submit
                 </Button>
-                &nbsp;
+                {'  '}
                 <Button
                   slim
                   color="grey"
