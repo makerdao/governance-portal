@@ -124,7 +124,8 @@ class Admin extends Component {
         content: ''
       },
       markdown: '',
-      canBeDeployed: false
+      canBeDeployed: false,
+      hash: ''
     };
   }
 
@@ -198,7 +199,7 @@ class Admin extends Component {
   };
 
   render = () => {
-    const { poll, markdown, canBeDeployed } = this.state;
+    const { poll, markdown, canBeDeployed, hash } = this.state;
     const isValidSubmission =
       !!poll.title &&
       !!poll.summary &&
@@ -213,9 +214,16 @@ class Admin extends Component {
               <StyledTitle>Create a new Polling proposal</StyledTitle>
             </StyledTop>
             <ContentWrapper>
-              <Code css={{ maxWidth: '800px', overflow: 'auto' }}>
-                {markdown}
-              </Code>
+              <SectionWrapper>
+                <StyledBody>Markdown:</StyledBody>
+                <Code css={{ width: '800px', overflow: 'auto' }}>
+                  {markdown}
+                </Code>
+              </SectionWrapper>
+              <SectionWrapper>
+                <StyledBody>Hash:</StyledBody>
+                <SectionText css={{ width: '800px' }}>{hash}</SectionText>
+              </SectionWrapper>
               <SectionWrapper css={{ marginTop: '20px' }}>
                 <Button slim onClick={() => copyToClipboard(markdown)}>
                   Copy
