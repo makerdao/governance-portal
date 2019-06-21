@@ -1,8 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Card from '../components/Card';
-import theme, { colors } from '../theme';
-
+import Button from '../components/Button';
+import closeImg from '../imgs/close-inline.svg';
+import theme from '../theme';
+import { generateIPFSHash } from '../utils/ipfs';
+import { TextArea, Input } from '@makerdao/ui-components-core';
+import { copyToClipboard } from '../utils/misc';
 const riseUp = keyframes`
 0% {
   opacity: 0;
@@ -34,37 +38,356 @@ const RiseUp = styled.div`
   animation: ${riseUp} 0.75s ease-in-out;
 `;
 
-const ContentWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-`;
-
-const RightPanels = styled(Card)`
+const ContentWrapper = styled(Card)`
   display: flex;
   flex-direction: column;
-  width: 400px;
+  align-items: center;
+  padding: 80px 100px;
 `;
 
-const ProposalPanel = styled(Card)`
-  max-width: 650px;
-  padding: 0px 25px 18px 25px;
-  color: #546978;
-  line-height: 30px;
+const SectionWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 40px;
 `;
+
+const SectionTitle = styled.p`
+  font-size: 22px;
+  color: ${theme.text.darker_default};
+  line-height: normal;
+  font-weight: 500;
+`;
+
+const SectionText = styled.p`
+  text-align: left;
+  line-height: 30px;
+  margin-top: 5px;
+  font-size: 17px;
+  color: #546978;
+  margin-bottom: 20px;
+`;
+
+const StyledBody = styled.p`
+  width: 150px;
+  text-align: left;
+  line-height: 30px;
+  margin-top: 5px;
+  font-size: 17px;
+  color: #546978;
+`;
+
+const OptionText = styled.p`
+  text-align: left;
+  line-height: 30px;
+  font-size: 17px;
+  color: #546978;
+`;
+
+const VoteOptionsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 10px;
+  grid-row-gap: 10px;
+`;
+
+const CloseIcon = styled.p`
+  width: 15px;
+  height: 15px;
+  background-color: red;
+  mask: url(${closeImg}) center no-repeat;
+  cursor: pointer;
+`;
+
+const Code = styled.pre`
+  font-size: 14px;
+  padding: 30px;
+  border: 1px solid black;
+`;
+
+const ABSTAIN = 'Abstain';
+const NOCHANGE = 'No Change';
 
 class Admin extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      poll: {
+        title: '',
+        summary: '',
+        start: null,
+        end: null,
+        link: '',
+        rules: '',
+        option: '',
+        choices: [ABSTAIN, NOCHANGE],
+        content: ''
+      },
+      markdown: '',
+      canBeDeployed: false,
+      hash: ''
+    };
+  }
+
+  handlePollState = (e, k) => {
+    e.stopPropagation();
+    this.setState({
+      poll: {
+        ...this.state.poll,
+        [k]: e.target.value
+      }
+    });
+  };
+
+  addPollVoteOption = () => {
+    const { option, choices } = this.state.poll;
+    if (option.length) {
+      this.setState({
+        poll: {
+          ...this.state.poll,
+          option: '',
+          choices: [...choices, option]
+        }
+      });
+    }
+  };
+
+  removePollOption = idx => {
+    const { choices } = this.state.poll;
+    this.setState({
+      poll: {
+        ...this.state.poll,
+        choices: choices.filter((item, index) => index !== idx)
+      }
+    });
+  };
+
+  resetPollState = () => {
+    this.setState({
+      poll: {
+        title: '',
+        summary: '',
+        start: null,
+        end: null,
+        link: '',
+        rules: '',
+        option: '',
+        choices: [ABSTAIN, NOCHANGE],
+        content: ''
+      },
+      markdown: '',
+      canBeDeployed: false
+    });
+  };
+
+  parseFormToMarkdownString = async () => {
+    const { choices, title, summary, link, rules, content } = this.state.poll;
+    const choiceString = choices.reduce(
+      (acc, opt, idx) => `${acc}   ${idx}: ${opt}\n`,
+      ''
+    );
+    const yml = `---\ntitle: ${title}\nsummary: ${summary}\ndiscussion_link: ${link}\nrules: ${rules}\noptions:\n${choiceString}---\n`;
+    const md = `# Poll: ${title}\n\n${content}`;
+    const ipfsHash = await generateIPFSHash(`${yml}${md}`, {
+      encoding: 'ascii'
+    });
+    this.setState({
+      markdown: `${yml}${md}`,
+      canBeDeployed: true,
+      hash: ipfsHash
+    });
+  };
+
   render = () => {
+    const { poll, markdown, canBeDeployed, hash } = this.state;
+    const isValidSubmission =
+      !!poll.title &&
+      !!poll.summary &&
+      poll.choices.length > 2 &&
+      !!poll.content;
+
     return (
-      <RiseUp>
-        <StyledTop>
-          <StyledTitle>Create Polling Proposal</StyledTitle>
-        </StyledTop>
-        <ContentWrapper>
-          <ProposalPanel>Full proposal goes here</ProposalPanel>
-          <RightPanels>Other input goes here</RightPanels>
-        </ContentWrapper>
-      </RiseUp>
+      <Fragment>
+        {canBeDeployed ? (
+          <RiseUp>
+            <StyledTop>
+              <StyledTitle>Create a new Polling proposal</StyledTitle>
+            </StyledTop>
+            <ContentWrapper>
+              <SectionWrapper>
+                <StyledBody>Markdown:</StyledBody>
+                <Code css={{ width: '800px', overflow: 'auto' }}>
+                  {markdown}
+                </Code>
+              </SectionWrapper>
+              <SectionWrapper>
+                <StyledBody>Hash:</StyledBody>
+                <SectionText css={{ width: '800px' }}>{hash}</SectionText>
+              </SectionWrapper>
+              <SectionWrapper css={{ marginTop: '20px' }}>
+                <Button slim onClick={() => copyToClipboard(markdown)}>
+                  Copy
+                </Button>
+                {'  '}
+                <Button
+                  slim
+                  color="grey"
+                  hoverColor="grey"
+                  onClick={() => this.setState({ canBeDeployed: false })}
+                >
+                  Back
+                </Button>
+              </SectionWrapper>
+            </ContentWrapper>
+          </RiseUp>
+        ) : (
+          <RiseUp>
+            <StyledTop>
+              <StyledTitle>Create a new Polling proposal</StyledTitle>
+            </StyledTop>
+            <ContentWrapper>
+              <SectionTitle>Poll Details</SectionTitle>
+              <SectionText>
+                This form will generate a formatted markdown file which can be
+                copied and included in the cms
+              </SectionText>
+              <SectionWrapper>
+                <StyledBody>Title:</StyledBody>
+                <Input
+                  width="400px"
+                  placeholder="This will be the poll title"
+                  value={poll.title}
+                  onChange={e => this.handlePollState(e, 'title')}
+                />
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <StyledBody>Summary:</StyledBody>
+                <Input
+                  width="400px"
+                  placeholder="Give a short description of what this Poll is for"
+                  value={poll.summary}
+                  onChange={e => this.handlePollState(e, 'summary')}
+                />
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <StyledBody>Poll Start Time:</StyledBody>
+                <Input
+                  width="400px"
+                  placeholder="Date and Time for the Poll to open"
+                  value={poll.start}
+                  onChange={e => this.handlePollState(e, 'start')}
+                />
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <StyledBody>Poll End Time:</StyledBody>
+                <Input
+                  width="400px"
+                  placeholder="Date and Time for the Poll to close"
+                  value={poll.end}
+                  onChange={e => this.handlePollState(e, 'end')}
+                />
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <StyledBody>Discussion Link:</StyledBody>
+                <Input
+                  width="400px"
+                  placeholder="Link to where this Polling proposal will be discussed"
+                  value={poll.link}
+                  onChange={e => this.handlePollState(e, 'link')}
+                />
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <StyledBody>Poll Rules:</StyledBody>
+                <Input
+                  width="400px"
+                  placeholder=""
+                  value={poll.rules}
+                  onChange={e => this.handlePollState(e, 'rules')}
+                />
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <StyledBody>Proposal:</StyledBody>
+                <TextArea
+                  width="600px"
+                  height="400px"
+                  placeholder="Write (in markdown) the full polling proposal"
+                  value={poll.content}
+                  onChange={e => this.handlePollState(e, 'content')}
+                />
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <StyledBody>Vote Options:</StyledBody>
+                <Input
+                  width="400px"
+                  placeholder="Add possible voting options"
+                  value={poll.option}
+                  onChange={e => this.handlePollState(e, 'option')}
+                  maxLength={25}
+                />
+                <Button
+                  css={{ alignSelf: 'center', marginLeft: '10px' }}
+                  width="190px"
+                  onClick={this.addPollVoteOption}
+                >
+                  Add Option
+                </Button>
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <div css={{ width: '215px' }} />
+                <VoteOptionsGrid>
+                  {poll.choices.map((opt, idx) => (
+                    <Card
+                      key={idx}
+                      css={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        width: '325px',
+                        padding: '10px'
+                      }}
+                    >
+                      <OptionText>
+                        #{idx} - {opt}
+                      </OptionText>
+                      {idx > 1 && (
+                        <CloseIcon onClick={() => this.removePollOption(idx)} />
+                      )}
+                    </Card>
+                  ))}
+                </VoteOptionsGrid>
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <Button
+                  slim
+                  disabled={!isValidSubmission}
+                  onClick={this.parseFormToMarkdownString}
+                >
+                  Submit
+                </Button>
+                {'  '}
+                <Button
+                  slim
+                  color="grey"
+                  hoverColor="grey"
+                  onClick={this.resetPollState}
+                >
+                  Reset
+                </Button>
+              </SectionWrapper>
+            </ContentWrapper>
+          </RiseUp>
+        )}
+      </Fragment>
     );
   };
 }
