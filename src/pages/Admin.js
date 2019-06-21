@@ -4,6 +4,7 @@ import Card from '../components/Card';
 import Button from '../components/Button';
 import closeImg from '../imgs/close-inline.svg';
 import theme from '../theme';
+import { generateIPFSHash } from '../utils/ipfs';
 import { TextArea, Input } from '@makerdao/ui-components-core';
 import { copyToClipboard } from '../utils/misc';
 const riseUp = keyframes`
@@ -178,7 +179,7 @@ class Admin extends Component {
     });
   };
 
-  parseFormToMarkdownString = () => {
+  parseFormToMarkdownString = async () => {
     const { choices, title, summary, link, rules, content } = this.state.poll;
     const choiceString = choices.reduce(
       (acc, opt, idx) => `${acc}   ${idx}: ${opt}\n`,
@@ -186,9 +187,13 @@ class Admin extends Component {
     );
     const yml = `---\ntitle: ${title}\nsummary: ${summary}\ndiscussion_link: ${link}\nrules: ${rules}\noptions:\n${choiceString}---\n`;
     const md = `# Poll: ${title}\n\n${content}`;
+    const ipfsHash = await generateIPFSHash(`${yml}${md}`, {
+      encoding: 'ascii'
+    });
     this.setState({
       markdown: `${yml}${md}`,
-      canBeDeployed: true
+      canBeDeployed: true,
+      hash: ipfsHash
     });
   };
 
