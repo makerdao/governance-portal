@@ -7,6 +7,8 @@ import theme from '../theme';
 import { generateIPFSHash } from '../utils/ipfs';
 import { TextArea, Input } from '@makerdao/ui-components-core';
 import { copyToClipboard } from '../utils/misc';
+import DateTimePicker from 'react-datetime-picker';
+
 const riseUp = keyframes`
 0% {
   opacity: 0;
@@ -106,17 +108,22 @@ const Code = styled.pre`
 
 const ABSTAIN = 'Abstain';
 const NOCHANGE = 'No Change';
+const NOW = new Date();
+const NEXTWEEK = new Date(NOW.getTime() + 7 * 24 * 60 * 60 * 1000);
+const DAILY_AVERAGE_BLOCKTIMES_URL =
+  'https://www.etherchain.org/charts/blockTime/data';
 
 class Admin extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       poll: {
         title: '',
         summary: '',
-        start: null,
-        end: null,
+        startTime: NOW,
+        endTime: NEXTWEEK,
+        startBlock: null,
+        endBlock: null,
         link: '',
         rules: '',
         option: '',
@@ -131,10 +138,29 @@ class Admin extends Component {
 
   handlePollState = (e, k) => {
     e.stopPropagation();
+
     this.setState({
       poll: {
         ...this.state.poll,
         [k]: e.target.value
+      }
+    });
+  };
+
+  handlePollStart = time => {
+    this.setState({
+      poll: {
+        ...this.state.poll,
+        startTime: time
+      }
+    });
+  };
+
+  handlePollEnd = time => {
+    this.setState({
+      poll: {
+        ...this.state.poll,
+        endTime: time
       }
     });
   };
@@ -152,6 +178,10 @@ class Admin extends Component {
     }
   };
 
+  pollTimeWindowIsValid = () => {
+    return true;
+  };
+
   removePollOption = idx => {
     const { choices } = this.state.poll;
     this.setState({
@@ -167,8 +197,10 @@ class Admin extends Component {
       poll: {
         title: '',
         summary: '',
-        start: null,
-        end: null,
+        start: NOW,
+        end: NEXTWEEK,
+        startBlock: null,
+        endBlock: null,
         link: '',
         rules: '',
         option: '',
@@ -198,13 +230,25 @@ class Admin extends Component {
     });
   };
 
+  async componentDidMount() {
+    const res = await fetch(DAILY_AVERAGE_BLOCKTIMES_URL, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json'
+      }
+    });
+    const blockTimeAvgs = res.json();
+    console.log(blockTimeAvgs);
+  }
+
   render = () => {
     const { poll, markdown, canBeDeployed, hash } = this.state;
     const isValidSubmission =
       !!poll.title &&
       !!poll.summary &&
       poll.choices.length > 2 &&
-      !!poll.content;
+      !!poll.content &&
+      this.pollTimeWindowIsValid();
 
     return (
       <Fragment>
@@ -273,21 +317,19 @@ class Admin extends Component {
 
               <SectionWrapper>
                 <StyledBody>Poll Start Time:</StyledBody>
-                <Input
-                  width="400px"
-                  placeholder="Date and Time for the Poll to open"
-                  value={poll.start}
-                  onChange={e => this.handlePollState(e, 'start')}
+                <DateTimePicker
+                  disableClock
+                  onChange={t => this.handlePollStart(t)}
+                  value={poll.startTime}
                 />
               </SectionWrapper>
 
               <SectionWrapper>
                 <StyledBody>Poll End Time:</StyledBody>
-                <Input
-                  width="400px"
-                  placeholder="Date and Time for the Poll to close"
-                  value={poll.end}
-                  onChange={e => this.handlePollState(e, 'end')}
+                <DateTimePicker
+                  disableClock
+                  onChange={t => this.handlePollEnd(t)}
+                  value={poll.endTime}
                 />
               </SectionWrapper>
 
