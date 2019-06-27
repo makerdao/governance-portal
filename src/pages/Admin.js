@@ -108,10 +108,27 @@ const Code = styled.pre`
 
 const ABSTAIN = 'Abstain';
 const NOCHANGE = 'No Change';
-const NOW = new Date();
-const NEXTWEEK = new Date(NOW.getTime() + 7 * 24 * 60 * 60 * 1000);
-const DAILY_AVERAGE_BLOCKTIMES_URL =
-  'https://www.etherchain.org/charts/blockTime/data';
+const DEFAULT_START = new Date();
+const DEFAULT_END = new Date(DEFAULT_START.getTime() + 7 * 24 * 60 * 60 * 1000);
+const MIN_POLL_DURATION = 24 * 60 * 60 * 1000;
+
+const calcTimeSpan = (earlier, later) => {
+  let d = Math.abs(earlier.getTime() - later.getTime()) / 1000;
+  let r = {};
+  let s = {
+    week: 604800,
+    day: 86400,
+    hour: 3600,
+    minute: 60
+  };
+
+  Object.keys(s).forEach(key => {
+    r[key] = Math.floor(d / s[key]);
+    d -= r[key] * s[key];
+  });
+
+  return `${r.week} w : ${r.day} d : ${r.hour} h : ${r.minute} m`;
+};
 
 class Admin extends Component {
   constructor(props) {
@@ -120,10 +137,8 @@ class Admin extends Component {
       poll: {
         title: '',
         summary: '',
-        startTime: NOW,
-        endTime: NEXTWEEK,
-        startBlock: null,
-        endBlock: null,
+        start: DEFAULT_START,
+        end: DEFAULT_END,
         link: '',
         rules: '',
         option: '',
@@ -147,20 +162,24 @@ class Admin extends Component {
     });
   };
 
-  handlePollStart = time => {
+  handlePollStart = t => {
+    const { end } = this.state.poll;
     this.setState({
       poll: {
         ...this.state.poll,
-        startTime: time
+        start: t,
+        end: t.getTime() > end.getTime() ? t : end
       }
     });
   };
 
-  handlePollEnd = time => {
+  handlePollEnd = t => {
+    const { start } = this.state.poll;
     this.setState({
       poll: {
         ...this.state.poll,
-        endTime: time
+        start: t.getTime() < start.getTime() ? t : start,
+        end: t
       }
     });
   };
@@ -179,7 +198,13 @@ class Admin extends Component {
   };
 
   pollTimeWindowIsValid = () => {
-    return true;
+    const { start, end } = this.state.poll;
+    const pollDuration = end.getTime() - start.getTime();
+    if (pollDuration >= MIN_POLL_DURATION) {
+      return true;
+    } else {
+      return false;
+    }
   };
 
   removePollOption = idx => {
@@ -197,10 +222,8 @@ class Admin extends Component {
       poll: {
         title: '',
         summary: '',
-        start: NOW,
-        end: NEXTWEEK,
-        startBlock: null,
-        endBlock: null,
+        start: DEFAULT_START,
+        end: DEFAULT_END,
         link: '',
         rules: '',
         option: '',
@@ -229,17 +252,6 @@ class Admin extends Component {
       hash: ipfsHash
     });
   };
-
-  async componentDidMount() {
-    const res = await fetch(DAILY_AVERAGE_BLOCKTIMES_URL, {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json'
-      }
-    });
-    const blockTimeAvgs = res.json();
-    console.log(blockTimeAvgs);
-  }
 
   render = () => {
     const { poll, markdown, canBeDeployed, hash } = this.state;
@@ -272,7 +284,6 @@ class Admin extends Component {
                 <Button slim onClick={() => copyToClipboard(markdown)}>
                   Copy
                 </Button>
-                {'  '}
                 <Button
                   slim
                   color="grey"
@@ -318,19 +329,32 @@ class Admin extends Component {
               <SectionWrapper>
                 <StyledBody>Poll Start Time:</StyledBody>
                 <DateTimePicker
+                  css={{ width: '400px' }}
                   disableClock
+                  showLeadingZeros
+                  clearIcon
                   onChange={t => this.handlePollStart(t)}
-                  value={poll.startTime}
+                  value={poll.start}
                 />
               </SectionWrapper>
 
               <SectionWrapper>
                 <StyledBody>Poll End Time:</StyledBody>
                 <DateTimePicker
+                  css={{ width: '400px' }}
                   disableClock
+                  showLeadingZeros
+                  clearIcon
                   onChange={t => this.handlePollEnd(t)}
-                  value={poll.endTime}
+                  value={poll.end}
                 />
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <StyledBody>Poll Duration</StyledBody>
+                <StyledBody css={{ width: '400px' }}>
+                  {calcTimeSpan(poll.start, poll.end)}
+                </StyledBody>
               </SectionWrapper>
 
               <SectionWrapper>
@@ -347,7 +371,7 @@ class Admin extends Component {
                 <StyledBody>Poll Rules:</StyledBody>
                 <Input
                   width="400px"
-                  placeholder=""
+                  placeholder="Indicate how the Poll is to be conducted"
                   value={poll.rules}
                   onChange={e => this.handlePollState(e, 'rules')}
                 />
@@ -416,7 +440,6 @@ class Admin extends Component {
                 >
                   Submit
                 </Button>
-                {'  '}
                 <Button
                   slim
                   color="grey"
