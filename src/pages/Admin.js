@@ -112,23 +112,23 @@ const DEFAULT_START = new Date();
 const DEFAULT_END = new Date(DEFAULT_START.getTime() + 7 * 24 * 60 * 60 * 1000);
 const MIN_POLL_DURATION = 24 * 60 * 60 * 1000;
 
-const calcTimeSpan = (earlier, later) => {
-  let d = Math.abs(earlier.getTime() - later.getTime()) / 1000;
-  let r = {};
-  let s = {
+function calculateTimeSpan(earlier, later) {
+  let timeSpanInSeconds = Math.abs(earlier.getTime() - later.getTime()) / 1000;
+  let span = {};
+  let timeUnits = {
     week: 604800,
     day: 86400,
     hour: 3600,
     minute: 60
   };
 
-  Object.keys(s).forEach(key => {
-    r[key] = Math.floor(d / s[key]);
-    d -= r[key] * s[key];
+  Object.keys(timeUnits).forEach(key => {
+    span[key] = Math.floor(timeSpanInSeconds / timeUnits[key]);
+    timeSpanInSeconds -= span[key] * timeUnits[key];
   });
 
-  return `${r.week} w : ${r.day} d : ${r.hour} h : ${r.minute} m`;
-};
+  return `${span.week} w : ${span.day} d : ${span.hour} h : ${span.minute} m`;
+}
 
 class Admin extends Component {
   constructor(props) {
@@ -353,7 +353,7 @@ class Admin extends Component {
               <SectionWrapper>
                 <StyledBody>Poll Duration</StyledBody>
                 <StyledBody css={{ width: '400px' }}>
-                  {calcTimeSpan(poll.start, poll.end)}
+                  {calculateTimeSpan(poll.start, poll.end)}
                 </StyledBody>
               </SectionWrapper>
 
