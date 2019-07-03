@@ -235,10 +235,14 @@ function Polling({
   );
 }
 
-const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
+const reduxProps = (
+  { proposals, tally, accounts, metamask, topics },
+  { match }
+) => {
   const { pollSlug } = match.params;
-  const proposal = proposals.find(({ title }) => {
-    return toSlug(title) === pollSlug;
+
+  const proposal = topics.find(({ voteId }) => {
+    return toSlug(voteId) === pollSlug;
   });
   const isValidRoute = proposal && pollSlug;
 

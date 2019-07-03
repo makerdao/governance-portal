@@ -6,6 +6,7 @@ import round from 'lodash.round';
 
 import { createReducer } from '../utils/redux';
 import { initApprovalsFetch } from './approvals';
+import { topicsSuccess } from './topics';
 import { div, mul, promiseRetry } from '../utils/misc';
 
 // Constants ----------------------------------------------
@@ -126,6 +127,8 @@ function extractProposals(topics, network) {
   // if we're using a testnet, overwrite proposal source with provided ganache addresses.
   if (network === 'ganache') updateSourceForTestnet(topics);
 
+  console.log('topics', topics);
+
   return topics.reduce((acc, topic) => {
     const proposals = topic.proposals.map(({ source, ...otherProps }) => ({
       ...otherProps,
@@ -148,6 +151,8 @@ export const proposalsInit = network => async dispatch => {
       times: 4,
       delay: 1
     });
+
+    dispatch(topicsSuccess());
 
     dispatch({
       type: PROPOSALS_SUCCESS,

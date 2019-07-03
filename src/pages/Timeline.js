@@ -187,12 +187,18 @@ const Timeline = ({
   votingFor,
   signaling,
   hat,
-  approvals
+  approvals,
+  topics
 }) => {
+  console.log('topics2', topics);
+  console.log('proposals', proposals);
+  console.log('hat', hat);
   const hatProposal = proposals.find(({ source }) => eq(source, hat.address));
+  console.log('hatProposal', hatProposal);
   const otherProposals = proposals.filter(
     ({ source }) => !eq(source, hat.address)
   );
+  console.log('other proposals', otherProposals);
   otherProposals.sort((a, b) => b.end_timestamp - a.end_timestamp);
 
   const topicInfo = otherProposals.reduce((accumulator, current) => {
@@ -207,6 +213,7 @@ const Timeline = ({
     }
     return accumulator;
   }, []);
+  console.log('signaling?', signaling);
   return (
     <Fragment>
       <MigrationNotificationBanner />
@@ -274,85 +281,63 @@ const Timeline = ({
           </StyledCard>
         )}
         {signaling
-          ? topicInfo.map(({ topicKey, topicTitle }) => (
-              <StyledTopicCard key={topicKey}>
-                <TopicSubHeading>{topicTitle}</TopicSubHeading>
-                {otherProposals.map(proposal =>
-                  topicKey === proposal.topicKey ? (
-                    <StyledCard key={proposal.key}>
-                      <Card.Element
-                        key={proposal.title}
-                        height={proposalWrapperHeight}
-                      >
-                        <ProposalDetails>
-                          <ExtendedLink
-                            to={`/polling-proposal/${toSlug(proposal.title)}`}
-                          >
-                            <SubHeading>{proposal.title}</SubHeading>
-                          </ExtendedLink>
-                          <Body
-                            dangerouslySetInnerHTML={{
-                              __html: proposal.proposal_blurb
-                            }}
-                          />
-                          <ExtendedLink
-                            to={`/polling-proposal/${toSlug(proposal.title)}`}
-                          >
-                            Read more...
-                          </ExtendedLink>
-                          {hat.approvals <
-                          approvals.approvals[proposal.source] ? (
-                            <div>
-                              <Tag>Available for execution</Tag>
-                            </div>
-                          ) : null}
-                          {proposal.active && signaling ? (
-                            <Timer
-                              endTimestamp={proposal.end_timestamp}
-                              small
-                              mb="-6"
-                            />
-                          ) : null}
-                        </ProposalDetails>
-                        <div>
-                          {proposal.active ? (
-                            <Fragment>
-                              <Button
-                                disabled={
-                                  !canVote ||
-                                  (!proposal.active && proposal.govVote)
-                                }
-                                loading={fetching}
-                                onClick={() =>
-                                  modalOpen(Vote, {
-                                    proposal: {
-                                      address: proposal.source,
-                                      title: proposal.title
-                                    }
-                                  })
-                                }
-                              >
-                                {votingFor.includes(
-                                  proposal.source.toLowerCase()
-                                )
-                                  ? 'Withdraw vote'
-                                  : 'Vote for this Proposal'}
-                              </Button>
-                              <br />
-                              <TillHat candidate={proposal.source} />
-                            </Fragment>
-                          ) : (
-                            <ClosedStatus
-                              topicKey={proposal.topicKey}
-                              proposalAddress={proposal.source}
-                            />
-                          )}
-                        </div>
-                      </Card.Element>
-                    </StyledCard>
-                  ) : null
-                )}
-              </StyledTopicCard>
+          ? topics.map(topic => (
+              <StyledCard key={topic.key}>
+                <Card.Element key={topic.topic} height={proposalWrapperHeight}>
+                  <ProposalDetails>
+                    <ExtendedLink to={`/polling-proposal/${toSlug(topic.key)}`}>
+                      <SubHeading>{topic.topic}</SubHeading>
+                    </ExtendedLink>
+                    <Body
+                      dangerouslySetInnerHTML={{
+                        __html: topic.topic_blurb
+                      }}
+                    />
+                    <ExtendedLink to={`/polling-proposal/${toSlug(topic.key)}`}>
+                      Read more...
+                    </ExtendedLink>
+                    {hat.approvals < approvals.approvals['proposal.source'] ? (
+                      <div>
+                        <Tag>Available for execution</Tag>
+                      </div>
+                    ) : null}
+                    {topic.active && signaling ? (
+                      <Timer endTimestamp={topic.end_timestamp} small mb="-6" />
+                    ) : null}
+                  </ProposalDetails>
+                  <div>
+                    {topic.active ? (
+                      <Fragment>
+                        <Button
+                          disabled={
+                            !canVote || (!topic.active && topic.govVote)
+                          }
+                          loading={fetching}
+                          onClick={() =>
+                            modalOpen(Vote, {
+                              proposal: {
+                                address: 'proposal.source',
+                                title: topic.title
+                              }
+                            })
+                          }
+                        >
+                          {votingFor.includes('topic.source.toLowerCase()')
+                            ? 'Withdraw vote'
+                            : 'Vote for this Proposal'}
+                        </Button>
+                        <br />
+                        <TillHat candidate={topic.source} />
+                      </Fragment>
+                    ) : (
+                      <ClosedStatus
+                        topicKey={topic.key}
+                        proposalAddress={topic.source}
+                      />
+                    )}
+                  </div>
+                </Card.Element>
+              </StyledCard>
             ))
           : otherProposals.map(proposal => (
               <StyledCard key={proposal.key}>
@@ -422,14 +407,18 @@ const Timeline = ({
   );
 };
 
-const reduxProps = ({ proposals, accounts, hat, approvals }, { signaling }) => {
+const reduxProps = (
+  { proposals, accounts, hat, approvals, topics },
+  { signaling }
+) => {
   return {
     hat,
     approvals,
     proposals: proposals.filter(p => !!p.govVote === !!signaling),
     canVote: activeCanVote({ accounts }),
     fetching: accounts.fetching,
-    votingFor: getActiveVotingFor({ accounts })
+    votingFor: getActiveVotingFor({ accounts }),
+    topics
   };
 };
 
