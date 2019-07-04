@@ -5,7 +5,7 @@ import Button from '../components/Button';
 import closeImg from '../imgs/close-inline.svg';
 import theme from '../theme';
 import { generateIPFSHash } from '../utils/ipfs';
-import { TextArea, Input } from '@makerdao/ui-components-core';
+import { TextArea, Input, Box } from '@makerdao/ui-components-core';
 import { copyToClipboard } from '../utils/misc';
 import DateTimePicker from 'react-datetime-picker';
 
@@ -76,6 +76,10 @@ const StyledBody = styled.p`
   margin-top: 5px;
   font-size: 17px;
   color: #546978;
+`;
+
+const TimeLabel = styled(StyledBody)`
+  width: 250px;
 `;
 
 const OptionText = styled.p`
@@ -255,6 +259,7 @@ class CreatePoll extends Component {
       !!content;
 
     const handleParentState = newState => this.setState(newState);
+
     return (
       <RiseUp>
         <StyledTop>
@@ -336,11 +341,9 @@ class CreatePoll extends Component {
 
               <SectionWrapper>
                 <StyledBody>Poll Duration</StyledBody>
-                <Input
-                  width="600px"
-                  disabled
-                  value={calculateTimeSpan(start, end)}
-                />
+                <Box width="600px">
+                  <TimeLabel>{calculateTimeSpan(start, end)}</TimeLabel>
+                </Box>
               </SectionWrapper>
 
               <SectionWrapper>
