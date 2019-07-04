@@ -133,7 +133,7 @@ function calculateTimeSpan(earlier, later) {
   return `${span.week} w : ${span.day} d : ${span.hour} h : ${span.minute} m`;
 }
 
-class Admin extends Component {
+class CreatePoll extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -490,4 +490,4 @@ class Admin extends Component {
   };
 }
 
-export default Admin;
+export default CreatePoll;
