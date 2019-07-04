@@ -39,12 +39,12 @@ class App extends Component {
                   render={routeProps => <Timeline {...routeProps} />}
                 />
                 <Route
-                  path="/polling"
-                  render={routeProps => <Timeline signaling {...routeProps} />}
+                  path="/polling/create"
+                  render={routeProps => <CreatePoll {...routeProps} />}
                 />
                 <Route
-                  path="/polling-create"
-                  render={routeProps => <CreatePoll {...routeProps} />}
+                  path="/polling"
+                  render={routeProps => <Timeline signaling {...routeProps} />}
                 />
                 <Route path="/not-found" component={NotFound} />
                 <Route
