@@ -143,7 +143,6 @@ class CreatePoll extends Component {
         start: DEFAULT_START,
         end: DEFAULT_END,
         link: '',
-        rules: '',
         option: '',
         choices: [ABSTAIN, NOCHANGE],
         content: ''
@@ -228,7 +227,6 @@ class CreatePoll extends Component {
         start: DEFAULT_START,
         end: DEFAULT_END,
         link: '',
-        rules: '',
         option: '',
         choices: [ABSTAIN, NOCHANGE],
         content: ''
@@ -387,16 +385,6 @@ class CreatePoll extends Component {
                     !poll.link.match(URL_REGEX) &&
                     'This must be a url'
                   }
-                />
-              </SectionWrapper>
-
-              <SectionWrapper>
-                <StyledBody>Poll Rules:</StyledBody>
-                <Input
-                  width="600px"
-                  placeholder="Indicate how the Poll is to be conducted"
-                  value={poll.rules}
-                  onChange={e => this.handlePollState(e, 'rules')}
                 />
               </SectionWrapper>
 
