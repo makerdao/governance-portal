@@ -107,7 +107,6 @@ const Code = styled.pre`
 `;
 
 const ABSTAIN = 'Abstain';
-const NOCHANGE = 'No Change';
 const DEFAULT_START = new Date();
 const DEFAULT_END = new Date(DEFAULT_START.getTime() + 7 * 24 * 60 * 60 * 1000);
 
@@ -168,7 +167,7 @@ class CreatePoll extends Component {
       end: DEFAULT_END,
       link: '',
       option: '',
-      choices: [ABSTAIN, NOCHANGE],
+      choices: [ABSTAIN],
       content: '',
       markdown: '',
       canBeDeployed: false,
@@ -208,7 +207,7 @@ class CreatePoll extends Component {
       end: DEFAULT_END,
       link: '',
       option: '',
-      choices: [ABSTAIN, NOCHANGE],
+      choices: [ABSTAIN],
       content: '',
       markdown: '',
       canBeDeployed: false,
@@ -252,7 +251,7 @@ class CreatePoll extends Component {
       !!title &&
       !!summary &&
       link.match(URL_REGEX) &&
-      choices.length > 2 &&
+      choices.length > 1 &&
       !!content;
 
     const handleParentState = newState => this.setState(newState);
@@ -382,11 +381,10 @@ class CreatePoll extends Component {
                   value={option}
                   onChange={e => this.handlePollState(e, 'option')}
                   maxLength={25}
-                  sucess={choices.length > 2}
-                  error={choices.length <= 2}
+                  success={choices.length > 1}
+                  error={choices.length <= 1}
                   failureMessage={
-                    choices.length <= 2 &&
-                    'Must be at least three voting options'
+                    choices.length <= 1 && 'Must be at least two voting options'
                   }
                   after={
                     <Button
@@ -418,7 +416,7 @@ class CreatePoll extends Component {
                       <OptionText>
                         #{idx} - {opt}
                       </OptionText>
-                      {idx > 1 && (
+                      {idx > 0 && (
                         <CloseIcon onClick={() => this.removePollOption(idx)} />
                       )}
                     </Card>
