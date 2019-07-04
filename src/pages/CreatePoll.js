@@ -8,6 +8,9 @@ import { generateIPFSHash } from '../utils/ipfs';
 import { TextArea, Input, Box } from '@makerdao/ui-components-core';
 import { copyToClipboard } from '../utils/misc';
 import DateTimePicker from 'react-datetime-picker';
+import ReactMde from 'react-mde';
+import * as Showdown from 'showdown';
+import 'react-mde/lib/styles/css/react-mde-all.css';
 
 const riseUp = keyframes`
 0% {
@@ -117,6 +120,13 @@ const DEFAULT_END = new Date(DEFAULT_START.getTime() + 7 * 24 * 60 * 60 * 1000);
 const expr = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
 const URL_REGEX = new RegExp(expr);
 
+const converter = new Showdown.Converter({
+  tables: true,
+  simplifiedAutoLink: true,
+  strikethrough: true,
+  tasklists: true
+});
+
 function calculateTimeSpan(earlier, later) {
   let timeSpanInSeconds = Math.abs(earlier.getTime() - later.getTime()) / 1000;
   let span = {};
@@ -177,7 +187,8 @@ class CreatePoll extends Component {
       markdown: '',
       canBeDeployed: false,
       hash: '',
-      submitAttempted: false
+      submitAttempted: false,
+      selectedTab: 'write'
     };
   }
 
@@ -218,7 +229,8 @@ class CreatePoll extends Component {
       markdown: '',
       canBeDeployed: false,
       hash: '',
-      submitAttempted: false
+      submitAttempted: false,
+      selectedTab: 'write'
     });
   };
 
@@ -253,7 +265,8 @@ class CreatePoll extends Component {
       markdown,
       canBeDeployed,
       hash,
-      submitAttempted
+      submitAttempted,
+      selectedTab
     } = this.state;
 
     const isValidSubmission =
@@ -268,7 +281,6 @@ class CreatePoll extends Component {
     const titleError = submitAttempted && title.length === 0;
     const summaryError = submitAttempted && summary.length === 0;
     const linkError = submitAttempted && !link.match(URL_REGEX);
-    const contentError = submitAttempted && content.length === 0;
     const choicesError = submitAttempted && choices.length <= 1;
 
     return (
@@ -420,15 +432,17 @@ class CreatePoll extends Component {
 
               <SectionWrapper>
                 <StyledBody>Proposal:</StyledBody>
-                <TextArea
-                  width="600px"
-                  height="400px"
-                  placeholder="Write (in markdown) the full polling proposal"
-                  value={content}
-                  onChange={e => this.handlePollState(e, 'content')}
-                  error={contentError}
-                  failureMessage={contentError && 'Proposal is required'}
-                />
+                <Box width="600px">
+                  <ReactMde
+                    value={content}
+                    onChange={value => this.setState({ content: value })}
+                    selectedTab={selectedTab}
+                    onTabChange={tab => this.setState({ selectedTab: tab })}
+                    generateMarkdownPreview={markdown =>
+                      Promise.resolve(converter.makeHtml(markdown))
+                    }
+                  />
+                </Box>
               </SectionWrapper>
 
               <SectionWrapper>
