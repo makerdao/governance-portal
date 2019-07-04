@@ -175,7 +175,8 @@ class CreatePoll extends Component {
       content: '',
       markdown: '',
       canBeDeployed: false,
-      hash: ''
+      hash: '',
+      submitAttempted: false
     };
   }
 
@@ -215,7 +216,8 @@ class CreatePoll extends Component {
       content: '',
       markdown: '',
       canBeDeployed: false,
-      hash: ''
+      hash: '',
+      submitAttempted: false
     });
   };
 
@@ -249,8 +251,10 @@ class CreatePoll extends Component {
       content,
       markdown,
       canBeDeployed,
-      hash
+      hash,
+      submitAttempted
     } = this.state;
+
     const isValidSubmission =
       !!title &&
       !!summary &&
@@ -259,6 +263,12 @@ class CreatePoll extends Component {
       !!content;
 
     const handleParentState = newState => this.setState(newState);
+
+    const titleError = submitAttempted && title.length === 0;
+    const summaryError = submitAttempted && summary.length === 0;
+    const linkError = submitAttempted && !link.match(URL_REGEX);
+    const contentError = submitAttempted && content.length === 0;
+    const choicesError = submitAttempted && choices.length <= 1;
 
     return (
       <RiseUp>
@@ -288,8 +298,8 @@ class CreatePoll extends Component {
                   placeholder="This will be the poll title"
                   value={title}
                   onChange={e => this.handlePollState(e, 'title')}
-                  success={title.length > 0}
-                  error={title.length === 0}
+                  error={titleError}
+                  failureMessage={titleError && 'Title is required'}
                 />
               </SectionWrapper>
 
@@ -300,9 +310,70 @@ class CreatePoll extends Component {
                   placeholder="Give a short description of what this Poll is for"
                   value={summary}
                   onChange={e => this.handlePollState(e, 'summary')}
-                  success={summary.length > 0}
-                  error={summary.length === 0}
+                  error={summaryError}
+                  failureMessage={summaryError && 'Summary is required'}
                 />
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <StyledBody>Discussion Link:</StyledBody>
+                <Input
+                  width="600px"
+                  placeholder="Link to where this Polling proposal will be discussed"
+                  value={link}
+                  onChange={e => this.handlePollState(e, 'link')}
+                  error={linkError}
+                  failureMessage={linkError && 'Link must be a valid URL'}
+                />
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <StyledBody>Vote Options:</StyledBody>
+                <Input
+                  width="600px"
+                  placeholder="Add possible voting options"
+                  value={option}
+                  onChange={e => this.handlePollState(e, 'option')}
+                  error={choicesError}
+                  failureMessage={
+                    choicesError && 'Must be at least two voting options'
+                  }
+                  after={
+                    <Button
+                      css={{ alignSelf: 'center', marginLeft: '10px' }}
+                      width="190px"
+                      onClick={this.addPollVoteOption}
+                    >
+                      Add Option
+                    </Button>
+                  }
+                />
+              </SectionWrapper>
+
+              <SectionWrapper>
+                <div css={{ width: '215px' }} />
+                <VoteOptionsGrid>
+                  {choices.map((opt, idx) => (
+                    <Card
+                      key={idx}
+                      css={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        width: '325px',
+                        padding: '10px'
+                      }}
+                    >
+                      <OptionText>
+                        #{idx} - {opt}
+                      </OptionText>
+                      {idx > 0 && (
+                        <CloseIcon onClick={() => this.removePollOption(idx)} />
+                      )}
+                    </Card>
+                  ))}
+                </VoteOptionsGrid>
               </SectionWrapper>
 
               <SectionWrapper>
@@ -347,23 +418,6 @@ class CreatePoll extends Component {
               </SectionWrapper>
 
               <SectionWrapper>
-                <StyledBody>Discussion Link:</StyledBody>
-                <Input
-                  width="600px"
-                  placeholder="Link to where this Polling proposal will be discussed"
-                  value={link}
-                  onChange={e => this.handlePollState(e, 'link')}
-                  success={link.match(URL_REGEX)}
-                  error={!link.match(URL_REGEX)}
-                  failureMessage={
-                    link !== '' &&
-                    !link.match(URL_REGEX) &&
-                    'This must be a url'
-                  }
-                />
-              </SectionWrapper>
-
-              <SectionWrapper>
                 <StyledBody>Proposal:</StyledBody>
                 <TextArea
                   width="600px"
@@ -371,67 +425,22 @@ class CreatePoll extends Component {
                   placeholder="Write (in markdown) the full polling proposal"
                   value={content}
                   onChange={e => this.handlePollState(e, 'content')}
-                  success={content}
-                  error={!content}
+                  error={contentError}
+                  failureMessage={contentError && 'Proposal is required'}
                 />
-              </SectionWrapper>
-
-              <SectionWrapper>
-                <StyledBody>Vote Options:</StyledBody>
-                <Input
-                  width="600px"
-                  placeholder="Add possible voting options"
-                  value={option}
-                  onChange={e => this.handlePollState(e, 'option')}
-                  maxLength={25}
-                  success={choices.length > 1}
-                  error={choices.length <= 1}
-                  failureMessage={
-                    choices.length <= 1 && 'Must be at least two voting options'
-                  }
-                  after={
-                    <Button
-                      css={{ alignSelf: 'center', marginLeft: '10px' }}
-                      width="190px"
-                      onClick={this.addPollVoteOption}
-                    >
-                      Add Option
-                    </Button>
-                  }
-                />
-              </SectionWrapper>
-
-              <SectionWrapper>
-                <div css={{ width: '215px' }} />
-                <VoteOptionsGrid>
-                  {choices.map((opt, idx) => (
-                    <Card
-                      key={idx}
-                      css={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        width: '325px',
-                        padding: '10px'
-                      }}
-                    >
-                      <OptionText>
-                        #{idx} - {opt}
-                      </OptionText>
-                      {idx > 0 && (
-                        <CloseIcon onClick={() => this.removePollOption(idx)} />
-                      )}
-                    </Card>
-                  ))}
-                </VoteOptionsGrid>
               </SectionWrapper>
 
               <SectionWrapper>
                 <Button
                   slim
-                  disabled={!isValidSubmission}
-                  onClick={this.parseFormToMarkdownString}
+                  onClick={() => {
+                    this.setState({
+                      submitAttempted: true
+                    });
+                    if (isValidSubmission) {
+                      this.parseFormToMarkdownString();
+                    }
+                  }}
                 >
                   Submit
                 </Button>
