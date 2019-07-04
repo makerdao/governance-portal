@@ -132,20 +132,44 @@ function calculateTimeSpan(earlier, later) {
   return `${span.week} w : ${span.day} d : ${span.hour} h : ${span.minute} m`;
 }
 
+const CreatePollOverview = ({ markdown, hash, handleParentState }) => (
+  <Fragment>
+    <SectionWrapper>
+      <StyledBody>Markdown:</StyledBody>
+      <Code css={{ width: '800px', overflow: 'auto' }}>{markdown}</Code>
+    </SectionWrapper>
+    <SectionWrapper>
+      <StyledBody>Hash:</StyledBody>
+      <SectionText css={{ width: '800px' }}>{hash}</SectionText>
+    </SectionWrapper>
+    <SectionWrapper css={{ marginTop: '20px' }}>
+      <Button slim onClick={() => copyToClipboard(markdown)}>
+        Copy
+      </Button>
+      <Button
+        slim
+        color="grey"
+        hoverColor="grey"
+        onClick={() => handleParentState({ canBeDeployed: false })}
+      >
+        Back
+      </Button>
+    </SectionWrapper>
+  </Fragment>
+);
+
 class CreatePoll extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      poll: {
-        title: '',
-        summary: '',
-        start: DEFAULT_START,
-        end: DEFAULT_END,
-        link: '',
-        option: '',
-        choices: [ABSTAIN, NOCHANGE],
-        content: ''
-      },
+      title: '',
+      summary: '',
+      start: DEFAULT_START,
+      end: DEFAULT_END,
+      link: '',
+      option: '',
+      choices: [ABSTAIN, NOCHANGE],
+      content: '',
       markdown: '',
       canBeDeployed: false,
       hash: ''
@@ -154,79 +178,46 @@ class CreatePoll extends Component {
 
   handlePollState = (e, k) => {
     e.stopPropagation();
-
     this.setState({
-      poll: {
-        ...this.state.poll,
-        [k]: e.target.value
-      }
-    });
-  };
-
-  handlePollStart = t => {
-    const { end } = this.state.poll;
-    this.setState({
-      poll: {
-        ...this.state.poll,
-        start: t,
-        end: t.getTime() > end.getTime() ? t : end
-      }
-    });
-  };
-
-  handlePollEnd = t => {
-    const { start } = this.state.poll;
-    this.setState({
-      poll: {
-        ...this.state.poll,
-        start: t.getTime() < start.getTime() ? t : start,
-        end: t
-      }
+      [k]: e.target.value
     });
   };
 
   addPollVoteOption = () => {
-    const { option, choices } = this.state.poll;
+    const { option, choices } = this.state;
     if (option.length) {
       this.setState({
-        poll: {
-          ...this.state.poll,
-          option: '',
-          choices: [...choices, option]
-        }
+        option: '',
+        choices: [...choices, option]
       });
     }
   };
 
   removePollOption = idx => {
-    const { choices } = this.state.poll;
+    const { choices } = this.state;
     this.setState({
-      poll: {
-        ...this.state.poll,
-        choices: choices.filter((item, index) => index !== idx)
-      }
+      choices: choices.filter((item, index) => index !== idx)
     });
   };
 
   resetPollState = () => {
     this.setState({
-      poll: {
-        title: '',
-        summary: '',
-        start: DEFAULT_START,
-        end: DEFAULT_END,
-        link: '',
-        option: '',
-        choices: [ABSTAIN, NOCHANGE],
-        content: ''
-      },
+      title: '',
+      summary: '',
+      start: DEFAULT_START,
+      end: DEFAULT_END,
+      link: '',
+      option: '',
+      choices: [ABSTAIN, NOCHANGE],
+      content: '',
       markdown: '',
-      canBeDeployed: false
+      canBeDeployed: false,
+      hash: ''
     });
   };
 
   parseFormToMarkdownString = async () => {
-    const { choices, title, summary, link, rules, content } = this.state.poll;
+    const { title, summary, link, choices, rules, content } = this.state;
     const choiceString = choices.reduce(
       (acc, opt, idx) => `${acc}   ${idx}: ${opt}\n`,
       ''
@@ -244,53 +235,43 @@ class CreatePoll extends Component {
   };
 
   render = () => {
-    const { poll, markdown, canBeDeployed, hash } = this.state;
+    const {
+      title,
+      summary,
+      start,
+      end,
+      link,
+      option,
+      choices,
+      content,
+      markdown,
+      canBeDeployed,
+      hash
+    } = this.state;
     const isValidSubmission =
-      !!poll.title &&
-      !!poll.summary &&
-      poll.link.match(URL_REGEX) &&
-      poll.choices.length > 2 &&
-      !!poll.content;
+      !!title &&
+      !!summary &&
+      link.match(URL_REGEX) &&
+      choices.length > 2 &&
+      !!content;
 
+    const handleParentState = newState => this.setState(newState);
     return (
-      <Fragment>
-        {canBeDeployed ? (
-          <RiseUp>
-            <StyledTop>
-              <StyledTitle>Create a new Polling proposal</StyledTitle>
-            </StyledTop>
-            <ContentWrapper>
-              <SectionWrapper>
-                <StyledBody>Markdown:</StyledBody>
-                <Code css={{ width: '800px', overflow: 'auto' }}>
-                  {markdown}
-                </Code>
-              </SectionWrapper>
-              <SectionWrapper>
-                <StyledBody>Hash:</StyledBody>
-                <SectionText css={{ width: '800px' }}>{hash}</SectionText>
-              </SectionWrapper>
-              <SectionWrapper css={{ marginTop: '20px' }}>
-                <Button slim onClick={() => copyToClipboard(markdown)}>
-                  Copy
-                </Button>
-                <Button
-                  slim
-                  color="grey"
-                  hoverColor="grey"
-                  onClick={() => this.setState({ canBeDeployed: false })}
-                >
-                  Back
-                </Button>
-              </SectionWrapper>
-            </ContentWrapper>
-          </RiseUp>
-        ) : (
-          <RiseUp>
-            <StyledTop>
-              <StyledTitle>Create a new Polling proposal</StyledTitle>
-            </StyledTop>
-            <ContentWrapper>
+      <RiseUp>
+        <StyledTop>
+          <StyledTitle>Create a new Polling proposal</StyledTitle>
+        </StyledTop>
+        <ContentWrapper>
+          {canBeDeployed ? (
+            <CreatePollOverview
+              {...{
+                markdown,
+                hash,
+                handleParentState
+              }}
+            />
+          ) : (
+            <Fragment>
               <SectionTitle>Poll Details</SectionTitle>
               <SectionText>
                 This form will generate a formatted markdown file which can be
@@ -301,10 +282,10 @@ class CreatePoll extends Component {
                 <Input
                   width="600px"
                   placeholder="This will be the poll title"
-                  value={poll.title}
+                  value={title}
                   onChange={e => this.handlePollState(e, 'title')}
-                  success={poll.title.length > 0}
-                  error={poll.title.length === 0}
+                  success={title.length > 0}
+                  error={title.length === 0}
                 />
               </SectionWrapper>
 
@@ -313,10 +294,10 @@ class CreatePoll extends Component {
                 <Input
                   width="600px"
                   placeholder="Give a short description of what this Poll is for"
-                  value={poll.summary}
+                  value={summary}
                   onChange={e => this.handlePollState(e, 'summary')}
-                  success={poll.summary.length > 0}
-                  error={poll.summary.length === 0}
+                  success={summary.length > 0}
+                  error={summary.length === 0}
                 />
               </SectionWrapper>
 
@@ -327,8 +308,13 @@ class CreatePoll extends Component {
                   disableClock
                   showLeadingZeros
                   clearIcon
-                  onChange={t => this.handlePollStart(t)}
-                  value={poll.start}
+                  onChange={t =>
+                    this.setState({
+                      start: t,
+                      end: t.getTime() > end.getTime() ? t : end
+                    })
+                  }
+                  value={start}
                 />
               </SectionWrapper>
 
@@ -339,8 +325,13 @@ class CreatePoll extends Component {
                   disableClock
                   showLeadingZeros
                   clearIcon
-                  onChange={t => this.handlePollEnd(t)}
-                  value={poll.end}
+                  onChange={t =>
+                    this.setState({
+                      start: t.getTime() < start.getTime() ? t : start,
+                      end: t
+                    })
+                  }
+                  value={end}
                 />
               </SectionWrapper>
 
@@ -349,7 +340,7 @@ class CreatePoll extends Component {
                 <Input
                   width="600px"
                   disabled
-                  value={calculateTimeSpan(poll.start, poll.end)}
+                  value={calculateTimeSpan(start, end)}
                 />
               </SectionWrapper>
 
@@ -358,13 +349,13 @@ class CreatePoll extends Component {
                 <Input
                   width="600px"
                   placeholder="Link to where this Polling proposal will be discussed"
-                  value={poll.link}
+                  value={link}
                   onChange={e => this.handlePollState(e, 'link')}
-                  success={poll.link.match(URL_REGEX)}
-                  error={!poll.link.match(URL_REGEX)}
+                  success={link.match(URL_REGEX)}
+                  error={!link.match(URL_REGEX)}
                   failureMessage={
-                    poll.link !== '' &&
-                    !poll.link.match(URL_REGEX) &&
+                    link !== '' &&
+                    !link.match(URL_REGEX) &&
                     'This must be a url'
                   }
                 />
@@ -376,10 +367,10 @@ class CreatePoll extends Component {
                   width="600px"
                   height="400px"
                   placeholder="Write (in markdown) the full polling proposal"
-                  value={poll.content}
+                  value={content}
                   onChange={e => this.handlePollState(e, 'content')}
-                  success={poll.content}
-                  error={!poll.content}
+                  success={content}
+                  error={!content}
                 />
               </SectionWrapper>
 
@@ -388,13 +379,13 @@ class CreatePoll extends Component {
                 <Input
                   width="600px"
                   placeholder="Add possible voting options"
-                  value={poll.option}
+                  value={option}
                   onChange={e => this.handlePollState(e, 'option')}
                   maxLength={25}
-                  sucess={poll.choices.length > 2}
-                  error={poll.choices.length <= 2}
+                  sucess={choices.length > 2}
+                  error={choices.length <= 2}
                   failureMessage={
-                    poll.choices.length <= 2 &&
+                    choices.length <= 2 &&
                     'Must be at least three voting options'
                   }
                   after={
@@ -412,7 +403,7 @@ class CreatePoll extends Component {
               <SectionWrapper>
                 <div css={{ width: '215px' }} />
                 <VoteOptionsGrid>
-                  {poll.choices.map((opt, idx) => (
+                  {choices.map((opt, idx) => (
                     <Card
                       key={idx}
                       css={{
@@ -452,10 +443,10 @@ class CreatePoll extends Component {
                   Reset
                 </Button>
               </SectionWrapper>
-            </ContentWrapper>
-          </RiseUp>
-        )}
-      </Fragment>
+            </Fragment>
+          )}
+        </ContentWrapper>
+      </RiseUp>
     );
   };
 }
