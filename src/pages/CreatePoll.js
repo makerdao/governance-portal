@@ -110,7 +110,6 @@ const ABSTAIN = 'Abstain';
 const NOCHANGE = 'No Change';
 const DEFAULT_START = new Date();
 const DEFAULT_END = new Date(DEFAULT_START.getTime() + 7 * 24 * 60 * 60 * 1000);
-const MIN_POLL_DURATION = 24 * 60 * 60 * 1000;
 
 const expr = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
 const URL_REGEX = new RegExp(expr);
@@ -199,16 +198,6 @@ class CreatePoll extends Component {
     }
   };
 
-  pollTimeWindowIsValid = () => {
-    const { start, end } = this.state.poll;
-    const pollDuration = end.getTime() - start.getTime();
-    if (pollDuration >= MIN_POLL_DURATION) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
   removePollOption = idx => {
     const { choices } = this.state.poll;
     this.setState({
@@ -261,8 +250,7 @@ class CreatePoll extends Component {
       !!poll.summary &&
       poll.link.match(URL_REGEX) &&
       poll.choices.length > 2 &&
-      !!poll.content &&
-      this.pollTimeWindowIsValid();
+      !!poll.content;
 
     return (
       <Fragment>
@@ -362,12 +350,6 @@ class CreatePoll extends Component {
                   width="600px"
                   disabled
                   value={calculateTimeSpan(poll.start, poll.end)}
-                  success={this.pollTimeWindowIsValid()}
-                  error={!this.pollTimeWindowIsValid()}
-                  failureMessage={
-                    !this.pollTimeWindowIsValid() &&
-                    'Poll must have a duration of at least 1 day'
-                  }
                 />
               </SectionWrapper>
 
