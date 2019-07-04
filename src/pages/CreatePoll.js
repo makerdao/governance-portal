@@ -149,6 +149,7 @@ const CreatePollOverview = ({ markdown, hash, handleParentState }) => (
       <Button slim onClick={() => copyToClipboard(markdown)}>
         Copy
       </Button>
+      <Box width="32px" />
       <Button
         slim
         color="grey"
@@ -444,6 +445,7 @@ class CreatePoll extends Component {
                 >
                   Submit
                 </Button>
+                <Box width="32px" />
                 <Button
                   slim
                   color="grey"
