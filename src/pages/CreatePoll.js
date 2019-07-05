@@ -1,11 +1,12 @@
 import React, { Component, Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Card from '../components/Card';
-import Button from '../components/Button';
+//import Button from '../components/Button';
 import closeImg from '../imgs/close-inline.svg';
 import theme from '../theme';
 import { generateIPFSHash } from '../utils/ipfs';
 import { TextArea, Input, Box } from '@makerdao/ui-components-core';
+import { Button } from '@makerdao/ui-components';
 import { copyToClipboard } from '../utils/misc';
 import DateTimePicker from 'react-datetime-picker';
 import ReactMde from 'react-mde';
@@ -156,14 +157,10 @@ const CreatePollOverview = ({ markdown, hash, handleParentState }) => (
       <SectionText css={{ width: '800px' }}>{hash}</SectionText>
     </SectionWrapper>
     <SectionWrapper css={{ marginTop: '20px' }}>
-      <Button slim onClick={() => copyToClipboard(markdown)}>
-        Copy
-      </Button>
+      <Button onClick={() => copyToClipboard(markdown)}>Copy</Button>
       <Box width="32px" />
       <Button
-        slim
-        color="grey"
-        hoverColor="grey"
+        variant="secondary"
         onClick={() => handleParentState({ canBeDeployed: false })}
       >
         Back
@@ -447,7 +444,6 @@ class CreatePoll extends Component {
 
               <SectionWrapper>
                 <Button
-                  slim
                   onClick={() => {
                     this.setState({
                       submitAttempted: true
@@ -460,12 +456,7 @@ class CreatePoll extends Component {
                   Submit
                 </Button>
                 <Box width="32px" />
-                <Button
-                  slim
-                  color="grey"
-                  hoverColor="grey"
-                  onClick={this.resetPollState}
-                >
+                <Button variant="secondary" onClick={this.resetPollState}>
                   Reset
                 </Button>
               </SectionWrapper>
