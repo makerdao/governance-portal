@@ -2,8 +2,9 @@ import React, { Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
 
+import { Button } from '@makerdao/ui-components';
+
 import VoterStatus from '../components/VoterStatus';
-import Button from '../components/Button';
 import Card from '../components/Card';
 import Timer from '../components/Timer';
 import ClosedStatus from '../components/ClosedStatus';
@@ -196,7 +197,7 @@ const PollingList = ({
       <VoterStatus signaling={signaling} />
       <RiseUp key={polls.toString()}>
         {polls.map(poll => (
-          <StyledCard key={poll.toString()}>
+          <StyledCard key={poll.voteId}>
             <Card.Element key={poll.voteId} height={proposalWrapperHeight}>
               <ProposalDetails>
                 <ExtendedLink to={`/polling-proposal/${toSlug(poll.voteId)}`}>
@@ -207,40 +208,29 @@ const PollingList = ({
                     __html: poll.summary
                   }}
                 />
-                <ExtendedLink to={`/polling-proposal/${toSlug(poll.voteId)}`}>
-                  Read more...
-                </ExtendedLink>
-                {/* {hat.approvals < approvals.approvals['proposal.source'] ? (
-                  <div>
-                    <Tag>Available for execution</Tag>
-                  </div>
-                ) : null} */}
-                <Timer endTimestamp={poll.endTime} small mb="-6" />
+                <Timer
+                  endTimestamp={poll.endTime}
+                  winningProposal={poll.winningProposal}
+                  small
+                  mb="-6"
+                />
               </ProposalDetails>
               <div>
                 {poll.active ? (
                   <Fragment>
-                    <Button>
-                      <ExtendedLink
-                        to={`/polling-proposal/${toSlug(poll.voteId)}`}
-                      >
-                        Vote on Proposal
-                      </ExtendedLink>
-                    </Button>
-                    <br />
-                    <TillHat candidate={poll.source} />
+                    <ExtendedLink
+                      to={`/polling-proposal/${toSlug(poll.voteId)}`}
+                    >
+                      <Button>Vote on Proposal</Button>
+                    </ExtendedLink>
                   </Fragment>
                 ) : (
                   <Fragment>
-                    <Button>
-                      <ExtendedLink
-                        to={`/polling-proposal/${toSlug(poll.voteId)}`}
-                      >
-                        See Details
-                      </ExtendedLink>
-                    </Button>
-                    <br />
-                    <TillHat candidate={poll.source} />
+                    <ExtendedLink
+                      to={`/polling-proposal/${toSlug(poll.voteId)}`}
+                    >
+                      <Button variant="secondary">See Details</Button>
+                    </ExtendedLink>
                   </Fragment>
                 )}
               </div>

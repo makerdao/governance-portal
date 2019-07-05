@@ -108,20 +108,32 @@ class Timer extends Component {
   }
 
   render() {
-    const { small } = this.props;
+    const { small, winningProposal } = this.props;
     const endedOn = this.state.endedOn;
     if (small) {
       return (
         <WrapperSmall fs={this.props.fs} mb={this.props.mb} mt={this.props.mt}>
           <SmallClock />
-          {endedOn ? <div>Poll ended {endedOn}</div> : this.renderCore()}
+          {endedOn ? (
+            <div>
+              Poll ended {endedOn}. Winning proposal: {winningProposal}
+            </div>
+          ) : (
+            this.renderCore()
+          )}
         </WrapperSmall>
       );
     }
     return (
       <Wrapper mb={this.props.mb} mt={this.props.mt}>
         <Clock />
-        {endedOn ? <div>Poll ended {endedOn}</div> : this.renderCore()}
+        {endedOn ? (
+          <div>
+            Poll ended {endedOn}. Winning proposal: {winningProposal}
+          </div>
+        ) : (
+          this.renderCore()
+        )}
       </Wrapper>
     );
   }

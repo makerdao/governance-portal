@@ -29,7 +29,7 @@ const mockParsedAllPollsData = [
 ];
 
 const mockPollMd1 = {
-  title: 'Stability Fee Adjustment (May 27 2019)',
+  title: 'Mock Active Poll',
   summary:
     'The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which',
   discussionLink: 'https://www.reddit.com/r/mkrgov/',
@@ -43,7 +43,7 @@ const mockPollMd1 = {
 };
 
 const mockPollMd2 = {
-  title: 'Poll2',
+  title: 'Mock Inactive Poll',
   summary:
     'The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which',
   discussionLink: 'https://www.reddit.com/r/mkrgov/',
@@ -127,6 +127,8 @@ export const pollsInit = () => async dispatch => {
       // );
       pollData.numUniqueVoters = '700';
       pollData.active = isPollActive(pollData.startTime, pollData.endTime);
+      if (!pollData.active) pollData.winningProposal = 'Mock Winning Proposal';
+      // if (pollData.active) pollData.winningProposal = await pollService.getWinningProposal(pollData.pollId);
 
       allPolls.push(pollData);
     }
