@@ -11,7 +11,7 @@ import hat from './hat';
 import toasts from './toasts';
 import eth from './eth';
 import onboarding from './onboarding';
-import topics from './topics';
+import polls from './polls';
 
 const rootReducer = combineReducers({
   metamask,
@@ -26,7 +26,7 @@ const rootReducer = combineReducers({
   eth,
   toasts,
   onboarding,
-  topics
+  polls
 });
 
 export default rootReducer;

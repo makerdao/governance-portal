@@ -48,8 +48,14 @@ class Timer extends Component {
     const timeLeft =
       Math.floor(props.endTimestamp / 1000) -
       Math.floor(new Date().getTime() / 1000);
-    if (timeLeft <= 0) this.state = { timeLeft: 0 };
-    else this.state = { timeLeft };
+    if (timeLeft <= 0) {
+      this.state = {
+        timeLeft: 0,
+        endedOn: props.endTimestamp.toDateString()
+      };
+    } else {
+      this.state = { timeLeft };
+    }
   }
 
   interval = null;
@@ -103,18 +109,19 @@ class Timer extends Component {
 
   render() {
     const { small } = this.props;
+    const endedOn = this.state.endedOn;
     if (small) {
       return (
         <WrapperSmall fs={this.props.fs} mb={this.props.mb} mt={this.props.mt}>
           <SmallClock />
-          {this.renderCore()}
+          {endedOn ? <div>Poll ended {endedOn}</div> : this.renderCore()}
         </WrapperSmall>
       );
     }
     return (
       <Wrapper mb={this.props.mb} mt={this.props.mt}>
         <Clock />
-        {this.renderCore()}
+        {endedOn ? <div>Poll ended {endedOn}</div> : this.renderCore()}
       </Wrapper>
     );
   }

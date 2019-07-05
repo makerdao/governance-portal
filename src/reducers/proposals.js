@@ -6,7 +6,6 @@ import round from 'lodash.round';
 
 import { createReducer } from '../utils/redux';
 import { initApprovalsFetch } from './approvals';
-import { topicsSuccess } from './topics';
 import { div, mul, promiseRetry } from '../utils/misc';
 
 // Constants ----------------------------------------------
@@ -151,8 +150,6 @@ export const proposalsInit = network => async dispatch => {
       times: 4,
       delay: 1
     });
-
-    dispatch(topicsSuccess());
 
     dispatch({
       type: PROPOSALS_SUCCESS,

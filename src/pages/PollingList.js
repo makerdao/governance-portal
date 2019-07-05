@@ -179,7 +179,7 @@ class MigrationNotificationBanner extends React.Component {
   }
 }
 
-const Timeline = ({
+const PollingList = ({
   modalOpen,
   proposals,
   canVote,
@@ -188,12 +188,8 @@ const Timeline = ({
   signaling,
   hat,
   approvals,
-  topics
+  polls
 }) => {
-  // cheating a bit here until everything is wired up properly:
-  const polls = topics;
-
-  console.log('signaling?', signaling);
   return (
     <Fragment>
       <MigrationNotificationBanner />
@@ -219,16 +215,14 @@ const Timeline = ({
                     <Tag>Available for execution</Tag>
                   </div>
                 ) : null} */}
-                {poll.active && signaling ? (
-                  <Timer endTimestamp={poll.endTime} small mb="-6" />
-                ) : null}
+                <Timer endTimestamp={poll.endTime} small mb="-6" />
               </ProposalDetails>
               <div>
                 {poll.active ? (
                   <Fragment>
                     <Button>
                       <ExtendedLink
-                        to={`/executive-proposal/${toSlug(poll.voteId)}`}
+                        to={`/polling-proposal/${toSlug(poll.voteId)}`}
                       >
                         Vote on Proposal
                       </ExtendedLink>
@@ -240,7 +234,7 @@ const Timeline = ({
                   <Fragment>
                     <Button>
                       <ExtendedLink
-                        to={`/executive-proposal/${toSlug(poll.voteId)}`}
+                        to={`/polling-proposal/${toSlug(poll.voteId)}`}
                       >
                         See Details
                       </ExtendedLink>
@@ -259,7 +253,7 @@ const Timeline = ({
 };
 
 const reduxProps = (
-  { proposals, accounts, hat, approvals, topics },
+  { proposals, accounts, hat, approvals, polls },
   { signaling }
 ) => {
   return {
@@ -269,11 +263,11 @@ const reduxProps = (
     canVote: activeCanVote({ accounts }),
     fetching: accounts.fetching,
     votingFor: getActiveVotingFor({ accounts }),
-    topics
+    polls
   };
 };
 
 export default connect(
   reduxProps,
   { modalOpen }
-)(Timeline);
+)(PollingList);

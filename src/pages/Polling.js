@@ -124,12 +124,12 @@ const DetailsCardItem = ({ name, value, component }) => (
   </DetailsItem>
 );
 
-const VotingPanel = ({ proposal }) => (
+const VotingPanel = ({ poll }) => (
   <React.Fragment>
     <VoteSelection>
       <Dropdown
         color="green"
-        items={['17.5%', '19.5%', 'No change', '14.5%', '15.5%', '16.5%']}
+        items={poll.options}
         renderItem={item => <DropdownText color="green">{item}</DropdownText>}
         renderRowItem={item => <DropdownText>{item}</DropdownText>}
         value="Please choose..."
@@ -140,7 +140,7 @@ const VotingPanel = ({ proposal }) => (
         color="white"
         hoverColor="white"
         width="135px"
-        disabled={!!proposal.active}
+        disabled={!!poll.active}
       >
         Vote Now
       </Button>
@@ -154,8 +154,13 @@ const VotingPanel = ({ proposal }) => (
   </React.Fragment>
 );
 
+const timeLeft = (startTime, endTime) => {
+  const timeLeft = Math.floor(endTime / 1000) - Math.floor(startTime / 1000);
+  const days = Math.floor(timeLeft / (3600 * 24));
+  return days !== 1 ? `${days} days` : `${days} day`;
+};
+
 function Polling({
-  proposal,
   voteState,
   voteStateFetching,
   modalOpen,
@@ -163,10 +168,12 @@ function Polling({
   network,
   canVote,
   votingFor,
-  isValidRoute
+  isValidRoute,
+  poll
 }) {
-  if (isNil(proposal) || isEmpty(proposal) || !isValidRoute)
-    return <NotFound />;
+  if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
+  console.log('this poll', poll);
+
   return (
     <RiseUp>
       <VoterStatus />
@@ -175,11 +182,11 @@ function Polling({
           <ReactMarkdown
             className="markdown"
             skipHtml={true}
-            source={proposal.about}
+            source={poll.content}
           />
         </DescriptionCard>
         <RightPanels>
-          <VotingPanel proposal />
+          <VotingPanel poll={poll} />
           <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
             <CardTitle>Details</CardTitle>
             {[
@@ -187,15 +194,18 @@ function Polling({
                 name: 'Source',
                 component: (
                   <ExternalLink
-                    href={ethScanLink(proposal.source, network)}
+                    href={ethScanLink(poll.source, network)}
                     target="_blank"
                   >
-                    {cutMiddle(proposal.source, 8, 8)}
+                    {cutMiddle(poll.source, 8, 8)}
                   </ExternalLink>
                 )
               },
-              { name: 'Started', value: '12 Sept 18' },
-              { name: 'Duration', value: '3 days' },
+              { name: 'Started', value: poll.startTime.toDateString() },
+              {
+                name: 'Duration',
+                value: timeLeft(poll.startTime, poll.endTime)
+              },
               {
                 name: 'Questions?',
                 component: (
@@ -210,9 +220,9 @@ function Polling({
 
             <CardTitle>Voting Stats</CardTitle>
             {[
-              { name: 'Total votes', value: '200,324.43 MKR' },
-              { name: 'Participation', value: '20.1%' },
-              { name: 'Unique voters', value: '1041' }
+              { name: 'Total votes', value: `${poll.totalVotes} MKR` },
+              { name: 'Participation', value: `${poll.participation}%` },
+              { name: 'Unique voters', value: poll.numUniqueVoters }
             ].map((item, i) => (
               <DetailsCardItem key={i} {...item} />
             ))}
@@ -235,19 +245,16 @@ function Polling({
   );
 }
 
-const reduxProps = (
-  { proposals, tally, accounts, metamask, topics },
-  { match }
-) => {
+const reduxProps = ({ tally, accounts, metamask, polls }, { match }) => {
   const { pollSlug } = match.params;
 
-  const proposal = topics.find(({ voteId }) => {
+  const poll = polls.find(({ voteId }) => {
     return toSlug(voteId) === pollSlug;
   });
-  const isValidRoute = proposal && pollSlug;
+  const isValidRoute = poll && pollSlug;
 
   return {
-    proposal,
+    poll,
     voteStateFetching: tally.fetching,
     voteState: tally.tally,
     accountDataFetching: accounts.fetching,

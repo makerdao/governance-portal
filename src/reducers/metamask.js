@@ -8,6 +8,7 @@ import { netIdToName } from '../utils/ethereum';
 import { ethInit } from './eth';
 import { voteTallyInit } from './tally';
 import { proposalsInit } from './proposals';
+import { pollsInit } from './polls';
 import { hatInit } from './hat';
 
 // Constants ----------------------------------------------
@@ -123,6 +124,7 @@ export const init = (network = 'mainnet') => async dispatch => {
 
   dispatch(voteTallyInit());
   dispatch(proposalsInit(network));
+  dispatch(pollsInit());
   dispatch(hatInit());
   dispatch(ethInit());
   await dispatch(initWeb3Accounts());
