@@ -32,7 +32,6 @@ const mockPollMd1 = {
   title: 'Mock Active Poll',
   summary:
     'The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which',
-  discussionLink: 'https://www.reddit.com/r/mkrgov/',
   options: ['abstain', '14%', '16%', 'no change', '18%', '20%'],
   content: `# Poll: POLL ONE
 

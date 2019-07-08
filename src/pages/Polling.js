@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
 import ReactMarkdown from 'react-markdown';
@@ -124,35 +124,52 @@ const DetailsCardItem = ({ name, value, component }) => (
   </DetailsItem>
 );
 
-const VotingPanel = ({ poll }) => (
-  <React.Fragment>
-    <VoteSelection>
-      <Dropdown
-        color="green"
-        items={poll.options}
-        renderItem={item => <DropdownText color="green">{item}</DropdownText>}
-        renderRowItem={item => <DropdownText>{item}</DropdownText>}
-        value="Please choose..."
-        onSelect={() => null}
-      />
-      <Button
-        bgColor="green"
-        color="white"
-        hoverColor="white"
-        width="135px"
-        disabled={!!poll.active}
-      >
-        Vote Now
-      </Button>
-    </VoteSelection>
-    <VoteStatusText>
-      <Black>Currently voting: </Black>
-      <Strong>17.5% </Strong>
-      <Black>| </Black>
-      <Blue onClick={() => null}>Withdraw Vote</Blue>
-    </VoteStatusText>
-  </React.Fragment>
-);
+class VotingPanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedOption: 'Please choose...'
+    };
+  }
+
+  onDropdownSelect = value => {
+    console.log('***value', value);
+    this.setState({
+      selectedOption: value
+    });
+  };
+
+  render() {
+    const poll = this.props.poll;
+    const selectedOption = this.state.selectedOption;
+    //TODO: fix dropdown resizing issue
+    return (
+      <React.Fragment>
+        <VoteSelection>
+          <Dropdown
+            color="green"
+            items={poll.options}
+            renderItem={item => (
+              <DropdownText color="green">{item}</DropdownText>
+            )}
+            renderRowItem={item => <DropdownText>{item}</DropdownText>}
+            value={selectedOption}
+            onSelect={this.onDropdownSelect}
+          />
+          <Button
+            bgColor="green"
+            color="white"
+            hoverColor="white"
+            width="135px"
+            disabled={!poll.active}
+          >
+            Vote Now
+          </Button>
+        </VoteSelection>
+      </React.Fragment>
+    );
+  }
+}
 
 const timeLeft = (startTime, endTime) => {
   const timeLeft = Math.floor(endTime / 1000) - Math.floor(startTime / 1000);
@@ -174,6 +191,10 @@ function Polling({
   if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
   console.log('this poll', poll);
 
+  // TODO: implement this after user>poll query is implemented in accounts reducer:
+  const votedPollOption = undefined;
+  const { discussionLink } = poll;
+
   return (
     <RiseUp>
       <VoterStatus />
@@ -186,7 +207,27 @@ function Polling({
           />
         </DescriptionCard>
         <RightPanels>
-          <VotingPanel poll={poll} />
+          {poll.active && <VotingPanel poll={poll} />}
+          {votedPollOption ? (
+            <VoteStatusText>
+              <Black>
+                {poll.active ? 'Currently voting: ' : 'Voted for: '}
+              </Black>
+              <Strong>{votedPollOption} </Strong>
+              {poll.active && (
+                <Fragment>
+                  <Black>| </Black>
+                  <Blue onClick={() => null}>Withdraw Vote</Blue>
+                </Fragment>
+              )}
+            </VoteStatusText>
+          ) : (
+            <VoteStatusText>
+              <Black>
+                {poll.active ? 'Not currently voting' : 'You did not vote'}
+              </Black>
+            </VoteStatusText>
+          )}
           <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
             <CardTitle>Details</CardTitle>
             {[
@@ -213,10 +254,21 @@ function Polling({
                     Governance FAQ's
                   </ExternalLink>
                 )
+              },
+              {
+                name: 'Discussion',
+                component: (
+                  <ExternalLink href={discussionLink} target="_blank">
+                    Here
+                  </ExternalLink>
+                ),
+                hide: !discussionLink
               }
-            ].map((item, i) => (
-              <DetailsCardItem key={i} {...item} />
-            ))}
+            ].map((item, i) => {
+              if (!item.hide) {
+                return <DetailsCardItem key={i} {...item} />;
+              }
+            })}
 
             <CardTitle>Voting Stats</CardTitle>
             {[
