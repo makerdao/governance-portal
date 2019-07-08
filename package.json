@@ -92,7 +92,7 @@
       "src/**/*.js"
     ],
     "moduleNameMapper": {
-      "\\.(png|svg|md)$": "<rootDir>/test/helpers/fileMock.js"
+      "\\.(png|svg|md|css)$": "<rootDir>/test/helpers/fileMock.js"
     },
     "setupFiles": [
       "<rootDir>/test/helpers/shimRequestAnimationFrame.js",
