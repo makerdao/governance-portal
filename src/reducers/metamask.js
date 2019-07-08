@@ -124,9 +124,9 @@ export const init = (network = 'mainnet') => async dispatch => {
 
   dispatch(voteTallyInit());
   dispatch(proposalsInit(network));
-  dispatch(pollsInit());
   dispatch(hatInit());
   dispatch(ethInit());
+  dispatch(pollsInit());
   await dispatch(initWeb3Accounts());
   dispatch(pollForMetamaskChanges());
 };

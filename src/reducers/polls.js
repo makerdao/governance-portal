@@ -1,4 +1,6 @@
 import { createReducer } from '../utils/redux';
+import { formatRound } from '../utils/misc';
+import { getWinningProp } from './proposals';
 
 // Mock Poll Data ----------------------------------------------
 
@@ -139,10 +141,55 @@ export const pollsInit = () => async dispatch => {
   dispatch(pollsSuccess(allPolls));
 };
 
+export const formatHistoricalPolls = topics => async (dispatch, getState) => {
+  const govTopics = topics.filter(t => t.govVote === true);
+  const allPolls = govTopics.reduce(
+    (
+      result,
+      { active, end_timestamp, date, topic_blurb, topic, key, proposals }
+    ) => {
+      const winningProposal = getWinningProp(getState(), key);
+      const options = proposals.map(p => p.title);
+      const totalVotes = proposals.reduce(
+        (acc, proposal) => acc + proposal.end_approvals,
+        0
+      );
+
+      const poll = {
+        active,
+        blockCreated: 'na',
+        content: proposals[0] ? proposals[0].about : topic_blurb,
+        creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
+        endTime: new Date(end_timestamp),
+        options: options,
+        source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
+        startTime: new Date(date),
+        summary: topic_blurb,
+        title: topic,
+        totalVotes: formatRound(totalVotes),
+        voteId: key,
+        winningProposal: winningProposal
+          ? winningProposal.title
+          : 'Not applicable'
+        // multiHash: 'na',
+        // discussionLink: 'https://www.reddit.com/r/mkrgov/',
+        // numUniqueVoters: '700',
+        // participation: '12',
+        // pollId: '2',
+      };
+
+      result.push(poll);
+      return result;
+    },
+    []
+  );
+  dispatch(pollsSuccess(allPolls));
+};
+
 // Reducer ------------------------------------------------
 
 export default createReducer([], {
-  [POLLS_SUCCESS]: (_, { payload }) => payload || []
+  [POLLS_SUCCESS]: (state, { payload }) => [...state, ...payload]
 });
 
 /**

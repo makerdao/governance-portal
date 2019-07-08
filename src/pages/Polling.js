@@ -273,7 +273,10 @@ function Polling({
             <CardTitle>Voting Stats</CardTitle>
             {[
               { name: 'Total votes', value: `${poll.totalVotes} MKR` },
-              { name: 'Participation', value: `${poll.participation}%` },
+              {
+                name: 'Participation',
+                value: isNaN(poll.participation) ? '' : `${poll.participation}%`
+              },
               { name: 'Unique voters', value: poll.numUniqueVoters }
             ].map((item, i) => (
               <DetailsCardItem key={i} {...item} />
@@ -297,7 +300,8 @@ function Polling({
   );
 }
 
-const reduxProps = ({ tally, accounts, metamask, polls }, { match }) => {
+const reduxProps = (state, { match }) => {
+  const { tally, accounts, metamask, polls } = state;
   const { pollSlug } = match.params;
 
   const poll = polls.find(({ voteId }) => {
