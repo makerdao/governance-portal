@@ -1,11 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Card from '../components/Card';
-//import Button from '../components/Button';
 import closeImg from '../imgs/close-inline.svg';
 import theme from '../theme';
 import { generateIPFSHash } from '../utils/ipfs';
-import { TextArea, Input, Box } from '@makerdao/ui-components-core';
+import { Input, Box } from '@makerdao/ui-components-core';
 import { Button } from '@makerdao/ui-components';
 import { copyToClipboard } from '../utils/misc';
 import DateTimePicker from 'react-datetime-picker';
