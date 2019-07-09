@@ -156,13 +156,13 @@ const CreatePollOverview = ({ markdown, hash, handleParentState }) => (
       <SectionText css={{ width: '800px' }}>{hash}</SectionText>
     </SectionWrapper>
     <SectionWrapper css={{ marginTop: '20px' }}>
-      <Button onClick={() => copyToClipboard(markdown)}>Copy</Button>
+      <Button onClick={() => copyToClipboard(markdown)}>Submit</Button>
       <Box width="32px" />
       <Button
         variant="secondary"
         onClick={() => handleParentState({ canBeDeployed: false })}
       >
-        Back
+        Edit
       </Button>
     </SectionWrapper>
   </Fragment>
@@ -437,11 +437,11 @@ class CreatePoll extends Component {
                     }
                   }}
                 >
-                  Submit
+                  Create Submission
                 </Button>
                 <Box width="32px" />
                 <Button variant="secondary" onClick={this.resetPollState}>
-                  Reset
+                  Reset Form
                 </Button>
               </SectionWrapper>
             </Fragment>
