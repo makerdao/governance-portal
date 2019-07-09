@@ -216,12 +216,12 @@ class CreatePoll extends Component {
   };
 
   parseFormToMarkdownString = async () => {
-    const { title, summary, link, choices, rules, content } = this.state;
+    const { title, summary, link, choices, content } = this.state;
     const choiceString = choices.reduce(
       (acc, opt, idx) => `${acc}   ${idx}: ${opt}\n`,
       ''
     );
-    const yml = `---\ntitle: ${title}\nsummary: ${summary}\ndiscussion_link: ${link}\nrules: ${rules}\noptions:\n${choiceString}---\n`;
+    const yml = `---\ntitle: ${title}\nsummary: ${summary}\ndiscussion_link: ${link}\noptions:\n${choiceString}---\n`;
     const md = `# Poll: ${title}\n\n${content}`;
     const ipfsHash = await generateIPFSHash(`${yml}${md}`, {
       encoding: 'ascii'
