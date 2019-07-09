@@ -113,6 +113,12 @@ const Code = styled.pre`
   border: 1px solid black;
 `;
 
+const WarningText = styled.p`
+  font-size: 0.9em;
+  color: #f35833;
+  margin-top: 11px;
+`;
+
 const ABSTAIN = 'Abstain';
 const DEFAULT_START = new Date();
 const DEFAULT_END = new Date(DEFAULT_START.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -279,19 +285,29 @@ class CreatePoll extends Component {
       selectedTab
     } = this.state;
 
+    const titleValid = !!title;
+    const summaryValid = !!summary;
+    const linkValid = link.match(URL_REGEX);
+    const choicesValid = choices.length > 1;
+    const contentValid = !!content;
+    const timeValid = start.getTime() >= DEFAULT_START.getTime();
+
     const isValidSubmission =
-      !!title &&
-      !!summary &&
-      link.match(URL_REGEX) &&
-      choices.length > 1 &&
-      !!content;
+      titleValid &&
+      summaryValid &&
+      linkValid &&
+      choicesValid &&
+      contentValid &&
+      timeValid;
+
+    const titleError = submitAttempted && !titleValid;
+    const summaryError = submitAttempted && !summaryValid;
+    const linkError = submitAttempted && !linkValid;
+    const choicesError = submitAttempted && !choicesValid;
+    const contentError = submitAttempted && !contentValid;
+    const timeError = submitAttempted && !timeValid;
 
     const handleParentState = newState => this.setState(newState);
-
-    const titleError = submitAttempted && title.length === 0;
-    const summaryError = submitAttempted && summary.length === 0;
-    const linkError = submitAttempted && !link.match(URL_REGEX);
-    const choicesError = submitAttempted && choices.length <= 1;
 
     return (
       <RiseUp>
@@ -408,7 +424,7 @@ class CreatePoll extends Component {
                   css={{ width: '600px' }}
                   disableClock
                   showLeadingZeros
-                  clearIcon
+                  clearIcon={null}
                   onChange={t =>
                     this.setState({
                       start: t,
@@ -425,7 +441,7 @@ class CreatePoll extends Component {
                   css={{ width: '600px' }}
                   disableClock
                   showLeadingZeros
-                  clearIcon
+                  clearIcon={null}
                   onChange={t =>
                     this.setState({
                       start: t.getTime() < start.getTime() ? t : start,
@@ -440,6 +456,9 @@ class CreatePoll extends Component {
                 <StyledBody>Poll Duration</StyledBody>
                 <Box width="600px">
                   <TimeLabel>{calculateTimeSpan(start, end)}</TimeLabel>
+                  {timeError && (
+                    <WarningText>Start time cannot be a past date</WarningText>
+                  )}
                 </Box>
               </SectionWrapper>
 
@@ -455,6 +474,9 @@ class CreatePoll extends Component {
                       Promise.resolve(converter.makeHtml(markdown))
                     }
                   />
+                  {contentError && (
+                    <WarningText>Proposal is required</WarningText>
+                  )}
                 </Box>
               </SectionWrapper>
 
