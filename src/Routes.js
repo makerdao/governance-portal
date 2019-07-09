@@ -9,7 +9,7 @@ import {
 import BaseLayout from './layouts/base';
 import Timeline from './pages/Timeline';
 import NotFound from './pages/NotFound';
-import Admin from './pages/Admin';
+import CreatePoll from './pages/CreatePoll';
 import ErrorBoundary from './components/ErrorBoundary';
 import Polling from './pages/Polling';
 import Executive from './pages/Executive';
@@ -39,12 +39,12 @@ class App extends Component {
                   render={routeProps => <Timeline {...routeProps} />}
                 />
                 <Route
-                  path="/polling"
-                  render={routeProps => <Timeline signaling {...routeProps} />}
+                  path="/polling/create"
+                  render={routeProps => <CreatePoll {...routeProps} />}
                 />
                 <Route
-                  path="/admin"
-                  render={routeProps => <Admin {...routeProps} />}
+                  path="/polling"
+                  render={routeProps => <Timeline signaling {...routeProps} />}
                 />
                 <Route path="/not-found" component={NotFound} />
                 <Route
