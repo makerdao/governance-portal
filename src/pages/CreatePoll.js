@@ -5,7 +5,7 @@ import closeImg from '../imgs/close-inline.svg';
 import theme from '../theme';
 import { generateIPFSHash } from '../utils/ipfs';
 import { calculateTimeSpan } from '../utils/misc';
-import { Input, Box } from '@makerdao/ui-components-core';
+import { Input, Box, Flex } from '@makerdao/ui-components-core';
 import { Button } from '@makerdao/ui-components';
 import { copyToClipboard } from '../utils/misc';
 import DateTimePicker from 'react-datetime-picker';
@@ -159,6 +159,15 @@ const CreatePollOverview = ({
       >
         {markdown}
       </Code>
+      <Flex css={{ paddingLeft: '10px' }}>
+        <Button
+          variant="secondary"
+          css={{ alignSelf: 'flex-end' }}
+          onClick={() => copyToClipboard(markdown)}
+        >
+          Copy
+        </Button>
+      </Flex>
     </SectionWrapper>
     <SectionWrapper>
       <StyledBody>Hash:</StyledBody>
@@ -171,10 +180,19 @@ const CreatePollOverview = ({
       >
         {hash}
       </SectionText>
+      <Box
+        css={{
+          paddingLeft: '10px'
+        }}
+      >
+        <Button variant="secondary" onClick={() => copyToClipboard(hash)}>
+          Copy
+        </Button>
+      </Box>
     </SectionWrapper>
 
     <SectionWrapper css={{ marginTop: '20px' }}>
-      <Button onClick={() => null}>Submit</Button>
+      <Button onClick={() => null}>Create Poll</Button>
       <Box width="32px" />
       <Button
         variant="secondary"
@@ -484,7 +502,7 @@ class CreatePoll extends Component {
                     }
                   }}
                 >
-                  Poll Overview
+                  Create Markdown
                 </Button>
                 <Box width="32px" />
                 <Button variant="secondary" onClick={this.resetPollState}>
