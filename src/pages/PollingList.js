@@ -191,6 +191,7 @@ const PollingList = ({
   approvals,
   polls
 }) => {
+  polls.sort((a, b) => b.startTime - a.startTime);
   return (
     <Fragment>
       <MigrationNotificationBanner />

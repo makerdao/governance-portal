@@ -5,24 +5,25 @@ import { getWinningProp, check } from './proposals';
 
 // Mock Poll Data ----------------------------------------------
 
-const pollId1 = '1';
-const pollId2 = '2';
+const voteId1 = 'QmPLpuz1VMtAapZJCb84NtRRUHVFsxGiX6kdb1ewsXxSSi';
+const voteId2 = 'QmbL3A3pz8j2NoWD18nt1PuKxqYh7Kk28jQK56nJaMcqcd';
 
+// Mocked poll data from the SDK/plugin
 const mockParsedAllPollsData = [
   {
     creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
-    pollId: pollId1,
-    voteId: 'QmPLpuz1VMtAapZJCb84NtRRUHVFsxGiX6kdb1ewsXxSSi',
+    pollId: '1',
+    voteId: voteId1,
     blockCreated: 123456789,
     startTime: new Date('2019-06-25'),
     endTime: new Date('2019-06-30'),
-    multiHash: 'QmPLpuz1VMtAapZJCb84NtRRUHVFsxGiX6kdb1ewsXxSSi',
+    multiHash: 'QmbL3A3pz8j2NoWD18nt1PuKxqYh7Kk28jQK56nJaMcqcd',
     source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2'
   },
   {
     creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
-    pollId: pollId2,
-    voteId: 'QmbL3A3pz8j2NoWD18nt1PuKxqYh7Kk28jQK56nJaMcqcd',
+    pollId: '2',
+    voteId: voteId2,
     blockCreated: 123456789,
     startTime: new Date('2019-07-05'),
     endTime: new Date('2019-07-10'),
@@ -31,6 +32,123 @@ const mockParsedAllPollsData = [
   }
 ];
 
+// Mock polls from the CMS
+
+const mockPollMd1 = {
+  about: `---
+title: Test Poll Inactive 1 (June 1)
+summary: This is a poll that ended in the past, and is inactive.
+discussion_link: https://www.reddit.com/r/mkrgov/
+rules: 
+options:
+   0: Abstain
+   1: No Change
+   2: Vote Yes
+   3: Vote No
+---
+# Poll: Test Poll Inactive 1 (June 1)
+
+This is a test poll that ended in the past, and is inactive. This text is dummy data.
+
+The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which presents a number of possible Dai Stability Fee options. Voters are now able to signal their support for a Stability Fee within a range of 13.50% to 23.50%.
+
+This Governance Poll (FAQ) will be active for three days beginning on Monday, May 27 at 4 PM UTC, the results of which will inform an Executive Vote (FAQ) which will go live on Friday, May 31, at 4 PM UTC.`
+};
+
+const mockPollMd2 = {
+  about: `---
+title: Test Poll Active 1 (Jul 9)
+summary: This is a poll that is active for a week starting July 9th.
+discussion_link: https://www.reddit.com/r/mkrgov/
+rules: 
+options:
+   0: Abstain
+   1: No Change
+   2: 5%
+   3: 25%
+   4: 75%
+---
+# Poll: Test Poll Active 1 (Jul 9)
+
+This is a poll that is active for a week starting July 9th. This text is dummy data.
+
+The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which presents a number of possible Dai Stability Fee options. Voters are now able to signal their support for a Stability Fee within a range of 13.50% to 23.50%.
+
+This Governance Poll (FAQ) will be active for three days beginning on Monday, May 27 at 4 PM UTC, the results of which will inform an Executive Vote (FAQ) which will go live on Friday, May 31, at 4 PM UTC.`
+};
+
+// Mock voteHistory:
+const mockHistory1 = {
+  time: new Date(),
+  options: [
+    {
+      option: 1,
+      mkr: 100,
+      percentage: 50
+    },
+    {
+      option: 2,
+      mkr: 200,
+      percentage: 25
+    },
+    {
+      option: 3,
+      mkr: 300,
+      percentage: 25
+    }
+  ]
+};
+
+const mockHistory2 = {
+  time: new Date(),
+  options: [
+    {
+      option: 1,
+      mkr: 2100,
+      percentage: 25
+    },
+    {
+      option: 2,
+      mkr: 2200,
+      percentage: 25
+    },
+    {
+      option: 3,
+      mkr: 2300,
+      percentage: 25
+    },
+    {
+      option: 4,
+      mkr: 2400,
+      percentage: 25
+    }
+  ]
+};
+
+const mockFetchCmsData = async voteId => {
+  // fetch the raw YAML & transform to POJO
+  // format options as array of type: {id, name, percentage(vote breakdown)}
+  // for now we mock:
+  switch (voteId) {
+    case voteId1:
+      return mockPollMd1;
+    case voteId2:
+      return mockPollMd2;
+    default:
+      break;
+  }
+};
+
+const mockGetVoteHistory = async pollId => {
+  switch (pollId) {
+    case '1':
+      return mockHistory1;
+    case '2':
+      return mockHistory2;
+    default:
+      return mockHistory1;
+  }
+};
 // Constants ----------------------------------------------
 
 export const POLLS_REQUEST = 'polls/REQUEST';
@@ -59,17 +177,19 @@ const getAllWhiteListedPolls = async () => {
   return mockParsedAllPollsData;
 };
 
-const fetchPollFromCms = async pollId => {
-  const cmsDevUrl = 'http://0.0.0.0:3000';
-  const cmsPath = 'content/governance-polling';
+const fetchPollFromCms = async voteId => {
+  const cmsLocalUrl = 'http://0.0.0.0:3000';
+  const cmsRemoteUrl = 'https://elb.cms-gov.makerfoundation.com';
 
-  const cmsUrl = `${cmsDevUrl}/${cmsPath}?voteId=${pollId}`;
+  const cmsPath = 'content/governance-polling';
+  const oldPath = 'content/governance-dashboard';
+
+  const cmsUrl = `${cmsRemoteUrl}/${oldPath}?voteId=${voteId}`;
   const res = await fetch(cmsUrl);
   await check(res);
   const json = await res.json();
 
-  // TODO: fix CMS route to return an object, not an array
-  return json[0];
+  return json;
 };
 
 const formatOptions = options => {
@@ -89,64 +209,6 @@ const formatYamlToJson = data => {
     discussion_link,
     content
   };
-};
-
-const mockGetVoteHistory = async pollId => {
-  const mockHistory1 = {
-    time: new Date(),
-    options: [
-      {
-        option: 1,
-        mkr: 100,
-        percentage: 50
-      },
-      {
-        option: 2,
-        mkr: 200,
-        percentage: 25
-      },
-      {
-        option: 3,
-        mkr: 300,
-        percentage: 25
-      }
-    ]
-  };
-
-  const mockHistory2 = {
-    time: new Date(),
-    options: [
-      {
-        option: 1,
-        mkr: 2100,
-        percentage: 25
-      },
-      {
-        option: 2,
-        mkr: 2200,
-        percentage: 25
-      },
-      {
-        option: 3,
-        mkr: 2300,
-        percentage: 25
-      },
-      {
-        option: 4,
-        mkr: 2400,
-        percentage: 25
-      }
-    ]
-  };
-
-  switch (pollId) {
-    case '1':
-      return mockHistory1;
-    case '2':
-      return mockHistory2;
-    default:
-      return mockHistory1;
-  }
 };
 
 export const getVoteBreakdown = async (pollId, options) => {
@@ -176,11 +238,13 @@ export const pollsInit = () => async dispatch => {
   dispatch(pollsRequest());
 
   const allPolls = [];
-  try {
-    const polls = await getAllWhiteListedPolls();
+  const polls = await getAllWhiteListedPolls();
 
+  try {
     for (const poll of polls) {
-      const cmsData = await fetchPollFromCms(poll.voteId);
+      // TODO: uncomment this when CORS issue in CMS is resolved
+      // const cmsData = await fetchPollFromCms(poll.voteId);
+      const cmsData = await mockFetchCmsData(poll.voteId);
       const cmsPoll = formatYamlToJson(cmsData);
 
       const pollData = { ...poll, ...cmsPoll };

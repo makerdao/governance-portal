@@ -112,6 +112,7 @@ const DetailsCardText = styled.p`
 `;
 
 const DropdownText = styled.p`
+  width: 125px;
   margin-left: 20px;
   margin-right: 20px;
   color: ${({ color }) => (color ? `rgb(${colors[color]})` : 'black')};
@@ -163,6 +164,7 @@ class VotingPanel extends React.Component {
             renderRowItem={item => <DropdownText>{item}</DropdownText>}
             value={selectedOption}
             onSelect={this.onDropdownSelect}
+            emptyMsg="Not available"
           />
           <Button
             bgColor="green"
