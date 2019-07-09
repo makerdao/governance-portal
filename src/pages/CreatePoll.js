@@ -186,16 +186,60 @@ const CreatePollOverview = ({
   </Fragment>
 );
 
-const CreatePollInput = ({ title, ...inputProps }) => {
-  return (
-    <Fragment>
-      <SectionWrapper>
-        <StyledBody>{title}:</StyledBody>
-        <Input width="600px" {...inputProps} />
-      </SectionWrapper>
-    </Fragment>
-  );
-};
+const CreatePollInput = ({ title, ...inputProps }) => (
+  <Fragment>
+    <SectionWrapper>
+      <StyledBody>{title}:</StyledBody>
+      <Input width="600px" {...inputProps} />
+    </SectionWrapper>
+  </Fragment>
+);
+
+const CreatePollTime = ({ start, end, timeError, handleParentState }) => (
+  <Fragment>
+    <SectionWrapper>
+      <StyledBody>Poll Start Time:</StyledBody>
+      <DateTimePicker
+        css={{ width: '600px' }}
+        disableClock
+        showLeadingZeros
+        clearIcon={null}
+        onChange={t =>
+          handleParentState({
+            start: t,
+            end: t.getTime() > end.getTime() ? t : end
+          })
+        }
+        value={start}
+      />
+    </SectionWrapper>
+    <SectionWrapper>
+      <StyledBody>Poll End Time:</StyledBody>
+      <DateTimePicker
+        css={{ width: '600px' }}
+        disableClock
+        showLeadingZeros
+        clearIcon={null}
+        onChange={t =>
+          handleParentState({
+            start: t.getTime() < start.getTime() ? t : start,
+            end: t
+          })
+        }
+        value={end}
+      />
+    </SectionWrapper>
+    <SectionWrapper>
+      <StyledBody>Poll Duration</StyledBody>
+      <Box width="600px">
+        <TimeLabel>{calculateTimeSpan(start, end)}</TimeLabel>
+        {timeError && (
+          <WarningText>Start time cannot be a past date</WarningText>
+        )}
+      </Box>
+    </SectionWrapper>
+  </Fragment>
+);
 
 const INITIAL_POLL_STATE = {
   title: '',
@@ -402,49 +446,14 @@ class CreatePoll extends Component {
                 </VoteOptionsGrid>
               </SectionWrapper>
 
-              <SectionWrapper>
-                <StyledBody>Poll Start Time:</StyledBody>
-                <DateTimePicker
-                  css={{ width: '600px' }}
-                  disableClock
-                  showLeadingZeros
-                  clearIcon={null}
-                  onChange={t =>
-                    this.setState({
-                      start: t,
-                      end: t.getTime() > end.getTime() ? t : end
-                    })
-                  }
-                  value={start}
-                />
-              </SectionWrapper>
-
-              <SectionWrapper>
-                <StyledBody>Poll End Time:</StyledBody>
-                <DateTimePicker
-                  css={{ width: '600px' }}
-                  disableClock
-                  showLeadingZeros
-                  clearIcon={null}
-                  onChange={t =>
-                    this.setState({
-                      start: t.getTime() < start.getTime() ? t : start,
-                      end: t
-                    })
-                  }
-                  value={end}
-                />
-              </SectionWrapper>
-
-              <SectionWrapper>
-                <StyledBody>Poll Duration</StyledBody>
-                <Box width="600px">
-                  <TimeLabel>{calculateTimeSpan(start, end)}</TimeLabel>
-                  {timeError && (
-                    <WarningText>Start time cannot be a past date</WarningText>
-                  )}
-                </Box>
-              </SectionWrapper>
+              <CreatePollTime
+                {...{
+                  start,
+                  end,
+                  timeError,
+                  handleParentState
+                }}
+              />
 
               <SectionWrapper>
                 <StyledBody>Proposal:</StyledBody>
