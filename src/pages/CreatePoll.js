@@ -168,30 +168,29 @@ const CreatePollOverview = ({ markdown, hash, handleParentState }) => (
   </Fragment>
 );
 
-class CreatePoll extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      title: '',
-      summary: '',
-      start: DEFAULT_START,
-      end: DEFAULT_END,
-      link: '',
-      option: '',
-      choices: [ABSTAIN],
-      content: '',
-      markdown: '',
-      canBeDeployed: false,
-      hash: '',
-      submitAttempted: false,
-      selectedTab: 'write'
-    };
-  }
+const INITIAL_POLL_STATE = {
+  title: '',
+  summary: '',
+  start: DEFAULT_START,
+  end: DEFAULT_END,
+  link: '',
+  option: '',
+  choices: [ABSTAIN],
+  content: '',
+  markdown: '',
+  canBeDeployed: false,
+  hash: '',
+  submitAttempted: false,
+  selectedTab: 'write'
+};
 
-  handlePollState = (e, k) => {
+class CreatePoll extends Component {
+  state = INITIAL_POLL_STATE;
+
+  handlePollState = (e, key) => {
     e.stopPropagation();
     this.setState({
-      [k]: e.target.value
+      [key]: e.target.value
     });
   };
 
@@ -208,26 +207,12 @@ class CreatePoll extends Component {
   removePollOption = idx => {
     const { choices } = this.state;
     this.setState({
-      choices: choices.filter((item, index) => index !== idx)
+      choices: choices.filter((_, index) => index !== idx)
     });
   };
 
   resetPollState = () => {
-    this.setState({
-      title: '',
-      summary: '',
-      start: DEFAULT_START,
-      end: DEFAULT_END,
-      link: '',
-      option: '',
-      choices: [ABSTAIN],
-      content: '',
-      markdown: '',
-      canBeDeployed: false,
-      hash: '',
-      submitAttempted: false,
-      selectedTab: 'write'
-    });
+    this.setState(INITIAL_POLL_STATE);
   };
 
   parseFormToMarkdownString = async () => {
