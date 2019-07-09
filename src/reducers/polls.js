@@ -207,7 +207,8 @@ const formatYamlToJson = data => {
     summary,
     options: formatOptions(options),
     discussion_link,
-    content
+    content,
+    rawData: data.about
   };
 };
 

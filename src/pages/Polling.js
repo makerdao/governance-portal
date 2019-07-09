@@ -187,6 +187,15 @@ const timeLeft = (startTime, endTime) => {
   return days !== 1 ? `${days} days` : `${days} day`;
 };
 
+const downloadRawPollData = (multiHash, rawData) => {
+  const element = document.createElement('a');
+  const file = new Blob([rawData], { type: 'text/plain' });
+  element.href = URL.createObjectURL(file);
+  element.download = `${multiHash}.txt`;
+  document.body.appendChild(element); // Required for this to work in FireFox
+  element.click();
+};
+
 function Polling({
   voteState,
   voteStateFetching,
@@ -203,7 +212,7 @@ function Polling({
 
   // TODO: implement this after user>poll query is implemented in accounts reducer:
   const votedPollOption = undefined;
-  const { discussionLink } = poll;
+  const { discussion_link, rawData, multiHash } = poll;
 
   return (
     <RiseUp>
@@ -215,6 +224,11 @@ function Polling({
             skipHtml={true}
             source={poll.content}
           />
+          {rawData && (
+            <Button onClick={() => downloadRawPollData(multiHash, rawData)}>
+              Download Raw
+            </Button>
+          )}
         </DescriptionCard>
         <RightPanels>
           {poll.active && <VotingPanel poll={poll} />}
@@ -268,11 +282,11 @@ function Polling({
               {
                 name: 'Discussion',
                 component: (
-                  <ExternalLink href={discussionLink} target="_blank">
+                  <ExternalLink href={discussion_link} target="_blank">
                     Here
                   </ExternalLink>
                 ),
-                hide: !discussionLink
+                hide: !discussion_link
               }
             ].map((item, i) => {
               if (!item.hide) {
