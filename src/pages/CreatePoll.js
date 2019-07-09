@@ -145,18 +145,47 @@ function calculateTimeSpan(earlier, later) {
   return `${span.week} w : ${span.day} d : ${span.hour} h : ${span.minute} m`;
 }
 
-const CreatePollOverview = ({ markdown, hash, handleParentState }) => (
+const CreatePollOverview = ({
+  title,
+  start,
+  end,
+  markdown,
+  hash,
+  handleParentState
+}) => (
   <Fragment>
+    <SectionTitle>Poll - {title}</SectionTitle>
+    <SectionText>
+      {`This is an overview of the new poll. The polling window will be open from the ${start.toUTCString()} and will close on ${end.toUTCString()}. The markdown and hash below should be copied into the cms.`}
+    </SectionText>
     <SectionWrapper>
       <StyledBody>Markdown:</StyledBody>
-      <Code css={{ width: '800px', overflow: 'auto' }}>{markdown}</Code>
+      <Code
+        css={{
+          width: '800px',
+          overflow: 'auto',
+          cursor: 'pointer'
+        }}
+        onClick={() => copyToClipboard(markdown)}
+      >
+        {markdown}
+      </Code>
     </SectionWrapper>
     <SectionWrapper>
       <StyledBody>Hash:</StyledBody>
-      <SectionText css={{ width: '800px' }}>{hash}</SectionText>
+      <SectionText
+        css={{
+          width: '800px',
+          cursor: 'pointer'
+        }}
+        onClick={() => copyToClipboard(hash)}
+      >
+        {hash}
+      </SectionText>
     </SectionWrapper>
+
     <SectionWrapper css={{ marginTop: '20px' }}>
-      <Button onClick={() => copyToClipboard(markdown)}>Submit</Button>
+      <Button onClick={() => null}>Submit</Button>
       <Box width="32px" />
       <Button
         variant="secondary"
@@ -273,6 +302,9 @@ class CreatePoll extends Component {
           {canBeDeployed ? (
             <CreatePollOverview
               {...{
+                title,
+                start,
+                end,
                 markdown,
                 hash,
                 handleParentState
@@ -437,7 +469,7 @@ class CreatePoll extends Component {
                     }
                   }}
                 >
-                  Create Submission
+                  Poll Overview
                 </Button>
                 <Box width="32px" />
                 <Button variant="secondary" onClick={this.resetPollState}>
