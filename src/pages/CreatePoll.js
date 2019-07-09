@@ -4,6 +4,7 @@ import Card from '../components/Card';
 import closeImg from '../imgs/close-inline.svg';
 import theme from '../theme';
 import { generateIPFSHash } from '../utils/ipfs';
+import { calculateTimeSpan } from '../utils/misc';
 import { Input, Box } from '@makerdao/ui-components-core';
 import { Button } from '@makerdao/ui-components';
 import { copyToClipboard } from '../utils/misc';
@@ -133,24 +134,6 @@ const converter = new Showdown.Converter({
   tasklists: true
 });
 
-function calculateTimeSpan(earlier, later) {
-  let timeSpanInSeconds = Math.abs(earlier.getTime() - later.getTime()) / 1000;
-  let span = {};
-  let timeUnits = {
-    week: 604800,
-    day: 86400,
-    hour: 3600,
-    minute: 60
-  };
-
-  Object.keys(timeUnits).forEach(key => {
-    span[key] = Math.floor(timeSpanInSeconds / timeUnits[key]);
-    timeSpanInSeconds -= span[key] * timeUnits[key];
-  });
-
-  return `${span.week} w : ${span.day} d : ${span.hour} h : ${span.minute} m`;
-}
-
 const CreatePollOverview = ({
   title,
   start,
@@ -202,6 +185,17 @@ const CreatePollOverview = ({
     </SectionWrapper>
   </Fragment>
 );
+
+const CreatePollInput = ({ title, ...inputProps }) => {
+  return (
+    <Fragment>
+      <SectionWrapper>
+        <StyledBody>{title}:</StyledBody>
+        <Input width="600px" {...inputProps} />
+      </SectionWrapper>
+    </Fragment>
+  );
+};
 
 const INITIAL_POLL_STATE = {
   title: '',
@@ -333,54 +327,42 @@ class CreatePoll extends Component {
                 This form will generate a formatted markdown file which can be
                 copied and included in the cms
               </SectionText>
-              <SectionWrapper>
-                <StyledBody>Title:</StyledBody>
-                <Input
-                  width="600px"
-                  placeholder="This will be the poll title"
-                  value={title}
-                  onChange={e => this.handlePollState(e, 'title')}
-                  error={titleError}
-                  failureMessage={titleError && 'Title is required'}
-                />
-              </SectionWrapper>
-
-              <SectionWrapper>
-                <StyledBody>Summary:</StyledBody>
-                <Input
-                  width="600px"
-                  placeholder="Give a short description of what this Poll is for"
-                  value={summary}
-                  onChange={e => this.handlePollState(e, 'summary')}
-                  error={summaryError}
-                  failureMessage={summaryError && 'Summary is required'}
-                />
-              </SectionWrapper>
-
-              <SectionWrapper>
-                <StyledBody>Discussion Link:</StyledBody>
-                <Input
-                  width="600px"
-                  placeholder="Link to where this Polling proposal will be discussed"
-                  value={link}
-                  onChange={e => this.handlePollState(e, 'link')}
-                  error={linkError}
-                  failureMessage={linkError && 'Link must be a valid URL'}
-                />
-              </SectionWrapper>
-
-              <SectionWrapper>
-                <StyledBody>Vote Options:</StyledBody>
-                <Input
-                  width="600px"
-                  placeholder="Add possible voting options"
-                  value={option}
-                  onChange={e => this.handlePollState(e, 'option')}
-                  error={choicesError}
-                  failureMessage={
-                    choicesError && 'Must be at least two voting options'
-                  }
-                  after={
+              {[
+                {
+                  title: 'Title',
+                  placeholder: 'This will be the poll title',
+                  value: title,
+                  onChange: e => this.handlePollState(e, 'title'),
+                  error: titleError,
+                  failureMessage: titleError && 'Title is required'
+                },
+                {
+                  title: 'Summary',
+                  placeholder:
+                    'Give a short description of what this poll is for',
+                  value: summary,
+                  onChange: e => this.handlePollState(e, 'summary'),
+                  error: summaryError,
+                  failureMessage: summaryError && 'Summary is required'
+                },
+                {
+                  title: 'Discussion Link',
+                  placeholder:
+                    'Link to where this Polling proposal will be discussed',
+                  value: link,
+                  onChange: e => this.handlePollState(e, 'link'),
+                  error: linkError,
+                  failureMessage: linkError && 'Link must be a valid URL'
+                },
+                {
+                  title: 'Vote Options',
+                  placeholder: 'Add possible voting options',
+                  value: option,
+                  onChange: e => this.handlePollState(e, 'option'),
+                  error: choicesError,
+                  failureMessage:
+                    choicesError && 'Must be at least two voting options',
+                  after: (
                     <Button
                       css={{ alignSelf: 'center', marginLeft: '10px' }}
                       width="190px"
@@ -388,12 +370,14 @@ class CreatePoll extends Component {
                     >
                       Add Option
                     </Button>
-                  }
-                />
-              </SectionWrapper>
+                  )
+                }
+              ].map((args, i) => (
+                <CreatePollInput key={i} {...args} />
+              ))}
 
               <SectionWrapper>
-                <div css={{ width: '215px' }} />
+                <StyledBody />
                 <VoteOptionsGrid>
                   {choices.map((opt, idx) => (
                     <Card
@@ -403,7 +387,7 @@ class CreatePoll extends Component {
                         flexDirection: 'row',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        width: '325px',
+                        width: '300px',
                         padding: '10px'
                       }}
                     >

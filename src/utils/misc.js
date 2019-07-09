@@ -240,3 +240,21 @@ export const formatStringToConstantCase = kebob => {
     .join('_')
     .toUpperCase();
 };
+
+export const calculateTimeSpan = (earlier, later) => {
+  let timeSpanInSeconds = Math.abs(earlier.getTime() - later.getTime()) / 1000;
+  let span = {};
+  let timeUnits = {
+    week: 604800,
+    day: 86400,
+    hour: 3600,
+    minute: 60
+  };
+
+  Object.keys(timeUnits).forEach(key => {
+    span[key] = Math.floor(timeSpanInSeconds / timeUnits[key]);
+    timeSpanInSeconds -= span[key] * timeUnits[key];
+  });
+
+  return `${span.week} w : ${span.day} d : ${span.hour} h : ${span.minute} m`;
+};
