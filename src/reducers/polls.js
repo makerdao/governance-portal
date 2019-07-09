@@ -1,6 +1,7 @@
+import matter from 'gray-matter';
 import { createReducer } from '../utils/redux';
 import { formatRound } from '../utils/misc';
-import { getWinningProp } from './proposals';
+import { getWinningProp, check } from './proposals';
 
 // Mock Poll Data ----------------------------------------------
 
@@ -11,51 +12,24 @@ const mockParsedAllPollsData = [
   {
     creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
     pollId: pollId1,
-    voteId: 'QmaozNR7DZHQK1ZcU9p7QdrshMvXqWK6gpu5rmrkPdT3L4',
+    voteId: 'QmPLpuz1VMtAapZJCb84NtRRUHVFsxGiX6kdb1ewsXxSSi',
     blockCreated: 123456789,
-    startTime: new Date('2019-07-05'),
-    endTime: new Date('2019-07-10'),
-    multiHash: 'QmaozNR7DZHQK1ZcU9p7QdrshMvXqWK6gpu5rmrkPdT3L4',
+    startTime: new Date('2019-06-25'),
+    endTime: new Date('2019-06-30'),
+    multiHash: 'QmPLpuz1VMtAapZJCb84NtRRUHVFsxGiX6kdb1ewsXxSSi',
     source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2'
   },
   {
     creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
     pollId: pollId2,
-    voteId: '8C411A89ED6D846F064ED0DECDBA3A857F0D1667',
+    voteId: 'QmbL3A3pz8j2NoWD18nt1PuKxqYh7Kk28jQK56nJaMcqcd',
     blockCreated: 123456789,
-    startTime: new Date('2019-06-25'),
-    endTime: new Date('2019-06-30'),
-    multiHash: '8C411A89ED6D846F064ED0DECDBA3A857F0D1667',
+    startTime: new Date('2019-07-05'),
+    endTime: new Date('2019-07-10'),
+    multiHash: 'QmbL3A3pz8j2NoWD18nt1PuKxqYh7Kk28jQK56nJaMcqcd',
     source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2'
   }
 ];
-
-const mockPollMd1 = {
-  title: 'Mock Active Poll',
-  summary:
-    'The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which',
-  options: ['abstain', '14%', '16%', 'no change', '18%', '20%'],
-  content: `# Poll: POLL ONE
-
-  The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which presents a number of possible Dai Stability Fee options. Voters are now able to signal their support for a Stability Fee within a range of 13.50% to 23.50%.
-  
-  This Governance Poll (FAQ) will be active for three days beginning on Monday, May 27 at 4 PM UTC, the results of which will inform an Executive Vote (FAQ) which will go live on Friday, May 31, at 4 PM UTC.
-  `
-};
-
-const mockPollMd2 = {
-  title: 'Mock Inactive Poll',
-  summary:
-    'The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which',
-  discussionLink: 'https://www.reddit.com/r/mkrgov/',
-  options: ['abstain', '14%', '16%', 'no change', '18%', '20%'],
-  content: `# Poll: POLL TWO
-
-  The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which presents a number of possible Dai Stability Fee options. Voters are now able to signal their support for a Stability Fee within a range of 13.50% to 23.50%.
-  
-  This Governance Poll (FAQ) will be active for three days beginning on Monday, May 27 at 4 PM UTC, the results of which will inform an Executive Vote (FAQ) which will go live on Friday, May 31, at 4 PM UTC.
-  `
-};
 
 // Constants ----------------------------------------------
 
@@ -85,18 +59,111 @@ const getAllWhiteListedPolls = async () => {
   return mockParsedAllPollsData;
 };
 
-const fetchCmsData = async pollId => {
-  // fetch the raw YAML & transform to POJO
-  // format options as array of type: {id, name, percentage(vote breakdown)}
-  // for now we mock:
+const fetchPollFromCms = async pollId => {
+  const cmsDevUrl = 'http://0.0.0.0:3000';
+  const cmsPath = 'content/governance-polling';
+
+  const cmsUrl = `${cmsDevUrl}/${cmsPath}?voteId=${pollId}`;
+  const res = await fetch(cmsUrl);
+  await check(res);
+  const json = await res.json();
+
+  // TODO: fix CMS route to return an object, not an array
+  return json[0];
+};
+
+const formatOptions = options => {
+  const opts = Object.values(options);
+  opts.shift();
+  return Object.values(options);
+};
+
+const formatYamlToJson = data => {
+  const json = matter(data.about);
+  const { content } = json;
+  const { title, summary, options, discussion_link } = json.data;
+  return {
+    title,
+    summary,
+    options: formatOptions(options),
+    discussion_link,
+    content
+  };
+};
+
+const mockGetVoteHistory = async pollId => {
+  const mockHistory1 = {
+    time: new Date(),
+    options: [
+      {
+        option: 1,
+        mkr: 100,
+        percentage: 50
+      },
+      {
+        option: 2,
+        mkr: 200,
+        percentage: 25
+      },
+      {
+        option: 3,
+        mkr: 300,
+        percentage: 25
+      }
+    ]
+  };
+
+  const mockHistory2 = {
+    time: new Date(),
+    options: [
+      {
+        option: 1,
+        mkr: 2100,
+        percentage: 25
+      },
+      {
+        option: 2,
+        mkr: 2200,
+        percentage: 25
+      },
+      {
+        option: 3,
+        mkr: 2300,
+        percentage: 25
+      },
+      {
+        option: 4,
+        mkr: 2400,
+        percentage: 25
+      }
+    ]
+  };
+
   switch (pollId) {
-    case pollId1:
-      return mockPollMd1;
-    case pollId2:
-      return mockPollMd2;
+    case '1':
+      return mockHistory1;
+    case '2':
+      return mockHistory2;
     default:
-      break;
+      return mockHistory1;
   }
+};
+
+export const getVoteBreakdown = async (pollId, options) => {
+  // TODO replace this with SDK method:
+  const { options: breakdownOpts } = await mockGetVoteHistory(pollId);
+
+  const voteBreakdown = breakdownOpts.reduce((result, val) => {
+    const currentOpt = options[val.option];
+    const breakdown = {
+      name: currentOpt,
+      value: `${val.mkr} MKR (${val.percentage}%)`
+    };
+    result.push(breakdown);
+    return result;
+  }, []);
+
+  return voteBreakdown;
 };
 
 const isPollActive = (startTime, endTime) => {
@@ -113,8 +180,10 @@ export const pollsInit = () => async dispatch => {
     const polls = await getAllWhiteListedPolls();
 
     for (const poll of polls) {
-      const cmsData = await fetchCmsData(poll.pollId);
-      const pollData = { ...poll, ...cmsData };
+      const cmsData = await fetchPollFromCms(poll.voteId);
+      const cmsPoll = formatYamlToJson(cmsData);
+
+      const pollData = { ...poll, ...cmsPoll };
 
       // TODO keep track of these methods as the SDK methods are implemented
       // pollData.totalVotes = await pollService.getMkrAmtVoted(pollData.pollId);
@@ -130,6 +199,12 @@ export const pollsInit = () => async dispatch => {
       pollData.active = isPollActive(pollData.startTime, pollData.endTime);
       if (!pollData.active) pollData.winningProposal = 'Mock Winning Proposal';
       // if (pollData.active) pollData.winningProposal = await pollService.getWinningProposal(pollData.pollId);
+
+      const voteBreakdown = await getVoteBreakdown(
+        pollData.pollId,
+        pollData.options
+      );
+      pollData.voteBreakdown = voteBreakdown;
 
       allPolls.push(pollData);
     }
@@ -156,6 +231,7 @@ export const formatHistoricalPolls = topics => async (dispatch, getState) => {
       );
 
       const poll = {
+        legacyPoll: true,
         active,
         blockCreated: 'na',
         content: proposals[0] ? proposals[0].about : topic_blurb,

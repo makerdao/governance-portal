@@ -64,7 +64,7 @@ const path = 'content/governance-dashboard';
 
 // util
 
-const check = async res => {
+export const check = async res => {
   if (!res.ok) {
     throw new Error(
       `unable to fetch topics: ${res.status} - ${await res.text()}`

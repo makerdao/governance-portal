@@ -139,8 +139,16 @@ class VotingPanel extends React.Component {
     });
   };
 
+  formatOptions = options => {
+    const displayOptions = [...options];
+    displayOptions.shift();
+    return displayOptions;
+  };
+
   render() {
     const poll = this.props.poll;
+    const { options } = poll;
+
     const selectedOption = this.state.selectedOption;
     //TODO: fix dropdown resizing issue
     return (
@@ -148,7 +156,7 @@ class VotingPanel extends React.Component {
         <VoteSelection>
           <Dropdown
             color="green"
-            items={poll.options}
+            items={this.formatOptions(options)}
             renderItem={item => (
               <DropdownText color="green">{item}</DropdownText>
             )}
@@ -282,17 +290,20 @@ function Polling({
               <DetailsCardItem key={i} {...item} />
             ))}
 
-            <CardTitle>Vote breakdown</CardTitle>
-            {[
-              { name: '17.5%', value: '170,324 MKR (82%)' },
-              { name: '19.5%', value: '20,520 MKR (12%)' },
-              { name: 'No change', value: '100 MKR (0.5%)' },
-              { name: '14.5%', value: '0 MKR' },
-              { name: '15.5%', value: '0 MKR' },
-              { name: '16.5%', value: '0 MKR' }
-            ].map((item, i) => (
-              <DetailsCardItem key={i} {...item} />
-            ))}
+            {poll.voteBreakdown && (
+              <>
+                <CardTitle>Vote breakdown</CardTitle>
+                {poll.voteBreakdown.map((item, i) => (
+                  <DetailsCardItem key={i} {...item} />
+                ))}
+              </>
+            )}
+            {poll.legacyPoll && (
+              <>
+                <CardTitle>Winning Proposal</CardTitle>
+                <span>{poll.winningProposal}</span>
+              </>
+            )}
           </DetailsPanelCard>
         </RightPanels>
       </ContentWrapper>
