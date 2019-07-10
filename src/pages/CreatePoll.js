@@ -57,6 +57,14 @@ const SectionWrapper = styled.div`
   padding-bottom: 40px;
 `;
 
+const ResultTitle = styled.p`
+  text-align: center;
+  line-height: 35px;
+  margin-top: 20px;
+  font-size: 22px;
+  color: #546978;
+`;
+
 const SectionText = styled.p`
   text-align: left;
   line-height: 30px;
@@ -427,6 +435,53 @@ const CreatePollMarkdown = ({
   );
 };
 
+const CreatePollResult = ({
+  pollTxStatus,
+  id,
+  handleParentState,
+  resetPollState
+}) => {
+  const { LOADING, SUCCESS, ERROR } = pollTxState;
+  switch (pollTxStatus) {
+    case LOADING:
+      return (
+        <Fragment>
+          <ResultTitle>Transaction is in progress...</ResultTitle>
+        </Fragment>
+      );
+    case SUCCESS:
+      return (
+        <Fragment>
+          <ResultTitle>Poll #{id} created!</ResultTitle>
+          <SectionWrapper css={{ marginTop: '20px' }}>
+            <Button onClick={() => copyToClipboard(id)} variant="secondary">
+              Copy Poll ID
+            </Button>
+            <Box width="32px" />
+            <Button variant="secondary" onClick={resetPollState}>
+              Create New Poll
+            </Button>
+          </SectionWrapper>
+        </Fragment>
+      );
+    case ERROR:
+      return (
+        <Fragment>
+          <ResultTitle>Something is not quite right...</ResultTitle>
+          <Button
+            css={{ marginTop: '30px' }}
+            variant="secondary"
+            onClick={() => handleParentState({ step: 1 })}
+          >
+            Back
+          </Button>
+        </Fragment>
+      );
+    default:
+      return null;
+  }
+};
+
 const INITIAL_POLL_STATE = {
   title: 'Mock poll',
   summary: 'This is not a real poll',
@@ -510,13 +565,22 @@ class CreatePoll extends Component {
         pollTxStatus: pollTxState.SUCCESS
       });
     } catch (e) {
-      console.err(e);
+      console.error(e);
       this.setState({ pollTxStatus: pollTxState.ERROR });
     }
   };
 
   render = () => {
-    const { title, start, end, markdown, hash, step } = this.state;
+    const {
+      title,
+      start,
+      end,
+      markdown,
+      pollTxStatus,
+      hash,
+      id,
+      step
+    } = this.state;
 
     const handleParentState = newState => this.setState(newState);
 
@@ -562,6 +626,17 @@ class CreatePoll extends Component {
                       hash,
                       handleParentState,
                       execCreatePoll: this.execCreatePoll
+                    }}
+                  />
+                );
+              case 2:
+                return (
+                  <CreatePollResult
+                    {...{
+                      pollTxStatus,
+                      id,
+                      handleParentState,
+                      resetPollState: this.resetPollState
                     }}
                   />
                 );
