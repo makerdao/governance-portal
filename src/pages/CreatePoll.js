@@ -127,6 +127,11 @@ const POLL_RULES =
   'The voter may select to vote for one of the poll options or they may elect to abstain from the poll entirely';
 const expr = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
 const URL_REGEX = new RegExp(expr);
+const pollTxState = {
+  LOADING: 'LOADING',
+  ERROR: 'ERROR',
+  SUCCESS: 'SUCCESS'
+};
 
 const converter = new Showdown.Converter({
   tables: true,
@@ -276,10 +281,10 @@ const INITIAL_POLL_STATE = {
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
   markdown: '',
   canBeDeployed: false,
+  pollTxStatus: null,
   hash: '',
   submitAttempted: false,
   selectedTab: 'write',
-  txSubmitted: false,
   id: null
 };
 
@@ -333,11 +338,20 @@ class CreatePoll extends Component {
   };
 
   execCreatePoll = async () => {
+    this.setState({ pollTxStatus: pollTxState.LOADING });
     const { start, end, hash, link } = this.state;
-    const pollId = await window.maker
-      .service('govPolling')
-      .createPoll(start.getTime(), end.getTime(), hash, link);
-    console.log(pollId);
+    try {
+      const id = await window.maker
+        .service('govPolling')
+        .createPoll(start.getTime(), end.getTime(), hash, link);
+      this.setState({
+        id,
+        pollTxStatus: pollTxState.SUCCESS
+      });
+    } catch (e) {
+      console.err(e);
+      this.setState({ pollTxStatus: pollTxState.ERROR });
+    }
   };
 
   render = () => {
@@ -352,6 +366,7 @@ class CreatePoll extends Component {
       content,
       markdown,
       canBeDeployed,
+      pollTxStatus,
       hash,
       submitAttempted,
       selectedTab
