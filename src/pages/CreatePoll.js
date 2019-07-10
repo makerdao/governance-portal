@@ -141,7 +141,8 @@ const CreatePollOverview = ({
   end,
   markdown,
   hash,
-  handleParentState
+  handleParentState,
+  execCreatePoll
 }) => (
   <Fragment>
     <SectionTitle>Poll - {title}</SectionTitle>
@@ -196,7 +197,7 @@ const CreatePollOverview = ({
     </SectionWrapper>
 
     <SectionWrapper css={{ marginTop: '20px' }}>
-      <Button onClick={() => null}>Create Poll</Button>
+      <Button onClick={execCreatePoll}>Create Poll</Button>
       <Box width="32px" />
       <Button
         variant="secondary"
@@ -331,6 +332,14 @@ class CreatePoll extends Component {
     });
   };
 
+  execCreatePoll = async () => {
+    const { start, end, hash, link } = this.state;
+    const pollId = await window.maker
+      .service('govPolling')
+      .createPoll(start.getTime(), end.getTime(), hash, link);
+    console.log(pollId);
+  };
+
   render = () => {
     const {
       title,
@@ -371,7 +380,6 @@ class CreatePoll extends Component {
     const timeError = submitAttempted && !timeValid;
 
     const handleParentState = newState => this.setState(newState);
-
     return (
       <RiseUp>
         <StyledTop>
@@ -386,7 +394,8 @@ class CreatePoll extends Component {
                 end,
                 markdown,
                 hash,
-                handleParentState
+                handleParentState,
+                execCreatePoll: this.execCreatePoll
               }}
             />
           ) : (
