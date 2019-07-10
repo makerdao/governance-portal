@@ -819,6 +819,13 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
+"@babel/runtime@^7.4.3":
+  version "7.5.4"
+  resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.5.4.tgz#cb7d1ad7c6d65676e66b47186577930465b5271b"
+  integrity sha512-Na84uwyImZZc3FKf4aUF1tysApzwf3p2yuFBIyBfbzT5glzKTdvYI4KVW4kcgjrzoGUjC7w3YyCHcJKaRxsr2Q==
+  dependencies:
+    regenerator-runtime "^0.13.2"
+
 "@babel/template@^7.1.0", "@babel/template@^7.1.2", "@babel/template@^7.2.2":
   version "7.2.2"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.2.2.tgz#005b3fdf0ed96e88041330379e0da9a708eb2907"
@@ -917,14 +924,14 @@
     babel-runtime "^6.26.0"
     ramda "^0.26.1"
 
-"@makerdao/dai-plugin-governance@^0.6.1":
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.6.1.tgz#86da3fa218ad3f4ff7bf3344f9f350c699f73c63"
-  integrity sha512-cKG/SsbTqY0dgni4hN/a7DpkNb0VwKRUS86zEE4TkTK+P+7zi7GRuso42F5b2xYNMBF37Dp9p+2fX3J5Qu+zqQ==
+"@makerdao/dai-plugin-governance@^0.7.0-alpha.0":
+  version "0.7.0-alpha.0"
+  resolved "https://registry.npmjs.org/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.7.0-alpha.0.tgz#a8ae2fb7e89ac2ce75cfb8cc570ab47eed9d471a"
+  integrity sha512-LG5l7ZbL5DMNnvoEo+vFI/Vd3ZLE5mAK5AcKyAdhG+D6DCdOHcqXtlGFy7DZO9UnXwVX2LlTIJ5dgVPwJ5hdTQ==
   dependencies:
-    "@makerdao/currency" "^0.9.3"
+    "@babel/runtime" "^7.4.3"
+    "@makerdao/currency" "^0.9.5"
     "@makerdao/services-core" "^0.9.5"
-    babel-runtime "^6.26.0"
     ramda "^0.25.0"
     web3-utils "^1.0.0-beta.36"
 
