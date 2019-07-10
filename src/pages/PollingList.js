@@ -16,7 +16,12 @@ import Vote from '../components/modals/Vote';
 import TillHat from '../components/TillHatMeta';
 import ExtendedLink from '../components/Onboarding/shared/ExtendedLink';
 import { Banner, BannerBody, BannerContent } from '../components/Banner';
+import Loader from '../components/Loader';
 import { poll } from 'ethers/utils/web';
+
+const Padding = styled.div`
+  margin-top: 20px;
+`;
 
 const riseUp = keyframes`
 0% {
@@ -44,10 +49,6 @@ const SubHeading = styled.p`
   opacity: ${({ disabled }) => (disabled ? 0.7 : 1)};
   flex: none;
   position: relative;
-`;
-
-const TopicSubHeading = styled(SubHeading)`
-  margin-bottom: 30px;
 `;
 
 const Body = styled.p`
@@ -142,10 +143,8 @@ class MigrationNotificationBanner extends React.Component {
         <Content>
           <BannerBody color="#FFFFFF">
             <BannerContent style={{ fontSize: '17px' }}>
-              {/* <Flex>
-                <NotificationIcon />
-              </Flex> */}
-              ROUTING TEST{' '}
+              We've made a critical update to the Maker Voting Contract. If
+              you've participated in any votes, please visit{' '}
               <BannerLink
                 href="https://migrate.makerdao.com/"
                 target="_blank"
@@ -179,6 +178,53 @@ class MigrationNotificationBanner extends React.Component {
   }
 }
 
+const fadeIn = keyframes`
+0% {
+  opacity: 0;
+}
+100% {
+  opacity: 1;
+}
+`;
+
+const FadeIn = styled.div`
+  animation: ${fadeIn} 0.75s forwards;
+`;
+const SmallMediumText = styled.p`
+  margin-top: 20px;
+  margin-bottom: 50px;
+  text-align: left;
+  line-height: 2;
+  font-size: 14px;
+  color: ${theme.text.dim_grey};
+`;
+const Black = styled.span`
+  color: ${theme.text.default};
+`;
+
+const Strong = styled(Black)`
+  color: ${theme.text.default};
+  font-weight: bold;
+`;
+
+export const VotingWeightBanner = ({ fetching, activeAccount }) => {
+  if (fetching || !activeAccount) {
+    return (
+      <Padding>
+        <Loader mt={34} mb={34} color="header" background="background" />
+      </Padding>
+    );
+  }
+  return (
+    <FadeIn>
+      <SmallMediumText>
+        <Strong>Connected wallet: </Strong>
+        <Black>{formatRound(activeAccount.mkrBalance, 4)} MKR</Black>{' '}
+      </SmallMediumText>
+    </FadeIn>
+  );
+};
+
 const PollingList = ({
   modalOpen,
   proposals,
@@ -188,13 +234,15 @@ const PollingList = ({
   signaling,
   hat,
   approvals,
-  polls
+  polls,
+  activeAccount
 }) => {
   polls.sort((a, b) => b.startTime - a.startTime);
+  console.log('*****activeAccount', activeAccount);
   return (
     <Fragment>
       <MigrationNotificationBanner />
-      <VoterStatus signaling={signaling} />
+      <VotingWeightBanner fetching={fetching} activeAccount={activeAccount} />
       <RiseUp key={polls.toString()}>
         {polls.map(poll => (
           <StyledCard key={poll.voteId}>
@@ -248,6 +296,9 @@ const reduxProps = (
   { proposals, accounts, hat, approvals, polls },
   { signaling }
 ) => {
+  const activeAccount = accounts.activeAccount
+    ? accounts.allAccounts.find(a => eq(a.address, accounts.activeAccount))
+    : null;
   return {
     hat,
     approvals,
@@ -255,7 +306,8 @@ const reduxProps = (
     canVote: activeCanVote({ accounts }),
     fetching: accounts.fetching,
     votingFor: getActiveVotingFor({ accounts }),
-    polls
+    polls,
+    activeAccount
   };
 };
 

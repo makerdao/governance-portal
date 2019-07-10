@@ -6,7 +6,6 @@ import { isNil, isEmpty } from 'ramda';
 import { toSlug } from '../utils/misc';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import VoterStatus from '../components/VoterStatus';
 import {
   activeCanVote,
   getActiveVotingFor,
@@ -14,9 +13,10 @@ import {
   getActiveAccount
 } from '../reducers/accounts';
 import NotFound from './NotFound';
+import { VotingWeightBanner } from './PollingList';
 import { modalOpen } from '../reducers/modal';
 import theme, { colors } from '../theme';
-import { cutMiddle } from '../utils/misc';
+import { cutMiddle, eq } from '../utils/misc';
 import ExternalLink from '../components/Onboarding/shared/ExternalLink';
 import { ethScanLink } from '../utils/ethereum';
 import Dropdown from '../components/Dropdown';
@@ -156,7 +156,6 @@ class VotingPanel extends React.Component {
     const { options } = poll;
 
     const selectedOption = this.state.selectedOption;
-    //TODO: fix dropdown resizing issue
     return (
       <React.Fragment>
         <VoteSelection>
@@ -229,13 +228,22 @@ class Polling extends React.Component {
 
   render() {
     const { votedPollOption } = this.state;
-    const { poll, isValidRoute, network } = this.props;
+    const {
+      poll,
+      isValidRoute,
+      network,
+      accountDataFetching,
+      activeAccount
+    } = this.props;
     const { discussion_link, rawData, multiHash } = poll;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
     console.log('this poll', poll);
     return (
       <RiseUp>
-        <VoterStatus />
+        <VotingWeightBanner
+          fetching={accountDataFetching}
+          activeAccount={activeAccount}
+        />
         <ContentWrapper>
           <DescriptionCard>
             <ReactMarkdown
@@ -353,7 +361,6 @@ class Polling extends React.Component {
 }
 
 const reduxProps = (state, { match }) => {
-  // TODO: move this back into parameters
   const { tally, accounts, metamask, polls } = state;
   const { pollSlug } = match.params;
 
@@ -361,10 +368,13 @@ const reduxProps = (state, { match }) => {
     return toSlug(voteId) === pollSlug;
   });
   const isValidRoute = poll && pollSlug;
+  const activeAccount = accounts.activeAccount
+    ? accounts.allAccounts.find(a => eq(a.address, accounts.activeAccount))
+    : null;
 
   return {
     poll,
-    activeAccount: accounts.activeAccount,
+    activeAccount,
     voteStateFetching: tally.fetching,
     voteState: tally.tally,
     accountDataFetching: accounts.fetching,
