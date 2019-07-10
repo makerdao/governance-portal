@@ -5,7 +5,7 @@ import closeImg from '../imgs/close-inline.svg';
 import theme from '../theme';
 import { generateIPFSHash } from '../utils/ipfs';
 import { calculateTimeSpan } from '../utils/misc';
-import { Input, Box } from '@makerdao/ui-components-core';
+import { Input, Box, Stepper } from '@makerdao/ui-components-core';
 import { Button } from '@makerdao/ui-components';
 import { copyToClipboard } from '../utils/misc';
 import DateTimePicker from 'react-datetime-picker';
@@ -55,13 +55,6 @@ const SectionWrapper = styled.div`
   display: flex;
   flex-direction: row;
   padding-bottom: 40px;
-`;
-
-const SectionTitle = styled.p`
-  font-size: 22px;
-  color: ${theme.text.darker_default};
-  line-height: normal;
-  font-weight: 500;
 `;
 
 const SectionText = styled.p`
@@ -141,7 +134,6 @@ const converter = new Showdown.Converter({
 });
 
 const CreatePollOverview = ({
-  title,
   start,
   end,
   markdown,
@@ -150,7 +142,6 @@ const CreatePollOverview = ({
   execCreatePoll
 }) => (
   <Fragment>
-    <SectionTitle>Poll - {title}</SectionTitle>
     <SectionText>
       {`This is an overview of the new poll. The polling window will be open from the ${start.toUTCString()} and will close on ${end.toUTCString()}. The markdown and hash below should be copied into the cms.`}
     </SectionText>
@@ -206,7 +197,7 @@ const CreatePollOverview = ({
       <Box width="32px" />
       <Button
         variant="secondary"
-        onClick={() => handleParentState({ canBeDeployed: false })}
+        onClick={() => handleParentState({ step: 0 })}
       >
         Edit
       </Button>
@@ -269,6 +260,173 @@ const CreatePollTime = ({ start, end, timeError, handleParentState }) => (
   </Fragment>
 );
 
+const CreatePollMarkdown = ({
+  state,
+  handlePollState,
+  addPollOption,
+  removePollOption,
+  handleParentState,
+  resetPollState,
+  parseMarkdown
+}) => {
+  const {
+    title,
+    summary,
+    start,
+    end,
+    link,
+    option,
+    choices,
+    content,
+    submitAttempted,
+    selectedTab
+  } = state;
+
+  const titleValid = !!title;
+  const summaryValid = !!summary;
+  const linkValid = link.match(URL_REGEX);
+  const choicesValid = choices.length > 1;
+  const contentValid = !!content;
+  const timeValid = start.getTime() >= DEFAULT_START.getTime();
+
+  const isValidSubmission =
+    titleValid &&
+    summaryValid &&
+    linkValid &&
+    choicesValid &&
+    contentValid &&
+    timeValid;
+
+  const titleError = submitAttempted && !titleValid;
+  const summaryError = submitAttempted && !summaryValid;
+  const linkError = submitAttempted && !linkValid;
+  const choicesError = submitAttempted && !choicesValid;
+  const contentError = submitAttempted && !contentValid;
+  const timeError = submitAttempted && !timeValid;
+
+  return (
+    <Fragment>
+      <SectionText>
+        This form will generate a formatted markdown file which can be copied
+        and included in the cms
+      </SectionText>
+      {[
+        {
+          title: 'Title',
+          placeholder: 'This will be the poll title',
+          value: title,
+          onChange: e => handlePollState(e, 'title'),
+          error: titleError,
+          failureMessage: titleError && 'Title is required'
+        },
+        {
+          title: 'Summary',
+          placeholder: 'Give a short description of what this poll is for',
+          value: summary,
+          onChange: e => handlePollState(e, 'summary'),
+          error: summaryError,
+          failureMessage: summaryError && 'Summary is required'
+        },
+        {
+          title: 'Discussion Link',
+          placeholder: 'Link to where this Polling proposal will be discussed',
+          value: link,
+          onChange: e => handlePollState(e, 'link'),
+          error: linkError,
+          failureMessage: linkError && 'Link must be a valid URL'
+        },
+        {
+          title: 'Vote Options',
+          placeholder: 'Add possible voting options',
+          value: option,
+          onChange: e => handlePollState(e, 'option'),
+          error: choicesError,
+          failureMessage: choicesError && 'Must be at least two voting options',
+          after: (
+            <Button
+              css={{ alignSelf: 'center', marginLeft: '10px' }}
+              width="190px"
+              onClick={addPollOption}
+            >
+              Add Option
+            </Button>
+          )
+        }
+      ].map((args, i) => (
+        <CreatePollInput key={i} {...args} />
+      ))}
+
+      <SectionWrapper>
+        <StyledBody />
+        <VoteOptionsGrid>
+          {choices.map((opt, idx) => (
+            <Card
+              key={idx}
+              css={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                width: '300px',
+                padding: '10px'
+              }}
+            >
+              <OptionText>
+                #{idx} - {opt}
+              </OptionText>
+              {idx > 0 && <CloseIcon onClick={() => removePollOption(idx)} />}
+            </Card>
+          ))}
+        </VoteOptionsGrid>
+      </SectionWrapper>
+
+      <CreatePollTime
+        {...{
+          start,
+          end,
+          timeError,
+          handleParentState
+        }}
+      />
+
+      <SectionWrapper>
+        <StyledBody>Proposal:</StyledBody>
+        <Box width="600px">
+          <ReactMde
+            value={content}
+            onChange={value => handleParentState({ content: value })}
+            selectedTab={selectedTab}
+            onTabChange={tab => handleParentState({ selectedTab: tab })}
+            generateMarkdownPreview={markdown =>
+              Promise.resolve(converter.makeHtml(markdown))
+            }
+          />
+          {contentError && <WarningText>Proposal is required</WarningText>}
+        </Box>
+      </SectionWrapper>
+
+      <SectionWrapper>
+        <Button
+          onClick={() => {
+            handleParentState({
+              submitAttempted: true
+            });
+            if (isValidSubmission) {
+              parseMarkdown();
+            }
+          }}
+        >
+          Create Markdown
+        </Button>
+        <Box width="32px" />
+        <Button variant="secondary" onClick={resetPollState}>
+          Reset Form
+        </Button>
+      </SectionWrapper>
+    </Fragment>
+  );
+};
+
 const INITIAL_POLL_STATE = {
   title: 'Mock poll',
   summary: 'This is not a real poll',
@@ -280,12 +438,12 @@ const INITIAL_POLL_STATE = {
   content:
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
   markdown: '',
-  canBeDeployed: false,
   pollTxStatus: null,
   hash: '',
   submitAttempted: false,
   selectedTab: 'write',
-  id: null
+  id: null,
+  step: 0
 };
 
 class CreatePoll extends Component {
@@ -298,7 +456,7 @@ class CreatePoll extends Component {
     });
   };
 
-  addPollVoteOption = () => {
+  addPollOption = () => {
     const { option, choices } = this.state;
     if (option.length) {
       this.setState({
@@ -319,7 +477,7 @@ class CreatePoll extends Component {
     this.setState(INITIAL_POLL_STATE);
   };
 
-  parseFormToMarkdownString = async () => {
+  parseMarkdown = async () => {
     const { title, summary, link, choices, content } = this.state;
     const choiceString = choices.reduce(
       (acc, opt, idx) => `${acc}   ${idx}: ${opt}\n`,
@@ -332,13 +490,16 @@ class CreatePoll extends Component {
     });
     this.setState({
       markdown: `${yml}${md}`,
-      canBeDeployed: true,
+      step: 1,
       hash: ipfsHash
     });
   };
 
   execCreatePoll = async () => {
-    this.setState({ pollTxStatus: pollTxState.LOADING });
+    this.setState({
+      step: 2,
+      pollTxStatus: pollTxState.LOADING
+    });
     const { start, end, hash, link } = this.state;
     try {
       const id = await window.maker
@@ -355,193 +516,59 @@ class CreatePoll extends Component {
   };
 
   render = () => {
-    const {
-      title,
-      summary,
-      start,
-      end,
-      link,
-      option,
-      choices,
-      content,
-      markdown,
-      canBeDeployed,
-      pollTxStatus,
-      hash,
-      submitAttempted,
-      selectedTab
-    } = this.state;
-
-    const titleValid = !!title;
-    const summaryValid = !!summary;
-    const linkValid = link.match(URL_REGEX);
-    const choicesValid = choices.length > 1;
-    const contentValid = !!content;
-    const timeValid = start.getTime() >= DEFAULT_START.getTime();
-
-    const isValidSubmission =
-      titleValid &&
-      summaryValid &&
-      linkValid &&
-      choicesValid &&
-      contentValid &&
-      timeValid;
-
-    const titleError = submitAttempted && !titleValid;
-    const summaryError = submitAttempted && !summaryValid;
-    const linkError = submitAttempted && !linkValid;
-    const choicesError = submitAttempted && !choicesValid;
-    const contentError = submitAttempted && !contentValid;
-    const timeError = submitAttempted && !timeValid;
+    const { title, start, end, markdown, hash, step } = this.state;
 
     const handleParentState = newState => this.setState(newState);
+
     return (
       <RiseUp>
         <StyledTop>
           <StyledTitle>Create a new Polling proposal</StyledTitle>
         </StyledTop>
         <ContentWrapper>
-          {canBeDeployed ? (
-            <CreatePollOverview
-              {...{
-                title,
-                start,
-                end,
-                markdown,
-                hash,
-                handleParentState,
-                execCreatePoll: this.execCreatePoll
-              }}
-            />
-          ) : (
-            <Fragment>
-              <SectionTitle>Poll Details</SectionTitle>
-              <SectionText>
-                This form will generate a formatted markdown file which can be
-                copied and included in the cms
-              </SectionText>
-              {[
-                {
-                  title: 'Title',
-                  placeholder: 'This will be the poll title',
-                  value: title,
-                  onChange: e => this.handlePollState(e, 'title'),
-                  error: titleError,
-                  failureMessage: titleError && 'Title is required'
-                },
-                {
-                  title: 'Summary',
-                  placeholder:
-                    'Give a short description of what this poll is for',
-                  value: summary,
-                  onChange: e => this.handlePollState(e, 'summary'),
-                  error: summaryError,
-                  failureMessage: summaryError && 'Summary is required'
-                },
-                {
-                  title: 'Discussion Link',
-                  placeholder:
-                    'Link to where this Polling proposal will be discussed',
-                  value: link,
-                  onChange: e => this.handlePollState(e, 'link'),
-                  error: linkError,
-                  failureMessage: linkError && 'Link must be a valid URL'
-                },
-                {
-                  title: 'Vote Options',
-                  placeholder: 'Add possible voting options',
-                  value: option,
-                  onChange: e => this.handlePollState(e, 'option'),
-                  error: choicesError,
-                  failureMessage:
-                    choicesError && 'Must be at least two voting options',
-                  after: (
-                    <Button
-                      css={{ alignSelf: 'center', marginLeft: '10px' }}
-                      width="190px"
-                      onClick={this.addPollVoteOption}
-                    >
-                      Add Option
-                    </Button>
-                  )
-                }
-              ].map((args, i) => (
-                <CreatePollInput key={i} {...args} />
-              ))}
-
-              <SectionWrapper>
-                <StyledBody />
-                <VoteOptionsGrid>
-                  {choices.map((opt, idx) => (
-                    <Card
-                      key={idx}
-                      css={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        width: '300px',
-                        padding: '10px'
-                      }}
-                    >
-                      <OptionText>
-                        #{idx} - {opt}
-                      </OptionText>
-                      {idx > 0 && (
-                        <CloseIcon onClick={() => this.removePollOption(idx)} />
-                      )}
-                    </Card>
-                  ))}
-                </VoteOptionsGrid>
-              </SectionWrapper>
-
-              <CreatePollTime
-                {...{
-                  start,
-                  end,
-                  timeError,
-                  handleParentState
-                }}
-              />
-
-              <SectionWrapper>
-                <StyledBody>Proposal:</StyledBody>
-                <Box width="600px">
-                  <ReactMde
-                    value={content}
-                    onChange={value => this.setState({ content: value })}
-                    selectedTab={selectedTab}
-                    onTabChange={tab => this.setState({ selectedTab: tab })}
-                    generateMarkdownPreview={markdown =>
-                      Promise.resolve(converter.makeHtml(markdown))
-                    }
+          <Stepper
+            css={{ paddingBottom: '30px' }}
+            selected={step}
+            steps={[
+              'Create Poll Markdown',
+              'Deploy Poll Contract',
+              'Poll Result'
+            ]}
+          />
+          {(() => {
+            switch (step) {
+              case 0:
+                return (
+                  <CreatePollMarkdown
+                    {...{
+                      state: this.state,
+                      handlePollState: this.handlePollState,
+                      addPollOption: this.addPollOption,
+                      removePollOption: this.removePollOption,
+                      handleParentState,
+                      resetPollState: this.resetPollState,
+                      parseMarkdown: this.parseMarkdown
+                    }}
                   />
-                  {contentError && (
-                    <WarningText>Proposal is required</WarningText>
-                  )}
-                </Box>
-              </SectionWrapper>
-
-              <SectionWrapper>
-                <Button
-                  onClick={() => {
-                    this.setState({
-                      submitAttempted: true
-                    });
-                    if (isValidSubmission) {
-                      this.parseFormToMarkdownString();
-                    }
-                  }}
-                >
-                  Create Markdown
-                </Button>
-                <Box width="32px" />
-                <Button variant="secondary" onClick={this.resetPollState}>
-                  Reset Form
-                </Button>
-              </SectionWrapper>
-            </Fragment>
-          )}
+                );
+              case 1:
+                return (
+                  <CreatePollOverview
+                    {...{
+                      title,
+                      start,
+                      end,
+                      markdown,
+                      hash,
+                      handleParentState,
+                      execCreatePoll: this.execCreatePoll
+                    }}
+                  />
+                );
+              default:
+                return null;
+            }
+          })()}
         </ContentWrapper>
       </RiseUp>
     );
