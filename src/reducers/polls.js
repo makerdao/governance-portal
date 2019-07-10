@@ -25,8 +25,8 @@ const mockParsedAllPollsData = [
     pollId: '2',
     voteId: voteId2,
     blockCreated: 123456789,
-    startTime: new Date('2019-07-05'),
-    endTime: new Date('2019-07-10'),
+    startTime: new Date('2019-07-09'),
+    endTime: new Date('2019-07-16'),
     multiHash: 'QmbL3A3pz8j2NoWD18nt1PuKxqYh7Kk28jQK56nJaMcqcd',
     source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2'
   }
@@ -125,7 +125,7 @@ const mockHistory2 = {
   ]
 };
 
-const mockFetchCmsData = async voteId => {
+const mockFetchPollFromCms = async voteId => {
   // fetch the raw YAML & transform to POJO
   // format options as array of type: {id, name, percentage(vote breakdown)}
   // for now we mock:
@@ -179,12 +179,13 @@ const getAllWhiteListedPolls = async () => {
 
 const fetchPollFromCms = async voteId => {
   const cmsLocalUrl = 'http://0.0.0.0:3000';
-  const cmsRemoteUrl = 'https://elb.cms-gov.makerfoundation.com';
+  const cmsRemoteUrl = 'https://cms-gov.makerfoundation.com';
 
   const cmsPath = 'content/governance-polling';
   const oldPath = 'content/governance-dashboard';
 
   const cmsUrl = `${cmsRemoteUrl}/${oldPath}?voteId=${voteId}`;
+  console.log('***cmsUrl', cmsUrl);
   const res = await fetch(cmsUrl);
   await check(res);
   const json = await res.json();
@@ -245,7 +246,8 @@ export const pollsInit = () => async dispatch => {
     for (const poll of polls) {
       // TODO: uncomment this when CORS issue in CMS is resolved
       // const cmsData = await fetchPollFromCms(poll.voteId);
-      const cmsData = await mockFetchCmsData(poll.voteId);
+      const cmsData = await mockFetchPollFromCms(poll.voteId);
+      console.log('***CMS data', cmsData);
       const cmsPoll = formatYamlToJson(cmsData);
 
       const pollData = { ...poll, ...cmsPoll };
