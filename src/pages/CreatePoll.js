@@ -9,6 +9,7 @@ import { Input, Box, Stepper } from '@makerdao/ui-components-core';
 import { Button } from '@makerdao/ui-components';
 import { copyToClipboard } from '../utils/misc';
 import DateTimePicker from 'react-datetime-picker';
+import Loader from '../components/Loader';
 import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
 import 'react-mde/lib/styles/css/react-mde-all.css';
@@ -141,78 +142,6 @@ const converter = new Showdown.Converter({
   tasklists: true
 });
 
-const CreatePollOverview = ({
-  start,
-  end,
-  markdown,
-  hash,
-  handleParentState,
-  execCreatePoll
-}) => (
-  <Fragment>
-    <SectionText>
-      {`This is an overview of the new poll. The polling window will be open from the ${start.toUTCString()} and will close on ${end.toUTCString()}. The markdown and hash below should be copied into the cms.`}
-    </SectionText>
-
-    <SectionWrapper>
-      <Box>
-        <StyledBody>Markdown:</StyledBody>
-        <Button
-          css={{ marginTop: '10px' }}
-          variant="secondary"
-          onClick={() => copyToClipboard(markdown)}
-        >
-          Copy
-        </Button>
-      </Box>
-      <Code
-        css={{
-          width: '800px',
-          overflow: 'auto',
-          cursor: 'pointer'
-        }}
-        onClick={() => copyToClipboard(markdown)}
-      >
-        {markdown}
-      </Code>
-    </SectionWrapper>
-
-    <SectionWrapper>
-      <Box>
-        <StyledBody>Hash:</StyledBody>
-        <Button
-          css={{ marginTop: '10px' }}
-          variant="secondary"
-          onClick={() => copyToClipboard(hash)}
-        >
-          Copy
-        </Button>
-      </Box>
-      <SectionText
-        css={{
-          width: '800px',
-          cursor: 'pointer',
-          alignSelf: 'center'
-        }}
-        onClick={() => copyToClipboard(hash)}
-      >
-        {hash}
-      </SectionText>
-    </SectionWrapper>
-
-    <SectionWrapper css={{ marginTop: '20px' }}>
-      <Button onClick={execCreatePoll}>Create Poll</Button>
-      <Box width="32px" />
-      <Button
-        variant="secondary"
-        onClick={() => handleParentState({ step: 0 })}
-      >
-        Edit
-      </Button>
-    </SectionWrapper>
-  </Fragment>
-);
-
 const CreatePollInput = ({ title, ...inputProps }) => (
   <Fragment>
     <SectionWrapper>
@@ -221,6 +150,107 @@ const CreatePollInput = ({ title, ...inputProps }) => (
     </SectionWrapper>
   </Fragment>
 );
+
+const CreatePollOverview = ({
+  start,
+  end,
+  markdown,
+  hash,
+  url,
+  submitAttempted,
+  handleParentState,
+  handlePollState,
+  execCreatePoll
+}) => {
+  const urlValid = url.match(URL_REGEX);
+  const urlError = submitAttempted && !urlValid;
+  return (
+    <Fragment>
+      <SectionText>
+        {`This is an overview of the new poll. The polling window will be open from the ${start.toUTCString()} and will close on ${end.toUTCString()}.`}
+      </SectionText>
+      <SectionText>
+        The markdown and hash below should be copied into the cms and a the
+        subsequent poll's content url should be retrieved and pasted in the
+        input field below.
+      </SectionText>
+      <SectionWrapper>
+        <Box>
+          <StyledBody>Markdown:</StyledBody>
+          <Button
+            css={{ marginTop: '10px' }}
+            variant="secondary"
+            onClick={() => copyToClipboard(markdown)}
+          >
+            Copy
+          </Button>
+        </Box>
+        <Code
+          css={{
+            width: '800px',
+            overflow: 'auto',
+            cursor: 'pointer'
+          }}
+          onClick={() => copyToClipboard(markdown)}
+        >
+          {markdown}
+        </Code>
+      </SectionWrapper>
+
+      <SectionWrapper>
+        <StyledBody>Hash:</StyledBody>
+        <SectionText
+          css={{
+            width: '600px',
+            cursor: 'pointer'
+          }}
+          onClick={() => copyToClipboard(hash)}
+        >
+          {hash}
+        </SectionText>
+        <Button
+          variant="secondary"
+          onClick={() => copyToClipboard(hash)}
+          css={{ width: '200px' }}
+        >
+          Copy
+        </Button>
+      </SectionWrapper>
+
+      <CreatePollInput
+        {...{
+          title: 'Poll URL',
+          placeholder: 'The URL from which the poll can be found',
+          value: url,
+          onChange: e => handlePollState(e, 'url'),
+          error: urlError,
+          failureMessage: urlError && 'The Poll URL must be a valid url',
+          width: '800px'
+        }}
+      />
+
+      <SectionWrapper css={{ marginTop: '20px' }}>
+        <Button
+          onClick={() => {
+            handleParentState({ submitAttempted: true });
+            if (urlValid) {
+              execCreatePoll();
+            }
+          }}
+        >
+          Create Poll
+        </Button>
+        <Box width="32px" />
+        <Button
+          variant="secondary"
+          onClick={() => handleParentState({ step: 0 })}
+        >
+          Edit
+        </Button>
+      </SectionWrapper>
+    </Fragment>
+  );
+};
 
 const CreatePollTime = ({ start, end, timeError, handleParentState }) => (
   <Fragment>
@@ -439,7 +469,8 @@ const CreatePollResult = ({
   pollTxStatus,
   id,
   handleParentState,
-  resetPollState
+  resetPollState,
+  title
 }) => {
   const { LOADING, SUCCESS, ERROR } = pollTxState;
   switch (pollTxStatus) {
@@ -447,12 +478,22 @@ const CreatePollResult = ({
       return (
         <Fragment>
           <ResultTitle>Transaction is in progress...</ResultTitle>
+          <Box alignSelf="center" mt="40px">
+            <Loader size={40} />
+          </Box>
         </Fragment>
       );
     case SUCCESS:
       return (
         <Fragment>
-          <ResultTitle>Poll #{id} created!</ResultTitle>
+          <ResultTitle>
+            Poll #{id} - {title} created!
+          </ResultTitle>
+          <SectionWrapper>
+            <SectionText css={{ textAlign: 'center', marginTop: '30px' }}>
+              The Poll ID should now be copied into the cms.
+            </SectionText>
+          </SectionWrapper>
           <SectionWrapper css={{ marginTop: '20px' }}>
             <Button onClick={() => copyToClipboard(id)} variant="secondary">
               Copy Poll ID
@@ -498,6 +539,7 @@ const INITIAL_POLL_STATE = {
   submitAttempted: false,
   selectedTab: 'write',
   id: null,
+  url: '',
   step: 0
 };
 
@@ -546,6 +588,7 @@ class CreatePoll extends Component {
     this.setState({
       markdown: `${yml}${md}`,
       step: 1,
+      submitAttempted: false,
       hash: ipfsHash
     });
   };
@@ -555,11 +598,11 @@ class CreatePoll extends Component {
       step: 2,
       pollTxStatus: pollTxState.LOADING
     });
-    const { start, end, hash, link } = this.state;
+    const { start, end, hash, url } = this.state;
     try {
       const id = await window.maker
         .service('govPolling')
-        .createPoll(start.getTime(), end.getTime(), hash, link);
+        .createPoll(start.getTime(), end.getTime(), hash, url);
       this.setState({
         id,
         pollTxStatus: pollTxState.SUCCESS
@@ -578,6 +621,8 @@ class CreatePoll extends Component {
       markdown,
       pollTxStatus,
       hash,
+      url,
+      submitAttempted,
       id,
       step
     } = this.state;
@@ -624,7 +669,10 @@ class CreatePoll extends Component {
                       end,
                       markdown,
                       hash,
+                      url,
+                      submitAttempted,
                       handleParentState,
+                      handlePollState: this.handlePollState,
                       execCreatePoll: this.execCreatePoll
                     }}
                   />
@@ -635,6 +683,7 @@ class CreatePoll extends Component {
                     {...{
                       pollTxStatus,
                       id,
+                      title,
                       handleParentState,
                       resetPollState: this.resetPollState
                     }}
