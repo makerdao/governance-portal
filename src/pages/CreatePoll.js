@@ -123,7 +123,8 @@ const WarningText = styled.p`
 const ABSTAIN = 'Abstain';
 const DEFAULT_START = new Date();
 const DEFAULT_END = new Date(DEFAULT_START.getTime() + 7 * 24 * 60 * 60 * 1000);
-
+const POLL_RULES =
+  'The voter may select to vote for one of the poll options or they may elect to abstain from the poll entirely';
 const expr = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
 const URL_REGEX = new RegExp(expr);
 
@@ -312,7 +313,7 @@ class CreatePoll extends Component {
       (acc, opt, idx) => `${acc}   ${idx}: ${opt}\n`,
       ''
     );
-    const yml = `---\ntitle: ${title}\nsummary: ${summary}\ndiscussion_link: ${link}\noptions:\n${choiceString}---\n`;
+    const yml = `---\ntitle: ${title}\nsummary: ${summary}\ndiscussion_link: ${link}\npoll_rules: ${POLL_RULES}\noptions:\n${choiceString}---\n`;
     const md = `# Poll: ${title}\n\n${content}`;
     const ipfsHash = await generateIPFSHash(`${yml}${md}`, {
       encoding: 'ascii'
