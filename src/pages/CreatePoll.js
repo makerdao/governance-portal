@@ -264,19 +264,22 @@ const CreatePollTime = ({ start, end, timeError, handleParentState }) => (
 );
 
 const INITIAL_POLL_STATE = {
-  title: '',
-  summary: '',
+  title: 'Mock poll',
+  summary: 'This is not a real poll',
   start: DEFAULT_START,
   end: DEFAULT_END,
-  link: '',
+  link: 'https://mock-polling-url.com/discuss-poll',
   option: '',
-  choices: [ABSTAIN],
-  content: '',
+  choices: [ABSTAIN, 'Vote1', 'Vote2'],
+  content:
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
   markdown: '',
   canBeDeployed: false,
   hash: '',
   submitAttempted: false,
-  selectedTab: 'write'
+  selectedTab: 'write',
+  txSubmitted: false,
+  id: null
 };
 
 class CreatePoll extends Component {
