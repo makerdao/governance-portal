@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import theme from '../theme';
 import clock from '../imgs/clock.svg';
 import smallClock from '../imgs/clock-small.svg';
+import smallGreyClock from '../imgs/clock-small-grey.svg';
 
 const Wrapper = styled.div`
   display: flex;
@@ -16,7 +17,7 @@ const Wrapper = styled.div`
 
 const WrapperSmall = styled.div`
   display: flex;
-  color: ${theme.text.darker_default};
+  color: ${theme.text.alt};
   font-size: ${({ theme, fs }) => (fs ? `${fs}px` : theme.fonts.size.medium)};
   font-weight: 300;
   align-items: center;
@@ -35,7 +36,7 @@ const SmallClock = styled.div`
   margin-right: 0.5em;
   width: 20px;
   height: 20px;
-  background: url(${smallClock}) no-repeat;
+  background: url(${smallGreyClock}) no-repeat;
 `;
 
 const Bold = styled.strong`
@@ -87,22 +88,20 @@ class Timer extends Component {
     return (
       <div>
         Time left to vote{' '}
-        <Bold>
-          {days > 0 && (
-            <Fragment>
-              {days} day
-              {Sday}{' '}
-            </Fragment>
-          )}
-          {hours > 0 && (
-            <Fragment>
-              {hours} hour
-              {Shour}{' '}
-            </Fragment>
-          )}
-          {minutes} minute
-          {Sminute}
-        </Bold>
+        {days > 0 && (
+          <Fragment>
+            {days} day
+            {Sday}{' '}
+          </Fragment>
+        )}
+        {hours > 0 && (
+          <Fragment>
+            {hours} hour
+            {Shour}{' '}
+          </Fragment>
+        )}
+        {minutes} minute
+        {Sminute}
       </div>
     );
   }

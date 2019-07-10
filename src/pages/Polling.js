@@ -197,7 +197,7 @@ const downloadRawPollData = (multiHash, rawData) => {
   const file = new Blob([rawData], { type: 'text/plain' });
   element.href = URL.createObjectURL(file);
   element.download = `${multiHash}.txt`;
-  document.body.appendChild(element); // Required for this to work in FireFox
+  document.body.appendChild(element);
   element.click();
 };
 

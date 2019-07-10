@@ -70,11 +70,10 @@ const ProposalDetails = styled.div`
 const StyledCard = styled(Card)`
   margin-bottom: 30px;
 `;
-const StyledTopicCard = styled(Card)`
-  padding-top: 30px;
-  padding-left: 30px;
-  padding-right: 30px;
-  margin-bottom: 50px;
+const StyledButton = styled(Button)`
+  position: absolute;
+  top: 16%;
+  right: 2%;
 `;
 
 const Tag = styled.p`
@@ -215,26 +214,28 @@ const PollingList = ({
                   small
                   mb="-6"
                 />
+                <div>
+                  {poll.active ? (
+                    <Fragment>
+                      <ExtendedLink
+                        to={`/polling-proposal/${toSlug(poll.voteId)}`}
+                      >
+                        <StyledButton>Vote on Proposal</StyledButton>
+                      </ExtendedLink>
+                    </Fragment>
+                  ) : (
+                    <Fragment>
+                      <ExtendedLink
+                        to={`/polling-proposal/${toSlug(poll.voteId)}`}
+                      >
+                        <StyledButton variant="secondary">
+                          See Details
+                        </StyledButton>
+                      </ExtendedLink>
+                    </Fragment>
+                  )}
+                </div>
               </ProposalDetails>
-              <div>
-                {poll.active ? (
-                  <Fragment>
-                    <ExtendedLink
-                      to={`/polling-proposal/${toSlug(poll.voteId)}`}
-                    >
-                      <Button>Vote on Proposal</Button>
-                    </ExtendedLink>
-                  </Fragment>
-                ) : (
-                  <Fragment>
-                    <ExtendedLink
-                      to={`/polling-proposal/${toSlug(poll.voteId)}`}
-                    >
-                      <Button variant="secondary">See Details</Button>
-                    </ExtendedLink>
-                  </Fragment>
-                )}
-              </div>
             </Card.Element>
           </StyledCard>
         ))}
