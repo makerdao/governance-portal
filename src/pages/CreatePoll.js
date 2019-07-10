@@ -5,7 +5,7 @@ import closeImg from '../imgs/close-inline.svg';
 import theme from '../theme';
 import { generateIPFSHash } from '../utils/ipfs';
 import { calculateTimeSpan } from '../utils/misc';
-import { Input, Box, Flex } from '@makerdao/ui-components-core';
+import { Input, Box } from '@makerdao/ui-components-core';
 import { Button } from '@makerdao/ui-components';
 import { copyToClipboard } from '../utils/misc';
 import DateTimePicker from 'react-datetime-picker';
@@ -148,8 +148,18 @@ const CreatePollOverview = ({
     <SectionText>
       {`This is an overview of the new poll. The polling window will be open from the ${start.toUTCString()} and will close on ${end.toUTCString()}. The markdown and hash below should be copied into the cms.`}
     </SectionText>
+
     <SectionWrapper>
-      <StyledBody>Markdown:</StyledBody>
+      <Box>
+        <StyledBody>Markdown:</StyledBody>
+        <Button
+          css={{ marginTop: '10px' }}
+          variant="secondary"
+          onClick={() => copyToClipboard(markdown)}
+        >
+          Copy
+        </Button>
+      </Box>
       <Code
         css={{
           width: '800px',
@@ -160,36 +170,29 @@ const CreatePollOverview = ({
       >
         {markdown}
       </Code>
-      <Flex css={{ paddingLeft: '10px' }}>
+    </SectionWrapper>
+
+    <SectionWrapper>
+      <Box>
+        <StyledBody>Hash:</StyledBody>
         <Button
+          css={{ marginTop: '10px' }}
           variant="secondary"
-          css={{ alignSelf: 'flex-end' }}
-          onClick={() => copyToClipboard(markdown)}
+          onClick={() => copyToClipboard(hash)}
         >
           Copy
         </Button>
-      </Flex>
-    </SectionWrapper>
-    <SectionWrapper>
-      <StyledBody>Hash:</StyledBody>
+      </Box>
       <SectionText
         css={{
           width: '800px',
-          cursor: 'pointer'
+          cursor: 'pointer',
+          alignSelf: 'center'
         }}
         onClick={() => copyToClipboard(hash)}
       >
         {hash}
       </SectionText>
-      <Box
-        css={{
-          paddingLeft: '10px'
-        }}
-      >
-        <Button variant="secondary" onClick={() => copyToClipboard(hash)}>
-          Copy
-        </Button>
-      </Box>
     </SectionWrapper>
 
     <SectionWrapper css={{ marginTop: '20px' }}>
