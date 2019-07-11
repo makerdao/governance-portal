@@ -56,15 +56,14 @@ const POLL_RULES =
   'The voter may select to vote for one of the poll options or they may elect to abstain from the poll entirely';
 
 const INITIAL_POLL_STATE = {
-  title: 'Mock poll',
-  summary: 'This is not a real poll',
+  title: '',
+  summary: '',
   start: POLL_DEFAULT_START,
   end: POLL_DEFAULT_END,
-  link: 'https://mock-polling-url.com/discuss-poll',
+  link: '',
   option: '',
-  choices: [ABSTAIN, 'Vote1', 'Vote2'],
-  content:
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
+  choices: [ABSTAIN],
+  content: '',
   markdown: '',
   pollTxStatus: null,
   hash: '',
