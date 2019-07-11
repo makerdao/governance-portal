@@ -167,7 +167,8 @@ const CreatePollOverview = ({
   return (
     <Fragment>
       <SectionText>
-        {`This is an overview of the new poll. The polling window will be open from the ${start.toUTCString()} and will close on ${end.toUTCString()}.`}
+        This is an overview of the new poll. The polling window will be open
+        from the {start.toUTCString()} and will close on {end.toUTCString()}.
       </SectionText>
       <SectionText>
         The markdown and hash below should be copied into the cms and a the
