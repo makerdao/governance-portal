@@ -1,14 +1,12 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Card from '../components/Card';
 import theme from '../theme';
 import { generateIPFSHash } from '../utils/ipfs';
-import { Box, Stepper } from '@makerdao/ui-components-core';
-import { Button } from '@makerdao/ui-components';
-import { copyToClipboard } from '../utils/misc';
-import Loader from '../components/Loader';
+import { Stepper } from '@makerdao/ui-components-core';
 import CreatePollOverview from '../components/CreatePoll/CreatePollOverview';
 import CreatePollMarkdown from '../components/CreatePoll/CreatePollMarkdown';
+import CreatePollResult from '../components/CreatePoll/CreatePollResult';
 
 const DEFAULT_START = new Date();
 const DEFAULT_END = new Date(DEFAULT_START.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -51,29 +49,6 @@ const ContentWrapper = styled(Card)`
   padding: 80px 100px;
 `;
 
-const SectionWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  padding-bottom: 40px;
-`;
-
-const ResultTitle = styled.p`
-  text-align: center;
-  line-height: 35px;
-  margin-top: 20px;
-  font-size: 22px;
-  color: #546978;
-`;
-
-const SectionText = styled.p`
-  text-align: left;
-  line-height: 30px;
-  margin-top: 5px;
-  font-size: 17px;
-  color: #546978;
-  margin-bottom: 20px;
-`;
-
 const ABSTAIN = 'Abstain';
 const POLL_RULES =
   'The voter may select to vote for one of the poll options or they may elect to abstain from the poll entirely';
@@ -81,64 +56,6 @@ const pollTxState = {
   LOADING: 'LOADING',
   ERROR: 'ERROR',
   SUCCESS: 'SUCCESS'
-};
-
-const CreatePollResult = ({
-  pollTxStatus,
-  id,
-  handleParentState,
-  resetPollState,
-  title
-}) => {
-  const { LOADING, SUCCESS, ERROR } = pollTxState;
-  switch (pollTxStatus) {
-    case LOADING:
-      return (
-        <Fragment>
-          <ResultTitle>Transaction is in progress...</ResultTitle>
-          <Box alignSelf="center" mt="40px">
-            <Loader size={40} />
-          </Box>
-        </Fragment>
-      );
-    case SUCCESS:
-      return (
-        <Fragment>
-          <ResultTitle>
-            Poll #{id} - {title} created!
-          </ResultTitle>
-          <SectionWrapper>
-            <SectionText css={{ textAlign: 'center', marginTop: '30px' }}>
-              The Poll ID should now be copied into the cms.
-            </SectionText>
-          </SectionWrapper>
-          <SectionWrapper css={{ marginTop: '20px' }}>
-            <Button onClick={() => copyToClipboard(id)} variant="secondary">
-              Copy Poll ID
-            </Button>
-            <Box width="32px" />
-            <Button variant="secondary" onClick={resetPollState}>
-              Create New Poll
-            </Button>
-          </SectionWrapper>
-        </Fragment>
-      );
-    case ERROR:
-      return (
-        <Fragment>
-          <ResultTitle>Something is not quite right...</ResultTitle>
-          <Button
-            css={{ marginTop: '30px' }}
-            variant="secondary"
-            onClick={() => handleParentState({ step: 1 })}
-          >
-            Back
-          </Button>
-        </Fragment>
-      );
-    default:
-      return null;
-  }
 };
 
 const INITIAL_POLL_STATE = {
