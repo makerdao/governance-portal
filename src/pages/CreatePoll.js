@@ -633,8 +633,6 @@ class CreatePoll extends Component {
       step
     } = this.state;
 
-    const handleParentState = newState => this.setState(newState);
-
     return (
       <RiseUp>
         <StyledTop>
@@ -655,42 +653,36 @@ class CreatePoll extends Component {
               case 0:
                 return (
                   <CreatePollMarkdown
-                    {...{
-                      parentState: this.state,
-                      addPollOption: this.addPollOption,
-                      removePollOption: this.removePollOption,
-                      handleParentState,
-                      resetPollState: this.resetPollState,
-                      parseMarkdown: this.parseMarkdown
-                    }}
+                    parentState={this.state}
+                    addPollOption={this.addPollOption}
+                    removePollOption={this.removePollOption}
+                    handleParentState={newState => this.setState(newState)}
+                    resetPollState={this.resetPollState}
+                    parseMarkdown={this.parseMarkdown}
                   />
                 );
               case 1:
                 return (
                   <CreatePollOverview
-                    {...{
-                      title,
-                      start,
-                      end,
-                      markdown,
-                      hash,
-                      url,
-                      submitAttempted,
-                      handleParentState,
-                      execCreatePoll: this.execCreatePoll
-                    }}
+                    title={title}
+                    start={start}
+                    end={end}
+                    markdown={markdown}
+                    hash={hash}
+                    url={url}
+                    submitAttempted={submitAttempted}
+                    handleParentState={newState => this.setState(newState)}
+                    execCreatePoll={this.execCreatePoll}
                   />
                 );
               case 2:
                 return (
                   <CreatePollResult
-                    {...{
-                      pollTxStatus,
-                      id,
-                      title,
-                      handleParentState,
-                      resetPollState: this.resetPollState
-                    }}
+                    pollTxStatus={pollTxStatus}
+                    id={id}
+                    title={title}
+                    handleParentState={newState => this.setState(newState)}
+                    resetPollState={this.resetPollState}
                   />
                 );
               default:
