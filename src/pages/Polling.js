@@ -219,6 +219,8 @@ class Polling extends React.Component {
   getVotedPollOption = async () => {
     //TODO: how to handle this situation when activeAccount is not
     // in props yet? Trigger an async call from render?
+
+    // make a fetching action & when it resloves, dispatch action to update votingFor?
     const optionId = await getPollOptionVotingFor(
       this.props.poll.pollId,
       this.props.activeAccount
@@ -364,8 +366,8 @@ const reduxProps = (state, { match }) => {
   const { tally, accounts, metamask, polls } = state;
   const { pollSlug } = match.params;
 
-  const poll = polls.find(({ voteId }) => {
-    return toSlug(voteId) === pollSlug;
+  const poll = polls.find(({ pollId }) => {
+    return toSlug(pollId) === pollSlug;
   });
   const isValidRoute = poll && pollSlug;
   const activeAccount = accounts.activeAccount

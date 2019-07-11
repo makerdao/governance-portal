@@ -5,15 +5,11 @@ import { getWinningProp, check } from './proposals';
 
 // Mock Poll Data ----------------------------------------------
 
-const voteId1 = 'QmPLpuz1VMtAapZJCb84NtRRUHVFsxGiX6kdb1ewsXxSSi';
-const voteId2 = 'QmbL3A3pz8j2NoWD18nt1PuKxqYh7Kk28jQK56nJaMcqcd';
-
 // Mocked poll data from the SDK/plugin
 const mockParsedAllPollsData = [
   {
     creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
     pollId: '1',
-    voteId: voteId1,
     blockCreated: 123456789,
     startTime: new Date('2019-06-25'),
     endTime: new Date('2019-06-30'),
@@ -23,11 +19,10 @@ const mockParsedAllPollsData = [
   {
     creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
     pollId: '2',
-    voteId: voteId2,
     blockCreated: 123456789,
     startTime: new Date('2019-07-09'),
     endTime: new Date('2019-07-16'),
-    multiHash: 'QmbL3A3pz8j2NoWD18nt1PuKxqYh7Kk28jQK56nJaMcqcd',
+    multiHash: 'QmPLpuz1VMtAapZJCb84NtRRUHVFsxGiX6kdb1ewsXxSSi',
     source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2'
   }
 ];
@@ -125,14 +120,14 @@ const mockHistory2 = {
   ]
 };
 
-const mockFetchPollFromCms = async voteId => {
+const mockFetchPollFromCms = async pollId => {
   // fetch the raw YAML & transform to POJO
   // format options as array of type: {id, name, percentage(vote breakdown)}
   // for now we mock:
-  switch (voteId) {
-    case voteId1:
+  switch (pollId) {
+    case '1':
       return mockPollMd1;
-    case voteId2:
+    case '2':
       return mockPollMd2;
     default:
       break;
@@ -177,14 +172,14 @@ const getAllWhiteListedPolls = async () => {
   return mockParsedAllPollsData;
 };
 
-const fetchPollFromCms = async voteId => {
+const fetchPollFromCms = async pollId => {
   const cmsLocalUrl = 'http://0.0.0.0:3000';
   const cmsRemoteUrl = 'https://cms-gov.makerfoundation.com';
 
   const cmsPath = 'content/governance-polling';
   const oldPath = 'content/governance-dashboard';
 
-  const cmsUrl = `${cmsRemoteUrl}/${oldPath}?voteId=${voteId}`;
+  const cmsUrl = `${cmsRemoteUrl}/${cmsPath}?pollId=${pollId}`;
   console.log('***cmsUrl', cmsUrl);
   const res = await fetch(cmsUrl);
   await check(res);
@@ -245,8 +240,8 @@ export const pollsInit = () => async dispatch => {
   try {
     for (const poll of polls) {
       // TODO: uncomment this when CORS issue in CMS is resolved
-      // const cmsData = await fetchPollFromCms(poll.voteId);
-      const cmsData = await mockFetchPollFromCms(poll.voteId);
+      const cmsData = await fetchPollFromCms(poll.pollId);
+      // const cmsData = await mockFetchPollFromCms(poll.pollId);
       console.log('***CMS data', cmsData);
       const cmsPoll = formatYamlToJson(cmsData);
 
@@ -310,7 +305,7 @@ export const formatHistoricalPolls = topics => async (dispatch, getState) => {
         summary: topic_blurb,
         title: topic,
         totalVotes: formatRound(totalVotes),
-        voteId: key,
+        pollId: key,
         winningProposal: winningProposal
           ? winningProposal.title
           : 'Not applicable'

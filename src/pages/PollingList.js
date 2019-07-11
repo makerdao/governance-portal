@@ -245,10 +245,10 @@ const PollingList = ({
       <VotingWeightBanner fetching={fetching} activeAccount={activeAccount} />
       <RiseUp key={polls.toString()}>
         {polls.map(poll => (
-          <StyledCard key={poll.voteId}>
-            <Card.Element key={poll.voteId} height={proposalWrapperHeight}>
+          <StyledCard key={poll.multiHash}>
+            <Card.Element key={poll.multiHash} height={proposalWrapperHeight}>
               <ProposalDetails>
-                <ExtendedLink to={`/polling-proposal/${toSlug(poll.voteId)}`}>
+                <ExtendedLink to={`/polling-proposal/${toSlug(poll.pollId)}`}>
                   <SubHeading>{poll.title}</SubHeading>
                 </ExtendedLink>
                 <Body
@@ -266,7 +266,7 @@ const PollingList = ({
                   {poll.active ? (
                     <Fragment>
                       <ExtendedLink
-                        to={`/polling-proposal/${toSlug(poll.voteId)}`}
+                        to={`/polling-proposal/${toSlug(poll.pollId)}`}
                       >
                         <StyledButton>Vote on Proposal</StyledButton>
                       </ExtendedLink>
@@ -274,7 +274,7 @@ const PollingList = ({
                   ) : (
                     <Fragment>
                       <ExtendedLink
-                        to={`/polling-proposal/${toSlug(poll.voteId)}`}
+                        to={`/polling-proposal/${toSlug(poll.pollId)}`}
                       >
                         <StyledButton variant="secondary">
                           See Details
