@@ -28,7 +28,6 @@ const mockParsedAllPollsData = [
 ];
 
 // Mock polls from the CMS
-
 const mockPollMd1 = {
   about: `---
 title: Test Poll Inactive 1 (June 1)
@@ -189,8 +188,6 @@ const fetchPollFromCms = async pollId => {
 };
 
 const formatOptions = options => {
-  const opts = Object.values(options);
-  opts.shift();
   return Object.values(options);
 };
 
@@ -206,6 +203,11 @@ const formatYamlToJson = data => {
     content,
     rawData: data.about
   };
+};
+
+const isPollActive = (startTime, endTime) => {
+  const now = new Date();
+  return startTime <= now && endTime > now ? true : false;
 };
 
 export const getVoteBreakdown = async (pollId, options) => {
@@ -225,24 +227,18 @@ export const getVoteBreakdown = async (pollId, options) => {
   return voteBreakdown;
 };
 
-const isPollActive = (startTime, endTime) => {
-  const now = new Date();
-  return startTime <= now && endTime > now ? true : false;
-};
-
 export const pollsInit = () => async dispatch => {
   // const pollService = window.maker.service('poll');
   dispatch(pollsRequest());
 
   const allPolls = [];
-  const polls = await getAllWhiteListedPolls();
 
   try {
+    const polls = await getAllWhiteListedPolls();
+
     for (const poll of polls) {
-      // TODO: uncomment this when CORS issue in CMS is resolved
       const cmsData = await fetchPollFromCms(poll.pollId);
       // const cmsData = await mockFetchPollFromCms(poll.pollId);
-      console.log('***CMS data', cmsData);
       const cmsPoll = formatYamlToJson(cmsData);
 
       const pollData = { ...poll, ...cmsPoll };
@@ -329,73 +325,3 @@ export const formatHistoricalPolls = topics => async (dispatch, getState) => {
 export default createReducer([], {
   [POLLS_SUCCESS]: (state, { payload }) => [...state, ...payload]
 });
-
-/**
- * 
-about: "# About
-active: false
-date: "2019-04-29T00:00:00.000Z"
-documents: []
-end_approvals: 549.66
-end_timestamp: 1556812800000
-govVote: true
-key: "signal-your-support-to-keep-the-stability-fee-set-to-16-5"
-proposal_blurb: "Vote for this proposal to signal your support to keep the Stability Fee set to 16.5% per year"
-source: "0x0c0fC0952790A96D60CD82cA865C7bb1233477C3"
-submitted_by: {link: "https://-", name: "-"}
-title: "Signal your support to keep the Stability Fee set to 16.5%"
-topicKey: "poll-stability-fee-adjustment-april-29"
-topicTitle: "Poll: Stability Fee Adjustment (April 29)"
-verified: false
- */
-
-/**OLD TOPIC
- * 
-active: true
-date: "2019-05-20T00:00:00.000Z"
-end_timestamp: 1558627200000
-govVote: true
-key: "poll-stability-fee-adjustment-may-20-2019"
-proposals: []
-submitted_by: {link: "https://-", name: "-"}
-topic: "Poll: Stability Fee Adjustment (May 20 2019)"
-topic_blurb: "Poll: Stability Fee Adjustment (May 20 2019)"
-verified: true
- */
-
-/**NEW POLL
- * 
- * 
- * {
-    creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
-    pollId: 0,
-    blockCreated: 123456789,
-    startTime: new Date(),
-    endTime: new Date(),
-    multiHash: 'QmaozNR7DZHQK1ZcU9p7QdrshMvXqWK6gpu5rmrkPdT3L4'
-  }
- */
-
-/**MARKDOWN POLL
----
-title: Stability Fee Adjustment (May 27 2019)
-summary: The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which ...
-discussion_link: https://www.reddit.com/r/mkrgov/
-options:
-    0: abstain
-    1: 14%
-    2: 16%
-    3: no change
-    4: 18%
-    5: 20%
----
-
-# Poll: Stability Fee Adjustment (May 27 2019)
-
-The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which presents a number of possible Dai Stability Fee options. Voters are now able to signal their support for a Stability Fee within a range of 13.50% to 23.50%.
-
-This Governance Poll (FAQ) will be active for three days beginning on Monday, May 27 at 4 PM UTC, the results of which will inform an Executive Vote (FAQ) which will go live on Friday, May 31, at 4 PM UTC.
-
-...
-  * 
-  */

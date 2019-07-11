@@ -1,23 +1,16 @@
 import React, { Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
-
 import { Button } from '@makerdao/ui-components';
 
-import VoterStatus from '../components/VoterStatus';
 import Card from '../components/Card';
 import Timer from '../components/Timer';
-import ClosedStatus from '../components/ClosedStatus';
-import { toSlug, eq, formatDate, formatRound } from '../utils/misc';
+import { toSlug, eq, formatRound } from '../utils/misc';
 import theme, { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
-import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
-import Vote from '../components/modals/Vote';
-import TillHat from '../components/TillHatMeta';
 import ExtendedLink from '../components/Onboarding/shared/ExtendedLink';
 import { Banner, BannerBody, BannerContent } from '../components/Banner';
 import Loader from '../components/Loader';
-import { poll } from 'ethers/utils/web';
 
 const Padding = styled.div`
   margin-top: 20px;
@@ -225,18 +218,7 @@ export const VotingWeightBanner = ({ fetching, activeAccount }) => {
   );
 };
 
-const PollingList = ({
-  modalOpen,
-  proposals,
-  canVote,
-  fetching,
-  votingFor,
-  signaling,
-  hat,
-  approvals,
-  polls,
-  activeAccount
-}) => {
+const PollingList = ({ fetching, polls, activeAccount }) => {
   polls.sort((a, b) => b.startTime - a.startTime);
   console.log('*****activeAccount', activeAccount);
   return (
@@ -292,20 +274,12 @@ const PollingList = ({
   );
 };
 
-const reduxProps = (
-  { proposals, accounts, hat, approvals, polls },
-  { signaling }
-) => {
+const reduxProps = ({ accounts, polls }) => {
   const activeAccount = accounts.activeAccount
     ? accounts.allAccounts.find(a => eq(a.address, accounts.activeAccount))
     : null;
   return {
-    hat,
-    approvals,
-    proposals: proposals.filter(p => !!p.govVote === !!signaling),
-    canVote: activeCanVote({ accounts }),
     fetching: accounts.fetching,
-    votingFor: getActiveVotingFor({ accounts }),
     polls,
     activeAccount
   };

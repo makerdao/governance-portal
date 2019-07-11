@@ -6,11 +6,11 @@ import { isNil, isEmpty } from 'ramda';
 import { toSlug } from '../utils/misc';
 import Button from '../components/Button';
 import Card from '../components/Card';
+import Loader from '../components/Loader';
 import {
   activeCanVote,
   getActiveVotingFor,
-  getPollOptionVotingFor,
-  getActiveAccount
+  getPollOptionVotingFor
 } from '../reducers/accounts';
 import NotFound from './NotFound';
 import { VotingWeightBanner } from './PollingList';
@@ -130,6 +130,31 @@ const DetailsCardItem = ({ name, value, component }) => (
   </DetailsItem>
 );
 
+const VotedFor = ({ voteStateFetching, votedPollOption, active }) => {
+  if (voteStateFetching) {
+    return <Loader mt={34} mb={34} color="header" background="background" />;
+  }
+  if (votedPollOption)
+    return (
+      <VoteStatusText>
+        <Black>{active ? 'Currently voting: ' : 'Voted for: '}</Black>
+        <Strong>{votedPollOption} </Strong>
+        {active && (
+          <Fragment>
+            <Black>| </Black>
+            <Blue onClick={() => null}>Withdraw Vote</Blue>
+          </Fragment>
+        )}
+      </VoteStatusText>
+    );
+  else
+    return (
+      <VoteStatusText>
+        <Black>{active ? 'Not currently voting' : 'You did not vote'}</Black>
+      </VoteStatusText>
+    );
+};
+
 class VotingPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -139,7 +164,6 @@ class VotingPanel extends React.Component {
   }
 
   onDropdownSelect = value => {
-    console.log('***value', value);
     this.setState({
       selectedOption: value
     });
@@ -147,6 +171,7 @@ class VotingPanel extends React.Component {
 
   formatOptions = options => {
     const displayOptions = [...options];
+    // Index 0 is expected to always be '0: abstain' but we don't want to display it here.
     displayOptions.shift();
     return displayOptions;
   };
@@ -155,7 +180,7 @@ class VotingPanel extends React.Component {
     const poll = this.props.poll;
     const { options } = poll;
 
-    const selectedOption = this.state.selectedOption;
+    const { selectedOption } = this.state;
     return (
       <React.Fragment>
         <VoteSelection>
@@ -204,42 +229,49 @@ class Polling extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      votedPollOption: null
+      votedPollOption: null,
+      activeAccount: this.props.activeAccount,
+      voteStateFetching: true
     };
   }
 
   async componentDidMount() {
-    const votedPollOption = await this.getVotedPollOption();
+    if (this.state.activeAccount) await this.getVotedPollOption();
+  }
 
-    this.setState({
-      votedPollOption
-    });
+  static getDerivedStateFromProps(newProps, state) {
+    /* Replaces componentWillReceiveProps
+    https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#fetching-external-data-when-props-change */
+
+    if (newProps.activeAccount !== state.activeAccount) {
+      return { activeAccount: newProps.activeAccount };
+    } else return null;
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (this.state.activeAccount !== prevProps.activeAccount) {
+      await this.getVotedPollOption();
+    }
   }
 
   getVotedPollOption = async () => {
-    //TODO: how to handle this situation when activeAccount is not
-    // in props yet? Trigger an async call from render?
-
-    // make a fetching action & when it resloves, dispatch action to update votingFor?
     const optionId = await getPollOptionVotingFor(
       this.props.poll.pollId,
-      this.props.activeAccount
+      this.state.activeAccount
     );
-    return this.props.poll.options[optionId];
+    const votedPollOption = this.props.poll.options[optionId];
+    this.setState({
+      votedPollOption,
+      voteStateFetching: false
+    });
   };
 
   render() {
-    const { votedPollOption } = this.state;
-    const {
-      poll,
-      isValidRoute,
-      network,
-      accountDataFetching,
-      activeAccount
-    } = this.props;
-    const { discussion_link, rawData, multiHash } = poll;
+    const { votedPollOption, activeAccount, voteStateFetching } = this.state;
+    const { poll, isValidRoute, network, accountDataFetching } = this.props;
+    const { discussion_link, rawData, multiHash, active } = poll;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
-    console.log('this poll', poll);
+
     return (
       <RiseUp>
         <VotingWeightBanner
@@ -261,26 +293,11 @@ class Polling extends React.Component {
           </DescriptionCard>
           <RightPanels>
             {poll.active && <VotingPanel poll={poll} />}
-            {votedPollOption ? (
-              <VoteStatusText>
-                <Black>
-                  {poll.active ? 'Currently voting: ' : 'Voted for: '}
-                </Black>
-                <Strong>{votedPollOption} </Strong>
-                {poll.active && (
-                  <Fragment>
-                    <Black>| </Black>
-                    <Blue onClick={() => null}>Withdraw Vote</Blue>
-                  </Fragment>
-                )}
-              </VoteStatusText>
-            ) : (
-              <VoteStatusText>
-                <Black>
-                  {poll.active ? 'Not currently voting' : 'You did not vote'}
-                </Black>
-              </VoteStatusText>
-            )}
+            <VotedFor
+              votedPollOption={votedPollOption}
+              voteStateFetching={voteStateFetching}
+              active={active}
+            />
             <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
               <CardTitle>Details</CardTitle>
               {[
@@ -363,7 +380,7 @@ class Polling extends React.Component {
 }
 
 const reduxProps = (state, { match }) => {
-  const { tally, accounts, metamask, polls } = state;
+  const { accounts, metamask, polls } = state;
   const { pollSlug } = match.params;
 
   const poll = polls.find(({ pollId }) => {
@@ -377,8 +394,6 @@ const reduxProps = (state, { match }) => {
   return {
     poll,
     activeAccount,
-    voteStateFetching: tally.fetching,
-    voteState: tally.tally,
     accountDataFetching: accounts.fetching,
     canVote: activeCanVote({ accounts }),
     votingFor: getActiveVotingFor({ accounts }),
