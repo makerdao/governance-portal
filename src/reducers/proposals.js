@@ -127,8 +127,6 @@ function extractProposals(topics, network) {
   // if we're using a testnet, overwrite proposal source with provided ganache addresses.
   if (network === 'ganache') updateSourceForTestnet(topics);
 
-  console.log('topics', topics);
-
   return topics.reduce((acc, topic) => {
     const proposals = topic.proposals.map(({ source, ...otherProps }) => ({
       ...otherProps,

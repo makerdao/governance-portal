@@ -338,9 +338,8 @@ class Polling extends React.Component {
                   hide: !discussion_link
                 }
               ].map((item, i) => {
-                if (!item.hide) {
-                  return <DetailsCardItem key={i} {...item} />;
-                }
+                if (!item.hide) return <DetailsCardItem key={i} {...item} />;
+                return null;
               })}
 
               <CardTitle>Voting Stats</CardTitle>

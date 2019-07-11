@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import descend from '../imgs/descend.svg';
 import { toSlug } from '../utils/misc';
-import theme, { fonts, shadows } from '../theme';
+import theme, { fonts } from '../theme';
 
 const Card = styled.div`
   transition: ${({ theme }) => theme.transitions.base};

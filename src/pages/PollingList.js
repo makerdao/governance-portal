@@ -70,20 +70,6 @@ const StyledButton = styled(Button)`
   right: 2%;
 `;
 
-const Tag = styled.p`
-  padding: 1px 10px;
-  border-radius: 4px;
-  line-height: 21px;
-  font-weight: bold;
-  font-size: 14px;
-  align-self: center;
-  margin: auto;
-  display: inline-block;
-  margin-left: ${({ ml }) => (ml ? `${ml}px` : '')};
-  background-color: ${({ green }) => (green ? '#c3f5ea' : '#FFE2D9')};
-  color: ${({ green }) => (green ? '#30BD9F' : '#E45432')};
-`;
-
 const Content = styled.div`
   display: flex;
 `;

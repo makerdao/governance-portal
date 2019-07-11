@@ -28,48 +28,48 @@ const mockParsedAllPollsData = [
 ];
 
 // Mock polls from the CMS
-const mockPollMd1 = {
-  about: `---
-title: Test Poll Inactive 1 (June 1)
-summary: This is a poll that ended in the past, and is inactive.
-discussion_link: https://www.reddit.com/r/mkrgov/
-rules: 
-options:
-   0: Abstain
-   1: No Change
-   2: Vote Yes
-   3: Vote No
----
-# Poll: Test Poll Inactive 1 (June 1)
+// const mockPollMd1 = {
+//   about: `---
+// title: Test Poll Inactive 1 (June 1)
+// summary: This is a poll that ended in the past, and is inactive.
+// discussion_link: https://www.reddit.com/r/mkrgov/
+// rules:
+// options:
+//    0: Abstain
+//    1: No Change
+//    2: Vote Yes
+//    3: Vote No
+// ---
+// # Poll: Test Poll Inactive 1 (June 1)
 
-This is a test poll that ended in the past, and is inactive. This text is dummy data.
+// This is a test poll that ended in the past, and is inactive. This text is dummy data.
 
-The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which presents a number of possible Dai Stability Fee options. Voters are now able to signal their support for a Stability Fee within a range of 13.50% to 23.50%.
+// The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which presents a number of possible Dai Stability Fee options. Voters are now able to signal their support for a Stability Fee within a range of 13.50% to 23.50%.
 
-This Governance Poll (FAQ) will be active for three days beginning on Monday, May 27 at 4 PM UTC, the results of which will inform an Executive Vote (FAQ) which will go live on Friday, May 31, at 4 PM UTC.`
-};
+// This Governance Poll (FAQ) will be active for three days beginning on Monday, May 27 at 4 PM UTC, the results of which will inform an Executive Vote (FAQ) which will go live on Friday, May 31, at 4 PM UTC.`
+// };
 
-const mockPollMd2 = {
-  about: `---
-title: Test Poll Active 1 (Jul 9)
-summary: This is a poll that is active for a week starting July 9th.
-discussion_link: https://www.reddit.com/r/mkrgov/
-rules: 
-options:
-   0: Abstain
-   1: No Change
-   2: 5%
-   3: 25%
-   4: 75%
----
-# Poll: Test Poll Active 1 (Jul 9)
+// const mockPollMd2 = {
+//   about: `---
+// title: Test Poll Active 1 (Jul 9)
+// summary: This is a poll that is active for a week starting July 9th.
+// discussion_link: https://www.reddit.com/r/mkrgov/
+// rules:
+// options:
+//    0: Abstain
+//    1: No Change
+//    2: 5%
+//    3: 25%
+//    4: 75%
+// ---
+// # Poll: Test Poll Active 1 (Jul 9)
 
-This is a poll that is active for a week starting July 9th. This text is dummy data.
+// This is a poll that is active for a week starting July 9th. This text is dummy data.
 
-The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which presents a number of possible Dai Stability Fee options. Voters are now able to signal their support for a Stability Fee within a range of 13.50% to 23.50%.
+// The Maker Foundation Interim Risk Team has placed a Governance Poll into the voting system which presents a number of possible Dai Stability Fee options. Voters are now able to signal their support for a Stability Fee within a range of 13.50% to 23.50%.
 
-This Governance Poll (FAQ) will be active for three days beginning on Monday, May 27 at 4 PM UTC, the results of which will inform an Executive Vote (FAQ) which will go live on Friday, May 31, at 4 PM UTC.`
-};
+// This Governance Poll (FAQ) will be active for three days beginning on Monday, May 27 at 4 PM UTC, the results of which will inform an Executive Vote (FAQ) which will go live on Friday, May 31, at 4 PM UTC.`
+// };
 
 // Mock voteHistory:
 const mockHistory1 = {
@@ -119,19 +119,16 @@ const mockHistory2 = {
   ]
 };
 
-const mockFetchPollFromCms = async pollId => {
-  // fetch the raw YAML & transform to POJO
-  // format options as array of type: {id, name, percentage(vote breakdown)}
-  // for now we mock:
-  switch (pollId) {
-    case '1':
-      return mockPollMd1;
-    case '2':
-      return mockPollMd2;
-    default:
-      break;
-  }
-};
+// const mockFetchPollFromCms = async pollId => {
+//   switch (pollId) {
+//     case '1':
+//       return mockPollMd1;
+//     case '2':
+//       return mockPollMd2;
+//     default:
+//       break;
+//   }
+// };
 
 const mockGetVoteHistory = async pollId => {
   switch (pollId) {
@@ -172,11 +169,10 @@ const getAllWhiteListedPolls = async () => {
 };
 
 const fetchPollFromCms = async pollId => {
-  const cmsLocalUrl = 'http://0.0.0.0:3000';
+  // const cmsLocalUrl = 'http://0.0.0.0:3000';
+  // const oldPath = 'content/governance-dashboard';
   const cmsRemoteUrl = 'https://cms-gov.makerfoundation.com';
-
   const cmsPath = 'content/governance-polling';
-  const oldPath = 'content/governance-dashboard';
 
   const cmsUrl = `${cmsRemoteUrl}/${cmsPath}?pollId=${pollId}`;
   console.log('***cmsUrl', cmsUrl);

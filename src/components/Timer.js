@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import theme from '../theme';
 import clock from '../imgs/clock.svg';
-import smallClock from '../imgs/clock-small.svg';
 import smallGreyClock from '../imgs/clock-small-grey.svg';
 
 const Wrapper = styled.div`
@@ -37,10 +36,6 @@ const SmallClock = styled.div`
   width: 20px;
   height: 20px;
   background: url(${smallGreyClock}) no-repeat;
-`;
-
-const Bold = styled.strong`
-  font-weight: bold;
 `;
 
 class Timer extends Component {

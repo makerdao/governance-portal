@@ -5,8 +5,6 @@ import { connect } from 'react-redux';
 import VoterStatus from '../components/VoterStatus';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import Timer from '../components/Timer';
-import ClosedStatus from '../components/ClosedStatus';
 import { toSlug, eq, formatDate, formatRound } from '../utils/misc';
 import theme, { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
@@ -44,10 +42,6 @@ const SubHeading = styled.p`
   position: relative;
 `;
 
-const TopicSubHeading = styled(SubHeading)`
-  margin-bottom: 30px;
-`;
-
 const Body = styled.p`
   font-size: 16px;
   line-height: 26px;
@@ -67,12 +61,6 @@ const ProposalDetails = styled.div`
 
 const StyledCard = styled(Card)`
   margin-bottom: 30px;
-`;
-const StyledTopicCard = styled(Card)`
-  padding-top: 30px;
-  padding-left: 30px;
-  padding-right: 30px;
-  margin-bottom: 50px;
 `;
 
 const Tag = styled.p`
