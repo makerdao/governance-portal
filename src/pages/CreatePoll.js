@@ -300,7 +300,7 @@ const CreatePollTime = ({ start, end, timeError, handleParentState }) => (
 );
 
 const CreatePollMarkdown = ({
-  state,
+  parentState,
   handlePollState,
   addPollOption,
   removePollOption,
@@ -319,7 +319,7 @@ const CreatePollMarkdown = ({
     content,
     submitAttempted,
     selectedTab
-  } = state;
+  } = parentState;
 
   const titleValid = !!title;
   const summaryValid = !!summary;
@@ -651,7 +651,7 @@ class CreatePoll extends Component {
                 return (
                   <CreatePollMarkdown
                     {...{
-                      state: this.state,
+                      parentState: this.state,
                       handlePollState: this.handlePollState,
                       addPollOption: this.addPollOption,
                       removePollOption: this.removePollOption,
