@@ -92,14 +92,14 @@ const OptionText = styled.p`
   text-align: left;
   line-height: 30px;
   font-size: 17px;
-  color: #546978;
+  color: #fff;
 `;
 
 const VoteOptionsGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-column-gap: 10px;
-  grid-row-gap: 10px;
+  grid-row-gap: 20px;
 `;
 
 const CloseIcon = styled.p`
@@ -418,8 +418,9 @@ const CreatePollMarkdown = ({
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                width: '300px',
-                padding: '10px'
+                width: '600px',
+                padding: '10px',
+                backgroundColor: '#30BD9F'
               }}
             >
               <OptionText>
