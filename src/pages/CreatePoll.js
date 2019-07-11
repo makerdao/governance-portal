@@ -4,15 +4,14 @@ import Card from '../components/Card';
 import closeImg from '../imgs/close-inline.svg';
 import theme from '../theme';
 import { generateIPFSHash } from '../utils/ipfs';
-import { calculateTimeSpan } from '../utils/misc';
 import { Input, Box, Stepper } from '@makerdao/ui-components-core';
 import { Button } from '@makerdao/ui-components';
 import { copyToClipboard } from '../utils/misc';
-import DateTimePicker from 'react-datetime-picker';
 import Loader from '../components/Loader';
 import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
 import 'react-mde/lib/styles/css/react-mde-all.css';
+import CreatePollTime from '../components/CreatePoll/CreatePollTime';
 
 const riseUp = keyframes`
 0% {
@@ -82,10 +81,6 @@ const StyledBody = styled.p`
   margin-top: 5px;
   font-size: 17px;
   color: #546978;
-`;
-
-const TimeLabel = styled(StyledBody)`
-  width: 250px;
 `;
 
 const OptionText = styled.p`
@@ -259,52 +254,6 @@ const CreatePollOverview = ({
     </Fragment>
   );
 };
-
-const CreatePollTime = ({ start, end, timeError, handleParentState }) => (
-  <Fragment>
-    <SectionWrapper>
-      <StyledBody>Poll Start Time:</StyledBody>
-      <DateTimePicker
-        css={{ width: '600px' }}
-        disableClock
-        showLeadingZeros
-        clearIcon={null}
-        onChange={t =>
-          handleParentState({
-            start: t,
-            end: t.getTime() > end.getTime() ? t : end
-          })
-        }
-        value={start}
-      />
-    </SectionWrapper>
-    <SectionWrapper>
-      <StyledBody>Poll End Time:</StyledBody>
-      <DateTimePicker
-        css={{ width: '600px' }}
-        disableClock
-        showLeadingZeros
-        clearIcon={null}
-        onChange={t =>
-          handleParentState({
-            start: t.getTime() < start.getTime() ? t : start,
-            end: t
-          })
-        }
-        value={end}
-      />
-    </SectionWrapper>
-    <SectionWrapper>
-      <StyledBody>Poll Duration</StyledBody>
-      <Box width="600px">
-        <TimeLabel>{calculateTimeSpan(start, end)}</TimeLabel>
-        {timeError && (
-          <WarningText>Start time cannot be a past date</WarningText>
-        )}
-      </Box>
-    </SectionWrapper>
-  </Fragment>
-);
 
 const CreatePollMarkdown = ({
   parentState,
