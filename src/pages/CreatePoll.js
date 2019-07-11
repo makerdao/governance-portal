@@ -4,7 +4,7 @@ import Card from '../components/Card';
 import closeImg from '../imgs/close-inline.svg';
 import theme from '../theme';
 import { generateIPFSHash } from '../utils/ipfs';
-import { Input, Box, Stepper } from '@makerdao/ui-components-core';
+import { Box, Stepper } from '@makerdao/ui-components-core';
 import { Button } from '@makerdao/ui-components';
 import { copyToClipboard } from '../utils/misc';
 import Loader from '../components/Loader';
@@ -13,7 +13,7 @@ import * as Showdown from 'showdown';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import CreatePollTime from '../components/CreatePoll/CreatePollTime';
 import CreatePollOverview from '../components/CreatePoll/CreatePollOverview';
-
+import CreatePollInput from '../components/CreatePoll/CreatePollInput';
 const riseUp = keyframes`
 0% {
   opacity: 0;
@@ -131,15 +131,6 @@ const converter = new Showdown.Converter({
   strikethrough: true,
   tasklists: true
 });
-
-const CreatePollInput = ({ title, ...inputProps }) => (
-  <Fragment>
-    <SectionWrapper>
-      <StyledBody>{title}:</StyledBody>
-      <Input width="600px" {...inputProps} />
-    </SectionWrapper>
-  </Fragment>
-);
 
 const CreatePollMarkdown = ({
   parentState,

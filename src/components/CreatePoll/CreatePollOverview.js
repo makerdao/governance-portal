@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
-import { Input, Box } from '@makerdao/ui-components-core';
+import { Box } from '@makerdao/ui-components-core';
 import { Button } from '@makerdao/ui-components';
 import { copyToClipboard } from '../../utils/misc';
+import CreatePollInput from './CreatePollInput';
 
 const expr = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
 const URL_REGEX = new RegExp(expr);
@@ -37,15 +38,6 @@ const Code = styled.pre`
   border: 1px solid black;
   white-space: pre-wrap;
 `;
-
-const CreatePollInput = ({ title, ...inputProps }) => (
-  <Fragment>
-    <SectionWrapper>
-      <StyledBody>{title}:</StyledBody>
-      <Input width="600px" {...inputProps} />
-    </SectionWrapper>
-  </Fragment>
-);
 
 export default function CreatePollOverview({
   start,
