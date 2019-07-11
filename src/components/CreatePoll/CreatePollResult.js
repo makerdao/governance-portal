@@ -4,6 +4,7 @@ import { Box } from '@makerdao/ui-components-core';
 import { Button } from '@makerdao/ui-components';
 import Loader from '../Loader';
 import { copyToClipboard } from '../../utils/misc';
+import { PollTxState } from '../../utils/constants';
 
 const ResultTitle = styled.p`
   text-align: center;
@@ -28,12 +29,6 @@ const SectionText = styled.p`
   margin-bottom: 20px;
 `;
 
-const pollTxState = {
-  LOADING: 'LOADING',
-  ERROR: 'ERROR',
-  SUCCESS: 'SUCCESS'
-};
-
 export default function CreatePollResult({
   pollTxStatus,
   id,
@@ -41,7 +36,7 @@ export default function CreatePollResult({
   resetPollState,
   title
 }) {
-  const { LOADING, SUCCESS, ERROR } = pollTxState;
+  const { LOADING, SUCCESS, ERROR } = PollTxState;
   switch (pollTxStatus) {
     case LOADING:
       return (

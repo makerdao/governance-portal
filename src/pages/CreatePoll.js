@@ -7,9 +7,11 @@ import { Stepper } from '@makerdao/ui-components-core';
 import CreatePollOverview from '../components/CreatePoll/CreatePollOverview';
 import CreatePollMarkdown from '../components/CreatePoll/CreatePollMarkdown';
 import CreatePollResult from '../components/CreatePoll/CreatePollResult';
-
-const DEFAULT_START = new Date();
-const DEFAULT_END = new Date(DEFAULT_START.getTime() + 7 * 24 * 60 * 60 * 1000);
+import {
+  POLL_DEFAULT_START,
+  POLL_DEFAULT_END,
+  PollTxState
+} from '../utils/constants';
 
 const riseUp = keyframes`
 0% {
@@ -52,17 +54,12 @@ const ContentWrapper = styled(Card)`
 const ABSTAIN = 'Abstain';
 const POLL_RULES =
   'The voter may select to vote for one of the poll options or they may elect to abstain from the poll entirely';
-const pollTxState = {
-  LOADING: 'LOADING',
-  ERROR: 'ERROR',
-  SUCCESS: 'SUCCESS'
-};
 
 const INITIAL_POLL_STATE = {
   title: 'Mock poll',
   summary: 'This is not a real poll',
-  start: DEFAULT_START,
-  end: DEFAULT_END,
+  start: POLL_DEFAULT_START,
+  end: POLL_DEFAULT_END,
   link: 'https://mock-polling-url.com/discuss-poll',
   option: '',
   choices: [ABSTAIN, 'Vote1', 'Vote2'],
@@ -124,7 +121,7 @@ class CreatePoll extends Component {
   execCreatePoll = async () => {
     this.setState({
       step: 2,
-      pollTxStatus: pollTxState.LOADING
+      pollTxStatus: PollTxState.LOADING
     });
     const { start, end, hash, url } = this.state;
     try {
@@ -133,11 +130,11 @@ class CreatePoll extends Component {
         .createPoll(start.getTime(), end.getTime(), hash, url);
       this.setState({
         id,
-        pollTxStatus: pollTxState.SUCCESS
+        pollTxStatus: PollTxState.SUCCESS
       });
     } catch (e) {
       console.error(e);
-      this.setState({ pollTxStatus: pollTxState.ERROR });
+      this.setState({ pollTxStatus: PollTxState.ERROR });
     }
   };
 

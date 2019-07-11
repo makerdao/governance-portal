@@ -6,13 +6,11 @@ import Card from '../Card';
 import closeImg from '../../imgs/close-inline.svg';
 import CreatePollInput from './CreatePollInput';
 import CreatePollTime from './CreatePollTime';
+import { POLL_DEFAULT_START, URL_REGEX } from '../../utils/constants';
+
 import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
 import 'react-mde/lib/styles/css/react-mde-all.css';
-
-const expr = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
-const URL_REGEX = new RegExp(expr);
-const DEFAULT_START = new Date();
 
 const converter = new Showdown.Converter({
   tables: true,
@@ -99,7 +97,7 @@ export default function CreatePollMarkdown({
   const linkValid = link.match(URL_REGEX);
   const choicesValid = choices.length > 1;
   const contentValid = !!content;
-  const timeValid = start.getTime() >= DEFAULT_START.getTime();
+  const timeValid = start.getTime() >= POLL_DEFAULT_START.getTime();
 
   const isValidSubmission =
     titleValid &&
