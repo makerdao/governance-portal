@@ -159,11 +159,17 @@ const CreatePollOverview = ({
   url,
   submitAttempted,
   handleParentState,
-  handlePollState,
   execCreatePoll
 }) => {
   const urlValid = url.match(URL_REGEX);
   const urlError = submitAttempted && !urlValid;
+  const handlePollState = (e, key) => {
+    e.stopPropagation();
+    handleParentState({
+      [key]: e.target.value
+    });
+  };
+
   return (
     <Fragment>
       <SectionText>
@@ -301,7 +307,6 @@ const CreatePollTime = ({ start, end, timeError, handleParentState }) => (
 
 const CreatePollMarkdown = ({
   parentState,
-  handlePollState,
   addPollOption,
   removePollOption,
   handleParentState,
@@ -342,6 +347,13 @@ const CreatePollMarkdown = ({
   const choicesError = submitAttempted && !choicesValid;
   const contentError = submitAttempted && !contentValid;
   const timeError = submitAttempted && !timeValid;
+
+  const handlePollState = (e, key) => {
+    e.stopPropagation();
+    handleParentState({
+      [key]: e.target.value
+    });
+  };
 
   return (
     <Fragment>
@@ -547,13 +559,6 @@ const INITIAL_POLL_STATE = {
 class CreatePoll extends Component {
   state = INITIAL_POLL_STATE;
 
-  handlePollState = (e, key) => {
-    e.stopPropagation();
-    this.setState({
-      [key]: e.target.value
-    });
-  };
-
   addPollOption = () => {
     const { option, choices } = this.state;
     if (option.length) {
@@ -652,7 +657,6 @@ class CreatePoll extends Component {
                   <CreatePollMarkdown
                     {...{
                       parentState: this.state,
-                      handlePollState: this.handlePollState,
                       addPollOption: this.addPollOption,
                       removePollOption: this.removePollOption,
                       handleParentState,
@@ -673,7 +677,6 @@ class CreatePoll extends Component {
                       url,
                       submitAttempted,
                       handleParentState,
-                      handlePollState: this.handlePollState,
                       execCreatePoll: this.execCreatePoll
                     }}
                   />
