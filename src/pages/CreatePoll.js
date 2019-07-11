@@ -114,6 +114,7 @@ const Code = styled.pre`
   font-size: 14px;
   padding: 30px;
   border: 1px solid black;
+  white-space: pre-wrap;
 `;
 
 const WarningText = styled.p`
