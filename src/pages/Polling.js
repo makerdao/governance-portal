@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
 import ReactMarkdown from 'react-markdown';
@@ -6,12 +6,18 @@ import { isNil, isEmpty } from 'ramda';
 import { toSlug } from '../utils/misc';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import VoterStatus from '../components/VoterStatus';
-import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
+import Loader from '../components/Loader';
+import {
+  activeCanVote,
+  getActiveVotingFor,
+  getPollOptionVotingFor
+} from '../reducers/accounts';
 import NotFound from './NotFound';
+import { VotingWeightBanner } from './PollingList';
 import { modalOpen } from '../reducers/modal';
+import { getWinningProp } from '../reducers/proposals';
 import theme, { colors } from '../theme';
-import { cutMiddle } from '../utils/misc';
+import { cutMiddle, eq } from '../utils/misc';
 import ExternalLink from '../components/Onboarding/shared/ExternalLink';
 import { ethScanLink } from '../utils/ethereum';
 import Dropdown from '../components/Dropdown';
@@ -45,7 +51,7 @@ const RightPanels = styled.div`
 
 const VoteSelection = styled.div`
   display: flex;
-  flex-diretion: row;
+  flex-direction: row;
   justify-content: space-between;
 `;
 
@@ -56,6 +62,10 @@ const DetailsPanelCard = styled(Card)`
 `;
 
 const DescriptionCard = styled(Card)`
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-content: space-between;
   margin: 0;
   max-width: 750px;
   padding: 0px 25px 18px 25px;
@@ -112,9 +122,19 @@ const DetailsCardText = styled.p`
 `;
 
 const DropdownText = styled.p`
-  margin-left: 20px;
-  margin-right: 20px;
+  width: 125px;
+  margin-left: 13px;
+  margin-right: 13px;
   color: ${({ color }) => (color ? `rgb(${colors[color]})` : 'black')};
+`;
+
+const VoteButton = styled(Button)`
+  border: 0px;
+  padding: 0px;
+`;
+
+const DownloadButton = styled(Button)`
+  top: 56%;
 `;
 
 const DetailsCardItem = ({ name, value, component }) => (
@@ -124,128 +144,276 @@ const DetailsCardItem = ({ name, value, component }) => (
   </DetailsItem>
 );
 
-const VotingPanel = ({ proposal }) => (
-  <React.Fragment>
-    <VoteSelection>
-      <Dropdown
-        color="green"
-        items={['17.5%', '19.5%', 'No change', '14.5%', '15.5%', '16.5%']}
-        renderItem={item => <DropdownText color="green">{item}</DropdownText>}
-        renderRowItem={item => <DropdownText>{item}</DropdownText>}
-        value="Please choose..."
-        onSelect={() => null}
-      />
-      <Button
-        bgColor="green"
-        color="white"
-        hoverColor="white"
-        width="135px"
-        disabled={!!proposal.active}
-      >
-        Vote Now
-      </Button>
-    </VoteSelection>
-    <VoteStatusText>
-      <Black>Currently voting: </Black>
-      <Strong>17.5% </Strong>
-      <Black>| </Black>
-      <Blue onClick={() => null}>Withdraw Vote</Blue>
-    </VoteStatusText>
-  </React.Fragment>
-);
+const VotedFor = ({ voteStateFetching, votedPollOption, active }) => {
+  if (voteStateFetching) {
+    return <Loader mt={34} mb={34} color="header" background="background" />;
+  }
+  if (votedPollOption)
+    return (
+      <VoteStatusText>
+        <Black>{active ? 'Currently voting: ' : 'Voted for: '}</Black>
+        <Strong>{votedPollOption} </Strong>
+        {active && (
+          <Fragment>
+            <Black>| </Black>
+            <Blue onClick={() => null}>Withdraw Vote</Blue>
+          </Fragment>
+        )}
+      </VoteStatusText>
+    );
+  else
+    return (
+      <VoteStatusText>
+        <Black>{active ? 'Not currently voting' : 'You did not vote'}</Black>
+      </VoteStatusText>
+    );
+};
 
-function Polling({
-  proposal,
-  voteState,
-  voteStateFetching,
-  modalOpen,
-  accountDataFetching,
-  network,
-  canVote,
-  votingFor,
-  isValidRoute
-}) {
-  if (isNil(proposal) || isEmpty(proposal) || !isValidRoute)
-    return <NotFound />;
-  return (
-    <RiseUp>
-      <VoterStatus />
-      <ContentWrapper>
-        <DescriptionCard>
-          <ReactMarkdown
-            className="markdown"
-            skipHtml={true}
-            source={proposal.about}
+class VotingPanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedOption: 'Please choose...'
+    };
+  }
+
+  onDropdownSelect = value => {
+    this.setState({
+      selectedOption: value
+    });
+  };
+
+  formatOptions = options => {
+    const displayOptions = [...options];
+    // Index 0 is expected to always be '0: abstain' but we don't want to display it here.
+    displayOptions.shift();
+    return displayOptions;
+  };
+
+  render() {
+    const poll = this.props.poll;
+    const { options } = poll;
+
+    const { selectedOption } = this.state;
+    return (
+      <React.Fragment>
+        <VoteSelection>
+          <Dropdown
+            color="green"
+            items={this.formatOptions(options)}
+            renderItem={item => (
+              <DropdownText color="green">{item}</DropdownText>
+            )}
+            renderRowItem={item => <DropdownText>{item}</DropdownText>}
+            value={selectedOption}
+            onSelect={this.onDropdownSelect}
+            emptyMsg="Not available"
           />
-        </DescriptionCard>
-        <RightPanels>
-          <VotingPanel proposal />
-          <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
-            <CardTitle>Details</CardTitle>
-            {[
-              {
-                name: 'Source',
-                component: (
-                  <ExternalLink
-                    href={ethScanLink(proposal.source, network)}
-                    target="_blank"
-                  >
-                    {cutMiddle(proposal.source, 8, 8)}
-                  </ExternalLink>
-                )
-              },
-              { name: 'Started', value: '12 Sept 18' },
-              { name: 'Duration', value: '3 days' },
-              {
-                name: 'Questions?',
-                component: (
-                  <ExternalLink href="https://makerdao.com/en/" target="_blank">
-                    Governance FAQ's
-                  </ExternalLink>
-                )
-              }
-            ].map((item, i) => (
-              <DetailsCardItem key={i} {...item} />
-            ))}
-
-            <CardTitle>Voting Stats</CardTitle>
-            {[
-              { name: 'Total votes', value: '200,324.43 MKR' },
-              { name: 'Participation', value: '20.1%' },
-              { name: 'Unique voters', value: '1041' }
-            ].map((item, i) => (
-              <DetailsCardItem key={i} {...item} />
-            ))}
-
-            <CardTitle>Vote breakdown</CardTitle>
-            {[
-              { name: '17.5%', value: '170,324 MKR (82%)' },
-              { name: '19.5%', value: '20,520 MKR (12%)' },
-              { name: 'No change', value: '100 MKR (0.5%)' },
-              { name: '14.5%', value: '0 MKR' },
-              { name: '15.5%', value: '0 MKR' },
-              { name: '16.5%', value: '0 MKR' }
-            ].map((item, i) => (
-              <DetailsCardItem key={i} {...item} />
-            ))}
-          </DetailsPanelCard>
-        </RightPanels>
-      </ContentWrapper>
-    </RiseUp>
-  );
+          <VoteButton
+            bgColor="green"
+            color="white"
+            hoverColor="white"
+            width="135px"
+            disabled={!poll.active}
+          >
+            Vote Now
+          </VoteButton>
+        </VoteSelection>
+      </React.Fragment>
+    );
+  }
 }
 
-const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
+const timeLeft = (startTime, endTime) => {
+  const timeLeft = Math.floor(endTime / 1000) - Math.floor(startTime / 1000);
+  const days = Math.floor(timeLeft / (3600 * 24));
+  return days !== 1 ? `${days} days` : `${days} day`;
+};
+
+const downloadRawPollData = (multiHash, rawData) => {
+  const element = document.createElement('a');
+  const file = new Blob([rawData], { type: 'text/plain' });
+  element.href = URL.createObjectURL(file);
+  element.download = `${multiHash}.txt`;
+  document.body.appendChild(element);
+  element.click();
+};
+
+class Polling extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      votedPollOption: null,
+      activeAccount: this.props.activeAccount,
+      voteStateFetching: true
+    };
+  }
+
+  async componentDidMount() {
+    if (this.state.activeAccount) await this.getVotedPollOption();
+  }
+
+  static getDerivedStateFromProps(newProps, state) {
+    /* Replaces componentWillReceiveProps
+    https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#fetching-external-data-when-props-change */
+
+    if (newProps.activeAccount !== state.activeAccount) {
+      return { activeAccount: newProps.activeAccount };
+    } else return null;
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (this.state.activeAccount !== prevProps.activeAccount) {
+      await this.getVotedPollOption();
+    }
+  }
+
+  getVotedPollOption = async () => {
+    const optionId = await getPollOptionVotingFor(
+      this.props.poll.pollId,
+      this.state.activeAccount
+    );
+    const votedPollOption = this.props.poll.options[optionId];
+    this.setState({
+      votedPollOption,
+      voteStateFetching: false
+    });
+  };
+
+  render() {
+    const { votedPollOption, activeAccount, voteStateFetching } = this.state;
+    const { poll, isValidRoute, network, accountDataFetching } = this.props;
+    const { discussion_link, rawData, multiHash, active } = poll;
+    if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
+
+    return (
+      <RiseUp>
+        <VotingWeightBanner
+          fetching={accountDataFetching}
+          activeAccount={activeAccount}
+        />
+        <ContentWrapper>
+          <DescriptionCard>
+            <ReactMarkdown
+              className="markdown"
+              skipHtml={true}
+              source={poll.content}
+            />
+            {rawData && (
+              <DownloadButton
+                onClick={() => downloadRawPollData(multiHash, rawData)}
+              >
+                Download raw metadata
+              </DownloadButton>
+            )}
+          </DescriptionCard>
+          <RightPanels>
+            {poll.active && <VotingPanel poll={poll} />}
+            <VotedFor
+              votedPollOption={votedPollOption}
+              voteStateFetching={voteStateFetching}
+              active={active}
+            />
+            <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
+              <CardTitle>Details</CardTitle>
+              {[
+                {
+                  name: 'Source',
+                  component: (
+                    <ExternalLink
+                      href={ethScanLink(poll.source, network)}
+                      target="_blank"
+                    >
+                      {cutMiddle(poll.source, 8, 8)}
+                    </ExternalLink>
+                  )
+                },
+                { name: 'Started', value: poll.startTime.toDateString() },
+                {
+                  name: 'Duration',
+                  value: timeLeft(poll.startTime, poll.endTime)
+                },
+                {
+                  name: 'Questions?',
+                  component: (
+                    <ExternalLink
+                      href="https://makerdao.com/en/"
+                      target="_blank"
+                    >
+                      Governance FAQ's
+                    </ExternalLink>
+                  )
+                },
+                {
+                  name: 'Discussion',
+                  component: (
+                    <ExternalLink href={discussion_link} target="_blank">
+                      Here
+                    </ExternalLink>
+                  ),
+                  hide: !discussion_link
+                }
+              ].map((item, i) => {
+                if (!item.hide) return <DetailsCardItem key={i} {...item} />;
+                return null;
+              })}
+
+              <CardTitle>Voting Stats</CardTitle>
+              {[
+                { name: 'Total votes', value: `${poll.totalVotes} MKR` },
+                {
+                  name: 'Participation',
+                  value: isNaN(poll.participation)
+                    ? ''
+                    : `${poll.participation}%`
+                },
+                { name: 'Unique voters', value: poll.numUniqueVoters }
+              ].map((item, i) => (
+                <DetailsCardItem key={i} {...item} />
+              ))}
+
+              {poll.voteBreakdown && (
+                <>
+                  <CardTitle>Vote breakdown</CardTitle>
+                  {poll.voteBreakdown.map((item, i) => (
+                    <DetailsCardItem key={i} {...item} />
+                  ))}
+                </>
+              )}
+              {poll.legacyPoll && (
+                <>
+                  <CardTitle>Winning Proposal</CardTitle>
+                  <span>{poll.winningProposal}</span>
+                </>
+              )}
+            </DetailsPanelCard>
+          </RightPanels>
+        </ContentWrapper>
+      </RiseUp>
+    );
+  }
+}
+
+const reduxProps = (state, { match }) => {
+  const { accounts, metamask, polls } = state;
   const { pollSlug } = match.params;
-  const proposal = proposals.find(({ title }) => {
-    return toSlug(title) === pollSlug;
+
+  const poll = polls.find(({ pollId }) => {
+    return toSlug(pollId) === pollSlug;
   });
-  const isValidRoute = proposal && pollSlug;
+  const isValidRoute = poll && pollSlug;
+  const activeAccount = accounts.activeAccount
+    ? accounts.allAccounts.find(a => eq(a.address, accounts.activeAccount))
+    : null;
+
+  if (poll.legacyPoll) {
+    const winningProp = getWinningProp(state, poll.pollId);
+    poll.winningProposal = winningProp ? winningProp.title : 'Not applicable';
+  }
 
   return {
-    proposal,
-    voteStateFetching: tally.fetching,
-    voteState: tally.tally,
+    poll,
+    activeAccount,
     accountDataFetching: accounts.fetching,
     canVote: activeCanVote({ accounts }),
     votingFor: getActiveVotingFor({ accounts }),

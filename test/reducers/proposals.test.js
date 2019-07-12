@@ -74,7 +74,7 @@ each([
 
     await proposalsInit(network)(dispatch);
 
-    expect(dispatch.mock.calls.length).toBe(3);
+    expect(dispatch.mock.calls.length).toBe(4);
     expect(dispatch.mock.calls[0][0]).toEqual({
       type: 'proposals/REQUEST',
       payload: {}
