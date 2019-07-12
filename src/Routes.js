@@ -9,10 +9,35 @@ import {
 import BaseLayout from './layouts/base';
 import Timeline from './pages/Timeline';
 import NotFound from './pages/NotFound';
-import CreatePoll from './pages/CreatePoll';
 import ErrorBoundary from './components/ErrorBoundary';
 import Polling from './pages/Polling';
 import Executive from './pages/Executive';
+import Loader from './components/Loader';
+
+class DynamicImport extends Component {
+  state = {
+    component: null
+  };
+  componentDidMount() {
+    this.props.load().then(mod =>
+      this.setState(() => ({
+        component: mod.default
+      }))
+    );
+  }
+  render = () =>
+    this.state.component ? (
+      this.props.children(this.state.component)
+    ) : (
+      <Loader
+        size={20}
+        mt={125}
+        mb={200}
+        color="header"
+        background="background"
+      />
+    );
+}
 
 class ScrollToTopUtil extends Component {
   componentDidUpdate(prevProps) {
@@ -24,6 +49,12 @@ class ScrollToTopUtil extends Component {
 }
 
 const ScrollToTop = withRouter(ScrollToTopUtil);
+
+const CreatePoll = props => (
+  <DynamicImport load={() => import('./pages/CreatePoll')}>
+    {Component => <Component {...props} />}
+  </DynamicImport>
+);
 
 class App extends Component {
   render = () => (
