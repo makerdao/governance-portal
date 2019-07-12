@@ -15,6 +15,7 @@ import {
 import NotFound from './NotFound';
 import { VotingWeightBanner } from './PollingList';
 import { modalOpen } from '../reducers/modal';
+import { getWinningProp } from '../reducers/proposals';
 import theme, { colors } from '../theme';
 import { cutMiddle, eq } from '../utils/misc';
 import ExternalLink from '../components/Onboarding/shared/ExternalLink';
@@ -389,6 +390,11 @@ const reduxProps = (state, { match }) => {
   const activeAccount = accounts.activeAccount
     ? accounts.allAccounts.find(a => eq(a.address, accounts.activeAccount))
     : null;
+
+  if (poll.legacyPoll) {
+    const winningProp = getWinningProp(state, poll.pollId);
+    poll.winningProposal = winningProp ? winningProp.title : 'Not applicable';
+  }
 
   return {
     poll,

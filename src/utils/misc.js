@@ -240,3 +240,11 @@ export const formatStringToConstantCase = kebob => {
     .join('_')
     .toUpperCase();
 };
+
+export const check = async res => {
+  if (!res.ok) {
+    throw new Error(
+      `unable to fetch topics: ${res.status} - ${await res.text()}`
+    );
+  }
+};

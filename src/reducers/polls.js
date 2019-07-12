@@ -1,7 +1,6 @@
 import matter from 'gray-matter';
 import { createReducer } from '../utils/redux';
-import { formatRound } from '../utils/misc';
-import { getWinningProp, check } from './proposals';
+import { formatRound, check } from '../utils/misc';
 
 // Mock Poll Data ----------------------------------------------
 
@@ -270,14 +269,13 @@ export const pollsInit = () => async dispatch => {
   dispatch(pollsSuccess(allPolls));
 };
 
-export const formatHistoricalPolls = topics => async (dispatch, getState) => {
+export const formatHistoricalPolls = topics => async dispatch => {
   const govTopics = topics.filter(t => t.govVote === true);
   const allPolls = govTopics.reduce(
     (
       result,
       { active, end_timestamp, date, topic_blurb, topic, key, proposals }
     ) => {
-      const winningProposal = getWinningProp(getState(), key);
       const options = proposals.map(p => p.title);
       const totalVotes = proposals.reduce(
         (acc, proposal) => acc + proposal.end_approvals,
@@ -297,10 +295,7 @@ export const formatHistoricalPolls = topics => async (dispatch, getState) => {
         summary: topic_blurb,
         title: topic,
         totalVotes: formatRound(totalVotes),
-        pollId: key,
-        winningProposal: winningProposal
-          ? winningProposal.title
-          : 'Not applicable'
+        pollId: key
         // multiHash: 'na',
         // discussionLink: 'https://www.reddit.com/r/mkrgov/',
         // numUniqueVoters: '700',
