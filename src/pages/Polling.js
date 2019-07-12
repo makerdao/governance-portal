@@ -51,7 +51,7 @@ const RightPanels = styled.div`
 
 const VoteSelection = styled.div`
   display: flex;
-  flex-diretion: row;
+  flex-direction: row;
   justify-content: space-between;
 `;
 
@@ -62,6 +62,10 @@ const DetailsPanelCard = styled(Card)`
 `;
 
 const DescriptionCard = styled(Card)`
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-content: space-between;
   margin: 0;
   max-width: 750px;
   padding: 0px 25px 18px 25px;
@@ -119,9 +123,18 @@ const DetailsCardText = styled.p`
 
 const DropdownText = styled.p`
   width: 125px;
-  margin-left: 20px;
-  margin-right: 20px;
+  margin-left: 13px;
+  margin-right: 13px;
   color: ${({ color }) => (color ? `rgb(${colors[color]})` : 'black')};
+`;
+
+const VoteButton = styled(Button)`
+  border: 0px;
+  padding: 0px;
+`;
+
+const DownloadButton = styled(Button)`
+  top: 56%;
 `;
 
 const DetailsCardItem = ({ name, value, component }) => (
@@ -196,7 +209,7 @@ class VotingPanel extends React.Component {
             onSelect={this.onDropdownSelect}
             emptyMsg="Not available"
           />
-          <Button
+          <VoteButton
             bgColor="green"
             color="white"
             hoverColor="white"
@@ -204,7 +217,7 @@ class VotingPanel extends React.Component {
             disabled={!poll.active}
           >
             Vote Now
-          </Button>
+          </VoteButton>
         </VoteSelection>
       </React.Fragment>
     );
@@ -287,9 +300,11 @@ class Polling extends React.Component {
               source={poll.content}
             />
             {rawData && (
-              <Button onClick={() => downloadRawPollData(multiHash, rawData)}>
-                Download Raw
-              </Button>
+              <DownloadButton
+                onClick={() => downloadRawPollData(multiHash, rawData)}
+              >
+                Download raw metadata
+              </DownloadButton>
             )}
           </DescriptionCard>
           <RightPanels>

@@ -171,7 +171,7 @@ const FadeIn = styled.div`
 `;
 const SmallMediumText = styled.p`
   margin-top: 20px;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
   text-align: left;
   line-height: 2;
   font-size: 14px;
