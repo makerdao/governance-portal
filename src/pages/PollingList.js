@@ -194,11 +194,15 @@ export const VotingWeightBanner = ({ fetching, activeAccount }) => {
       </Padding>
     );
   }
+  const balance = activeAccount.hasProxy
+    ? activeAccount.proxy.votingPower
+    : activeAccount.mkrBalance;
+
   return (
     <FadeIn>
       <SmallMediumText>
         <Strong>Connected wallet: </Strong>
-        <Black>{formatRound(activeAccount.mkrBalance, 4)} MKR</Black>{' '}
+        <Black>{formatRound(balance, 4)} MKR</Black>{' '}
       </SmallMediumText>
     </FadeIn>
   );
