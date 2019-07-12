@@ -283,6 +283,7 @@ class Polling extends React.Component {
   render() {
     const { votedPollOption, activeAccount, voteStateFetching } = this.state;
     const { poll, isValidRoute, network, accountDataFetching } = this.props;
+    if (!poll) return null;
     const { discussion_link, rawData, multiHash, active } = poll;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
 
@@ -406,7 +407,7 @@ const reduxProps = (state, { match }) => {
     ? accounts.allAccounts.find(a => eq(a.address, accounts.activeAccount))
     : null;
 
-  if (poll.legacyPoll) {
+  if (poll && poll.legacyPoll) {
     const winningProp = getWinningProp(state, poll.pollId);
     poll.winningProposal = winningProp ? winningProp.title : 'Not applicable';
   }
