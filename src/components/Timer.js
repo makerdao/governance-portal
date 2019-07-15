@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import theme from '../theme';
 import clock from '../imgs/clock.svg';
-import smallClock from '../imgs/clock-small.svg';
+import smallGreyClock from '../imgs/clock-small-grey.svg';
 
 const Wrapper = styled.div`
   display: flex;
@@ -16,7 +16,7 @@ const Wrapper = styled.div`
 
 const WrapperSmall = styled.div`
   display: flex;
-  color: ${theme.text.darker_default};
+  color: ${theme.text.alt};
   font-size: ${({ theme, fs }) => (fs ? `${fs}px` : theme.fonts.size.medium)};
   font-weight: 300;
   align-items: center;
@@ -35,11 +35,7 @@ const SmallClock = styled.div`
   margin-right: 0.5em;
   width: 20px;
   height: 20px;
-  background: url(${smallClock}) no-repeat;
-`;
-
-const Bold = styled.strong`
-  font-weight: bold;
+  background: url(${smallGreyClock}) no-repeat;
 `;
 
 class Timer extends Component {
@@ -48,8 +44,14 @@ class Timer extends Component {
     const timeLeft =
       Math.floor(props.endTimestamp / 1000) -
       Math.floor(new Date().getTime() / 1000);
-    if (timeLeft <= 0) this.state = { timeLeft: 0 };
-    else this.state = { timeLeft };
+    if (timeLeft <= 0) {
+      this.state = {
+        timeLeft: 0,
+        endedOn: props.endTimestamp.toDateString()
+      };
+    } else {
+      this.state = { timeLeft };
+    }
   }
 
   interval = null;
@@ -81,40 +83,51 @@ class Timer extends Component {
     return (
       <div>
         Time left to vote{' '}
-        <Bold>
-          {days > 0 && (
-            <Fragment>
-              {days} day
-              {Sday}{' '}
-            </Fragment>
-          )}
-          {hours > 0 && (
-            <Fragment>
-              {hours} hour
-              {Shour}{' '}
-            </Fragment>
-          )}
-          {minutes} minute
-          {Sminute}
-        </Bold>
+        {days > 0 && (
+          <Fragment>
+            {days} day
+            {Sday}{' '}
+          </Fragment>
+        )}
+        {hours > 0 && (
+          <Fragment>
+            {hours} hour
+            {Shour}{' '}
+          </Fragment>
+        )}
+        {minutes} minute
+        {Sminute}
       </div>
     );
   }
 
   render() {
-    const { small } = this.props;
+    const { small, winningProposal } = this.props;
+    const endedOn = this.state.endedOn;
     if (small) {
       return (
         <WrapperSmall fs={this.props.fs} mb={this.props.mb} mt={this.props.mt}>
           <SmallClock />
-          {this.renderCore()}
+          {endedOn ? (
+            <div>
+              Poll ended {endedOn}. Winning proposal: {winningProposal}
+            </div>
+          ) : (
+            this.renderCore()
+          )}
         </WrapperSmall>
       );
     }
     return (
       <Wrapper mb={this.props.mb} mt={this.props.mt}>
         <Clock />
-        {this.renderCore()}
+        {endedOn ? (
+          <div>
+            Poll ended {endedOn}. Winning proposal: {winningProposal}
+          </div>
+        ) : (
+          this.renderCore()
+        )}
       </Wrapper>
     );
   }

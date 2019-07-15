@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import BaseLayout from './layouts/base';
 import Timeline from './pages/Timeline';
+import PollingList from './pages/PollingList';
 import NotFound from './pages/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
 import Polling from './pages/Polling';
@@ -75,7 +76,9 @@ class App extends Component {
                 />
                 <Route
                   path="/polling"
-                  render={routeProps => <Timeline signaling {...routeProps} />}
+                  render={routeProps => (
+                    <PollingList signaling {...routeProps} />
+                  )}
                 />
                 <Route path="/not-found" component={NotFound} />
                 <Route

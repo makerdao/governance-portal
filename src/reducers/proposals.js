@@ -6,7 +6,8 @@ import round from 'lodash.round';
 
 import { createReducer } from '../utils/redux';
 import { initApprovalsFetch } from './approvals';
-import { div, mul, promiseRetry } from '../utils/misc';
+import { formatHistoricalPolls } from './polls';
+import { div, mul, promiseRetry, check } from '../utils/misc';
 
 // Constants ----------------------------------------------
 
@@ -60,16 +61,6 @@ const prod = 'https://content.makerfoundation.com';
 const staging = 'https://elb.content.makerfoundation.com:444';
 
 const path = 'content/governance-dashboard';
-
-// util
-
-const check = async res => {
-  if (!res.ok) {
-    throw new Error(
-      `unable to fetch topics: ${res.status} - ${await res.text()}`
-    );
-  }
-};
 
 // backends
 
@@ -153,6 +144,7 @@ export const proposalsInit = network => async dispatch => {
       type: PROPOSALS_SUCCESS,
       payload: extractProposals(topics, network)
     });
+    dispatch(formatHistoricalPolls(topics));
   } catch (err) {
     dispatch({
       type: PROPOSALS_FAILURE,

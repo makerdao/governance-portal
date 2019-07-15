@@ -258,3 +258,11 @@ export const calculateTimeSpan = (earlier, later) => {
 
   return `${span.week} w : ${span.day} d : ${span.hour} h : ${span.minute} m`;
 };
+
+export const check = async res => {
+  if (!res.ok) {
+    throw new Error(
+      `unable to fetch topics: ${res.status} - ${await res.text()}`
+    );
+  }
+};
