@@ -61,18 +61,6 @@ const DetailsPanelCard = styled(Card)`
   padding: 14px 20px;
 `;
 
-const DescriptionCard = styled(Card)`
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  align-content: space-between;
-  margin: 0;
-  max-width: 750px;
-  padding: 0px 25px 18px 25px;
-  color: #546978;
-  line-height: 30px;
-`;
-
 const CardTitle = styled.p`
   font-size: 20px;
   font-weight: 500;
@@ -133,8 +121,19 @@ const VoteButton = styled(Button)`
   padding: 0px;
 `;
 
+const DescriptionCard = styled(Card)`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0;
+  max-width: 750px;
+  padding: 0px 25px 18px 25px;
+  color: #546978;
+  line-height: 30px;
+`;
+
 const DownloadButton = styled(Button)`
-  top: 56%;
+  display: flex;
 `;
 
 const DetailsCardItem = ({ name, value, component }) => (
