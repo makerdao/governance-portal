@@ -11,6 +11,7 @@ import { modalOpen } from '../reducers/modal';
 import ExtendedLink from '../components/Onboarding/shared/ExtendedLink';
 import { Banner, BannerBody, BannerContent } from '../components/Banner';
 import Loader from '../components/Loader';
+import VoterStatus from '../components/VoterStatus';
 
 const Padding = styled.div`
   margin-top: 20px;
@@ -198,14 +199,18 @@ export const VotingWeightBanner = ({ fetching, activeAccount }) => {
     ? activeAccount.proxy.votingPower
     : activeAccount.mkrBalance;
 
-  return (
-    <FadeIn>
-      <SmallMediumText>
-        <Strong>Connected wallet: </Strong>
-        <Black>{formatRound(balance, 4)} MKR</Black>{' '}
-      </SmallMediumText>
-    </FadeIn>
-  );
+  if (activeAccount.hasProxy) {
+    return <VoterStatus />;
+  } else {
+    return (
+      <FadeIn>
+        <SmallMediumText>
+          <Strong>Connected wallet: </Strong>
+          <Black>{formatRound(balance, 4)} MKR</Black>{' '}
+        </SmallMediumText>
+      </FadeIn>
+    );
+  }
 };
 
 const PollingList = ({ fetching, polls, activeAccount }) => {

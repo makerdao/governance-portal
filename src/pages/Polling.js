@@ -16,7 +16,11 @@ import {
 } from '../reducers/accounts';
 import { modalOpen } from '../reducers/modal';
 import { getWinningProp } from '../reducers/proposals';
-import { voteForPoll, withdrawVoteForPoll } from '../reducers/polls';
+import {
+  voteForPoll,
+  withdrawVoteForPoll,
+  setOptionVotingFor
+} from '../reducers/polls';
 import theme, { colors } from '../theme';
 import { cutMiddle, eq } from '../utils/misc';
 import ExternalLink from '../components/Onboarding/shared/ExternalLink';
@@ -286,6 +290,7 @@ class Polling extends React.Component {
       votedPollOption,
       voteStateFetching: false
     });
+    this.props.voteForPoll(this.props.poll.pollId, optionId);
   };
 
   voteForPoll = (pollId, selectedOptionId) => {
@@ -300,123 +305,116 @@ class Polling extends React.Component {
     const { votedPollOption, activeAccount, voteStateFetching } = this.state;
     const { poll, isValidRoute, network, accountDataFetching } = this.props;
     if (!poll) return null;
-    const {
-      discussion_link,
-      rawData,
-      multiHash,
-      active,
-      options,
-      optionVotingFor
-    } = poll;
+    const { discussion_link, rawData, multiHash, active } = poll;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
 
+    console.log('^^^active Account', activeAccount);
     return (
-      <RiseUp>
+      <Fragment>
         <VotingWeightBanner
           fetching={accountDataFetching}
           activeAccount={activeAccount}
         />
-        <ContentWrapper>
-          <DescriptionCard>
-            <ReactMarkdown
-              className="markdown"
-              skipHtml={true}
-              source={poll.content}
-            />
-            {rawData && (
-              <DownloadButton
-                onClick={() => downloadRawPollData(multiHash, rawData)}
-              >
-                Download raw metadata
-              </DownloadButton>
-            )}
-          </DescriptionCard>
-          <RightPanels>
-            {poll.active && (
-              <VotingPanel poll={poll} voteForPoll={this.voteForPoll} />
-            )}
-            <VotedFor
-              votedPollOption={options[optionVotingFor] || votedPollOption}
-              voteStateFetching={voteStateFetching}
-              active={active}
-              withdrawVote={this.withdrawVote}
-            />
-            <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
-              <CardTitle>Details</CardTitle>
-              {[
-                {
-                  name: 'Source',
-                  component: (
-                    <ExternalLink
-                      href={ethScanLink(poll.source, network)}
-                      target="_blank"
-                    >
-                      {cutMiddle(poll.source, 8, 8)}
-                    </ExternalLink>
-                  )
-                },
-                { name: 'Started', value: poll.startTime.toDateString() },
-                {
-                  name: 'Duration',
-                  value: timeLeft(poll.startTime, poll.endTime)
-                },
-                {
-                  name: 'Questions?',
-                  component: (
-                    <ExternalLink
-                      href="https://makerdao.com/en/"
-                      target="_blank"
-                    >
-                      Governance FAQ's
-                    </ExternalLink>
-                  )
-                },
-                {
-                  name: 'Discussion',
-                  component: (
-                    <ExternalLink href={discussion_link} target="_blank">
-                      Here
-                    </ExternalLink>
-                  ),
-                  hide: !discussion_link
-                }
-              ].map((item, i) => {
-                if (!item.hide) return <DetailsCardItem key={i} {...item} />;
-                return null;
-              })}
-
-              <CardTitle>Voting Stats</CardTitle>
-              {[
-                { name: 'Total votes', value: `${poll.totalVotes} MKR` },
-                {
-                  name: 'Participation',
-                  value: isNaN(poll.participation)
-                    ? ''
-                    : `${poll.participation}%`
-                },
-                { name: 'Unique voters', value: poll.numUniqueVoters }
-              ].map((item, i) => (
-                <DetailsCardItem key={i} {...item} />
-              ))}
-
-              {poll.voteBreakdown && (
-                <>
-                  <CardTitle>Vote breakdown</CardTitle>
-                  {poll.voteBreakdown.map((item, i) => (
-                    <DetailsCardItem key={i} {...item} />
-                  ))}
-                </>
+        <RiseUp>
+          <ContentWrapper>
+            <DescriptionCard>
+              <ReactMarkdown
+                className="markdown"
+                skipHtml={true}
+                source={poll.content}
+              />
+              {rawData && (
+                <DownloadButton
+                  onClick={() => downloadRawPollData(multiHash, rawData)}
+                >
+                  Download raw metadata
+                </DownloadButton>
               )}
-              {poll.legacyPoll && (
-                <>
-                  <CardTitle>Winning Proposal</CardTitle>
-                  <span>{poll.winningProposal}</span>
-                </>
-              )}
-            </DetailsPanelCard>
-          </RightPanels>
-        </ContentWrapper>
-      </RiseUp>
+            </DescriptionCard>
+            <RightPanels>
+              {poll.active && <VotingPanel poll={poll} />}
+              <VotedFor
+                votedPollOption={votedPollOption}
+                voteStateFetching={voteStateFetching}
+                active={active}
+              />
+              <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
+                <CardTitle>Details</CardTitle>
+                {[
+                  {
+                    name: 'Source',
+                    component: (
+                      <ExternalLink
+                        href={ethScanLink(poll.source, network)}
+                        target="_blank"
+                      >
+                        {cutMiddle(poll.source, 8, 8)}
+                      </ExternalLink>
+                    )
+                  },
+                  { name: 'Started', value: poll.startTime.toDateString() },
+                  {
+                    name: 'Duration',
+                    value: timeLeft(poll.startTime, poll.endTime)
+                  },
+                  {
+                    name: 'Questions?',
+                    component: (
+                      <ExternalLink
+                        href="https://makerdao.com/en/"
+                        target="_blank"
+                      >
+                        Governance FAQ's
+                      </ExternalLink>
+                    )
+                  },
+                  {
+                    name: 'Discussion',
+                    component: (
+                      <ExternalLink href={discussion_link} target="_blank">
+                        Here
+                      </ExternalLink>
+                    ),
+                    hide: !discussion_link
+                  }
+                ].map((item, i) => {
+                  if (!item.hide) return <DetailsCardItem key={i} {...item} />;
+                  return null;
+                })}
+
+                <CardTitle>Voting Stats</CardTitle>
+                {[
+                  { name: 'Total votes', value: `${poll.totalVotes} MKR` },
+                  {
+                    name: 'Participation',
+                    value: isNaN(poll.participation)
+                      ? ''
+                      : `${poll.participation}%`
+                  },
+                  { name: 'Unique voters', value: poll.numUniqueVoters }
+                ].map((item, i) => (
+                  <DetailsCardItem key={i} {...item} />
+                ))}
+
+                {poll.voteBreakdown && (
+                  <>
+                    <CardTitle>Vote breakdown</CardTitle>
+                    {poll.voteBreakdown.map((item, i) => (
+                      <DetailsCardItem key={i} {...item} />
+                    ))}
+                  </>
+                )}
+                {poll.legacyPoll && (
+                  <>
+                    <CardTitle>Winning Proposal</CardTitle>
+                    <span>{poll.winningProposal}</span>
+                  </>
+                )}
+              </DetailsPanelCard>
+            </RightPanels>
+          </ContentWrapper>
+        </RiseUp>
+      </Fragment>
     );
   }
 }
@@ -451,5 +449,5 @@ const reduxProps = (state, { match }) => {
 
 export default connect(
   reduxProps,
-  { modalOpen, voteForPoll, withdrawVoteForPoll }
+  { modalOpen, voteForPoll, withdrawVoteForPoll, setOptionVotingFor }
 )(Polling);
