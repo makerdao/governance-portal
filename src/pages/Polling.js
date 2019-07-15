@@ -7,15 +7,16 @@ import { toSlug } from '../utils/misc';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Loader from '../components/Loader';
+import NotFound from './NotFound';
+import { VotingWeightBanner } from './PollingList';
 import {
   activeCanVote,
   getActiveVotingFor,
   getPollOptionVotingFor
 } from '../reducers/accounts';
-import NotFound from './NotFound';
-import { VotingWeightBanner } from './PollingList';
 import { modalOpen } from '../reducers/modal';
 import { getWinningProp } from '../reducers/proposals';
+import { voteForPoll, withdrawVoteForPoll } from '../reducers/polls';
 import theme, { colors } from '../theme';
 import { cutMiddle, eq } from '../utils/misc';
 import ExternalLink from '../components/Onboarding/shared/ExternalLink';
@@ -143,7 +144,12 @@ const DetailsCardItem = ({ name, value, component }) => (
   </DetailsItem>
 );
 
-const VotedFor = ({ voteStateFetching, votedPollOption, active }) => {
+const VotedFor = ({
+  voteStateFetching,
+  votedPollOption,
+  active,
+  withdrawVote
+}) => {
   if (voteStateFetching) {
     return <Loader mt={34} mb={34} color="header" background="background" />;
   }
@@ -155,7 +161,7 @@ const VotedFor = ({ voteStateFetching, votedPollOption, active }) => {
         {active && (
           <Fragment>
             <Black>| </Black>
-            <Blue onClick={() => null}>Withdraw Vote</Blue>
+            <Blue onClick={() => withdrawVote()}>Withdraw Vote</Blue>
           </Fragment>
         )}
       </VoteStatusText>
@@ -176,9 +182,11 @@ class VotingPanel extends React.Component {
     };
   }
 
-  onDropdownSelect = value => {
+  onDropdownSelect = (value, index) => {
+    const selectedOptionId = parseInt(index) + 1;
     this.setState({
-      selectedOption: value
+      selectedOption: value,
+      selectedOptionId
     });
   };
 
@@ -190,10 +198,10 @@ class VotingPanel extends React.Component {
   };
 
   render() {
-    const poll = this.props.poll;
-    const { options } = poll;
+    const { poll, voteForPoll } = this.props;
+    const { pollId, options } = poll;
 
-    const { selectedOption } = this.state;
+    const { selectedOption, selectedOptionId } = this.state;
     return (
       <React.Fragment>
         <VoteSelection>
@@ -214,6 +222,7 @@ class VotingPanel extends React.Component {
             hoverColor="white"
             width="135px"
             disabled={!poll.active}
+            onClick={() => voteForPoll(pollId, selectedOptionId)}
           >
             Vote Now
           </VoteButton>
@@ -279,11 +288,26 @@ class Polling extends React.Component {
     });
   };
 
+  voteForPoll = (pollId, selectedOptionId) => {
+    this.props.voteForPoll(pollId, selectedOptionId);
+  };
+
+  withdrawVote = () => {
+    this.props.withdrawVoteForPoll(this.props.poll.pollId);
+  };
+
   render() {
     const { votedPollOption, activeAccount, voteStateFetching } = this.state;
     const { poll, isValidRoute, network, accountDataFetching } = this.props;
     if (!poll) return null;
-    const { discussion_link, rawData, multiHash, active } = poll;
+    const {
+      discussion_link,
+      rawData,
+      multiHash,
+      active,
+      options,
+      optionVotingFor
+    } = poll;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
 
     return (
@@ -308,11 +332,14 @@ class Polling extends React.Component {
             )}
           </DescriptionCard>
           <RightPanels>
-            {poll.active && <VotingPanel poll={poll} />}
+            {poll.active && (
+              <VotingPanel poll={poll} voteForPoll={this.voteForPoll} />
+            )}
             <VotedFor
-              votedPollOption={votedPollOption}
+              votedPollOption={options[optionVotingFor] || votedPollOption}
               voteStateFetching={voteStateFetching}
               active={active}
+              withdrawVote={this.withdrawVote}
             />
             <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
               <CardTitle>Details</CardTitle>
@@ -424,5 +451,5 @@ const reduxProps = (state, { match }) => {
 
 export default connect(
   reduxProps,
-  { modalOpen }
+  { modalOpen, voteForPoll, withdrawVoteForPoll }
 )(Polling);

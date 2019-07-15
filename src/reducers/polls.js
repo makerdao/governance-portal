@@ -145,22 +145,47 @@ export const POLLS_REQUEST = 'polls/REQUEST';
 export const POLLS_SUCCESS = 'polls/SUCCESS';
 export const POLLS_FAILURE = 'polls/FAILURE';
 
+export const POLLS_SET_OPTION_VOTING_FOR = 'polls/SET_OPTION_VOTING_FOR';
+export const POLLS_WITHDRAW_OPTION_VOTING_FOR =
+  'polls/WITHDRAW_OPTION_VOTING_FOR';
+
 // Actions ----------------------------------------------
 
 export const pollsRequest = () => ({
   type: POLLS_REQUEST
 });
-
 export const pollsSuccess = polls => ({
   type: POLLS_SUCCESS,
   payload: polls
 });
-
 export const pollsFailure = () => ({
   type: POLLS_FAILURE
 });
 
-// ---
+export const setOptionVotingFor = (pollId, optionId) => ({
+  type: POLLS_SET_OPTION_VOTING_FOR,
+  payload: { pollId, optionId }
+});
+export const withdrawOptionVotingFor = pollId => ({
+  type: POLLS_WITHDRAW_OPTION_VOTING_FOR,
+  payload: { pollId }
+});
+
+// Writes ---
+
+export const voteForPoll = (pollId, optionId) => dispatch => {
+  console.log('vote for poll', pollId, optionId);
+  // const pollVote = window.maker.service('govPolling').vote(pollId, optionId);
+  dispatch(setOptionVotingFor(pollId, optionId));
+};
+
+export const withdrawVoteForPoll = pollId => dispatch => {
+  console.log('withdraw vote for poll', pollId);
+  // const pollVote = window.maker.service('govPolling').withdraw(pollId);
+  dispatch(withdrawOptionVotingFor(pollId));
+};
+
+// Reads ---
 
 const getAllWhiteListedPolls = async () => {
   //return window.maker.service('poll').getAllWhitelistedPolls();
@@ -174,7 +199,6 @@ const fetchPollFromCms = async pollId => {
   const cmsPath = 'content/governance-polling';
 
   const cmsUrl = `${cmsRemoteUrl}/${cmsPath}?pollId=${pollId}`;
-  console.log('***cmsUrl', cmsUrl);
   const res = await fetch(cmsUrl);
   await check(res);
   const json = await res.json();
@@ -314,5 +338,28 @@ export const formatHistoricalPolls = topics => async dispatch => {
 // Reducer ------------------------------------------------
 
 export default createReducer([], {
-  [POLLS_SUCCESS]: (state, { payload }) => [...state, ...payload]
+  [POLLS_SUCCESS]: (state, { payload }) => [...state, ...payload],
+  [POLLS_SET_OPTION_VOTING_FOR]: (state, { payload }) => {
+    console.log('payload', payload);
+    return state.map(poll => {
+      if (poll.pollId === payload.pollId) {
+        return {
+          ...poll,
+          optionVotingFor: payload.optionId
+        };
+      }
+      return poll;
+    });
+  },
+  [POLLS_WITHDRAW_OPTION_VOTING_FOR]: (state, { payload }) => {
+    return state.map(poll => {
+      if (poll.pollId === payload.pollId) {
+        return {
+          ...poll,
+          optionVotingFor: null
+        };
+      }
+      return poll;
+    });
+  }
 });
