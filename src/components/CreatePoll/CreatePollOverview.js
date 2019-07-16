@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
 import { Box } from '@makerdao/ui-components-core';
-import { Button } from '@makerdao/ui-components';
+import { Button, Checkbox } from '@makerdao/ui-components';
 import { copyToClipboard } from '../../utils/misc';
 import { URL_REGEX } from '../../utils/constants';
 import CreatePollInput from './CreatePollInput';
@@ -39,6 +39,12 @@ const Code = styled.pre`
   white-space: pre-wrap;
 `;
 
+const Label = styled.label`
+  font-size: 0.9em;
+  color: #546978;
+  margin-left: 10px;
+`;
+
 const WarningText = styled.p`
   font-size: 0.9em;
   color: #f35833;
@@ -46,6 +52,16 @@ const WarningText = styled.p`
 `;
 
 class CreatePollOverview extends Component {
+  state = {
+    confirmCreatePoll: false
+  };
+
+  toggleCheckbox = () => {
+    this.setState({
+      confirmCreatePoll: !this.state.confirmCreatePoll
+    });
+  };
+
   render = () => {
     const {
       start,
@@ -137,15 +153,26 @@ class CreatePollOverview extends Component {
           }}
         />
 
+        <div css={{ display: 'flex', alignItems: 'flex-start' }}>
+          <Checkbox
+            id="createPollCheckbox"
+            checked={this.state.confirmCreatePoll}
+            onChange={this.toggleCheckbox}
+          />
+          <Label htmlFor="createPollCheckbox">
+            Confirm that you have copied the above content into the cms
+          </Label>
+        </div>
+
         <SectionWrapper css={{ marginTop: '20px' }}>
           <Button
             onClick={async () => {
               handleParentState({ submitAttempted: true });
-              if (urlValid && execPollValid) {
+              if (urlValid && execPollValid && this.state.confirmCreatePoll) {
                 execCreatePoll();
               }
             }}
-            disabled={execPollError}
+            disabled={execPollError && !this.state.confirmCreatePoll}
           >
             Create Poll
           </Button>
