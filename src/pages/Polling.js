@@ -180,7 +180,6 @@ const VotedFor = ({
 
 class VotingPanel extends React.Component {
   constructor(props) {
-    console.log('props', props);
     super(props);
     this.state = {
       selectedOption: 'Please choose...'
@@ -306,7 +305,14 @@ class Polling extends React.Component {
     const { votedPollOption, activeAccount, voteStateFetching } = this.state;
     const { poll, isValidRoute, network, accountDataFetching } = this.props;
     if (!poll) return null;
-    const { discussion_link, rawData, multiHash, active } = poll;
+    const {
+      discussion_link,
+      rawData,
+      multiHash,
+      active,
+      options,
+      optionVotingFor
+    } = poll;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
 
     console.log('^^^active Account', activeAccount);
@@ -341,9 +347,10 @@ class Polling extends React.Component {
                 />
               )}
               <VotedFor
-                votedPollOption={votedPollOption}
+                votedPollOption={options[optionVotingFor] || votedPollOption}
                 voteStateFetching={voteStateFetching && accountDataFetching}
                 active={active}
+                withdrawVote={this.withdrawVote}
               />
               <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
                 <CardTitle>Details</CardTitle>
