@@ -186,7 +186,7 @@ const Timeline = ({
   return (
     <Fragment>
       <MigrationNotificationBanner />
-      <VoterStatus signaling={signaling} />
+      <VoterStatus signaling={signaling} legacy={true} />
       <RiseUp key={otherProposals.toString()}>
         {signaling || !hatProposal ? null : (
           <StyledCard>

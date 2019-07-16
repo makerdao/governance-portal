@@ -109,7 +109,8 @@ const VoterStatus = ({
   modalOpen,
   fetching,
   signaling,
-  onboardingState
+  onboardingState,
+  legacy
 }) => {
   if (fetching) {
     return (
@@ -194,9 +195,9 @@ const VoterStatus = ({
                 }
               </WithVote>
             </Fragment>
-          ) : (
+          ) : legacy ? (
             'Currently not voting'
-          )}
+          ) : null}
         </SmallMediumText>
       ) : (
         <SmallMediumText>
@@ -251,9 +252,9 @@ const VoterStatus = ({
                 }
               </WithVote>
             </Fragment>
-          ) : (
+          ) : legacy ? (
             'Currently not voting'
-          )}
+          ) : null}
         </SmallMediumText>
       )}
     </FadeIn>
