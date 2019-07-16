@@ -202,7 +202,7 @@ class VotingPanel extends React.Component {
   };
 
   render() {
-    const { poll, voteForPoll } = this.props;
+    const { poll, voteForPoll, activeAccount } = this.props;
     const { pollId, options } = poll;
 
     const { selectedOption, selectedOptionId } = this.state;
@@ -225,7 +225,7 @@ class VotingPanel extends React.Component {
             color="white"
             hoverColor="white"
             width="135px"
-            disabled={!poll.active}
+            disabled={!poll.active || !activeAccount}
             onClick={() => voteForPoll(pollId, selectedOptionId)}
           >
             Vote Now
@@ -305,7 +305,14 @@ class Polling extends React.Component {
     const { votedPollOption, activeAccount, voteStateFetching } = this.state;
     const { poll, isValidRoute, network, accountDataFetching } = this.props;
     if (!poll) return null;
-    const { discussion_link, rawData, multiHash, active } = poll;
+    const {
+      discussion_link,
+      rawData,
+      multiHash,
+      active,
+      options,
+      optionVotingFor
+    } = poll;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
 
     console.log('^^^active Account', activeAccount);
@@ -332,11 +339,18 @@ class Polling extends React.Component {
               )}
             </DescriptionCard>
             <RightPanels>
-              {poll.active && <VotingPanel poll={poll} />}
+              {poll.active && (
+                <VotingPanel
+                  poll={poll}
+                  voteForPoll={this.voteForPoll}
+                  activeAccount={activeAccount}
+                />
+              )}
               <VotedFor
-                votedPollOption={votedPollOption}
-                voteStateFetching={voteStateFetching}
+                votedPollOption={options[optionVotingFor] || votedPollOption}
+                voteStateFetching={voteStateFetching && accountDataFetching}
                 active={active}
+                withdrawVote={this.withdrawVote}
               />
               <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
                 <CardTitle>Details</CardTitle>

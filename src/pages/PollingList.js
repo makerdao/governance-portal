@@ -188,13 +188,15 @@ const Strong = styled(Black)`
 `;
 
 export const VotingWeightBanner = ({ fetching, activeAccount }) => {
-  if (fetching || !activeAccount) {
+  if (fetching) {
     return (
       <Padding>
         <Loader mt={34} mb={34} color="header" background="background" />
       </Padding>
     );
   }
+  if (!activeAccount) return <Padding />;
+
   const balance = activeAccount.hasProxy
     ? activeAccount.proxy.votingPower
     : activeAccount.mkrBalance;
