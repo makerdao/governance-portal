@@ -180,6 +180,7 @@ const VotedFor = ({
 
 class VotingPanel extends React.Component {
   constructor(props) {
+    console.log('props', props);
     super(props);
     this.state = {
       selectedOption: 'Please choose...'
@@ -202,7 +203,7 @@ class VotingPanel extends React.Component {
   };
 
   render() {
-    const { poll, voteForPoll } = this.props;
+    const { poll, voteForPoll, activeAccount } = this.props;
     const { pollId, options } = poll;
 
     const { selectedOption, selectedOptionId } = this.state;
@@ -225,7 +226,7 @@ class VotingPanel extends React.Component {
             color="white"
             hoverColor="white"
             width="135px"
-            disabled={!poll.active}
+            disabled={!poll.active || !activeAccount}
             onClick={() => voteForPoll(pollId, selectedOptionId)}
           >
             Vote Now
@@ -332,10 +333,16 @@ class Polling extends React.Component {
               )}
             </DescriptionCard>
             <RightPanels>
-              {poll.active && <VotingPanel poll={poll} />}
+              {poll.active && (
+                <VotingPanel
+                  poll={poll}
+                  voteForPoll={this.voteForPoll}
+                  activeAccount={activeAccount}
+                />
+              )}
               <VotedFor
                 votedPollOption={votedPollOption}
-                voteStateFetching={voteStateFetching}
+                voteStateFetching={voteStateFetching && accountDataFetching}
                 active={active}
               />
               <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>

@@ -13,16 +13,20 @@ const mockParsedAllPollsData = [
     startTime: new Date('2019-06-25'),
     endTime: new Date('2019-06-30'),
     multiHash: 'QmbL3A3pz8j2NoWD18nt1PuKxqYh7Kk28jQK56nJaMcqcd',
-    source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2'
+    source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
+    url:
+      'https://cms-gov.makerfoundation.com/content/governance-polling?pollId=1'
   },
   {
     creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
     pollId: '2',
     blockCreated: 123456789,
     startTime: new Date('2019-07-09'),
-    endTime: new Date('2019-07-16'),
+    endTime: new Date('2019-07-23'),
     multiHash: 'QmPLpuz1VMtAapZJCb84NtRRUHVFsxGiX6kdb1ewsXxSSi',
-    source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2'
+    source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
+    url:
+      'https://cms-gov.makerfoundation.com/content/governance-polling?pollId=2'
   }
 ];
 
@@ -192,14 +196,8 @@ const getAllWhiteListedPolls = async () => {
   return mockParsedAllPollsData;
 };
 
-const fetchPollFromCms = async pollId => {
-  // const cmsLocalUrl = 'http://0.0.0.0:3000';
-  // const oldPath = 'content/governance-dashboard';
-  const cmsRemoteUrl = 'https://cms-gov.makerfoundation.com';
-  const cmsPath = 'content/governance-polling';
-
-  const cmsUrl = `${cmsRemoteUrl}/${cmsPath}?pollId=${pollId}`;
-  const res = await fetch(cmsUrl);
+const fetchPollFromUrl = async url => {
+  const res = await fetch(url);
   await check(res);
   const json = await res.json();
 
@@ -256,7 +254,7 @@ export const pollsInit = () => async dispatch => {
     const polls = await getAllWhiteListedPolls();
 
     for (const poll of polls) {
-      const cmsData = await fetchPollFromCms(poll.pollId);
+      const cmsData = await fetchPollFromUrl(poll.url);
       // const cmsData = await mockFetchPollFromCms(poll.pollId);
       const cmsPoll = formatYamlToJson(cmsData);
 
