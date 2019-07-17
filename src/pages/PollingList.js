@@ -216,7 +216,7 @@ export const VotingWeightBanner = ({ fetching, activeAccount }) => {
 };
 
 const PollingList = ({ fetching, polls, activeAccount }) => {
-  polls.sort((a, b) => b.startTime - a.startTime);
+  polls.sort((a, b) => b.startDate - a.startDate);
   console.log('*****activeAccount', activeAccount);
   return (
     <Fragment>
@@ -227,7 +227,7 @@ const PollingList = ({ fetching, polls, activeAccount }) => {
           <StyledCard key={poll.multiHash}>
             <Card.Element key={poll.multiHash} height={proposalWrapperHeight}>
               <ProposalDetails>
-                <ExtendedLink to={`/polling-proposal/${toSlug(poll.pollId)}`}>
+                <ExtendedLink to={`/polling-proposal/${toSlug(poll.voteId)}`}>
                   <SubHeading>{poll.title}</SubHeading>
                 </ExtendedLink>
                 <Body
@@ -236,7 +236,7 @@ const PollingList = ({ fetching, polls, activeAccount }) => {
                   }}
                 />
                 <Timer
-                  endTimestamp={poll.endTime}
+                  endTimestamp={poll.endDate}
                   winningProposal={poll.winningProposal}
                   small
                   mb="-6"
@@ -245,7 +245,7 @@ const PollingList = ({ fetching, polls, activeAccount }) => {
                   {poll.active ? (
                     <Fragment>
                       <ExtendedLink
-                        to={`/polling-proposal/${toSlug(poll.pollId)}`}
+                        to={`/polling-proposal/${toSlug(poll.voteId)}`}
                       >
                         <StyledButton>Vote on Proposal</StyledButton>
                       </ExtendedLink>
@@ -253,7 +253,7 @@ const PollingList = ({ fetching, polls, activeAccount }) => {
                   ) : (
                     <Fragment>
                       <ExtendedLink
-                        to={`/polling-proposal/${toSlug(poll.pollId)}`}
+                        to={`/polling-proposal/${toSlug(poll.voteId)}`}
                       >
                         <StyledButton variant="secondary">
                           See Details

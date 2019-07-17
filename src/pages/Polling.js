@@ -233,8 +233,8 @@ class VotingPanel extends React.Component {
   }
 }
 
-const timeLeft = (startTime, endTime) => {
-  const timeLeft = Math.floor(endTime / 1000) - Math.floor(startTime / 1000);
+const timeLeft = (startDate, endDate) => {
+  const timeLeft = Math.floor(endDate / 1000) - Math.floor(startDate / 1000);
   const days = Math.floor(timeLeft / (3600 * 24));
   return days !== 1 ? `${days} days` : `${days} day`;
 };
@@ -359,10 +359,10 @@ class Polling extends React.Component {
                       </ExternalLink>
                     )
                   },
-                  { name: 'Started', value: poll.startTime.toDateString() },
+                  { name: 'Started', value: poll.startDate.toDateString() },
                   {
                     name: 'Duration',
-                    value: timeLeft(poll.startTime, poll.endTime)
+                    value: timeLeft(poll.startDate, poll.endDate)
                   },
                   {
                     name: 'Questions?',
@@ -430,8 +430,8 @@ const reduxProps = (state, { match }) => {
   const { accounts, metamask, polls } = state;
   const { pollSlug } = match.params;
 
-  const poll = polls.find(({ pollId }) => {
-    return toSlug(pollId) === pollSlug;
+  const poll = polls.find(({ voteId }) => {
+    return toSlug(voteId) === pollSlug;
   });
   const isValidRoute = poll && pollSlug;
   const activeAccount = accounts.activeAccount
@@ -439,6 +439,7 @@ const reduxProps = (state, { match }) => {
     : null;
 
   if (poll && poll.legacyPoll) {
+    // TODO update this to voteId:
     const winningProp = getWinningProp(state, poll.pollId);
     poll.winningProposal = winningProp ? winningProp.title : 'Not applicable';
   }
