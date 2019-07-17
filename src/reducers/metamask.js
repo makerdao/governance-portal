@@ -8,7 +8,7 @@ import { netIdToName } from '../utils/ethereum';
 import { ethInit } from './eth';
 import { voteTallyInit } from './tally';
 import { proposalsInit } from './proposals';
-import { pollsInit } from './polls';
+import { pollsInit } from './polling';
 import { hatInit } from './hat';
 
 // Constants ----------------------------------------------

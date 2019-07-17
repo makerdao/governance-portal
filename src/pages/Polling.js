@@ -20,7 +20,7 @@ import {
   voteForPoll,
   withdrawVoteForPoll,
   setOptionVotingFor
-} from '../reducers/polls';
+} from '../reducers/polling';
 import theme, { colors } from '../theme';
 import { cutMiddle, eq } from '../utils/misc';
 import ExternalLink from '../components/Onboarding/shared/ExternalLink';
@@ -290,7 +290,6 @@ class Polling extends React.Component {
       votedPollOption,
       voteStateFetching: false
     });
-    this.props.voteForPoll(this.props.poll.pollId, optionId);
   };
 
   voteForPoll = (pollId, selectedOptionId) => {
@@ -434,10 +433,10 @@ class Polling extends React.Component {
 }
 
 const reduxProps = (state, { match }) => {
-  const { accounts, metamask, polls } = state;
+  const { accounts, metamask, polling } = state;
   const { pollSlug } = match.params;
 
-  const poll = polls.find(({ pollId }) => {
+  const poll = polling.polls.find(({ pollId }) => {
     return toSlug(pollId) === pollSlug;
   });
   const isValidRoute = poll && pollSlug;

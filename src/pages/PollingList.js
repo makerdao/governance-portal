@@ -271,13 +271,13 @@ const PollingList = ({ fetching, polls, activeAccount }) => {
   );
 };
 
-const reduxProps = ({ accounts, polls }) => {
+const reduxProps = ({ accounts, polling }) => {
   const activeAccount = accounts.activeAccount
     ? accounts.allAccounts.find(a => eq(a.address, accounts.activeAccount))
     : null;
   return {
     fetching: accounts.fetching,
-    polls,
+    polls: polling.polls,
     activeAccount
   };
 };

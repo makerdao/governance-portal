@@ -1,6 +1,8 @@
 import matter from 'gray-matter';
 import { createReducer } from '../utils/redux';
 import { formatRound, check } from '../utils/misc';
+import { addToastWithTimeout, ToastTypes } from './toasts';
+import { TransactionStatus } from '../utils/constants';
 
 // Mock Poll Data ----------------------------------------------
 
@@ -143,17 +145,45 @@ const mockGetVoteHistory = async pollId => {
       return mockHistory1;
   }
 };
+
 // Constants ----------------------------------------------
 
 export const POLLS_REQUEST = 'polls/REQUEST';
 export const POLLS_SUCCESS = 'polls/SUCCESS';
 export const POLLS_FAILURE = 'polls/FAILURE';
 
+export const POLL_VOTE_REQUEST = 'poll/VOTE_REQUEST';
+export const POLL_VOTE_SENT = 'poll/VOTE_SENT';
+export const POLL_VOTE_SUCCESS = 'poll/VOTE_SUCCESS';
+export const POLL_VOTE_FAILURE = 'poll/VOTE_FAILURE';
+
 export const POLLS_SET_OPTION_VOTING_FOR = 'polls/SET_OPTION_VOTING_FOR';
 export const POLLS_WITHDRAW_OPTION_VOTING_FOR =
   'polls/WITHDRAW_OPTION_VOTING_FOR';
 
 // Actions ----------------------------------------------
+
+const handleTx = ({ prefix, dispatch, txObject }) =>
+  new Promise(resolve => {
+    const txMgr = window.maker.service('transactionManager');
+    txMgr.listen(txObject, {
+      pending: tx => {
+        dispatch({
+          type: `poll/${prefix}_SENT`,
+          payload: { txHash: tx.hash }
+        });
+      },
+      mined: _ => {
+        dispatch({ type: `poll/${prefix}_SUCCESS` });
+        resolve();
+      },
+      error: (_, err) => {
+        dispatch({ type: `poll/${prefix}_FAILURE`, payload: err });
+        dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+        resolve();
+      }
+    });
+  });
 
 export const pollsRequest = () => ({
   type: POLLS_REQUEST
@@ -177,9 +207,18 @@ export const withdrawOptionVotingFor = pollId => ({
 
 // Writes ---
 
-export const voteForPoll = (pollId, optionId) => dispatch => {
+export const voteForPoll = (pollId, optionId) => async dispatch => {
   console.log('vote for poll', pollId, optionId);
-  // const pollVote = window.maker.service('govPolling').vote(pollId, optionId);
+
+  dispatch({ type: POLL_VOTE_REQUEST });
+
+  const pollVote = window.maker.service('govPolling').vote(pollId, optionId);
+  await handleTx({
+    txObject: pollVote,
+    prefix: 'VOTE',
+    dispatch
+  });
+
   dispatch(setOptionVotingFor(pollId, optionId));
 };
 
@@ -335,29 +374,62 @@ export const formatHistoricalPolls = topics => async dispatch => {
 
 // Reducer ------------------------------------------------
 
-export default createReducer([], {
-  [POLLS_SUCCESS]: (state, { payload }) => [...state, ...payload],
+const initialState = {
+  polls: [],
+  voteTxHash: '',
+  voteTxStatus: TransactionStatus.NOT_STARTED
+};
+
+export default createReducer(initialState, {
+  [POLLS_SUCCESS]: (state, { payload }) => ({
+    ...state,
+    polls: [...state.polls, ...payload]
+  }),
+  [POLL_VOTE_REQUEST]: state => ({
+    ...state,
+    voteTxHash: '',
+    voteTxStatus: TransactionStatus.NOT_STARTED
+  }),
+  [POLL_VOTE_SENT]: (state, { payload }) => ({
+    ...state,
+    voteTxHash: payload.txHash,
+    voteTxStatus: TransactionStatus.PENDING
+  }),
+  [POLL_VOTE_SUCCESS]: state => ({
+    ...state,
+    voteTxStatus: TransactionStatus.MINED
+  }),
+  [POLL_VOTE_FAILURE]: state => ({
+    ...state,
+    voteTxStatus: TransactionStatus.ERROR
+  }),
   [POLLS_SET_OPTION_VOTING_FOR]: (state, { payload }) => {
     console.log('payload', payload);
-    return state.map(poll => {
-      if (poll.pollId === payload.pollId) {
-        return {
-          ...poll,
-          optionVotingFor: payload.optionId
-        };
-      }
-      return poll;
-    });
+    return {
+      ...state,
+      polls: state.polls.map(poll => {
+        if (poll.pollId === payload.pollId) {
+          return {
+            ...poll,
+            optionVotingFor: payload.optionId
+          };
+        }
+        return poll;
+      })
+    };
   },
   [POLLS_WITHDRAW_OPTION_VOTING_FOR]: (state, { payload }) => {
-    return state.map(poll => {
-      if (poll.pollId === payload.pollId) {
-        return {
-          ...poll,
-          optionVotingFor: null
-        };
-      }
-      return poll;
-    });
+    return {
+      ...state,
+      polls: state.polls.map(poll => {
+        if (poll.pollId === payload.pollId) {
+          return {
+            ...poll,
+            optionVotingFor: null
+          };
+        }
+        return poll;
+      })
+    };
   }
 });

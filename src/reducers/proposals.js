@@ -6,7 +6,7 @@ import round from 'lodash.round';
 
 import { createReducer } from '../utils/redux';
 import { initApprovalsFetch } from './approvals';
-import { formatHistoricalPolls } from './polls';
+import { formatHistoricalPolls } from './polling';
 import { div, mul, promiseRetry, check } from '../utils/misc';
 
 // Constants ----------------------------------------------
