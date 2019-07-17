@@ -9,17 +9,14 @@ import Card from '../components/Card';
 import Loader from '../components/Loader';
 import NotFound from './NotFound';
 import { VotingWeightBanner } from './PollingList';
-import {
-  activeCanVote,
-  getActiveVotingFor,
-  getPollOptionVotingFor
-} from '../reducers/accounts';
+import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import { modalOpen } from '../reducers/modal';
 import { getWinningProp } from '../reducers/proposals';
 import {
   voteForPoll,
   withdrawVoteForPoll,
-  setOptionVotingFor
+  setOptionVotingFor,
+  getOptionVotingFor
 } from '../reducers/polls';
 import theme, { colors } from '../theme';
 import { cutMiddle, eq } from '../utils/misc';
@@ -150,18 +147,18 @@ const DetailsCardItem = ({ name, value, component }) => (
 
 const VotedFor = ({
   voteStateFetching,
-  votedPollOption,
+  optionVotingFor,
   active,
   withdrawVote
 }) => {
   if (voteStateFetching) {
     return <Loader mt={34} mb={34} color="header" background="background" />;
   }
-  if (votedPollOption)
+  if (optionVotingFor)
     return (
       <VoteStatusText>
         <Black>{active ? 'Currently voting: ' : 'Voted for: '}</Black>
-        <Strong>{votedPollOption} </Strong>
+        <Strong>{optionVotingFor} </Strong>
         {active && (
           <Fragment>
             <Black>| </Black>
@@ -204,8 +201,8 @@ class VotingPanel extends React.Component {
   render() {
     const { poll, voteForPoll, activeAccount } = this.props;
     const { pollId, options } = poll;
-
     const { selectedOption, selectedOptionId } = this.state;
+
     return (
       <React.Fragment>
         <VoteSelection>
@@ -255,14 +252,13 @@ class Polling extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      votedPollOption: null,
       activeAccount: this.props.activeAccount,
       voteStateFetching: true
     };
   }
 
   async componentDidMount() {
-    if (this.state.activeAccount) await this.getVotedPollOption();
+    if (this.state.activeAccount) await this.updateVotedPollOption();
   }
 
   static getDerivedStateFromProps(newProps, state) {
@@ -276,21 +272,18 @@ class Polling extends React.Component {
 
   async componentDidUpdate(prevProps, prevState) {
     if (this.state.activeAccount !== prevProps.activeAccount) {
-      await this.getVotedPollOption();
+      await this.updateVotedPollOption();
     }
   }
 
-  getVotedPollOption = async () => {
-    const optionId = await getPollOptionVotingFor(
+  updateVotedPollOption = async () => {
+    await this.props.getOptionVotingFor(
       this.props.poll.pollId,
       this.state.activeAccount
     );
-    const votedPollOption = this.props.poll.options[optionId];
     this.setState({
-      votedPollOption,
       voteStateFetching: false
     });
-    this.props.voteForPoll(this.props.poll.pollId, optionId);
   };
 
   voteForPoll = (pollId, selectedOptionId) => {
@@ -302,7 +295,7 @@ class Polling extends React.Component {
   };
 
   render() {
-    const { votedPollOption, activeAccount, voteStateFetching } = this.state;
+    const { activeAccount, voteStateFetching } = this.state;
     const { poll, isValidRoute, network, accountDataFetching } = this.props;
     if (!poll) return null;
     const {
@@ -347,7 +340,7 @@ class Polling extends React.Component {
                 />
               )}
               <VotedFor
-                votedPollOption={options[optionVotingFor] || votedPollOption}
+                optionVotingFor={options[optionVotingFor]}
                 voteStateFetching={voteStateFetching && accountDataFetching}
                 active={active}
                 withdrawVote={this.withdrawVote}
@@ -463,5 +456,11 @@ const reduxProps = (state, { match }) => {
 
 export default connect(
   reduxProps,
-  { modalOpen, voteForPoll, withdrawVoteForPoll, setOptionVotingFor }
+  {
+    modalOpen,
+    voteForPoll,
+    withdrawVoteForPoll,
+    setOptionVotingFor,
+    getOptionVotingFor
+  }
 )(Polling);
