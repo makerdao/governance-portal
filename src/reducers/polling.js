@@ -158,8 +158,6 @@ export const POLL_VOTE_SUCCESS = 'poll/VOTE_SUCCESS';
 export const POLL_VOTE_FAILURE = 'poll/VOTE_FAILURE';
 
 export const POLLS_SET_OPTION_VOTING_FOR = 'polls/SET_OPTION_VOTING_FOR';
-export const POLLS_WITHDRAW_OPTION_VOTING_FOR =
-  'polls/WITHDRAW_OPTION_VOTING_FOR';
 
 // Actions ----------------------------------------------
 
@@ -200,16 +198,10 @@ export const setOptionVotingFor = (pollId, optionId) => ({
   type: POLLS_SET_OPTION_VOTING_FOR,
   payload: { pollId, optionId }
 });
-export const withdrawOptionVotingFor = pollId => ({
-  type: POLLS_WITHDRAW_OPTION_VOTING_FOR,
-  payload: { pollId }
-});
 
 // Writes ---
 
 export const voteForPoll = (pollId, optionId) => async dispatch => {
-  console.log('vote for poll', pollId, optionId);
-
   dispatch({ type: POLL_VOTE_REQUEST });
 
   const pollVote = window.maker.service('govPolling').vote(pollId, optionId);
@@ -222,10 +214,17 @@ export const voteForPoll = (pollId, optionId) => async dispatch => {
   dispatch(setOptionVotingFor(pollId, optionId));
 };
 
-export const withdrawVoteForPoll = pollId => dispatch => {
-  console.log('withdraw vote for poll', pollId);
-  // const pollVote = window.maker.service('govPolling').withdraw(pollId);
-  dispatch(withdrawOptionVotingFor(pollId));
+export const withdrawVoteForPoll = pollId => async dispatch => {
+  dispatch({ type: POLL_VOTE_REQUEST });
+
+  const pollVote = window.maker.service('govPolling').vote(pollId, 0);
+  await handleTx({
+    txObject: pollVote,
+    prefix: 'VOTE',
+    dispatch
+  });
+
+  dispatch(setOptionVotingFor(pollId, 0));
 };
 
 // Reads ---
@@ -404,7 +403,6 @@ export default createReducer(initialState, {
     voteTxStatus: TransactionStatus.ERROR
   }),
   [POLLS_SET_OPTION_VOTING_FOR]: (state, { payload }) => {
-    console.log('payload', payload);
     return {
       ...state,
       polls: state.polls.map(poll => {
@@ -412,20 +410,6 @@ export default createReducer(initialState, {
           return {
             ...poll,
             optionVotingFor: payload.optionId
-          };
-        }
-        return poll;
-      })
-    };
-  },
-  [POLLS_WITHDRAW_OPTION_VOTING_FOR]: (state, { payload }) => {
-    return {
-      ...state,
-      polls: state.polls.map(poll => {
-        if (poll.pollId === payload.pollId) {
-          return {
-            ...poll,
-            optionVotingFor: null
           };
         }
         return poll;

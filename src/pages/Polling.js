@@ -16,11 +16,7 @@ import {
 } from '../reducers/accounts';
 import { modalOpen } from '../reducers/modal';
 import { getWinningProp } from '../reducers/proposals';
-import {
-  voteForPoll,
-  withdrawVoteForPoll,
-  setOptionVotingFor
-} from '../reducers/polling';
+import { voteForPoll, withdrawVoteForPoll } from '../reducers/polling';
 import theme, { colors } from '../theme';
 import { cutMiddle, eq } from '../utils/misc';
 import ExternalLink from '../components/Onboarding/shared/ExternalLink';
@@ -462,5 +458,5 @@ const reduxProps = (state, { match }) => {
 
 export default connect(
   reduxProps,
-  { modalOpen, voteForPoll, withdrawVoteForPoll, setOptionVotingFor }
+  { modalOpen, voteForPoll, withdrawVoteForPoll }
 )(Polling);
