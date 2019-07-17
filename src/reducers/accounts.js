@@ -383,14 +383,6 @@ export const addHardwareAccount = (address, accountType) => async (
   }
 };
 
-export const getPollOptionVotingFor = async (pollId, address) => {
-  console.log('pollId, address', pollId, address);
-  // const optionVotingFor = await window.maker
-  //   .service('poll')
-  //   .getOptionVotingFor(pollId, address);
-  return 1;
-};
-
 // Reducer ------------------------------------------------
 
 // Reducer helpers

@@ -234,6 +234,15 @@ const getAllWhiteListedPolls = async () => {
   return mockParsedAllPollsData;
 };
 
+export const getOptionVotingFor = (pollId, address) => async dispatch => {
+  console.log('pollId, address', pollId, address);
+  // const optionId = await window.maker
+  //   .service('poll')
+  //   .getOptionVotingFor(pollId, address);
+  const optionId = 3;
+  dispatch(setOptionVotingFor(pollId, optionId));
+};
+
 const fetchPollFromUrl = async url => {
   const res = await fetch(url);
   await check(res);
