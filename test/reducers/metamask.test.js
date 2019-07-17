@@ -4,7 +4,7 @@ import * as proposals from '../../src/reducers/proposals';
 import * as hat from '../../src/reducers/hat';
 import * as eth from '../../src/reducers/eth';
 import * as accounts from '../../src/reducers/accounts';
-import * as polls from '../../src/reducers/polls';
+import * as polls from '../../src/reducers/polling';
 import { getAction } from '../helpers/getAction';
 import * as ethereumUtils from '../../src/utils/ethereum';
 
