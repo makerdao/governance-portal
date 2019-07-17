@@ -430,6 +430,8 @@ const reduxProps = (state, { match }) => {
   const { accounts, metamask, polls } = state;
   const { pollSlug } = match.params;
 
+  console.log('polls in Polling.js props', polls);
+
   const poll = polls.find(({ voteId }) => {
     return toSlug(voteId) === pollSlug;
   });

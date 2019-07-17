@@ -178,9 +178,12 @@ export const withdrawOptionVotingFor = pollId => ({
 
 // Writes ---
 
-export const voteForPoll = (pollId, optionId) => dispatch => {
+export const voteForPoll = (pollId, optionId) => async dispatch => {
   console.log('vote for poll', pollId, optionId);
-  // const pollVote = window.maker.service('govPolling').vote(pollId, optionId);
+  const pollVote = await window.maker
+    .service('govPolling')
+    .vote(pollId, optionId);
+  console.log('^^^pollVote', pollVote);
   dispatch(setOptionVotingFor(pollId, optionId));
 };
 
@@ -212,12 +215,16 @@ export const getOptionVotingFor = (pollId, address) => async dispatch => {
 };
 
 const fetchPollFromUrl = async url => {
-  console.log('^^url to fetch', url);
+  console.log('url to fetch', url);
   const res = await fetch(url);
   await check(res);
   const json = await res.json();
-  if (!json['voteId']) return null;
-  else return json;
+  if (!json['voteId']) {
+    return null;
+  } else {
+    console.log('valid poll', json);
+    return json;
+  }
 };
 
 const formatOptions = options => {
@@ -248,6 +255,9 @@ export const getVoteBreakdown = async (pollId, options) => {
   // TODO replace this with SDK method:
   const { options: breakdownOpts } = await mockGetVoteHistory(pollId);
 
+  // const vh = await window.maker.service('govPolling').getVoteHistory(pollId);
+  // console.log('^^voteHistory', vh);
+
   const voteBreakdown = breakdownOpts.reduce((result, val) => {
     const currentOpt = options[val.option];
     const breakdown = {
@@ -272,32 +282,37 @@ export const pollsInit = () => async dispatch => {
 
     for (const poll of polls) {
       const cmsData = await fetchPollFromUrl(poll.url);
+      // console.log('cmsData for valid poll', cmsData);
       if (cmsData === null) continue;
       // const cmsData = await mockFetchPollFromCms(poll.pollId);
       const cmsPoll = formatYamlToJson(cmsData);
+      console.log('cmsPOLL for valid poll', cmsPoll);
 
       const pollData = { ...poll, ...cmsPoll };
 
       // TODO keep track of these methods as the SDK methods are implemented
 
+      // TODO this is failing for me locally with a poll that has a vote for it:
       // const totalVotes = await pollService.getMkrAmtVoted(pollData.pollId);
-      // console.log('totalVotes', totalVotes);
+      // console.log('^^1totalVotes', totalVotes);
       pollData.totalVotes = '1200';
 
-      // const participation = await pollService.getPercentageMkrVoted(pollData.pollId);
-      // console.log('^^participation', participation);
+      const participation = await pollService.getPercentageMkrVoted(
+        pollData.pollId
+      );
+      console.log('^^2participation', participation);
       pollData.participation = '12';
 
       const numUniqueVoters = await pollService.getNumUniqueVoters(
         pollData.pollId
       );
-      console.log('numUniqueVoters', numUniqueVoters);
+      console.log('^^3numUniqueVoters', numUniqueVoters);
       pollData.numUniqueVoters = numUniqueVoters;
 
       pollData.active = isPollActive(pollData.startDate, pollData.endDate);
       if (!pollData.active) pollData.winningProposal = 'Mock Winning Proposal';
-      // const winningPro = await pollService.getWinningProposal(pollData.pollId);
-      // console.log('winningPro', winningPro);
+      const winningPro = await pollService.getWinningProposal(pollData.pollId);
+      console.log('^^4winningPro, active?', !pollData.active, winningPro);
 
       const voteBreakdown = await getVoteBreakdown(
         pollData.pollId,
