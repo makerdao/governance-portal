@@ -1,34 +1,37 @@
 import matter from 'gray-matter';
+import uniqBy from 'lodash.uniqby';
 import { createReducer } from '../utils/redux';
 import { formatRound, check } from '../utils/misc';
+import { addToastWithTimeout, ToastTypes } from './toasts';
+import { TransactionStatus } from '../utils/constants';
 
 // Mock Poll Data ----------------------------------------------
 
 // Mocked poll data from the SDK/plugin
-const mockParsedAllPollsData = [
-  {
-    creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
-    pollId: '1',
-    blockCreated: 123456789,
-    startTime: new Date('2019-06-25'),
-    endTime: new Date('2019-06-30'),
-    multiHash: 'QmbL3A3pz8j2NoWD18nt1PuKxqYh7Kk28jQK56nJaMcqcd',
-    source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
-    url:
-      'https://cms-gov.makerfoundation.com/content/governance-polling?pollId=1'
-  },
-  {
-    creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
-    pollId: '2',
-    blockCreated: 123456789,
-    startTime: new Date('2019-07-09'),
-    endTime: new Date('2019-07-23'),
-    multiHash: 'QmPLpuz1VMtAapZJCb84NtRRUHVFsxGiX6kdb1ewsXxSSi',
-    source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
-    url:
-      'https://cms-gov.makerfoundation.com/content/governance-polling?pollId=2'
-  }
-];
+// const mockParsedAllPollsData = [
+//   {
+//     creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
+//     pollId: '1',
+//     blockCreated: 123456789,
+//     startTime: new Date('2019-06-25'),
+//     endTime: new Date('2019-06-30'),
+//     multiHash: 'QmbL3A3pz8j2NoWD18nt1PuKxqYh7Kk28jQK56nJaMcqcd',
+//     source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
+//     url:
+//       'https://cms-gov.makerfoundation.com/content/governance-polling?pollId=1'
+//   },
+//   {
+//     creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
+//     pollId: '2',
+//     blockCreated: 123456789,
+//     startTime: new Date('2019-07-09'),
+//     endTime: new Date('2019-07-23'),
+//     multiHash: 'QmPLpuz1VMtAapZJCb84NtRRUHVFsxGiX6kdb1ewsXxSSi',
+//     source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
+//     url:
+//       'https://cms-gov.makerfoundation.com/content/governance-polling?pollId=2'
+//   }
+// ];
 
 // Mock polls from the CMS
 // const mockPollMd1 = {
@@ -149,11 +152,36 @@ export const POLLS_REQUEST = 'polls/REQUEST';
 export const POLLS_SUCCESS = 'polls/SUCCESS';
 export const POLLS_FAILURE = 'polls/FAILURE';
 
+export const POLL_VOTE_REQUEST = 'poll/VOTE_REQUEST';
+export const POLL_VOTE_SENT = 'poll/VOTE_SENT';
+export const POLL_VOTE_SUCCESS = 'poll/VOTE_SUCCESS';
+export const POLL_VOTE_FAILURE = 'poll/VOTE_FAILURE';
+
 export const POLLS_SET_OPTION_VOTING_FOR = 'polls/SET_OPTION_VOTING_FOR';
-export const POLLS_WITHDRAW_OPTION_VOTING_FOR =
-  'polls/WITHDRAW_OPTION_VOTING_FOR';
 
 // Actions ----------------------------------------------
+
+const handleTx = ({ prefix, dispatch, txObject }) =>
+  new Promise(resolve => {
+    const txMgr = window.maker.service('transactionManager');
+    txMgr.listen(txObject, {
+      pending: tx => {
+        dispatch({
+          type: `poll/${prefix}_SENT`,
+          payload: { txHash: tx.hash }
+        });
+      },
+      mined: _ => {
+        dispatch({ type: `poll/${prefix}_SUCCESS` });
+        resolve();
+      },
+      error: (_, err) => {
+        dispatch({ type: `poll/${prefix}_FAILURE`, payload: err });
+        dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
+        resolve();
+      }
+    });
+  });
 
 export const pollsRequest = () => ({
   type: POLLS_REQUEST
@@ -170,47 +198,64 @@ export const setOptionVotingFor = (pollId, optionId) => ({
   type: POLLS_SET_OPTION_VOTING_FOR,
   payload: { pollId, optionId }
 });
-export const withdrawOptionVotingFor = pollId => ({
-  type: POLLS_WITHDRAW_OPTION_VOTING_FOR,
-  payload: { pollId }
-});
 
 // Writes ---
 
-export const voteForPoll = (pollId, optionId) => dispatch => {
-  console.log('vote for poll', pollId, optionId);
-  // const pollVote = window.maker.service('govPolling').vote(pollId, optionId);
+export const voteForPoll = (pollId, optionId) => async dispatch => {
+  dispatch({ type: POLL_VOTE_REQUEST });
+
+  const pollVote = window.maker.service('govPolling').vote(pollId, optionId);
+  await handleTx({
+    txObject: pollVote,
+    prefix: 'VOTE',
+    dispatch
+  });
   dispatch(setOptionVotingFor(pollId, optionId));
 };
 
-export const withdrawVoteForPoll = pollId => dispatch => {
-  console.log('withdraw vote for poll', pollId);
-  // const pollVote = window.maker.service('govPolling').withdraw(pollId);
-  dispatch(withdrawOptionVotingFor(pollId));
+export const withdrawVoteForPoll = pollId => async dispatch => {
+  dispatch({ type: POLL_VOTE_REQUEST });
+
+  const pollVote = window.maker.service('govPolling').vote(pollId, 0);
+  await handleTx({
+    txObject: pollVote,
+    prefix: 'VOTE',
+    dispatch
+  });
+
+  dispatch(setOptionVotingFor(pollId, 0));
 };
 
 // Reads ---
 
 const getAllWhiteListedPolls = async () => {
-  //return window.maker.service('poll').getAllWhitelistedPolls();
-  return mockParsedAllPollsData;
+  const pollsList = await window.maker
+    .service('govPolling')
+    .getAllWhitelistedPolls();
+
+  const polls = uniqBy(pollsList, p => p.url);
+  console.log('unique polls', polls);
+  return polls;
 };
 
-export const getOptionVotingFor = (pollId, address) => async dispatch => {
-  console.log('pollId, address', pollId, address);
-  // const optionId = await window.maker
-  //   .service('poll')
-  //   .getOptionVotingFor(pollId, address);
-  const optionId = 3;
+export const getOptionVotingFor = (address, pollId) => async dispatch => {
+  const optionId = await window.maker
+    .service('govPolling')
+    .getOptionVotingFor(address, pollId);
   dispatch(setOptionVotingFor(pollId, optionId));
 };
 
 const fetchPollFromUrl = async url => {
+  console.log('url to fetch', url);
   const res = await fetch(url);
   await check(res);
   const json = await res.json();
-
-  return json;
+  if (!json['voteId']) {
+    return null;
+  } else {
+    console.log('valid poll', json);
+    return json;
+  }
 };
 
 const formatOptions = options => {
@@ -222,6 +267,7 @@ const formatYamlToJson = data => {
   const { content } = json;
   const { title, summary, options, discussion_link } = json.data;
   return {
+    voteId: data.voteId,
     title,
     summary,
     options: formatOptions(options),
@@ -231,14 +277,17 @@ const formatYamlToJson = data => {
   };
 };
 
-const isPollActive = (startTime, endTime) => {
+const isPollActive = (startDate, endDate) => {
   const now = new Date();
-  return startTime <= now && endTime > now ? true : false;
+  return startDate <= now && endDate > now ? true : false;
 };
 
 export const getVoteBreakdown = async (pollId, options) => {
   // TODO replace this with SDK method:
   const { options: breakdownOpts } = await mockGetVoteHistory(pollId);
+
+  // const vh = await window.maker.service('govPolling').getVoteHistory(pollId);
+  // console.log('^^voteHistory', vh);
 
   const voteBreakdown = breakdownOpts.reduce((result, val) => {
     const currentOpt = options[val.option];
@@ -254,7 +303,7 @@ export const getVoteBreakdown = async (pollId, options) => {
 };
 
 export const pollsInit = () => async dispatch => {
-  // const pollService = window.maker.service('poll');
+  const pollService = window.maker.service('govPolling');
   dispatch(pollsRequest());
 
   const allPolls = [];
@@ -264,31 +313,44 @@ export const pollsInit = () => async dispatch => {
 
     for (const poll of polls) {
       const cmsData = await fetchPollFromUrl(poll.url);
-      // const cmsData = await mockFetchPollFromCms(poll.pollId);
+      if (cmsData === null) continue;
       const cmsPoll = formatYamlToJson(cmsData);
 
       const pollData = { ...poll, ...cmsPoll };
 
-      // TODO keep track of these methods as the SDK methods are implemented
-      // pollData.totalVotes = await pollService.getMkrAmtVoted(pollData.pollId);
+      // TODO this is failing for me locally with a poll that has a vote for it:
+      // const totalVotes = await pollService.getMkrAmtVoted(pollData.pollId);
+      // console.log('^^1totalVotes', totalVotes);
       pollData.totalVotes = '1200';
-      // pollData.participation = await pollService.getPercentageMkrVoted(
+
+      // TODO also failing because it uses the same getMkrAmtVoted method
+      // const participation = await pollService.getPercentageMkrVoted(
       //   pollData.pollId
       // );
+      // console.log('^^2participation', participation);
       pollData.participation = '12';
-      // pollData.numUniqueVoters = await pollService.numUniqueVoters(
-      //   pollData.pollId
-      // );
-      pollData.numUniqueVoters = '700';
-      pollData.active = isPollActive(pollData.startTime, pollData.endTime);
-      if (!pollData.active) pollData.winningProposal = 'Mock Winning Proposal';
-      // if (pollData.active) pollData.winningProposal = await pollService.getWinningProposal(pollData.pollId);
+
+      // working
+      const numUniqueVoters = await pollService.getNumUniqueVoters(
+        pollData.pollId
+      );
+      pollData.numUniqueVoters = numUniqueVoters;
+
+      // working
+      pollData.active = isPollActive(pollData.startDate, pollData.endDate);
+      const winningProposal = await pollService.getWinningProposal(
+        pollData.pollId
+      );
+      if (!pollData.active) pollData.winningProposal = winningProposal;
 
       const voteBreakdown = await getVoteBreakdown(
         pollData.pollId,
         pollData.options
       );
       pollData.voteBreakdown = voteBreakdown;
+
+      // TODO: pull the Polling address from the correct json file
+      pollData.source = '0x518a0702701BF98b5242E73b2368ae07562BEEA3';
 
       allPolls.push(pollData);
     }
@@ -315,18 +377,19 @@ export const formatHistoricalPolls = topics => async dispatch => {
 
       const poll = {
         legacyPoll: true,
-        active,
+        active: false,
         blockCreated: 'na',
         content: proposals[0] ? proposals[0].about : topic_blurb,
         creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
-        endTime: new Date(end_timestamp),
+        endDate: new Date(end_timestamp),
         options: options,
         source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
-        startTime: new Date(date),
+        startDate: new Date(date),
         summary: topic_blurb,
         title: topic,
         totalVotes: formatRound(totalVotes),
-        pollId: key
+        pollId: key,
+        voteId: key
         // multiHash: 'na',
         // discussionLink: 'https://www.reddit.com/r/mkrgov/',
         // numUniqueVoters: '700',
@@ -344,29 +407,47 @@ export const formatHistoricalPolls = topics => async dispatch => {
 
 // Reducer ------------------------------------------------
 
-export default createReducer([], {
-  [POLLS_SUCCESS]: (state, { payload }) => [...state, ...payload],
+const initialState = {
+  polls: [],
+  voteTxHash: '',
+  voteTxStatus: TransactionStatus.NOT_STARTED
+};
+
+export default createReducer(initialState, {
+  [POLLS_SUCCESS]: (state, { payload }) => ({
+    ...state,
+    polls: [...state.polls, ...payload]
+  }),
+  [POLL_VOTE_REQUEST]: state => ({
+    ...state,
+    voteTxHash: '',
+    voteTxStatus: TransactionStatus.NOT_STARTED
+  }),
+  [POLL_VOTE_SENT]: (state, { payload }) => ({
+    ...state,
+    voteTxHash: payload.txHash,
+    voteTxStatus: TransactionStatus.PENDING
+  }),
+  [POLL_VOTE_SUCCESS]: state => ({
+    ...state,
+    voteTxStatus: TransactionStatus.MINED
+  }),
+  [POLL_VOTE_FAILURE]: state => ({
+    ...state,
+    voteTxStatus: TransactionStatus.ERROR
+  }),
   [POLLS_SET_OPTION_VOTING_FOR]: (state, { payload }) => {
-    console.log('payload', payload);
-    return state.map(poll => {
-      if (poll.pollId === payload.pollId) {
-        return {
-          ...poll,
-          optionVotingFor: payload.optionId
-        };
-      }
-      return poll;
-    });
-  },
-  [POLLS_WITHDRAW_OPTION_VOTING_FOR]: (state, { payload }) => {
-    return state.map(poll => {
-      if (poll.pollId === payload.pollId) {
-        return {
-          ...poll,
-          optionVotingFor: null
-        };
-      }
-      return poll;
-    });
+    return {
+      ...state,
+      polls: state.polls.map(poll => {
+        if (poll.pollId === payload.pollId) {
+          return {
+            ...poll,
+            optionVotingFor: payload.optionId
+          };
+        }
+        return poll;
+      })
+    };
   }
 });
