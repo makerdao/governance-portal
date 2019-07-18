@@ -348,7 +348,7 @@ export const formatHistoricalPolls = topics => async dispatch => {
 
       const poll = {
         legacyPoll: true,
-        active,
+        active: false,
         blockCreated: 'na',
         content: proposals[0] ? proposals[0].about : topic_blurb,
         creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
