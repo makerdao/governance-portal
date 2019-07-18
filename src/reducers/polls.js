@@ -280,37 +280,35 @@ export const pollsInit = () => async dispatch => {
 
     for (const poll of polls) {
       const cmsData = await fetchPollFromUrl(poll.url);
-      // console.log('cmsData for valid poll', cmsData);
       if (cmsData === null) continue;
-      // const cmsData = await mockFetchPollFromCms(poll.pollId);
       const cmsPoll = formatYamlToJson(cmsData);
-      console.log('cmsPOLL for valid poll', cmsPoll);
 
       const pollData = { ...poll, ...cmsPoll };
-
-      // TODO keep track of these methods as the SDK methods are implemented
 
       // TODO this is failing for me locally with a poll that has a vote for it:
       // const totalVotes = await pollService.getMkrAmtVoted(pollData.pollId);
       // console.log('^^1totalVotes', totalVotes);
       pollData.totalVotes = '1200';
 
+      // TODO also failing because it uses the same getMkrAmtVoted method
       // const participation = await pollService.getPercentageMkrVoted(
       //   pollData.pollId
-      // // );
+      // );
       // console.log('^^2participation', participation);
       pollData.participation = '12';
 
+      // working
       const numUniqueVoters = await pollService.getNumUniqueVoters(
         pollData.pollId
       );
-      console.log('^^3numUniqueVoters', numUniqueVoters);
       pollData.numUniqueVoters = numUniqueVoters;
 
+      // working
       pollData.active = isPollActive(pollData.startDate, pollData.endDate);
-      if (!pollData.active) pollData.winningProposal = 'Mock Winning Proposal';
-      const winningPro = await pollService.getWinningProposal(pollData.pollId);
-      console.log('^^4winningPro, active?', !pollData.active, winningPro);
+      const winningProposal = await pollService.getWinningProposal(
+        pollData.pollId
+      );
+      if (!pollData.active) pollData.winningProposal = winningProposal;
 
       const voteBreakdown = await getVoteBreakdown(
         pollData.pollId,

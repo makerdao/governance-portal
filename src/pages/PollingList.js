@@ -215,6 +215,13 @@ export const VotingWeightBanner = ({ fetching, activeAccount }) => {
   }
 };
 
+const winningProposal = poll => {
+  const winningProp = poll.winningProposal
+    ? poll.options[poll.winningProposal]
+    : null;
+  return winningProp;
+};
+
 const PollingList = ({ fetching, polls, activeAccount }) => {
   polls.sort((a, b) => b.startDate - a.startDate);
   console.log('*****activeAccount', activeAccount);
@@ -237,7 +244,7 @@ const PollingList = ({ fetching, polls, activeAccount }) => {
                 />
                 <Timer
                   endTimestamp={poll.endDate}
-                  winningProposal={poll.winningProposal}
+                  winningProposal={winningProposal(poll)}
                   small
                   mb="-6"
                 />
