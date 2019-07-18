@@ -224,7 +224,7 @@ const winningProposal = poll => {
   return winningProp;
 };
 
-const PollingList = ({ fetching, polls, activeAccount }) => {
+const PollingList = ({ fetching, polls: { polls }, activeAccount }) => {
   polls.sort((a, b) => b.startDate - a.startDate);
   console.log('*****activeAccount', activeAccount);
   return (
