@@ -179,7 +179,7 @@ class VotingPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedOption: 'Please choose...'
+      selectedOption: null
     };
   }
 
@@ -199,7 +199,7 @@ class VotingPanel extends React.Component {
   };
 
   render() {
-    const { poll, voteForPoll, activeAccount } = this.props;
+    const { poll, voteForPoll, activeAccount, optionVotingFor } = this.props;
     const { pollId, options } = poll;
     const { selectedOption, selectedOptionId } = this.state;
 
@@ -213,7 +213,7 @@ class VotingPanel extends React.Component {
               <DropdownText color="green">{item}</DropdownText>
             )}
             renderRowItem={item => <DropdownText>{item}</DropdownText>}
-            value={selectedOption}
+            value={selectedOption || optionVotingFor || 'Please choose...'}
             onSelect={this.onDropdownSelect}
             emptyMsg="Not available"
           />
@@ -280,8 +280,8 @@ class Polling extends React.Component {
 
   updateVotedPollOption = async () => {
     await this.props.getOptionVotingFor(
-      this.props.poll.pollId,
-      this.state.activeAccount
+      this.state.activeAccount.address,
+      this.props.poll.pollId
     );
     this.setState({
       voteStateFetching: false
@@ -336,6 +336,7 @@ class Polling extends React.Component {
             <RightPanels>
               {poll.active && (
                 <VotingPanel
+                  optionVotingFor={options[optionVotingFor]}
                   poll={poll}
                   voteForPoll={this.voteForPoll}
                   activeAccount={activeAccount}

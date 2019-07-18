@@ -205,12 +205,10 @@ const getAllWhiteListedPolls = async () => {
   return polls;
 };
 
-export const getOptionVotingFor = (pollId, address) => async dispatch => {
-  console.log('pollId, address', pollId, address);
-  // const optionId = await window.maker
-  //   .service('poll')
-  //   .getOptionVotingFor(pollId, address);
-  const optionId = 3;
+export const getOptionVotingFor = (address, pollId) => async dispatch => {
+  const optionId = await window.maker
+    .service('govPolling')
+    .getOptionVotingFor(address, pollId);
   dispatch(setOptionVotingFor(pollId, optionId));
 };
 
@@ -297,10 +295,10 @@ export const pollsInit = () => async dispatch => {
       // console.log('^^1totalVotes', totalVotes);
       pollData.totalVotes = '1200';
 
-      const participation = await pollService.getPercentageMkrVoted(
-        pollData.pollId
-      );
-      console.log('^^2participation', participation);
+      // const participation = await pollService.getPercentageMkrVoted(
+      //   pollData.pollId
+      // // );
+      // console.log('^^2participation', participation);
       pollData.participation = '12';
 
       const numUniqueVoters = await pollService.getNumUniqueVoters(
