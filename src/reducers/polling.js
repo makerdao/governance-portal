@@ -312,11 +312,16 @@ export const pollsInit = () => async dispatch => {
     const polls = await getAllWhiteListedPolls();
 
     for (const poll of polls) {
-      const cmsData = await fetchPollFromUrl(poll.url);
-      if (cmsData === null) continue;
-      const cmsPoll = formatYamlToJson(cmsData);
-
-      const pollData = { ...poll, ...cmsPoll };
+      let pollData;
+      try {
+        const cmsData = await fetchPollFromUrl(poll.url);
+        if (cmsData === null) continue;
+        const cmsPoll = formatYamlToJson(cmsData);
+        pollData = { ...poll, ...cmsPoll };
+      } catch (e) {
+        console.error(e);
+        continue;
+      }
 
       // TODO this is failing for me locally with a poll that has a vote for it:
       // const totalVotes = await pollService.getMkrAmtVoted(pollData.pollId);

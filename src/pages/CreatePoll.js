@@ -126,12 +126,8 @@ class CreatePoll extends Component {
     try {
       const id = await window.maker
         .service('govPolling')
-        .createPoll(
-          Math.floor(start.getTime() / 1000),
-          Math.floor(end.getTime() / 1000),
-          hash,
-          url
-        );
+        .createPoll(start.getTime(), end.getTime(), hash, url);
+      console.log('createPoll success', id);
       this.setState({
         id,
         pollTxStatus: PollTxState.SUCCESS

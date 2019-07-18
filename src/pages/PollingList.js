@@ -224,7 +224,7 @@ const winningProposal = poll => {
   return winningProp;
 };
 
-const PollingList = ({ fetching, polls: { polls }, activeAccount }) => {
+const PollingList = ({ fetching, polling: { polls }, activeAccount }) => {
   polls.sort((a, b) => b.startDate - a.startDate);
   console.log('*****activeAccount', activeAccount);
   return (
@@ -280,13 +280,13 @@ const PollingList = ({ fetching, polls: { polls }, activeAccount }) => {
   );
 };
 
-const reduxProps = ({ accounts, polls }) => {
+const reduxProps = ({ accounts, polling }) => {
   const activeAccount = accounts.activeAccount
     ? accounts.allAccounts.find(a => eq(a.address, accounts.activeAccount))
     : null;
   return {
     fetching: accounts.fetching,
-    polls,
+    polling,
     activeAccount
   };
 };

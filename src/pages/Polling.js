@@ -15,9 +15,8 @@ import { getWinningProp } from '../reducers/proposals';
 import {
   voteForPoll,
   withdrawVoteForPoll,
-  setOptionVotingFor,
   getOptionVotingFor
-} from '../reducers/polls';
+} from '../reducers/polling';
 import theme, { colors } from '../theme';
 import { cutMiddle, eq } from '../utils/misc';
 import ExternalLink from '../components/Onboarding/shared/ExternalLink';
@@ -430,7 +429,7 @@ class Polling extends React.Component {
 }
 
 const reduxProps = (state, { match }) => {
-  const { accounts, metamask, polls: polling } = state;
+  const { accounts, metamask, polling } = state;
   const { polls } = polling;
   const { pollSlug } = match.params;
 
@@ -465,7 +464,6 @@ export default connect(
     modalOpen,
     voteForPoll,
     withdrawVoteForPoll,
-    setOptionVotingFor,
     getOptionVotingFor
   }
 )(Polling);
