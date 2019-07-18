@@ -5,7 +5,7 @@ import { Button } from '@makerdao/ui-components';
 
 import Card from '../components/Card';
 import Timer from '../components/Timer';
-import { toSlug, eq, formatRound } from '../utils/misc';
+import { toSlug, eq, formatRound, add } from '../utils/misc';
 import theme, { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
 import ExtendedLink from '../components/Onboarding/shared/ExtendedLink';
@@ -197,9 +197,11 @@ export const VotingWeightBanner = ({ fetching, activeAccount }) => {
   }
   if (!activeAccount) return <Padding />;
 
-  const balance = activeAccount.hasProxy
-    ? activeAccount.proxy.votingPower
-    : activeAccount.mkrBalance;
+  // mkr in wallet + mkr locked in chief (including mkr locked via a vote proxy)
+  const pollVotingPower = add(
+    activeAccount.proxy.votingPower,
+    activeAccount.mkrBalance
+  );
 
   if (activeAccount.hasProxy) {
     return <VoterStatus />;
@@ -208,7 +210,7 @@ export const VotingWeightBanner = ({ fetching, activeAccount }) => {
       <FadeIn>
         <SmallMediumText>
           <Strong>Connected wallet: </Strong>
-          <Black>{formatRound(balance, 4)} MKR</Black>{' '}
+          <Black>{formatRound(pollVotingPower, 4)} MKR</Black>{' '}
         </SmallMediumText>
       </FadeIn>
     );
