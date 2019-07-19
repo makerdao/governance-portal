@@ -4,7 +4,7 @@ import * as proposals from '../../src/reducers/proposals';
 import * as hat from '../../src/reducers/hat';
 import * as eth from '../../src/reducers/eth';
 import * as accounts from '../../src/reducers/accounts';
-import * as polls from '../../src/reducers/polls';
+import * as polling from '../../src/reducers/polling';
 import { getAction } from '../helpers/getAction';
 import * as ethereumUtils from '../../src/utils/ethereum';
 
@@ -71,7 +71,7 @@ const initialState = {
 const mockAction = { type: 'MOCK_ACTION', payload: true };
 tally.voteTallyInit = jest.fn(() => mockAction);
 proposals.proposalsInit = jest.fn(() => mockAction);
-polls.pollsInit = jest.fn(() => mockAction);
+polling.pollsInit = jest.fn(() => mockAction);
 hat.hatInit = jest.fn(() => mockAction);
 eth.ethInit = jest.fn(() => mockAction);
 accounts.setActiveAccount = jest.fn(() => mockAction);
@@ -146,7 +146,7 @@ describe('async actions', () => {
     expect(tally.voteTallyInit).toBeCalledTimes(1);
     expect(proposals.proposalsInit).toBeCalledTimes(1);
     expect(proposals.proposalsInit).toBeCalledWith(network);
-    expect(polls.pollsInit).toBeCalledTimes(1);
+    expect(polling.pollsInit).toBeCalledTimes(1);
     expect(hat.hatInit).toBeCalledTimes(1);
     expect(eth.ethInit).toBeCalledTimes(1);
     expect(await getAction(store, reducer.CONNECT_REQUEST)).toEqual({
