@@ -78,52 +78,52 @@ import { TransactionStatus } from '../utils/constants';
 // };
 
 // Mock voteHistory:
-const mockHistory1 = {
-  time: new Date(),
-  options: [
-    {
-      option: 1,
-      mkr: 100,
-      percentage: 50
-    },
-    {
-      option: 2,
-      mkr: 200,
-      percentage: 25
-    },
-    {
-      option: 3,
-      mkr: 300,
-      percentage: 25
-    }
-  ]
-};
+// const mockHistory1 = {
+//   time: new Date(),
+//   options: [
+//     {
+//       option: 1,
+//       mkr: 100,
+//       percentage: 50
+//     },
+//     {
+//       option: 2,
+//       mkr: 200,
+//       percentage: 25
+//     },
+//     {
+//       option: 3,
+//       mkr: 300,
+//       percentage: 25
+//     }
+//   ]
+// };
 
-const mockHistory2 = {
-  time: new Date(),
-  options: [
-    {
-      option: 1,
-      mkr: 2100,
-      percentage: 25
-    },
-    {
-      option: 2,
-      mkr: 2200,
-      percentage: 25
-    },
-    {
-      option: 3,
-      mkr: 2300,
-      percentage: 25
-    },
-    {
-      option: 4,
-      mkr: 2400,
-      percentage: 25
-    }
-  ]
-};
+// const mockHistory2 = {
+//   time: new Date(),
+//   options: [
+//     {
+//       option: 1,
+//       mkr: 2100,
+//       percentage: 25
+//     },
+//     {
+//       option: 2,
+//       mkr: 2200,
+//       percentage: 25
+//     },
+//     {
+//       option: 3,
+//       mkr: 2300,
+//       percentage: 25
+//     },
+//     {
+//       option: 4,
+//       mkr: 2400,
+//       percentage: 25
+//     }
+//   ]
+// };
 
 // const mockFetchPollFromCms = async pollId => {
 //   switch (pollId) {
@@ -136,16 +136,16 @@ const mockHistory2 = {
 //   }
 // };
 
-const mockGetVoteHistory = async pollId => {
-  switch (pollId) {
-    case '1':
-      return mockHistory1;
-    case '2':
-      return mockHistory2;
-    default:
-      return mockHistory1;
-  }
-};
+// const mockGetVoteHistory = async pollId => {
+//   switch (pollId) {
+//     case '1':
+//       return mockHistory1;
+//     case '2':
+//       return mockHistory2;
+//     default:
+//       return mockHistory1;
+//   }
+// };
 // Constants ----------------------------------------------
 
 export const POLLS_REQUEST = 'polls/REQUEST';
@@ -283,21 +283,25 @@ const isPollActive = (startDate, endDate) => {
 };
 
 export const getVoteBreakdown = async (pollId, options) => {
-  // TODO replace this with SDK method:
-  const { options: breakdownOpts } = await mockGetVoteHistory(pollId);
+  // const { options: breakdownOpts } = await mockGetVoteHistory(pollId);
 
-  // const vh = await window.maker.service('govPolling').getVoteHistory(pollId);
-  // console.log('^^voteHistory', vh);
+  const voteHistory = await window.maker
+    .service('govPolling')
+    .getVoteHistory(pollId);
+  console.log('^^6voteHistory', voteHistory[0].options);
 
-  const voteBreakdown = breakdownOpts.reduce((result, val) => {
-    const currentOpt = options[val.option];
+  const voteBreakdown = voteHistory[0].options.reduce((result, val) => {
+    const currentOpt = options[val.optionId];
     const breakdown = {
       name: currentOpt,
-      value: `${val.mkr} MKR (${val.percentage}%)`
+      value: `${val.mkrSupport} MKR (${formatRound(val.percentage)}%)`,
+      optionId: val.optionId
     };
     result.push(breakdown);
     return result;
   }, []);
+
+  voteBreakdown.sort((a, b) => a.optionId - b.optionId);
 
   return voteBreakdown;
 };
@@ -310,6 +314,7 @@ export const pollsInit = () => async dispatch => {
 
   try {
     const polls = await getAllWhiteListedPolls();
+    console.log('Whitelisted Polls', polls);
 
     for (const poll of polls) {
       let pollData;
@@ -323,19 +328,19 @@ export const pollsInit = () => async dispatch => {
         continue;
       }
 
-      // TODO this is failing for me locally with a poll that has a vote for it:
-      // const totalVotes = await pollService.getMkrAmtVoted(pollData.pollId);
-      // console.log('^^1totalVotes', totalVotes);
-      pollData.totalVotes = '1200';
+      //working
+      const totalVotes = await pollService.getMkrAmtVoted(pollData.pollId);
+      console.log('^^1totalVotes', totalVotes.toNumber());
+      pollData.totalVotes = totalVotes.toNumber();
 
-      // TODO also failing because it uses the same getMkrAmtVoted method
-      // const participation = await pollService.getPercentageMkrVoted(
-      //   pollData.pollId
-      // );
-      // console.log('^^2participation', participation);
-      pollData.participation = '12';
+      // working (I think. Weird data probably caused by block sync issue)
+      const participation = await pollService.getPercentageMkrVoted(
+        pollData.pollId
+      );
+      console.log('^^2participation', participation);
+      pollData.participation = participation;
 
-      // working
+      //working
       const numUniqueVoters = await pollService.getNumUniqueVoters(
         pollData.pollId
       );
