@@ -333,7 +333,8 @@ export const pollsInit = () => async dispatch => {
       console.log('^^1totalVotes', totalVotes.toNumber());
       pollData.totalVotes = totalVotes.toNumber();
 
-      // working (I think. Weird data probably caused by block sync issue)
+      // working
+      // TODO check why percentage seems off, is it caused by block sync issue?
       const participation = await pollService.getPercentageMkrVoted(
         pollData.pollId
       );
@@ -353,6 +354,7 @@ export const pollsInit = () => async dispatch => {
       );
       if (!pollData.active) pollData.winningProposal = winningProposal;
 
+      //working
       const voteBreakdown = await getVoteBreakdown(
         pollData.pollId,
         pollData.options
