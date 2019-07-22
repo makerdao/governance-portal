@@ -308,8 +308,9 @@ class Polling extends React.Component {
       optionVotingFor
     } = poll;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
+    const optionVotingForName =
+      optionVotingFor === 0 ? null : options[optionVotingFor];
 
-    console.log('^^^active Account', activeAccount);
     return (
       <Fragment>
         <VotingWeightBanner
@@ -335,14 +336,14 @@ class Polling extends React.Component {
             <RightPanels>
               {poll.active && (
                 <VotingPanel
-                  optionVotingFor={options[optionVotingFor]}
+                  optionVotingFor={optionVotingForName}
                   poll={poll}
                   voteForPoll={this.voteForPoll}
                   activeAccount={activeAccount}
                 />
               )}
               <VotedFor
-                optionVotingFor={options[optionVotingFor]}
+                optionVotingFor={optionVotingForName}
                 voteStateFetching={voteStateFetching && accountDataFetching}
                 active={active}
                 withdrawVote={this.withdrawVote}

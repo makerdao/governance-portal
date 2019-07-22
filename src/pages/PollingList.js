@@ -8,6 +8,7 @@ import Timer from '../components/Timer';
 import { toSlug, eq, formatRound, add } from '../utils/misc';
 import theme, { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
+import { getWinningProp } from '../reducers/proposals';
 import ExtendedLink from '../components/Onboarding/shared/ExtendedLink';
 import { Banner, BannerBody, BannerContent } from '../components/Banner';
 import Loader from '../components/Loader';
@@ -217,15 +218,24 @@ export const VotingWeightBanner = ({ fetching, activeAccount }) => {
   }
 };
 
-const winningProposal = poll => {
-  const winningProp = poll.winningProposal
-    ? poll.options[poll.winningProposal]
-    : null;
-  return winningProp;
-};
-
-const PollingList = ({ fetching, polling: { polls }, activeAccount }) => {
+const PollingList = ({
+  fetching,
+  polling: { polls },
+  activeAccount,
+  proposals,
+  approvals
+}) => {
   polls.sort((a, b) => b.startDate - a.startDate);
+  const winningProposal = poll => {
+    if (poll.legacyPoll) {
+      const wp = getWinningProp({ proposals, approvals }, poll.pollId);
+      return wp ? wp.title : 'Not available';
+    }
+    const winningProp = poll.winningProposal
+      ? poll.options[poll.winningProposal]
+      : null;
+    return winningProp;
+  };
   console.log('*****activeAccount', activeAccount);
   return (
     <Fragment>
@@ -233,7 +243,7 @@ const PollingList = ({ fetching, polling: { polls }, activeAccount }) => {
       <VotingWeightBanner fetching={fetching} activeAccount={activeAccount} />
       <RiseUp key={polls.toString()}>
         {polls.map(poll => (
-          <StyledCard key={poll.multiHash}>
+          <StyledCard key={poll.pollId}>
             <Card.Element key={poll.multiHash} height={proposalWrapperHeight}>
               <ProposalDetails>
                 <ExtendedLink to={`/polling-proposal/${toSlug(poll.voteId)}`}>
@@ -280,14 +290,16 @@ const PollingList = ({ fetching, polling: { polls }, activeAccount }) => {
   );
 };
 
-const reduxProps = ({ accounts, polling }) => {
+const reduxProps = ({ accounts, polling, approvals, proposals }) => {
   const activeAccount = accounts.activeAccount
     ? accounts.allAccounts.find(a => eq(a.address, accounts.activeAccount))
     : null;
   return {
     fetching: accounts.fetching,
     polling,
-    activeAccount
+    activeAccount,
+    approvals,
+    proposals
   };
 };
 

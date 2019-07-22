@@ -53,7 +53,7 @@ export default class Dropdown extends Component {
             <List>
               {items.map((item, index) => (
                 <Row
-                  key={item[itemKey]}
+                  key={item[itemKey] || index}
                   onClick={() => this.select(item, index)}
                 >
                   {renderRowItem ? renderRowItem(item) : renderItem(item)}

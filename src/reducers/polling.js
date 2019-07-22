@@ -401,7 +401,8 @@ export const formatHistoricalPolls = topics => async dispatch => {
         title: topic,
         totalVotes: formatRound(totalVotes),
         pollId: key,
-        voteId: key
+        voteId: key,
+        topicKey: key
         // multiHash: 'na',
         // discussionLink: 'https://www.reddit.com/r/mkrgov/',
         // numUniqueVoters: '700',
