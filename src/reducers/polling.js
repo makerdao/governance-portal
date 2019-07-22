@@ -324,7 +324,7 @@ export const pollsInit = () => async dispatch => {
         const cmsPoll = formatYamlToJson(cmsData);
         pollData = { ...poll, ...cmsPoll };
       } catch (e) {
-        console.error(e);
+        console.error(`Poll ID: ${poll.pollId}`, e);
         continue;
       }
 

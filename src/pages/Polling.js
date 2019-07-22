@@ -258,10 +258,6 @@ class Polling extends React.Component {
     };
   }
 
-  async componentDidMount() {
-    if (this.state.activeAccount) await this.updateVotedPollOption();
-  }
-
   static getDerivedStateFromProps(newProps, state) {
     /* Replaces componentWillReceiveProps
     https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#fetching-external-data-when-props-change */
@@ -272,12 +268,16 @@ class Polling extends React.Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (this.state.activeAccount !== prevProps.activeAccount) {
+    if (
+      this.state.activeAccount !== prevProps.activeAccount ||
+      (this.props.poll && prevProps.poll === undefined)
+    ) {
       await this.updateVotedPollOption();
     }
   }
 
   updateVotedPollOption = async () => {
+    if (!this.props.poll) return null;
     await this.props.getOptionVotingFor(
       this.state.activeAccount.address,
       this.props.poll.pollId
