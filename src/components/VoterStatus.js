@@ -16,7 +16,7 @@ import {
 } from './Banner';
 import Button from './Button';
 import Loader from './Loader';
-import { cutMiddle, firstLetterCapital, formatRound } from '../utils/misc';
+import { cutMiddle, firstLetterCapital, formatRound, add } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
 import Lock from './modals/Lock';
 import Withdraw from './modals/Withdraw';
@@ -137,6 +137,8 @@ const VoterStatus = ({
   const isColdWallet = account.proxyRole === 'cold';
   const coldWallet =
     isColdWallet || account.singleWallet ? account : linkedAccount;
+
+  const pollVotingPower = add(account.proxy.votingPower, account.mkrBalance);
   return (
     <FadeIn>
       {!account.singleWallet ? (
@@ -169,6 +171,13 @@ const VoterStatus = ({
               >
                 Etherscan
               </a>
+            </Fragment>
+          )}
+          <DotSpacer />
+          {!legacy && (
+            <Fragment>
+              Total voting weight:{' '}
+              <Black>{formatRound(pollVotingPower, 4)} MKR</Black>{' '}
             </Fragment>
           )}
           <br />
