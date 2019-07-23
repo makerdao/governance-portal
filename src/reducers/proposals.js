@@ -57,8 +57,10 @@ export function getWinningProp(state, topicKey) {
 // Backend ------------------------------------------------
 
 const local = 'http://127.0.0.1:3000';
-const prod = 'https://content.makerfoundation.com';
-const staging = 'https://elb.content.makerfoundation.com:444';
+// const prod = 'https://content.makerfoundation.com';
+// const staging = 'https://elb.content.makerfoundation.com:444';
+const prod = 'https://cms-gov.makerfoundation.com';
+const staging = 'https://elb.cms-gov.makerfoundation.com:444';
 
 const path = 'content/governance-dashboard';
 

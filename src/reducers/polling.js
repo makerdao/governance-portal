@@ -170,8 +170,6 @@ export const updateVoteBreakdown = pollId => (dispatch, getState) => {
 };
 
 export const getVoteBreakdown = async (pollId, options, endDate) => {
-  // const { options: breakdownOpts } = await mockGetVoteHistory(pollId);
-
   // returns either the block on which this poll ended,
   // or, if the poll hasn't ended, the current block
   const pollEndBlock = await window.maker
@@ -244,7 +242,8 @@ export const pollsInit = () => async dispatch => {
       const winningProposal = await pollService.getWinningProposal(
         pollData.pollId
       );
-      if (!pollData.active) pollData.winningProposal = winningProposal;
+      if (!pollData.active && winningProposal !== 0)
+        pollData.winningProposal = winningProposal;
 
       // working
       const voteBreakdown = await getVoteBreakdown(
@@ -271,10 +270,7 @@ export const pollsInit = () => async dispatch => {
 export const formatHistoricalPolls = topics => async dispatch => {
   const govTopics = topics.filter(t => t.govVote === true);
   const allPolls = govTopics.reduce(
-    (
-      result,
-      { active, end_timestamp, date, topic_blurb, topic, key, proposals }
-    ) => {
+    (result, { end_timestamp, date, topic_blurb, topic, key, proposals }) => {
       const options = proposals.map(p => p.title);
       const totalVotes = proposals.reduce(
         (acc, proposal) => acc + proposal.end_approvals,

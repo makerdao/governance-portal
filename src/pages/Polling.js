@@ -7,14 +7,15 @@ import { toSlug } from '../utils/misc';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Loader from '../components/Loader';
+import PollingVote from '../components/modals/PollingVote';
 import NotFound from './NotFound';
 import { VotingWeightBanner } from './PollingList';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import { modalOpen } from '../reducers/modal';
 import { getWinningProp } from '../reducers/proposals';
 import {
-  voteForPoll,
-  withdrawVoteForPoll,
+  // voteForPoll,
+  // withdrawVoteForPoll,
   getOptionVotingFor
 } from '../reducers/polling';
 import theme, { colors } from '../theme';
@@ -150,7 +151,9 @@ const VotedFor = ({
   voteStateFetching,
   optionVotingFor,
   active,
-  withdrawVote
+  modalOpen,
+  pollId,
+  totalVotes
 }) => {
   if (voteStateFetching) {
     return <Loader mt={34} mb={34} color="header" background="background" />;
@@ -163,7 +166,21 @@ const VotedFor = ({
         {active && (
           <Fragment>
             <Black>| </Black>
-            <Blue onClick={() => withdrawVote()}>Withdraw Vote</Blue>
+            <Blue
+              onClick={() =>
+                modalOpen(PollingVote, {
+                  poll: {
+                    address: '0x',
+                    title: 'sometitel',
+                    pollId,
+                    alreadyVotingFor: true,
+                    totalVotes
+                  }
+                })
+              }
+            >
+              Withdraw Vote
+            </Blue>
           </Fragment>
         )}
       </VoteStatusText>
@@ -200,7 +217,13 @@ class VotingPanel extends React.Component {
   };
 
   render() {
-    const { poll, voteForPoll, activeAccount, optionVotingFor } = this.props;
+    const {
+      poll,
+      activeAccount,
+      optionVotingFor,
+      modalOpen,
+      totalVotes
+    } = this.props;
     const { pollId, options } = poll;
     const { selectedOption, selectedOptionId } = this.state;
 
@@ -229,7 +252,18 @@ class VotingPanel extends React.Component {
               selectedOptionId === undefined ||
               selectedOption === optionVotingFor
             }
-            onClick={() => voteForPoll(pollId, selectedOptionId)}
+            onClick={() =>
+              modalOpen(PollingVote, {
+                poll: {
+                  address: '0x',
+                  title: 'some title',
+                  pollId,
+                  selectedOption,
+                  selectedOptionId,
+                  totalVotes
+                }
+              })
+            }
           >
             Vote Now
           </VoteButton>
@@ -292,17 +326,15 @@ class Polling extends React.Component {
     });
   };
 
-  voteForPoll = (pollId, selectedOptionId) => {
-    this.props.voteForPoll(pollId, selectedOptionId);
-  };
-
-  withdrawVote = () => {
-    this.props.withdrawVoteForPoll(this.props.poll.pollId);
-  };
-
   render() {
     const { activeAccount, voteStateFetching } = this.state;
-    const { poll, isValidRoute, network, accountDataFetching } = this.props;
+    const {
+      poll,
+      isValidRoute,
+      network,
+      accountDataFetching,
+      modalOpen
+    } = this.props;
     if (!poll) return null;
     const {
       discussion_link,
@@ -310,11 +342,17 @@ class Polling extends React.Component {
       multiHash,
       active,
       options,
-      optionVotingFor
+      optionVotingFor,
+      pollId,
+      totalVotes
     } = poll;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
     const optionVotingForName =
       optionVotingFor === 0 ? null : options[optionVotingFor];
+
+    const winningProposalName = poll.legacyPoll
+      ? poll.winningProposal
+      : poll.options[poll.winningProposal];
 
     return (
       <Fragment>
@@ -345,6 +383,8 @@ class Polling extends React.Component {
                   poll={poll}
                   voteForPoll={this.voteForPoll}
                   activeAccount={activeAccount}
+                  modalOpen={modalOpen}
+                  totalVotes={totalVotes}
                 />
               )}
               <VotedFor
@@ -352,6 +392,10 @@ class Polling extends React.Component {
                 voteStateFetching={voteStateFetching && accountDataFetching}
                 active={active}
                 withdrawVote={this.withdrawVote}
+                modalOpen={modalOpen}
+                pollId={pollId}
+                totalVotes={totalVotes}
+                alreadyVotingFor={true}
               />
               <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
                 <CardTitle>Details</CardTitle>
@@ -406,12 +450,15 @@ class Polling extends React.Component {
                       ? ''
                       : `${poll.participation}%`
                   },
-                  { name: 'Unique voters', value: poll.numUniqueVoters }
+                  {
+                    name: 'Unique voters',
+                    value: poll.numUniqueVoters //TODO add .toString here, but check for null
+                  }
                 ].map((item, i) => (
                   <DetailsCardItem key={i} {...item} />
                 ))}
 
-                {poll.voteBreakdown && (
+                {poll.voteBreakdown && poll.voteBreakdown.length > 0 && (
                   <>
                     <CardTitle>Vote breakdown</CardTitle>
                     {poll.voteBreakdown.map((item, i) => (
@@ -419,10 +466,10 @@ class Polling extends React.Component {
                     ))}
                   </>
                 )}
-                {poll.legacyPoll && (
+                {poll.winningProposal && (
                   <>
                     <CardTitle>Winning Proposal</CardTitle>
-                    <span>{poll.winningProposal}</span>
+                    <span>{winningProposalName}</span>
                   </>
                 )}
               </DetailsPanelCard>
@@ -468,8 +515,6 @@ export default connect(
   reduxProps,
   {
     modalOpen,
-    voteForPoll,
-    withdrawVoteForPoll,
     getOptionVotingFor
   }
 )(Polling);
