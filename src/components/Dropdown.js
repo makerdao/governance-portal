@@ -84,6 +84,7 @@ const Selection = styled.div`
   cursor: ${({ clickable }) => (clickable ? 'pointer' : 'auto')};
   pointer-events: ${({ clickable }) => (clickable ? 'auto' : 'none')};
   align-items: center;
+  white-space: nowrap;
 `;
 
 export const Input = styled.input`

@@ -111,6 +111,8 @@ const DetailsCardText = styled.p`
 `;
 
 const DropdownText = styled.p`
+  text-overflow: ellipsis;
+  overflow: hidden;
   width: 125px;
   margin-left: 13px;
   margin-right: 13px;
