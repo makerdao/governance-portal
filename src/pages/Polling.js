@@ -13,11 +13,7 @@ import { VotingWeightBanner } from './PollingList';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import { modalOpen } from '../reducers/modal';
 import { getWinningProp } from '../reducers/proposals';
-import {
-  // voteForPoll,
-  // withdrawVoteForPoll,
-  getOptionVotingFor
-} from '../reducers/polling';
+import { getOptionVotingFor } from '../reducers/polling';
 import theme, { colors } from '../theme';
 import { cutMiddle, eq } from '../utils/misc';
 import ExternalLink from '../components/Onboarding/shared/ExternalLink';
@@ -170,8 +166,6 @@ const VotedFor = ({
               onClick={() =>
                 modalOpen(PollingVote, {
                   poll: {
-                    address: '0x',
-                    title: 'sometitel',
                     pollId,
                     alreadyVotingFor: true,
                     totalVotes
@@ -255,8 +249,6 @@ class VotingPanel extends React.Component {
             onClick={() =>
               modalOpen(PollingVote, {
                 poll: {
-                  address: '0x',
-                  title: 'some title',
                   pollId,
                   selectedOption,
                   selectedOptionId,

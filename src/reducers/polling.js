@@ -161,7 +161,17 @@ export const updateVoteBreakdown = pollId => (dispatch, getState) => {
   async function checkForVoteBreakdownUpdates(triesRemaining) {
     if (triesRemaining === 0) return;
     const voteBreakdown = await getVoteBreakdown(pollId, options, endDate);
-    dispatch(updatePoll(pollId, { voteBreakdown }));
+    const totalVotes = await getTotalVotes(pollId);
+    const participation = await getParticipation(pollId);
+    const numUniqueVoters = await getNumUniqueVoters(pollId);
+    dispatch(
+      updatePoll(pollId, {
+        voteBreakdown,
+        totalVotes,
+        participation,
+        numUniqueVoters
+      })
+    );
     setTimeout(() => checkForVoteBreakdownUpdates(triesRemaining - 1), 1000);
   }
 
@@ -196,6 +206,27 @@ export const getVoteBreakdown = async (pollId, options, endDate) => {
   return voteBreakdown;
 };
 
+export const getTotalVotes = async pollId => {
+  const totalVotes = await window.maker
+    .service('govPolling')
+    .getMkrAmtVoted(pollId);
+  return totalVotes.toNumber();
+};
+
+export const getParticipation = async pollId => {
+  const participation = await window.maker
+    .service('govPolling')
+    .getPercentageMkrVoted(pollId);
+  return participation;
+};
+
+export const getNumUniqueVoters = async pollId => {
+  const numUniqueVoters = await window.maker
+    .service('govPolling')
+    .getNumUniqueVoters(pollId);
+  return numUniqueVoters;
+};
+
 export const pollsInit = () => async dispatch => {
   const pollService = window.maker.service('govPolling');
   dispatch(pollsRequest());
@@ -218,26 +249,12 @@ export const pollsInit = () => async dispatch => {
         continue;
       }
 
-      //working
-      const totalVotes = await pollService.getMkrAmtVoted(pollData.pollId);
-      console.log('^^1totalVotes', totalVotes.toNumber());
-      pollData.totalVotes = totalVotes.toNumber();
+      pollData.totalVotes = await getTotalVotes(pollData.pollId);
 
-      // working
-      // TODO check why percentage seems off, is it caused by block sync issue?
-      const participation = await pollService.getPercentageMkrVoted(
-        pollData.pollId
-      );
-      console.log('^^2participation', participation);
-      pollData.participation = participation;
+      pollData.participation = await getParticipation(pollData.pollId);
 
-      //working
-      const numUniqueVoters = await pollService.getNumUniqueVoters(
-        pollData.pollId
-      );
-      pollData.numUniqueVoters = numUniqueVoters;
+      pollData.numUniqueVoters = await getNumUniqueVoters(pollData.pollId);
 
-      // working
       pollData.active = isPollActive(pollData.startDate, pollData.endDate);
       const winningProposal = await pollService.getWinningProposal(
         pollData.pollId
@@ -245,7 +262,6 @@ export const pollsInit = () => async dispatch => {
       if (!pollData.active && winningProposal !== 0)
         pollData.winningProposal = winningProposal;
 
-      // working
       const voteBreakdown = await getVoteBreakdown(
         pollData.pollId,
         pollData.options,
