@@ -17,6 +17,7 @@ export const POLL_VOTE_SUCCESS = 'poll/VOTE_SUCCESS';
 export const POLL_VOTE_FAILURE = 'poll/VOTE_FAILURE';
 
 export const POLLS_SET_OPTION_VOTING_FOR = 'polls/SET_OPTION_VOTING_FOR';
+export const UPDATE_POLL = 'polls/UPDATE_POLL';
 
 // Actions ----------------------------------------------
 
@@ -32,12 +33,12 @@ const handleTx = ({ prefix, dispatch, txObject }) =>
       },
       mined: _ => {
         dispatch({ type: `poll/${prefix}_SUCCESS` });
-        resolve();
+        resolve(true);
       },
       error: (_, err) => {
         dispatch({ type: `poll/${prefix}_FAILURE`, payload: err });
         dispatch(addToastWithTimeout(ToastTypes.ERROR, err));
-        resolve();
+        resolve(false);
       }
     });
   });
@@ -53,6 +54,11 @@ export const pollsFailure = () => ({
   type: POLLS_FAILURE
 });
 
+export const updatePoll = (pollId, pollDataUpdates) => ({
+  type: UPDATE_POLL,
+  payload: { pollId, pollDataUpdates }
+});
+
 export const setOptionVotingFor = (pollId, optionId) => ({
   type: POLLS_SET_OPTION_VOTING_FOR,
   payload: { pollId, optionId }
@@ -64,25 +70,32 @@ export const voteForPoll = (pollId, optionId) => async dispatch => {
   dispatch({ type: POLL_VOTE_REQUEST });
 
   const pollVote = window.maker.service('govPolling').vote(pollId, optionId);
-  await handleTx({
+  const success = await handleTx({
     txObject: pollVote,
     prefix: 'VOTE',
     dispatch
   });
-  dispatch(setOptionVotingFor(pollId, optionId));
+
+  if (success) {
+    dispatch(setOptionVotingFor(pollId, optionId));
+    dispatch(updateVoteBreakdown(pollId));
+  }
 };
 
 export const withdrawVoteForPoll = pollId => async dispatch => {
   dispatch({ type: POLL_VOTE_REQUEST });
 
   const pollVote = window.maker.service('govPolling').vote(pollId, 0);
-  await handleTx({
+  const success = await handleTx({
     txObject: pollVote,
     prefix: 'VOTE',
     dispatch
   });
 
-  dispatch(setOptionVotingFor(pollId, 0));
+  if (success) {
+    dispatch(setOptionVotingFor(pollId, 0));
+    dispatch(updateVoteBreakdown(pollId));
+  }
 };
 
 // Reads ---
@@ -139,6 +152,21 @@ const formatYamlToJson = data => {
 const isPollActive = (startDate, endDate) => {
   const now = new Date();
   return startDate <= now && endDate > now ? true : false;
+};
+
+export const updateVoteBreakdown = pollId => (dispatch, getState) => {
+  const poll = getState().polling.polls.find(poll => poll.pollId === pollId);
+  if (!poll) return;
+  const { options, endDate } = poll;
+  async function checkForVoteBreakdownUpdates(triesRemaining) {
+    if (triesRemaining === 0) return;
+    const voteBreakdown = await getVoteBreakdown(pollId, options, endDate);
+    dispatch(updatePoll(pollId, { voteBreakdown }));
+    setTimeout(() => checkForVoteBreakdownUpdates(triesRemaining - 1), 1000);
+  }
+
+  const NUM_TRIES = 6;
+  checkForVoteBreakdownUpdates(NUM_TRIES);
 };
 
 export const getVoteBreakdown = async (pollId, options, endDate) => {
@@ -301,6 +329,14 @@ export default createReducer(initialState, {
     ...state,
     voteTxHash: '',
     voteTxStatus: TransactionStatus.NOT_STARTED
+  }),
+  [UPDATE_POLL]: (state, { payload }) => ({
+    ...state,
+    polls: state.polls.map(poll =>
+      poll.pollId === payload.pollId
+        ? { ...poll, ...payload.pollDataUpdates }
+        : poll
+    )
   }),
   [POLL_VOTE_SENT]: (state, { payload }) => ({
     ...state,
