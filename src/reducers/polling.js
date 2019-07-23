@@ -220,8 +220,9 @@ export const pollsInit = () => async dispatch => {
       );
       pollData.voteBreakdown = voteBreakdown;
 
-      // TODO: pull the Polling address from the correct json file
-      pollData.source = '0x518a0702701BF98b5242E73b2368ae07562BEEA3';
+      pollData.source = window.maker
+        .service('smartContract')
+        .getContract('POLLING').address;
 
       allPolls.push(pollData);
     }
