@@ -141,15 +141,20 @@ const isPollActive = (startDate, endDate) => {
   return startDate <= now && endDate > now ? true : false;
 };
 
-export const getVoteBreakdown = async (pollId, options) => {
+export const getVoteBreakdown = async (pollId, options, endDate) => {
   // const { options: breakdownOpts } = await mockGetVoteHistory(pollId);
 
-  const voteHistory = await window.maker
-    .service('govPolling')
-    .getVoteHistory(pollId);
-  console.log('^^6voteHistory', voteHistory[0].options);
+  // returns either the block on which this poll ended,
+  // or, if the poll hasn't ended, the current block
+  const pollEndBlock = await window.maker
+    .service('govQueryApi')
+    .getBlockNumber(Math.floor(endDate.getTime() / 1000));
 
-  const voteBreakdown = voteHistory[0].options.reduce((result, val) => {
+  const mkrSupport = await window.maker
+    .service('govQueryApi')
+    .getMkrSupport(pollId, pollEndBlock);
+
+  const voteBreakdown = mkrSupport.reduce((result, val) => {
     const currentOpt = options[val.optionId];
     const breakdown = {
       name: currentOpt,
@@ -213,10 +218,11 @@ export const pollsInit = () => async dispatch => {
       );
       if (!pollData.active) pollData.winningProposal = winningProposal;
 
-      //working
+      // working
       const voteBreakdown = await getVoteBreakdown(
         pollData.pollId,
-        pollData.options
+        pollData.options,
+        pollData.endDate
       );
       pollData.voteBreakdown = voteBreakdown;
 

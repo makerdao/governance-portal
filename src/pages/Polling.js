@@ -267,7 +267,7 @@ class Polling extends React.Component {
     } else return null;
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(prevProps) {
     if (
       this.state.activeAccount !== prevProps.activeAccount ||
       (this.props.poll && prevProps.poll === undefined)
@@ -277,7 +277,7 @@ class Polling extends React.Component {
   }
 
   updateVotedPollOption = async () => {
-    if (!this.props.poll) return null;
+    if (!this.props.poll || !this.state.activeAccount) return null;
     await this.props.getOptionVotingFor(
       this.state.activeAccount.address,
       this.props.poll.pollId
