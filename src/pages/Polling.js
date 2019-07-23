@@ -224,7 +224,10 @@ class VotingPanel extends React.Component {
             hoverColor="white"
             width="135px"
             disabled={
-              !poll.active || !activeAccount || selectedOptionId === undefined
+              !poll.active ||
+              !activeAccount ||
+              selectedOptionId === undefined ||
+              selectedOption === optionVotingFor
             }
             onClick={() => voteForPoll(pollId, selectedOptionId)}
           >
