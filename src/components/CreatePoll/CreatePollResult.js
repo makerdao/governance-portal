@@ -1,10 +1,11 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
-import { Box } from '@makerdao/ui-components-core';
+import { Box, Link } from '@makerdao/ui-components-core';
 import { Button } from '@makerdao/ui-components';
 import Loader from '../Loader';
-import { copyToClipboard } from '../../utils/misc';
+import { copyToClipboard, cutMiddle } from '../../utils/misc';
 import { PollTxState } from '../../utils/constants';
+import { netIdToName, ethScanLink } from '../../utils/ethereum';
 
 const ResultTitle = styled.p`
   text-align: center;
@@ -34,14 +35,24 @@ export default function CreatePollResult({
   id,
   handleParentState,
   resetPollState,
-  title
+  title,
+  txHash
 }) {
+  const txHashUrl = ethScanLink(
+    txHash,
+    netIdToName(window.maker.service('web3').networkId())
+  );
+  console.log(txHashUrl);
   const { LOADING, SUCCESS, ERROR } = PollTxState;
   switch (pollTxStatus) {
     case LOADING:
       return (
         <Fragment>
-          <ResultTitle>Transaction is in progress...</ResultTitle>
+          <ResultTitle>
+            <Link href={txHashUrl} target="_blank">
+              Transaction {cutMiddle(txHash, 6)} is in progress...
+            </Link>
+          </ResultTitle>
           <Box alignSelf="center" mt="40px">
             <Loader size={40} />
           </Box>
@@ -50,6 +61,11 @@ export default function CreatePollResult({
     case SUCCESS:
       return (
         <Fragment>
+          <ResultTitle>
+            <Link href={txHashUrl} target="_blank">
+              Transaction {cutMiddle(txHash, 6)} completed!
+            </Link>
+          </ResultTitle>
           <ResultTitle>
             Poll #{id} - {title} created!
           </ResultTitle>
