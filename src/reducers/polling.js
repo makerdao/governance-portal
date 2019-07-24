@@ -243,9 +243,9 @@ export const pollsInit = () => async dispatch => {
   try {
     const polls = await getAllWhiteListedPolls();
     console.log('Whitelisted Polls', polls);
-    const filteredPolls = pollsFilter(polls, Whitelist, 'creator');
+    // const filteredPolls = pollsFilter(polls, Whitelist, 'creator');
 
-    for (const poll of filteredPolls) {
+    for (const poll of polls) {
       let pollData;
       try {
         const cmsData = await fetchPollFromUrl(poll.url);
@@ -292,6 +292,7 @@ export const pollsInit = () => async dispatch => {
 };
 
 export const formatHistoricalPolls = topics => async dispatch => {
+  // console.log('historical topics from reducer', topics);
   const govTopics = topics.filter(t => t.govVote === true);
   const allPolls = govTopics.reduce(
     (result, { end_timestamp, date, topic_blurb, topic, key, proposals }) => {
@@ -304,12 +305,14 @@ export const formatHistoricalPolls = topics => async dispatch => {
       const poll = {
         legacyPoll: true,
         active: false,
-        blockCreated: 'na',
         content: proposals[0] ? proposals[0].about : topic_blurb,
-        creator: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
         endDate: new Date(end_timestamp),
         options: options,
-        source: '0xeda95d1bdb60f901986f43459151b6d1c734b8a2',
+        source:
+          proposals[0] && proposals[0].source
+            ? proposals[0].source
+            : window.maker.service('smartContract').getContract('POLLING')
+                .address,
         startDate: new Date(date),
         summary: topic_blurb,
         title: topic,
@@ -317,11 +320,6 @@ export const formatHistoricalPolls = topics => async dispatch => {
         pollId: key,
         voteId: key,
         topicKey: key
-        // multiHash: 'na',
-        // discussionLink: 'https://www.reddit.com/r/mkrgov/',
-        // numUniqueVoters: '700',
-        // participation: '12',
-        // pollId: '2',
       };
 
       result.push(poll);

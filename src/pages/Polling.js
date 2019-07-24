@@ -346,6 +346,8 @@ class Polling extends React.Component {
       ? poll.winningProposal
       : poll.options[poll.winningProposal];
 
+    console.log('this poll', poll);
+
     return (
       <Fragment>
         <VotingWeightBanner
