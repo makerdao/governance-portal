@@ -4,6 +4,7 @@ import { createReducer } from '../utils/redux';
 import { formatRound, check } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { TransactionStatus } from '../utils/constants';
+import { Whitelist } from '../utils/pollingWhitelist';
 
 // Constants ----------------------------------------------
 
@@ -227,6 +228,12 @@ export const getNumUniqueVoters = async pollId => {
   return numUniqueVoters;
 };
 
+const pollsFilter = (polls, list, property, negate = false) => {
+  return negate
+    ? polls.filter(poll => list.some(item => poll[property] !== item))
+    : polls.filter(poll => list.some(item => poll[property] === item));
+};
+
 export const pollsInit = () => async dispatch => {
   const pollService = window.maker.service('govPolling');
   dispatch(pollsRequest());
@@ -236,8 +243,9 @@ export const pollsInit = () => async dispatch => {
   try {
     const polls = await getAllWhiteListedPolls();
     console.log('Whitelisted Polls', polls);
+    const filteredPolls = pollsFilter(polls, Whitelist, 'creator');
 
-    for (const poll of polls) {
+    for (const poll of filteredPolls) {
       let pollData;
       try {
         const cmsData = await fetchPollFromUrl(poll.url);
