@@ -71,7 +71,8 @@ const INITIAL_POLL_STATE = {
   selectedTab: 'write',
   id: null,
   url: '',
-  step: 0
+  step: 0,
+  txHash: null
 };
 
 class CreatePoll extends Component {
@@ -118,20 +119,31 @@ class CreatePoll extends Component {
   };
 
   execCreatePoll = async () => {
-    this.setState({
-      step: 2,
-      pollTxStatus: PollTxState.LOADING
-    });
     const { start, end, hash, url } = this.state;
     try {
-      const id = await window.maker
+      const txMgr = window.maker.service('transactionManager');
+
+      const createPollTx = window.maker
         .service('govPolling')
+        ._pollingContract()
         .createPoll(
           Math.floor(start.getTime() / 1000),
           Math.floor(end.getTime() / 1000),
           hash,
           url
         );
+
+      txMgr.listen(createPollTx, {
+        pending: async tx => {
+          this.setState({
+            txHash: tx.hash,
+            step: 2,
+            pollTxStatus: PollTxState.LOADING
+          });
+        }
+      });
+
+      const id = parseInt((await createPollTx).receipt.logs[0].topics[2]);
       console.log('createPoll success', id);
       this.setState({
         id,
@@ -154,7 +166,8 @@ class CreatePoll extends Component {
       url,
       submitAttempted,
       id,
-      step
+      step,
+      txHash
     } = this.state;
 
     return (
@@ -205,6 +218,7 @@ class CreatePoll extends Component {
                     pollTxStatus={pollTxStatus}
                     id={id}
                     title={title}
+                    txHash={txHash}
                     handleParentState={newState => this.setState(newState)}
                     resetPollState={this.resetPollState}
                   />
