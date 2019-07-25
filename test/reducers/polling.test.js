@@ -92,14 +92,10 @@ describe('Vote Reducer', () => {
     test('pollsInit test', async done => {
       await store.dispatch(reducer.pollsInit());
 
-      expect(store.getActions().length).toBe(2);
+      expect(store.getActions().length).toBe(1);
       expect(getAllWhitelistedPolls).toBeCalledTimes(1);
       expect(store.getActions()[0]).toEqual({
         type: reducer.POLLS_REQUEST
-      });
-      expect(store.getActions()[1]).toEqual({
-        type: reducer.POLLS_SUCCESS,
-        payload: []
       });
 
       done();

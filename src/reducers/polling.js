@@ -18,6 +18,7 @@ export const POLL_VOTE_SUCCESS = 'poll/VOTE_SUCCESS';
 export const POLL_VOTE_FAILURE = 'poll/VOTE_FAILURE';
 
 export const POLLS_SET_OPTION_VOTING_FOR = 'polls/SET_OPTION_VOTING_FOR';
+export const ADD_POLL = 'poll/ADD_POLL';
 export const UPDATE_POLL = 'polls/UPDATE_POLL';
 
 // Actions ----------------------------------------------
@@ -53,6 +54,11 @@ export const pollsSuccess = polls => ({
 });
 export const pollsFailure = () => ({
   type: POLLS_FAILURE
+});
+
+export const addPoll = poll => ({
+  type: ADD_POLL,
+  payload: poll
 });
 
 export const updatePoll = (pollId, pollDataUpdates) => ({
@@ -228,6 +234,13 @@ export const getNumUniqueVoters = async pollId => {
   return numUniqueVoters;
 };
 
+export const getWinningProposal = async pollId => {
+  const winningProposal = window.maker
+    .service('govPolling')
+    .getWinningProposal(pollId);
+  return winningProposal;
+};
+
 const pollsFilter = (polls, list, property, negate = false) => {
   return negate
     ? polls.filter(poll => list.some(item => poll[property] !== item))
@@ -235,10 +248,7 @@ const pollsFilter = (polls, list, property, negate = false) => {
 };
 
 export const pollsInit = () => async dispatch => {
-  const pollService = window.maker.service('govPolling');
   dispatch(pollsRequest());
-
-  const allPolls = [];
 
   try {
     const polls = await getAllWhiteListedPolls();
@@ -246,53 +256,63 @@ export const pollsInit = () => async dispatch => {
     // const filteredPolls = pollsFilter(polls, Whitelist, 'creator');
 
     for (const poll of polls) {
+      const { pollId } = poll;
       let pollData;
       try {
         const cmsData = await fetchPollFromUrl(poll.url);
         if (cmsData === null) continue;
         const cmsPoll = formatYamlToJson(cmsData);
         pollData = { ...poll, ...cmsPoll };
+        pollData.active = isPollActive(pollData.startDate, pollData.endDate);
+        pollData.source = window.maker
+          .service('smartContract')
+          .getContract('POLLING').address;
+        dispatch(addPoll(pollData));
+        dispatch(pollDataInit(pollData));
       } catch (e) {
-        console.error(`Poll ID: ${poll.pollId}`, e);
+        console.error(`Poll ID: ${pollId}`, e);
         continue;
       }
-
-      pollData.totalVotes = await getTotalVotes(pollData.pollId);
-
-      pollData.participation = await getParticipation(pollData.pollId);
-
-      pollData.numUniqueVoters = await getNumUniqueVoters(pollData.pollId);
-
-      pollData.active = isPollActive(pollData.startDate, pollData.endDate);
-      const winningProposal = await pollService.getWinningProposal(
-        pollData.pollId
-      );
-      if (!pollData.active && winningProposal !== 0)
-        pollData.winningProposal = winningProposal;
-
-      const voteBreakdown = await getVoteBreakdown(
-        pollData.pollId,
-        pollData.options,
-        pollData.endDate
-      );
-      pollData.voteBreakdown = voteBreakdown;
-
-      pollData.source = window.maker
-        .service('smartContract')
-        .getContract('POLLING').address;
-
-      allPolls.push(pollData);
     }
   } catch (error) {
     console.error(error);
     dispatch(pollsFailure());
   }
+};
 
-  dispatch(pollsSuccess(allPolls));
+export const pollDataInit = ({
+  pollId,
+  options,
+  endDate,
+  active
+}) => async dispatch => {
+  const [
+    totalVotes,
+    participation,
+    numUniqueVoters,
+    winningProposal
+  ] = await Promise.all([
+    getTotalVotes(pollId),
+    getParticipation(pollId),
+    getNumUniqueVoters(pollId),
+    getWinningProposal(pollId)
+  ]);
+  dispatch(
+    updatePoll(pollId, {
+      totalVotes,
+      participation,
+      numUniqueVoters
+    })
+  );
+
+  if (!active && winningProposal !== 0)
+    dispatch(updatePoll(pollId, { winningProposal }));
+
+  const voteBreakdown = await getVoteBreakdown(pollId, options, endDate);
+  dispatch(updatePoll(pollId, { voteBreakdown }));
 };
 
 export const formatHistoricalPolls = topics => async dispatch => {
-  // console.log('historical topics from reducer', topics);
   const govTopics = topics.filter(t => t.govVote === true);
   const allPolls = govTopics.reduce(
     (result, { end_timestamp, date, topic_blurb, topic, key, proposals }) => {
@@ -347,6 +367,10 @@ export default createReducer(initialState, {
     ...state,
     voteTxHash: '',
     voteTxStatus: TransactionStatus.NOT_STARTED
+  }),
+  [ADD_POLL]: (state, { payload }) => ({
+    ...state,
+    polls: [...state.polls, payload]
   }),
   [UPDATE_POLL]: (state, { payload }) => ({
     ...state,

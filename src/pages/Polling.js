@@ -346,6 +346,10 @@ class Polling extends React.Component {
       ? poll.winningProposal
       : poll.options[poll.winningProposal];
 
+    const numUniqueVoters = poll.numUniqueVoters
+      ? poll.numUniqueVoters.toString()
+      : '0';
+
     console.log('this poll', poll);
 
     return (
@@ -446,7 +450,7 @@ class Polling extends React.Component {
                   },
                   {
                     name: 'Unique voters',
-                    value: poll.numUniqueVoters //TODO add .toString here, but check for null
+                    value: numUniqueVoters
                   }
                 ].map((item, i) => (
                   <DetailsCardItem key={i} {...item} />

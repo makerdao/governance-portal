@@ -236,7 +236,6 @@ const PollingList = ({
       : null;
     return winningProp;
   };
-  console.log('*****activeAccount', activeAccount);
   return (
     <Fragment>
       <MigrationNotificationBanner />
