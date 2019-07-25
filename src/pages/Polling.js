@@ -409,7 +409,17 @@ class Polling extends React.Component {
                       </ExternalLink>
                     )
                   },
-                  { name: 'Started', value: poll.startDate.toDateString() },
+                  {
+                    name: 'Started',
+                    value: poll.startDate.toLocaleDateString('en-GB', {
+                      weekday: 'short',
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric'
+                    })
+                  },
                   {
                     name: 'Duration',
                     value: timeLeft(poll.startDate, poll.endDate)
