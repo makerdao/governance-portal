@@ -197,16 +197,38 @@ export const getVoteBreakdown = async (pollId, options, endDate) => {
     .service('govQueryApi')
     .getMkrSupport(pollId, pollEndBlock);
 
-  const voteBreakdown = mkrSupport.reduce((result, val) => {
-    const currentOpt = options[val.optionId];
+  console.log('options', options);
+  console.log('mkrSupport', mkrSupport);
+
+  const voteBreakdown = options.reduce((result, val, index) => {
+    const correctOpt = mkrSupport.find(x => x.optionId === index);
+    // if (correctOpt) {
+    const value = correctOpt
+      ? `${correctOpt.mkrSupport} MKR (${formatRound(correctOpt.percentage)}%)`
+      : '0 MKR (0.00%)';
     const breakdown = {
-      name: currentOpt,
-      value: `${val.mkrSupport} MKR (${formatRound(val.percentage)}%)`,
-      optionId: val.optionId
+      name: val,
+      value,
+      optionId: index
     };
+    console.log('inex', index);
     result.push(breakdown);
+    // }
     return result;
   }, []);
+
+  console.log('vote b', voteBreakdown);
+
+  // const voteBreakdown = mkrSupport.reduce((result, val) => {
+  //   const currentOpt = options[val.optionId];
+  //   const breakdown = {
+  //     name: currentOpt,
+  //     value: `${val.mkrSupport} MKR (${formatRound(val.percentage)}%)`,
+  //     optionId: val.optionId
+  //   };
+  //   result.push(breakdown);
+  //   return result;
+  // }, []);
 
   voteBreakdown.sort((a, b) => a.optionId - b.optionId);
 
