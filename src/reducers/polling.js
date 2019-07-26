@@ -200,20 +200,22 @@ export const getVoteBreakdown = async (pollId, options, endDate) => {
   console.log('options', options);
   console.log('mkrSupport', mkrSupport);
 
-  const voteBreakdown = options.reduce((result, val, index) => {
-    const correctOpt = mkrSupport.find(x => x.optionId === index);
-    // if (correctOpt) {
-    const value = correctOpt
-      ? `${correctOpt.mkrSupport} MKR (${formatRound(correctOpt.percentage)}%)`
+  // Don't include "abstain" in vote breakdown:
+  const displayOptions = [...options];
+  displayOptions.shift();
+  const voteBreakdown = displayOptions.reduce((result, val, index) => {
+    const matchingOption = mkrSupport.find(x => x.optionId === index);
+    const value = matchingOption
+      ? `${matchingOption.mkrSupport} MKR (${formatRound(
+          matchingOption.percentage
+        )}%)`
       : '0 MKR (0.00%)';
     const breakdown = {
       name: val,
       value,
       optionId: index
     };
-    console.log('inex', index);
     result.push(breakdown);
-    // }
     return result;
   }, []);
 
@@ -338,6 +340,7 @@ export const formatHistoricalPolls = topics => async dispatch => {
   const govTopics = topics.filter(t => t.govVote === true);
   const allPolls = govTopics.reduce(
     (result, { end_timestamp, date, topic_blurb, topic, key, proposals }) => {
+      console.log('this poll proposals', proposals);
       const options = proposals.map(p => p.title);
       const totalVotes = proposals.reduce(
         (acc, proposal) => acc + proposal.end_approvals,
