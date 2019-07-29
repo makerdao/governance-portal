@@ -463,7 +463,7 @@ class Polling extends React.Component {
                     value: isNaN(poll.participation)
                       ? '----'
                       : parseFloat(poll.participation) < MIN_MKR_PERCENTAGE
-                      ? `<${MIN_MKR_PERCENTAGE}`
+                      ? `<${MIN_MKR_PERCENTAGE}%`
                       : `${poll.participation}%`
                   },
                   {
