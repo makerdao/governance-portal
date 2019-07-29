@@ -254,25 +254,23 @@ export const pollsInit = () => async dispatch => {
     const polls = await getAllWhiteListedPolls();
     console.log('Whitelisted Polls', polls);
     // const filteredPolls = pollsFilter(polls, Whitelist, 'creator');
-
     for (const poll of polls) {
-      const { pollId } = poll;
-      let pollData;
-      try {
-        const cmsData = await fetchPollFromUrl(poll.url);
-        if (cmsData === null) continue;
-        const cmsPoll = formatYamlToJson(cmsData);
-        pollData = { ...poll, ...cmsPoll };
-        pollData.active = isPollActive(pollData.startDate, pollData.endDate);
-        pollData.source = window.maker
-          .service('smartContract')
-          .getContract('POLLING').address;
-        dispatch(addPoll(pollData));
-        dispatch(pollDataInit(pollData));
-      } catch (e) {
-        console.error(`Poll ID: ${pollId}`, e);
-        continue;
-      }
+      fetchPollFromUrl(poll.url)
+        .then(cmsData => {
+          if (cmsData === null)
+            throw `Error fetching data for poll with ID ${
+              poll.pollId
+            }. Is this a valid URL? ${poll.url}`;
+          const cmsPoll = formatYamlToJson(cmsData);
+          const pollData = { ...poll, ...cmsPoll };
+          pollData.active = isPollActive(pollData.startDate, pollData.endDate);
+          pollData.source = window.maker
+            .service('smartContract')
+            .getContract('POLLING').address;
+          dispatch(addPoll(pollData));
+          dispatch(pollDataInit(pollData));
+        })
+        .catch(e => console.error(e));
     }
   } catch (error) {
     console.error(error);
@@ -285,7 +283,7 @@ export const pollDataInit = ({
   options,
   endDate,
   active
-}) => async dispatch => {
+}) => dispatch => {
   getTotalVotes(pollId).then(totalVotes =>
     dispatch(updatePoll(pollId, { totalVotes }))
   );
