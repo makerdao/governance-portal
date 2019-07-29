@@ -35,3 +35,5 @@ export const POLL_DEFAULT_END = new Date(
 
 const expr = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
 export const URL_REGEX = new RegExp(expr);
+
+export const MIN_MKR_PERCENTAGE = 0.0001;
