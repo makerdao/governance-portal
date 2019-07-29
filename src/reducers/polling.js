@@ -4,7 +4,7 @@ import { createReducer } from '../utils/redux';
 import { formatRound, check } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { TransactionStatus } from '../utils/constants';
-import { Whitelist } from '../utils/pollingWhitelist';
+// import { Whitelist } from '../utils/pollingWhitelist';
 
 // Constants ----------------------------------------------
 
@@ -241,11 +241,11 @@ export const getWinningProposal = async pollId => {
   return winningProposal;
 };
 
-const pollsFilter = (polls, list, property, negate = false) => {
-  return negate
-    ? polls.filter(poll => list.some(item => poll[property] !== item))
-    : polls.filter(poll => list.some(item => poll[property] === item));
-};
+// const pollsFilter = (polls, list, property, negate = false) => {
+//   return negate
+//     ? polls.filter(poll => list.some(item => poll[property] !== item))
+//     : polls.filter(poll => list.some(item => poll[property] === item));
+// };
 
 export const pollsInit = () => async dispatch => {
   dispatch(pollsRequest());
@@ -254,25 +254,25 @@ export const pollsInit = () => async dispatch => {
     const polls = await getAllWhiteListedPolls();
     console.log('Whitelisted Polls', polls);
     // const filteredPolls = pollsFilter(polls, Whitelist, 'creator');
-
     for (const poll of polls) {
-      const { pollId } = poll;
-      let pollData;
-      try {
-        const cmsData = await fetchPollFromUrl(poll.url);
-        if (cmsData === null) continue;
-        const cmsPoll = formatYamlToJson(cmsData);
-        pollData = { ...poll, ...cmsPoll };
-        pollData.active = isPollActive(pollData.startDate, pollData.endDate);
-        pollData.source = window.maker
-          .service('smartContract')
-          .getContract('POLLING').address;
-        dispatch(addPoll(pollData));
-        dispatch(pollDataInit(pollData));
-      } catch (e) {
-        console.error(`Poll ID: ${pollId}`, e);
-        continue;
-      }
+      fetchPollFromUrl(poll.url)
+        .then(cmsData => {
+          if (cmsData === null)
+            throw new Error(
+              `Error fetching data for poll with ID ${
+                poll.pollId
+              }. Is this a valid URL? ${poll.url}`
+            );
+          const cmsPoll = formatYamlToJson(cmsData);
+          const pollData = { ...poll, ...cmsPoll };
+          pollData.active = isPollActive(pollData.startDate, pollData.endDate);
+          pollData.source = window.maker
+            .service('smartContract')
+            .getContract('POLLING').address;
+          dispatch(addPoll(pollData));
+          dispatch(pollDataInit(pollData));
+        })
+        .catch(e => console.error(e));
     }
   } catch (error) {
     console.error(error);
@@ -285,31 +285,23 @@ export const pollDataInit = ({
   options,
   endDate,
   active
-}) => async dispatch => {
-  const [
-    totalVotes,
-    participation,
-    numUniqueVoters,
-    winningProposal
-  ] = await Promise.all([
-    getTotalVotes(pollId),
-    getParticipation(pollId),
-    getNumUniqueVoters(pollId),
-    getWinningProposal(pollId)
-  ]);
-  dispatch(
-    updatePoll(pollId, {
-      totalVotes,
-      participation,
-      numUniqueVoters
-    })
+}) => dispatch => {
+  getTotalVotes(pollId).then(totalVotes =>
+    dispatch(updatePoll(pollId, { totalVotes }))
   );
-
-  if (!active && winningProposal !== 0)
-    dispatch(updatePoll(pollId, { winningProposal }));
-
-  const voteBreakdown = await getVoteBreakdown(pollId, options, endDate);
-  dispatch(updatePoll(pollId, { voteBreakdown }));
+  getParticipation(pollId).then(participation =>
+    dispatch(updatePoll(pollId, { participation }))
+  );
+  getNumUniqueVoters(pollId).then(numUniqueVoters =>
+    dispatch(updatePoll(pollId, { numUniqueVoters }))
+  );
+  getWinningProposal(pollId).then(winningProposal => {
+    if (!active && winningProposal !== 0)
+      dispatch(updatePoll(pollId, { winningProposal }));
+  });
+  getVoteBreakdown(pollId, options, endDate).then(voteBreakdown =>
+    dispatch(updatePoll(pollId, { voteBreakdown }))
+  );
 };
 
 export const formatHistoricalPolls = topics => async dispatch => {

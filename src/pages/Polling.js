@@ -16,8 +16,9 @@ import { getWinningProp } from '../reducers/proposals';
 import { getOptionVotingFor } from '../reducers/polling';
 import theme, { colors } from '../theme';
 import { cutMiddle, eq } from '../utils/misc';
-import ExternalLink from '../components/Onboarding/shared/ExternalLink';
 import { ethScanLink } from '../utils/ethereum';
+import { MIN_MKR_PERCENTAGE } from '../utils/constants';
+import ExternalLink from '../components/Onboarding/shared/ExternalLink';
 import Dropdown from '../components/Dropdown';
 
 const riseUp = keyframes`
@@ -451,11 +452,18 @@ class Polling extends React.Component {
 
                 <CardTitle>Voting Stats</CardTitle>
                 {[
-                  { name: 'Total votes', value: `${poll.totalVotes} MKR` },
+                  {
+                    name: 'Total votes',
+                    value: isNaN(poll.totalVotes)
+                      ? '----'
+                      : `${poll.totalVotes} MKR`
+                  },
                   {
                     name: 'Participation',
                     value: isNaN(poll.participation)
-                      ? ''
+                      ? '----'
+                      : parseFloat(poll.participation) < MIN_MKR_PERCENTAGE
+                      ? `<${MIN_MKR_PERCENTAGE}`
                       : `${poll.participation}%`
                   },
                   {
