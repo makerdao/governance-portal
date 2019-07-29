@@ -4,7 +4,7 @@ import { createReducer } from '../utils/redux';
 import { formatRound, check } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { TransactionStatus } from '../utils/constants';
-import { Whitelist } from '../utils/pollingWhitelist';
+// import { Whitelist } from '../utils/pollingWhitelist';
 
 // Constants ----------------------------------------------
 
@@ -241,11 +241,11 @@ export const getWinningProposal = async pollId => {
   return winningProposal;
 };
 
-const pollsFilter = (polls, list, property, negate = false) => {
-  return negate
-    ? polls.filter(poll => list.some(item => poll[property] !== item))
-    : polls.filter(poll => list.some(item => poll[property] === item));
-};
+// const pollsFilter = (polls, list, property, negate = false) => {
+//   return negate
+//     ? polls.filter(poll => list.some(item => poll[property] !== item))
+//     : polls.filter(poll => list.some(item => poll[property] === item));
+// };
 
 export const pollsInit = () => async dispatch => {
   dispatch(pollsRequest());
@@ -258,9 +258,11 @@ export const pollsInit = () => async dispatch => {
       fetchPollFromUrl(poll.url)
         .then(cmsData => {
           if (cmsData === null)
-            throw `Error fetching data for poll with ID ${
-              poll.pollId
-            }. Is this a valid URL? ${poll.url}`;
+            throw new Error(
+              `Error fetching data for poll with ID ${
+                poll.pollId
+              }. Is this a valid URL? ${poll.url}`
+            );
           const cmsPoll = formatYamlToJson(cmsData);
           const pollData = { ...poll, ...cmsPoll };
           pollData.active = isPollActive(pollData.startDate, pollData.endDate);
