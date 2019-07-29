@@ -451,11 +451,16 @@ class Polling extends React.Component {
 
                 <CardTitle>Voting Stats</CardTitle>
                 {[
-                  { name: 'Total votes', value: `${poll.totalVotes} MKR` },
+                  {
+                    name: 'Total votes',
+                    value: isNaN(poll.totalVotes)
+                      ? '----'
+                      : `${poll.totalVotes} MKR`
+                  },
                   {
                     name: 'Participation',
                     value: isNaN(poll.participation)
-                      ? ''
+                      ? '----'
                       : `${poll.participation}%`
                   },
                   {

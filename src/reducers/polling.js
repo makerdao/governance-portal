@@ -286,30 +286,22 @@ export const pollDataInit = ({
   endDate,
   active
 }) => async dispatch => {
-  const [
-    totalVotes,
-    participation,
-    numUniqueVoters,
-    winningProposal
-  ] = await Promise.all([
-    getTotalVotes(pollId),
-    getParticipation(pollId),
-    getNumUniqueVoters(pollId),
-    getWinningProposal(pollId)
-  ]);
-  dispatch(
-    updatePoll(pollId, {
-      totalVotes,
-      participation,
-      numUniqueVoters
-    })
+  getTotalVotes(pollId).then(totalVotes =>
+    dispatch(updatePoll(pollId, { totalVotes }))
   );
-
-  if (!active && winningProposal !== 0)
-    dispatch(updatePoll(pollId, { winningProposal }));
-
-  const voteBreakdown = await getVoteBreakdown(pollId, options, endDate);
-  dispatch(updatePoll(pollId, { voteBreakdown }));
+  getParticipation(pollId).then(participation =>
+    dispatch(updatePoll(pollId, { participation }))
+  );
+  getNumUniqueVoters(pollId).then(numUniqueVoters =>
+    dispatch(updatePoll(pollId, { numUniqueVoters }))
+  );
+  getWinningProposal(pollId).then(winningProposal => {
+    if (!active && winningProposal !== 0)
+      dispatch(updatePoll(pollId, { winningProposal }));
+  });
+  getVoteBreakdown(pollId, options, endDate).then(voteBreakdown =>
+    dispatch(updatePoll(pollId, { voteBreakdown }))
+  );
 };
 
 export const formatHistoricalPolls = topics => async dispatch => {
