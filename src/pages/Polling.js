@@ -371,7 +371,7 @@ class Polling extends React.Component {
                 <DownloadButton
                   onClick={() => downloadRawPollData(multiHash, rawData)}
                 >
-                  Download raw metadata
+                  Download raw document
                 </DownloadButton>
               )}
             </DescriptionCard>
@@ -463,7 +463,7 @@ class Polling extends React.Component {
                     value: isNaN(poll.participation)
                       ? '----'
                       : parseFloat(poll.participation) < MIN_MKR_PERCENTAGE
-                      ? `<${MIN_MKR_PERCENTAGE}%`
+                      ? `< ${MIN_MKR_PERCENTAGE}%`
                       : `${poll.participation}%`
                   },
                   {
