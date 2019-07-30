@@ -76,7 +76,11 @@ export const setOptionVotingFor = (pollId, optionId) => ({
 export const voteForPoll = (pollId, optionId) => async dispatch => {
   dispatch({ type: POLL_VOTE_REQUEST });
 
-  const pollVote = window.maker.service('govPolling').vote(pollId, optionId);
+  // increment the optionId to give the plugin the correct ID
+  const optionIdToVoteFor = parseInt(optionId) + 1;
+  const pollVote = window.maker
+    .service('govPolling')
+    .vote(pollId, optionIdToVoteFor);
   const success = await handleTx({
     txObject: pollVote,
     prefix: 'VOTE',
@@ -100,7 +104,7 @@ export const withdrawVoteForPoll = pollId => async dispatch => {
   });
 
   if (success) {
-    dispatch(setOptionVotingFor(pollId, 0));
+    dispatch(setOptionVotingFor(pollId, null));
     dispatch(updateVoteBreakdown(pollId));
   }
 };
@@ -118,9 +122,13 @@ const getAllWhiteListedPolls = async () => {
 };
 
 export const getOptionVotingFor = (address, pollId) => async dispatch => {
-  const optionId = await window.maker
+  let optionId = await window.maker
     .service('govPolling')
     .getOptionVotingFor(address, pollId);
+
+  // Option "0" from the plugin is "abstain", but the FE doesn't use "abstain".
+  if (optionId === 0) optionId = null;
+  else optionId = parseInt(optionId) - 1;
   dispatch(setOptionVotingFor(pollId, optionId));
 };
 
@@ -138,7 +146,10 @@ const fetchPollFromUrl = async url => {
 };
 
 const formatOptions = options => {
-  return Object.values(options);
+  const optionVals = Object.values(options);
+  // Remove option 0: abstain
+  optionVals.shift();
+  return optionVals;
 };
 
 const formatYamlToJson = data => {
@@ -197,14 +208,11 @@ export const getVoteBreakdown = async (pollId, options, endDate) => {
     .service('govQueryApi')
     .getMkrSupport(pollId, pollEndBlock);
 
-  console.log('options', options);
-  console.log('mkrSupport', mkrSupport);
-
-  // Don't include "abstain" in vote breakdown:
-  const displayOptions = [...options];
-  displayOptions.shift();
-  const voteBreakdown = displayOptions.reduce((result, val, index) => {
-    const matchingOption = mkrSupport.find(x => x.optionId === index);
+  const voteBreakdown = options.reduce((result, val, index) => {
+    // correct for option 0: abstain here:
+    const matchingOption = mkrSupport.find(
+      x => parseInt(x.optionId) - 1 === index
+    );
     const value = matchingOption
       ? `${matchingOption.mkrSupport} MKR (${formatRound(
           matchingOption.percentage
@@ -218,19 +226,6 @@ export const getVoteBreakdown = async (pollId, options, endDate) => {
     result.push(breakdown);
     return result;
   }, []);
-
-  console.log('vote b', voteBreakdown);
-
-  // const voteBreakdown = mkrSupport.reduce((result, val) => {
-  //   const currentOpt = options[val.optionId];
-  //   const breakdown = {
-  //     name: currentOpt,
-  //     value: `${val.mkrSupport} MKR (${formatRound(val.percentage)}%)`,
-  //     optionId: val.optionId
-  //   };
-  //   result.push(breakdown);
-  //   return result;
-  // }, []);
 
   voteBreakdown.sort((a, b) => a.optionId - b.optionId);
 
