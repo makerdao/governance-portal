@@ -123,9 +123,6 @@ const VoteButton = styled(Button)`
 `;
 
 const DescriptionCard = styled(Card)`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   margin: 0;
   max-width: 750px;
   padding: 0px 25px 18px 25px;
@@ -134,7 +131,8 @@ const DescriptionCard = styled(Card)`
 `;
 
 const DownloadButton = styled(Button)`
-  display: flex;
+  position: absolute;
+  bottom: 20px;
 `;
 
 const DetailsCardItem = ({ name, value, component }) => (
@@ -371,7 +369,7 @@ class Polling extends React.Component {
                 <DownloadButton
                   onClick={() => downloadRawPollData(multiHash, rawData)}
                 >
-                  Download raw metadata
+                  Download raw document
                 </DownloadButton>
               )}
             </DescriptionCard>
@@ -463,7 +461,7 @@ class Polling extends React.Component {
                     value: isNaN(poll.participation)
                       ? '----'
                       : parseFloat(poll.participation) < MIN_MKR_PERCENTAGE
-                      ? `<${MIN_MKR_PERCENTAGE}`
+                      ? `< ${MIN_MKR_PERCENTAGE}%`
                       : `${poll.participation}%`
                   },
                   {
