@@ -314,8 +314,9 @@ export const pollDataInit = ({
   getNumUniqueVoters(pollId).then(numUniqueVoters =>
     dispatch(updatePoll(pollId, { numUniqueVoters }))
   );
-  getWinningProposal(pollId).then(winningProposal => {
-    if (!active && winningProposal !== 0)
+  getWinningProposal(pollId).then(proposalId => {
+    const winningProposal = proposalId === 0 ? null : parseInt(proposalId) - 1;
+    if (!active && winningProposal !== null)
       dispatch(updatePoll(pollId, { winningProposal }));
   });
   getVoteBreakdown(pollId, options, endDate).then(voteBreakdown =>
@@ -327,7 +328,6 @@ export const formatHistoricalPolls = topics => async dispatch => {
   const govTopics = topics.filter(t => t.govVote === true);
   const allPolls = govTopics.reduce(
     (result, { end_timestamp, date, topic_blurb, topic, key, proposals }) => {
-      console.log('this poll proposals', proposals);
       const options = proposals.map(p => p.title);
       const totalVotes = proposals.reduce(
         (acc, proposal) => acc + proposal.end_approvals,

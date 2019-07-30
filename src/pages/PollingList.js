@@ -231,7 +231,7 @@ const PollingList = ({
       const wp = getWinningProp({ proposals, approvals }, poll.pollId);
       return wp ? wp.title : 'Not available';
     }
-    const winningProp = poll.winningProposal
+    const winningProp = poll.options[poll.winningProposal]
       ? poll.options[poll.winningProposal]
       : null;
     return winningProp;

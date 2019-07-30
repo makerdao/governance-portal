@@ -310,6 +310,11 @@ class Polling extends React.Component {
     });
   };
 
+  validateLink = link => {
+    if (!link) return null;
+    return link.indexOf('http') === 0 ? link : `https://${link}`;
+  };
+
   render() {
     const { activeAccount, voteStateFetching } = this.state;
     const {
@@ -428,7 +433,10 @@ class Polling extends React.Component {
                   {
                     name: 'Discussion',
                     component: (
-                      <ExternalLink href={discussion_link} target="_blank">
+                      <ExternalLink
+                        href={this.validateLink(discussion_link)}
+                        target="_blank"
+                      >
                         Here
                       </ExternalLink>
                     ),
@@ -482,7 +490,7 @@ class Polling extends React.Component {
                     ))}
                   </>
                 )}
-                {poll.winningProposal && (
+                {winningProposalName && (
                   <>
                     <CardTitle>Winning Proposal</CardTitle>
                     <span>{winningProposalName}</span>
