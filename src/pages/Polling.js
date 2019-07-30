@@ -195,18 +195,11 @@ class VotingPanel extends React.Component {
   }
 
   onDropdownSelect = (value, index) => {
-    const selectedOptionId = parseInt(index) + 1;
+    const selectedOptionId = parseInt(index);
     this.setState({
       selectedOption: value,
       selectedOptionId
     });
-  };
-
-  formatOptions = options => {
-    const displayOptions = [...options];
-    // Index 0 is expected to always be '0: abstain' but we don't want to display it here.
-    displayOptions.shift();
-    return displayOptions;
   };
 
   render() {
@@ -225,7 +218,7 @@ class VotingPanel extends React.Component {
         <VoteSelection>
           <Dropdown
             color="green"
-            items={this.formatOptions(options)}
+            items={options}
             renderItem={item => (
               <DropdownText color="green">{item}</DropdownText>
             )}
@@ -317,6 +310,11 @@ class Polling extends React.Component {
     });
   };
 
+  validateLink = link => {
+    if (!link) return null;
+    return link.indexOf('http') === 0 ? link : `https://${link}`;
+  };
+
   render() {
     const { activeAccount, voteStateFetching } = this.state;
     const {
@@ -338,8 +336,7 @@ class Polling extends React.Component {
       totalVotes
     } = poll;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
-    const optionVotingForName =
-      optionVotingFor === 0 ? null : options[optionVotingFor];
+    const optionVotingForName = options[optionVotingFor];
 
     const winningProposalName = poll.legacyPoll
       ? poll.winningProposal
@@ -378,7 +375,6 @@ class Polling extends React.Component {
                 <VotingPanel
                   optionVotingFor={optionVotingForName}
                   poll={poll}
-                  voteForPoll={this.voteForPoll}
                   activeAccount={activeAccount}
                   modalOpen={modalOpen}
                   totalVotes={totalVotes}
@@ -437,7 +433,10 @@ class Polling extends React.Component {
                   {
                     name: 'Discussion',
                     component: (
-                      <ExternalLink href={discussion_link} target="_blank">
+                      <ExternalLink
+                        href={this.validateLink(discussion_link)}
+                        target="_blank"
+                      >
                         Here
                       </ExternalLink>
                     ),
@@ -460,7 +459,8 @@ class Polling extends React.Component {
                     name: 'Participation',
                     value: isNaN(poll.participation)
                       ? '----'
-                      : parseFloat(poll.participation) < MIN_MKR_PERCENTAGE
+                      : parseFloat(poll.participation) < MIN_MKR_PERCENTAGE &&
+                        parseFloat(poll.participation) !== 0
                       ? `< ${MIN_MKR_PERCENTAGE}%`
                       : `${poll.participation}%`
                   },
@@ -472,15 +472,25 @@ class Polling extends React.Component {
                   <DetailsCardItem key={i} {...item} />
                 ))}
 
-                {poll.voteBreakdown && poll.voteBreakdown.length > 0 && (
+                {poll.voteBreakdown && poll.voteBreakdown.length > 0 ? (
                   <>
                     <CardTitle>Vote breakdown</CardTitle>
                     {poll.voteBreakdown.map((item, i) => (
                       <DetailsCardItem key={i} {...item} />
                     ))}
                   </>
+                ) : (
+                  <>
+                    <CardTitle>Vote breakdown</CardTitle>
+                    {poll.options.map((item, i) => (
+                      <DetailsCardItem
+                        key={i}
+                        {...{ name: options[i], value: '----' }}
+                      />
+                    ))}
+                  </>
                 )}
-                {poll.winningProposal && (
+                {winningProposalName && (
                   <>
                     <CardTitle>Winning Proposal</CardTitle>
                     <span>{winningProposalName}</span>
