@@ -117,7 +117,6 @@ const getAllWhiteListedPolls = async () => {
     .getAllWhitelistedPolls();
 
   const polls = uniqBy(pollsList, p => p.url);
-  console.log('unique polls', polls);
   return polls;
 };
 
@@ -133,14 +132,12 @@ export const getOptionVotingFor = (address, pollId) => async dispatch => {
 };
 
 const fetchPollFromUrl = async url => {
-  console.log('url to fetch', url);
   const res = await fetch(url);
   await check(res);
   const json = await res.json();
   if (!json['voteId']) {
     return null;
   } else {
-    console.log('valid poll', json);
     return json;
   }
 };
@@ -279,7 +276,6 @@ export const pollsInit = () => async dispatch => {
 
   try {
     const polls = await getAllWhiteListedPolls();
-    console.log('Whitelisted Polls', polls);
     // const filteredPolls = pollsFilter(polls, Whitelist, 'creator');
     for (const poll of polls) {
       fetchPollFromUrl(poll.url)

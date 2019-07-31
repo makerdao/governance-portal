@@ -6,6 +6,7 @@ import {
   withRouter,
   Redirect
 } from 'react-router-dom';
+import mixpanel from 'mixpanel-browser';
 import BaseLayout from './layouts/base';
 import Timeline from './pages/Timeline';
 import PollingList from './pages/PollingList';
@@ -58,6 +59,11 @@ const CreatePoll = props => (
 );
 
 class App extends Component {
+  mixpanelTrack = routeProps => {
+    console.debug(`[Analytics] Tracked: ${routeProps.location.pathname}`);
+    mixpanel.track('Pageview', { product: 'governance-dashboard' });
+  };
+
   render = () => (
     <Router>
       <ScrollToTop>
@@ -68,31 +74,47 @@ class App extends Component {
                 <Route
                   exact
                   path="/"
-                  render={routeProps => <Timeline {...routeProps} />}
+                  render={routeProps => {
+                    this.mixpanelTrack(routeProps);
+                    return <Timeline {...routeProps} />;
+                  }}
                 />
                 <Route
                   path="/polling/create"
-                  render={routeProps => <CreatePoll {...routeProps} />}
+                  render={routeProps => {
+                    this.mixpanelTrack(routeProps);
+                    return <CreatePoll {...routeProps} />;
+                  }}
                 />
                 <Route
                   path="/polling"
-                  render={routeProps => (
-                    <PollingList signaling {...routeProps} />
-                  )}
+                  render={routeProps => {
+                    this.mixpanelTrack(routeProps);
+                    return <PollingList signaling {...routeProps} />;
+                  }}
                 />
                 <Route path="/not-found" component={NotFound} />
                 <Route
                   exact
                   path="/:topicSlug"
-                  render={() => <Redirect to="/" />}
+                  render={routeProps => {
+                    this.mixpanelTrack(routeProps);
+                    return <Redirect to="/" />;
+                  }}
                 />
                 <Route
                   path="/polling-proposal/:pollSlug"
-                  render={routeProps => <Polling {...routeProps} />}
+                  render={routeProps => {
+                    this.mixpanelTrack(routeProps);
+                    return <Polling {...routeProps} />;
+                  }}
                 />
                 <Route
                   path="/executive-proposal/:execSlug"
-                  render={routeProps => <Executive {...routeProps} />}
+                  render={routeProps => {
+                    this.mixpanelTrack(routeProps);
+                    return <Executive {...routeProps} />;
+                  }}
                 />
               </Switch>
             </BaseLayout>
