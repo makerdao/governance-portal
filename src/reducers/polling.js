@@ -12,6 +12,8 @@ export const POLLS_REQUEST = 'polls/REQUEST';
 export const POLLS_SUCCESS = 'polls/SUCCESS';
 export const POLLS_FAILURE = 'polls/FAILURE';
 
+export const LEGACY_POLLS_SUCCESS = 'polls/LEGACY_POLLS_SUCCESS';
+
 export const POLL_VOTE_REQUEST = 'poll/VOTE_REQUEST';
 export const POLL_VOTE_SENT = 'poll/VOTE_SENT';
 export const POLL_VOTE_SUCCESS = 'poll/VOTE_SUCCESS';
@@ -45,12 +47,15 @@ const handleTx = ({ prefix, dispatch, txObject }) =>
     });
   });
 
+export const legacyPollsSuccess = polls => ({
+  type: LEGACY_POLLS_SUCCESS,
+  payload: polls
+});
 export const pollsRequest = () => ({
   type: POLLS_REQUEST
 });
-export const pollsSuccess = polls => ({
-  type: POLLS_SUCCESS,
-  payload: polls
+export const pollsSuccess = () => ({
+  type: POLLS_SUCCESS
 });
 export const pollsFailure = () => ({
   type: POLLS_FAILURE
@@ -281,6 +286,7 @@ export const pollsInit = () => async dispatch => {
     const polls = await getAllWhiteListedPolls();
     console.log('Whitelisted Polls', polls);
     // const filteredPolls = pollsFilter(polls, Whitelist, 'creator');
+    let pollsRemaining = polls.length;
     for (const poll of polls) {
       fetchPollFromUrl(poll.url)
         .then(cmsData => {
@@ -299,7 +305,11 @@ export const pollsInit = () => async dispatch => {
           dispatch(addPoll(pollData));
           dispatch(pollDataInit(pollData));
         })
-        .catch(e => console.error(e));
+        .catch(e => console.error(e))
+        .finally(_ => {
+          pollsRemaining--;
+          if (pollsRemaining === 0) dispatch(pollsSuccess());
+        });
     }
   } catch (error) {
     console.error(error);
@@ -367,7 +377,7 @@ export const formatHistoricalPolls = topics => async dispatch => {
     },
     []
   );
-  dispatch(pollsSuccess(allPolls));
+  dispatch(legacyPollsSuccess(allPolls));
 };
 
 // Reducer ------------------------------------------------
@@ -379,9 +389,21 @@ const initialState = {
 };
 
 export default createReducer(initialState, {
-  [POLLS_SUCCESS]: (state, { payload }) => ({
+  [LEGACY_POLLS_SUCCESS]: (state, { payload }) => ({
     ...state,
     polls: [...state.polls, ...payload]
+  }),
+  [POLLS_REQUEST]: state => ({
+    ...state,
+    pollsFetching: true
+  }),
+  [POLLS_SUCCESS]: state => ({
+    ...state,
+    pollsFetching: false
+  }),
+  [POLLS_FAILURE]: state => ({
+    ...state,
+    pollsFetching: false
   }),
   [POLL_VOTE_REQUEST]: state => ({
     ...state,

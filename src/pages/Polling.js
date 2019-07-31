@@ -328,9 +328,11 @@ class Polling extends React.Component {
       isValidRoute,
       network,
       accountDataFetching,
-      modalOpen
+      modalOpen,
+      pollsFetching
     } = this.props;
-    if (!poll) return null;
+    if (pollsFetching && !poll) return null;
+    if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
     const {
       discussion_link,
       rawData,
@@ -340,7 +342,6 @@ class Polling extends React.Component {
       optionVotingFor,
       totalVotes
     } = poll;
-    if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
     const optionVotingForName = options[optionVotingFor];
 
     const winningProposalName = poll.legacyPoll
@@ -512,7 +513,7 @@ class Polling extends React.Component {
 
 const reduxProps = (state, { match }) => {
   const { accounts, metamask, polling } = state;
-  const { polls } = polling;
+  const { polls, pollsFetching } = polling;
   const { pollSlug } = match.params;
 
   const poll = polls.find(({ voteId }) => {
@@ -530,6 +531,7 @@ const reduxProps = (state, { match }) => {
 
   return {
     poll,
+    pollsFetching,
     activeAccount,
     accountDataFetching: accounts.fetching,
     canVote: activeCanVote({ accounts }),
