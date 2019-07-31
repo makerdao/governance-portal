@@ -142,17 +142,25 @@ const DetailsCardItem = ({ name, value, component }) => (
   </DetailsItem>
 );
 
+const getTotalVotesForOption = (voteBreakdown, selectedOptionId) => {
+  return voteBreakdown[selectedOptionId].mkrSupport;
+};
+
 const VotedFor = ({
   voteStateFetching,
   optionVotingFor,
-  active,
+  optionVotingForId,
   modalOpen,
-  pollId,
-  totalVotes
+  poll
 }) => {
   if (voteStateFetching) {
     return <Loader mt={34} mb={34} color="header" background="background" />;
   }
+  const { voteBreakdown, active, pollId } = poll;
+  const totalVotes =
+    voteBreakdown && (optionVotingForId || optionVotingForId === 0)
+      ? getTotalVotesForOption(voteBreakdown, optionVotingForId)
+      : null;
   if (optionVotingFor)
     return (
       <VoteStatusText>
@@ -203,15 +211,13 @@ class VotingPanel extends React.Component {
   };
 
   render() {
-    const {
-      poll,
-      activeAccount,
-      optionVotingFor,
-      modalOpen,
-      totalVotes
-    } = this.props;
-    const { pollId, options } = poll;
+    const { poll, activeAccount, optionVotingFor, modalOpen } = this.props;
+    const { pollId, options, voteBreakdown } = poll;
     const { selectedOption, selectedOptionId } = this.state;
+    const totalVotes =
+      voteBreakdown && (selectedOptionId || selectedOptionId === 0)
+        ? getTotalVotesForOption(voteBreakdown, selectedOptionId)
+        : null;
 
     return (
       <React.Fragment>
@@ -332,7 +338,6 @@ class Polling extends React.Component {
       active,
       options,
       optionVotingFor,
-      pollId,
       totalVotes
     } = poll;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
@@ -371,7 +376,7 @@ class Polling extends React.Component {
               )}
             </DescriptionCard>
             <RightPanels>
-              {poll.active && (
+              {active && (
                 <VotingPanel
                   optionVotingFor={optionVotingForName}
                   poll={poll}
@@ -381,12 +386,12 @@ class Polling extends React.Component {
                 />
               )}
               <VotedFor
+                poll={poll}
                 optionVotingFor={optionVotingForName}
+                optionVotingForId={optionVotingFor}
                 voteStateFetching={voteStateFetching && accountDataFetching}
-                active={active}
                 withdrawVote={this.withdrawVote}
                 modalOpen={modalOpen}
-                pollId={pollId}
                 totalVotes={totalVotes}
                 alreadyVotingFor={true}
               />
@@ -519,7 +524,6 @@ const reduxProps = (state, { match }) => {
     : null;
 
   if (poll && poll.legacyPoll) {
-    // TODO update this to voteId:
     const winningProp = getWinningProp(state, poll.pollId);
     poll.winningProposal = winningProp ? winningProp.title : 'Not applicable';
   }

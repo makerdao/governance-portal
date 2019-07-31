@@ -218,10 +218,18 @@ export const getVoteBreakdown = async (pollId, options, endDate) => {
           matchingOption.percentage
         )}%)`
       : '0 MKR (0.00%)';
+
+    const mkrSupportData = matchingOption
+      ? {
+          mkrSupport: matchingOption.mkrSupport,
+          percentage: formatRound(matchingOption.percentage)
+        }
+      : { mkrSupport: '0', percentage: '0' };
     const breakdown = {
       name: val,
+      optionId: index,
       value,
-      optionId: index
+      ...mkrSupportData
     };
     result.push(breakdown);
     return result;
