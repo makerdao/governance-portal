@@ -214,7 +214,7 @@ export const getVoteBreakdown = async (pollId, options, endDate) => {
       x => parseInt(x.optionId) - 1 === index
     );
     const value = matchingOption
-      ? `${matchingOption.mkrSupport} MKR (${formatRound(
+      ? `${formatRound(matchingOption.mkrSupport, 2)} MKR (${formatRound(
           matchingOption.percentage
         )}%)`
       : '0 MKR (0.00%)';
@@ -356,7 +356,7 @@ export const formatHistoricalPolls = topics => async dispatch => {
         startDate: new Date(date),
         summary: topic_blurb,
         title: topic,
-        totalVotes: formatRound(totalVotes),
+        totalVotes: formatRound(totalVotes, 2),
         pollId: key,
         voteId: key,
         topicKey: key

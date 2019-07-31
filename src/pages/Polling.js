@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import { isNil, isEmpty } from 'ramda';
-import { toSlug } from '../utils/misc';
+import { toSlug, formatRound, cutMiddle, eq } from '../utils/misc';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Loader from '../components/Loader';
@@ -15,7 +15,6 @@ import { modalOpen } from '../reducers/modal';
 import { getWinningProp } from '../reducers/proposals';
 import { getOptionVotingFor } from '../reducers/polling';
 import theme, { colors } from '../theme';
-import { cutMiddle, eq } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
 import { MIN_MKR_PERCENTAGE } from '../utils/constants';
 import ExternalLink from '../components/Onboarding/shared/ExternalLink';
@@ -458,7 +457,7 @@ class Polling extends React.Component {
                     name: 'Total votes',
                     value: isNaN(poll.totalVotes)
                       ? '----'
-                      : `${poll.totalVotes} MKR`
+                      : `${formatRound(poll.totalVotes, 2)} MKR`
                   },
                   {
                     name: 'Participation',
@@ -467,7 +466,7 @@ class Polling extends React.Component {
                       : parseFloat(poll.participation) < MIN_MKR_PERCENTAGE &&
                         parseFloat(poll.participation) !== 0
                       ? `< ${MIN_MKR_PERCENTAGE}%`
-                      : `${poll.participation}%`
+                      : `${formatRound(poll.participation, 2)}%`
                   },
                   {
                     name: 'Unique voters',
