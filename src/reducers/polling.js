@@ -287,6 +287,10 @@ export const pollsInit = () => async dispatch => {
     console.log('Whitelisted Polls', polls);
     // const filteredPolls = pollsFilter(polls, Whitelist, 'creator');
     let pollsRemaining = polls.length;
+    function onPollFetchAttempt() {
+      pollsRemaining--;
+      if (pollsRemaining === 0) dispatch(pollsSuccess());
+    }
     for (const poll of polls) {
       fetchPollFromUrl(poll.url)
         .then(cmsData => {
@@ -306,10 +310,7 @@ export const pollsInit = () => async dispatch => {
           dispatch(pollDataInit(pollData));
         })
         .catch(e => console.error(e))
-        .finally(_ => {
-          pollsRemaining--;
-          if (pollsRemaining === 0) dispatch(pollsSuccess());
-        });
+        .finally(onPollFetchAttempt);
     }
   } catch (error) {
     console.error(error);
