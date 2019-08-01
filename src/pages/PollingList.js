@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
+import mixpanel from 'mixpanel-browser';
 import { Button } from '@makerdao/ui-components';
 
 import Card from '../components/Card';
@@ -245,7 +246,17 @@ const PollingList = ({
           <StyledCard key={poll.pollId}>
             <Card.Element key={poll.multiHash} height={proposalWrapperHeight}>
               <ProposalDetails>
-                <ExtendedLink to={`/polling-proposal/${toSlug(poll.voteId)}`}>
+                <ExtendedLink
+                  to={`/polling-proposal/${toSlug(poll.voteId)}`}
+                  onClick={() => {
+                    mixpanel.track('btn-click', {
+                      id: 'poll-view-card',
+                      product: 'governance-dashboard',
+                      page: 'PollingList',
+                      section: 'poll-card'
+                    });
+                  }}
+                >
                   <SubHeading>{poll.title}</SubHeading>
                 </ExtendedLink>
                 <Body
@@ -264,6 +275,14 @@ const PollingList = ({
                     <Fragment>
                       <ExtendedLink
                         to={`/polling-proposal/${toSlug(poll.voteId)}`}
+                        onClick={() => {
+                          mixpanel.track('btn-click', {
+                            id: 'poll-view-btn-active',
+                            product: 'governance-dashboard',
+                            page: 'PollingList',
+                            section: 'poll-card'
+                          });
+                        }}
                       >
                         <StyledButton>Vote on Proposal</StyledButton>
                       </ExtendedLink>
@@ -272,6 +291,14 @@ const PollingList = ({
                     <Fragment>
                       <ExtendedLink
                         to={`/polling-proposal/${toSlug(poll.voteId)}`}
+                        onClick={() => {
+                          mixpanel.track('btn-click', {
+                            id: 'poll-view-btn-inactive',
+                            product: 'governance-dashboard',
+                            page: 'PollingList',
+                            section: 'poll-card'
+                          });
+                        }}
                       >
                         <StyledButton variant="secondary">
                           See Details

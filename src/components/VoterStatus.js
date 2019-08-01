@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import React, { Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
+import mixpanel from 'mixpanel-browser';
 import { modalOpen } from '../reducers/modal';
 import { onboardingOpen } from '../reducers/onboarding';
 import { getActiveAccount } from '../reducers/accounts';
@@ -89,7 +90,15 @@ const WelcomeBanner = ({ onboardingOpen, activeAccount }) => {
         textColor={theme.text.darker_default}
         hoverTextColor={theme.text.darker_default}
         activeColor={'grey'}
-        onClick={onboardingOpen}
+        onClick={() => {
+          mixpanel.track('btn-click', {
+            id: 'onboarding-open',
+            product: 'governance-dashboard',
+            page: 'Home',
+            section: 'welcome-banner'
+          });
+          onboardingOpen();
+        }}
         disabled={!activeAccount}
       >
         Set up now

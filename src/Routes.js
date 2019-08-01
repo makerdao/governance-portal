@@ -54,10 +54,12 @@ const CreatePoll = props => (
 );
 
 const history = createBrowserHistory();
-const location = history.location;
 history.listen(location => {
   console.debug(`[Analytics] Tracked: ${location.pathname}`);
-  mixpanel.track('Pageview', { product: 'governance-dashboard' });
+  mixpanel.track('Pageview', {
+    product: 'governance-dashboard',
+    id: location.pathname
+  });
 });
 
 class App extends Component {
