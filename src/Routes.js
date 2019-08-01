@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  withRouter,
-  Redirect
-} from 'react-router-dom';
+import { Router, Switch, Route, withRouter, Redirect } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 import mixpanel from 'mixpanel-browser';
 import BaseLayout from './layouts/base';
 import Timeline from './pages/Timeline';
@@ -58,14 +53,16 @@ const CreatePoll = props => (
   </DynamicImport>
 );
 
-class App extends Component {
-  mixpanelTrack = routeProps => {
-    console.debug(`[Analytics] Tracked: ${routeProps.location.pathname}`);
-    mixpanel.track('Pageview', { product: 'governance-dashboard' });
-  };
+const history = createBrowserHistory();
+const location = history.location;
+history.listen(location => {
+  console.debug(`[Analytics] Tracked: ${location.pathname}`);
+  mixpanel.track('Pageview', { product: 'governance-dashboard' });
+});
 
+class App extends Component {
   render = () => (
-    <Router>
+    <Router history={history}>
       <ScrollToTop>
         <div className="App">
           <ErrorBoundary>
@@ -74,47 +71,31 @@ class App extends Component {
                 <Route
                   exact
                   path="/"
-                  render={routeProps => {
-                    this.mixpanelTrack(routeProps);
-                    return <Timeline {...routeProps} />;
-                  }}
+                  render={routeProps => <Timeline {...routeProps} />}
                 />
                 <Route
                   path="/polling/create"
-                  render={routeProps => {
-                    this.mixpanelTrack(routeProps);
-                    return <CreatePoll {...routeProps} />;
-                  }}
+                  render={routeProps => <CreatePoll {...routeProps} />}
                 />
                 <Route
                   path="/polling"
-                  render={routeProps => {
-                    this.mixpanelTrack(routeProps);
-                    return <PollingList signaling {...routeProps} />;
-                  }}
+                  render={routeProps => (
+                    <PollingList signaling {...routeProps} />
+                  )}
                 />
                 <Route path="/not-found" component={NotFound} />
                 <Route
                   exact
                   path="/:topicSlug"
-                  render={routeProps => {
-                    this.mixpanelTrack(routeProps);
-                    return <Redirect to="/" />;
-                  }}
+                  render={() => <Redirect to="/" />}
                 />
                 <Route
                   path="/polling-proposal/:pollSlug"
-                  render={routeProps => {
-                    this.mixpanelTrack(routeProps);
-                    return <Polling {...routeProps} />;
-                  }}
+                  render={routeProps => <Polling {...routeProps} />}
                 />
                 <Route
                   path="/executive-proposal/:execSlug"
-                  render={routeProps => {
-                    this.mixpanelTrack(routeProps);
-                    return <Executive {...routeProps} />;
-                  }}
+                  render={routeProps => <Executive {...routeProps} />}
                 />
               </Switch>
             </BaseLayout>
