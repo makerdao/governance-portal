@@ -358,7 +358,8 @@ class Polling extends React.Component {
       active,
       options,
       optionVotingFor,
-      totalVotes
+      totalVotes,
+      voteBreakdownFetching
     } = poll;
     const optionVotingForName = options[optionVotingFor];
 
@@ -495,17 +496,22 @@ class Polling extends React.Component {
                 ].map((item, i) => (
                   <DetailsCardItem key={i} {...item} />
                 ))}
-
-                {poll.voteBreakdown && poll.voteBreakdown.length > 0 ? (
+                <CardTitle>Vote breakdown</CardTitle>
+                {voteBreakdownFetching ? (
+                  <Loader
+                    mt={34}
+                    mb={34}
+                    color="header"
+                    background="background"
+                  />
+                ) : poll.voteBreakdown && poll.voteBreakdown.length > 0 ? (
                   <>
-                    <CardTitle>Vote breakdown</CardTitle>
                     {poll.voteBreakdown.map((item, i) => (
                       <DetailsCardItem key={i} {...item} />
                     ))}
                   </>
                 ) : (
                   <>
-                    <CardTitle>Vote breakdown</CardTitle>
                     {poll.options.map((item, i) => (
                       <DetailsCardItem
                         key={i}

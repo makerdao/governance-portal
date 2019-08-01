@@ -292,9 +292,7 @@ export const pollsInit = () => async dispatch => {
         .then(cmsData => {
           if (cmsData === null)
             throw new Error(
-              `Error fetching data for poll with ID ${
-                poll.pollId
-              }. Is this a valid URL? ${poll.url}`
+              `Error fetching data for poll with ID ${poll.pollId}. Is this a valid URL? ${poll.url}`
             );
           const cmsPoll = formatYamlToJson(cmsData);
           const pollData = { ...poll, ...cmsPoll };
@@ -334,8 +332,12 @@ export const pollDataInit = ({
     if (!active && winningProposal !== null)
       dispatch(updatePoll(pollId, { winningProposal }));
   });
+
+  dispatch(updatePoll(pollId, { voteBreakdownFetching: true }));
   getVoteBreakdown(pollId, options, endDate).then(voteBreakdown =>
-    dispatch(updatePoll(pollId, { voteBreakdown }))
+    dispatch(
+      updatePoll(pollId, { voteBreakdown, voteBreakdownFetching: false })
+    )
   );
 };
 
