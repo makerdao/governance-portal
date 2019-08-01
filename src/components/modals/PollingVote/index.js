@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ReactGA from 'react-ga';
+import mixpanel from 'mixpanel-browser';
 
 import { add, subtract, formatRound } from '../../../utils/misc';
 import Button from '../../Button';
@@ -114,6 +115,11 @@ class PollingVote extends Component {
                   <Button
                     slim
                     onClick={() => {
+                      mixpanel.track('btn-click', {
+                        id: 'confirm-withdraw-vote',
+                        product: 'governance-dashboard',
+                        section: 'polling-vote-modal'
+                      });
                       this.props.withdrawVoteForPoll(pollId);
                       onNext();
                     }}
@@ -181,6 +187,11 @@ class PollingVote extends Component {
                   <Button
                     slim
                     onClick={() => {
+                      mixpanel.track('btn-click', {
+                        id: 'confirm-vote',
+                        product: 'governance-dashboard',
+                        section: 'polling-vote-modal'
+                      });
                       this.props.voteForPoll(pollId, selectedOptionId);
                       onNext();
                     }}

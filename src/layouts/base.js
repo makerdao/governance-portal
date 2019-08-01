@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
+import mixpanel from 'mixpanel-browser';
 import { Header, Footer } from '@makerdao/ui-components';
 import { colors, fonts } from '../theme';
 import { onboardingOpen, OnboardingStates } from '../reducers/onboarding';
@@ -183,6 +184,12 @@ const BaseLayout = ({
               </StyledLinkWrapper>
               <DimHeaderElement
                 onClick={() => {
+                  mixpanel.track('btn-click', {
+                    id: 'voting-contract',
+                    product: 'governance-dashboard',
+                    page: 'BaseLayout',
+                    section: 'header'
+                  });
                   if (
                     !accountsFetching &&
                     onboardingState !== OnboardingStates.FINISHED

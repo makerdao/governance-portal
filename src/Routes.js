@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  withRouter,
-  Redirect
-} from 'react-router-dom';
+import { Router, Switch, Route, withRouter, Redirect } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+import mixpanel from 'mixpanel-browser';
 import BaseLayout from './layouts/base';
 import Timeline from './pages/Timeline';
 import PollingList from './pages/PollingList';
@@ -57,9 +53,18 @@ const CreatePoll = props => (
   </DynamicImport>
 );
 
+const history = createBrowserHistory();
+history.listen(location => {
+  console.debug(`[Analytics] Tracked: ${location.pathname}`);
+  mixpanel.track('Pageview', {
+    product: 'governance-dashboard',
+    id: location.pathname
+  });
+});
+
 class App extends Component {
   render = () => (
-    <Router>
+    <Router history={history}>
       <ScrollToTop>
         <div className="App">
           <ErrorBoundary>

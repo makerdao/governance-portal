@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import { isNil, isEmpty } from 'ramda';
+import mixpanel from 'mixpanel-browser';
 import { toSlug, formatRound, cutMiddle, eq } from '../utils/misc';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -169,15 +170,21 @@ const VotedFor = ({
           <Fragment>
             <Black>| </Black>
             <Blue
-              onClick={() =>
+              onClick={() => {
+                mixpanel.track('btn-click', {
+                  id: 'withdraw',
+                  product: 'governance-dashboard',
+                  page: 'Polling',
+                  section: 'voting-panel'
+                });
                 modalOpen(PollingVote, {
                   poll: {
                     pollId,
                     alreadyVotingFor: true,
                     totalVotes
                   }
-                })
-              }
+                });
+              }}
             >
               Withdraw Vote
             </Blue>
@@ -206,6 +213,12 @@ class VotingPanel extends React.Component {
     this.setState({
       selectedOption: value,
       selectedOptionId
+    });
+    mixpanel.track('input-change', {
+      id: 'dropdown-select',
+      product: 'governance-dashboard',
+      page: 'Polling',
+      section: 'voting-panel'
     });
   };
 
@@ -243,7 +256,13 @@ class VotingPanel extends React.Component {
               selectedOptionId === undefined ||
               selectedOption === optionVotingFor
             }
-            onClick={() =>
+            onClick={() => {
+              mixpanel.track('btn-click', {
+                id: 'vote',
+                product: 'governance-dashboard',
+                page: 'Polling',
+                section: 'voting-panel'
+              });
               modalOpen(PollingVote, {
                 poll: {
                   pollId,
@@ -251,8 +270,8 @@ class VotingPanel extends React.Component {
                   selectedOptionId,
                   totalVotes
                 }
-              })
-            }
+              });
+            }}
           >
             Vote Now
           </VoteButton>
