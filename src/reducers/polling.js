@@ -276,6 +276,7 @@ export const pollsInit = () => async dispatch => {
 
   try {
     const polls = await getAllWhiteListedPolls();
+    console.log('all whitelisted poll', polls);
 
     let pollsRemaining = polls.length;
     function onPollFetchAttempt() {
@@ -283,8 +284,10 @@ export const pollsInit = () => async dispatch => {
       if (pollsRemaining === 0) dispatch(pollsSuccess());
     }
     for (const poll of polls) {
+      // console.log('pollId', poll.pollId, poll);
       fetchPollFromUrl(poll.url)
         .then(cmsData => {
+          // if (poll.pollId === 76) console.log('');
           if (cmsData === null)
             throw new Error(
               `Error fetching data for poll with ID ${poll.pollId}. Is this a valid URL? ${poll.url}`
