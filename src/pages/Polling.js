@@ -358,8 +358,7 @@ class Polling extends React.Component {
       active,
       options,
       optionVotingFor,
-      totalVotes,
-      voteBreakdownFetching
+      totalVotes
     } = poll;
     const optionVotingForName = options[optionVotingFor];
 
@@ -470,54 +469,37 @@ class Polling extends React.Component {
                   return null;
                 })}
 
-                <CardTitle>Voting Stats</CardTitle>
-                {[
-                  {
-                    name: 'Total votes',
-                    value: isNaN(poll.totalVotes)
-                      ? '----'
-                      : `${formatRound(poll.totalVotes, 2)} MKR`
-                  },
-                  {
-                    name: 'Participation',
-                    value: isNaN(poll.participation)
-                      ? '----'
-                      : parseFloat(poll.participation) < MIN_MKR_PERCENTAGE &&
-                        parseFloat(poll.participation) !== 0
-                      ? `< ${MIN_MKR_PERCENTAGE}%`
-                      : `${formatRound(poll.participation, 2)}%`
-                  },
-                  {
-                    name: 'Unique voters',
-                    value: numUniqueVoters
-                  }
-                ].map((item, i) => (
-                  <DetailsCardItem key={i} {...item} />
-                ))}
-                <CardTitle>Vote breakdown</CardTitle>
-                {voteBreakdownFetching ? (
-                  <Loader
-                    mt={34}
-                    mb={34}
-                    color="header"
-                    background="background"
-                  />
-                ) : poll.voteBreakdown && poll.voteBreakdown.length > 0 ? (
+                {poll.legacyPoll ? null : (
                   <>
-                    {poll.voteBreakdown.map((item, i) => (
+                    <CardTitle>Voting Stats</CardTitle>
+                    {[
+                      {
+                        name: 'Total votes',
+                        value: isNaN(poll.totalVotes)
+                          ? '----'
+                          : `${formatRound(poll.totalVotes, 2)} MKR`
+                      },
+                      {
+                        name: 'Participation',
+                        value: isNaN(poll.participation)
+                          ? '----'
+                          : parseFloat(poll.participation) <
+                              MIN_MKR_PERCENTAGE &&
+                            parseFloat(poll.participation) !== 0
+                          ? `< ${MIN_MKR_PERCENTAGE}%`
+                          : `${formatRound(poll.participation, 2)}%`
+                      },
+                      {
+                        name: 'Unique voters',
+                        value: numUniqueVoters
+                      }
+                    ].map((item, i) => (
                       <DetailsCardItem key={i} {...item} />
                     ))}
                   </>
-                ) : (
-                  <>
-                    {poll.options.map((item, i) => (
-                      <DetailsCardItem
-                        key={i}
-                        {...{ name: options[i], value: '----' }}
-                      />
-                    ))}
-                  </>
                 )}
+
+                <VoteBreakdown poll={poll} />
                 {winningProposalName && (
                   <>
                     <CardTitle>Winning Proposal</CardTitle>
@@ -531,6 +513,32 @@ class Polling extends React.Component {
       </Fragment>
     );
   }
+}
+
+function VoteBreakdown({ poll }) {
+  const { voteBreakdownFetching, voteBreakdown, options, legacyPoll } = poll;
+  if (legacyPoll) return null;
+  const voteBreakdownExists = voteBreakdown && voteBreakdown.length > 0;
+  return (
+    <>
+      <CardTitle>Vote breakdown</CardTitle>
+      {voteBreakdownFetching ? (
+        <Loader mt={34} mb={34} color="header" background="background" />
+      ) : voteBreakdownExists ? (
+        <>
+          {voteBreakdown.map((item, i) => (
+            <DetailsCardItem key={i} {...item} />
+          ))}
+        </>
+      ) : (
+        <>
+          {options.map((_, i) => (
+            <DetailsCardItem key={i} {...{ name: options[i], value: '----' }} />
+          ))}
+        </>
+      )}
+    </>
+  );
 }
 
 const reduxProps = (state, { match }) => {
