@@ -371,8 +371,6 @@ class Polling extends React.Component {
       ? poll.numUniqueVoters.toString()
       : '0';
 
-    console.log('this poll', poll);
-
     return (
       <Fragment>
         <VotingWeightBanner

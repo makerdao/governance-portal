@@ -276,3 +276,9 @@ export const getUtcDateObject = () => {
   const minute = now.getUTCMinutes();
   return new Date(year, month, day, hour, minute);
 };
+
+export const pollsFilter = (polls, list, property, negate = false) => {
+  return negate
+    ? polls.filter(poll => list.some(item => poll[property] !== item))
+    : polls.filter(poll => list.some(item => poll[property] === item));
+};

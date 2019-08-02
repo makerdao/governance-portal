@@ -4,7 +4,6 @@ import { createReducer } from '../utils/redux';
 import { formatRound, check } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { TransactionStatus } from '../utils/constants';
-// import { Whitelist } from '../utils/pollingWhitelist';
 
 // Constants ----------------------------------------------
 
@@ -270,18 +269,12 @@ export const getWinningProposal = async pollId => {
   return winningProposal;
 };
 
-// const pollsFilter = (polls, list, property, negate = false) => {
-//   return negate
-//     ? polls.filter(poll => list.some(item => poll[property] !== item))
-//     : polls.filter(poll => list.some(item => poll[property] === item));
-// };
-
 export const pollsInit = () => async dispatch => {
   dispatch(pollsRequest());
 
   try {
     const polls = await getAllWhiteListedPolls();
-    // const filteredPolls = pollsFilter(polls, Whitelist, 'creator');
+
     let pollsRemaining = polls.length;
     function onPollFetchAttempt() {
       pollsRemaining--;

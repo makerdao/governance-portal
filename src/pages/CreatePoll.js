@@ -144,7 +144,6 @@ class CreatePoll extends Component {
       });
 
       const id = parseInt((await createPollTx).receipt.logs[0].topics[2]);
-      console.log('createPoll success', id);
       this.setState({
         id,
         pollTxStatus: PollTxState.SUCCESS
