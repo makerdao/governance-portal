@@ -120,7 +120,9 @@ const getAllWhiteListedPolls = async () => {
     .service('govPolling')
     .getAllWhitelistedPolls();
 
-  const polls = uniqBy(pollsList, p => p.url);
+  const uniqPolls = uniqBy(pollsList, p => p.url);
+  // Don't process polls where startDate is in the future
+  const polls = uniqPolls.filter(poll => poll.startDate <= new Date());
   return polls;
 };
 
