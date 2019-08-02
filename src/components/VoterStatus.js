@@ -147,7 +147,10 @@ const VoterStatus = ({
   const coldWallet =
     isColdWallet || account.singleWallet ? account : linkedAccount;
 
-  const pollVotingPower = add(account.proxy.votingPower, account.mkrBalance);
+  const pollVotingPower = add(
+    add(account.proxy.votingPower, account.mkrBalance),
+    linkedAccount.mkrBalance
+  );
   return (
     <FadeIn>
       {!account.singleWallet ? (
