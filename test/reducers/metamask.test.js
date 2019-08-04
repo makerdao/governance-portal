@@ -7,6 +7,7 @@ import * as accounts from '../../src/reducers/accounts';
 import * as polling from '../../src/reducers/polling';
 import { getAction } from '../helpers/getAction';
 import * as ethereumUtils from '../../src/utils/ethereum';
+import mixpanel from 'mixpanel-browser';
 
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -129,6 +130,7 @@ describe('actions', () => {
 
 describe('async actions', () => {
   beforeAll(() => {
+    mixpanel.init('mockToken', 'mockConfig');
     mockWeb3();
   });
   beforeEach(() => {

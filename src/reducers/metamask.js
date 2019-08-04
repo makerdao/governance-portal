@@ -97,9 +97,9 @@ export const initWeb3Accounts = () => async (dispatch, getState) => {
       mixpanelIdentify(address, { wallet: 'metamask' });
       mixpanel.track('account-change', {
         product: 'governance-dashboard',
-        address,
+        account: address,
         network,
-        wallet: metamask
+        wallet: 'metamask'
       });
     }
   }
