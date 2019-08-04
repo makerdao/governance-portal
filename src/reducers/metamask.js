@@ -1,4 +1,6 @@
+import mixpanel from 'mixpanel-browser';
 import { createReducer } from '../utils/redux';
+import { mixpanelIdentify } from '../../src/analytics';
 import {
   setActiveAccount,
   addMetamaskAccount,
@@ -82,7 +84,7 @@ let triedEnabling = false;
 
 export const initWeb3Accounts = () => async (dispatch, getState) => {
   const {
-    metamask: { activeAddress },
+    metamask: { activeAddress, network },
     accounts: { fetching }
   } = getState();
 
@@ -92,6 +94,13 @@ export const initWeb3Accounts = () => async (dispatch, getState) => {
       dispatch(updateAddress(address));
       await dispatch(addMetamaskAccount(address));
       await dispatch(setActiveAccount(address, true));
+      mixpanelIdentify(address, { wallet: 'metamask' });
+      mixpanel.track('account-change', {
+        product: 'governance-dashboard',
+        account: address,
+        network,
+        wallet: 'metamask'
+      });
     }
   }
 
