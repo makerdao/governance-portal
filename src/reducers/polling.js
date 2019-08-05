@@ -4,6 +4,7 @@ import { createReducer } from '../utils/redux';
 import { formatRound, check } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { TransactionStatus } from '../utils/constants';
+import { generateIPFSHash } from '../utils/ipfs';
 
 // Constants ----------------------------------------------
 
@@ -140,12 +141,15 @@ export const getOptionVotingFor = (address, pollId) => async dispatch => {
 const fetchPollFromUrl = async url => {
   const res = await fetch(url);
   await check(res);
-  const json = await res.json();
-  if (!json['voteId']) {
-    return null;
-  } else {
+  const contentType = res.headers.get('content-type');
+  if (!contentType) return null;
+  if (contentType && contentType.indexOf('application/json') !== -1) {
+    const json = await res.json();
+    if (!json.about || typeof json.about !== 'string') return null;
     return json;
-  }
+  } else if (contentType && contentType.indexOf('text/plain') !== -1) {
+    return res.text();
+  } else return null;
 };
 
 const formatOptions = options => {
@@ -155,12 +159,20 @@ const formatOptions = options => {
   return optionVals;
 };
 
-const formatYamlToJson = data => {
-  const json = matter(data.about);
+const formatYamlToJson = async data => {
+  const json = data.about ? matter(data.about) : matter(data);
+  if (!json.data.title || !json.data.options)
+    throw new Error(
+      'Invalid poll document: no options or title field found in front matter'
+    );
   const { content } = json;
   const { title, summary, options, discussion_link } = json.data;
   return {
-    voteId: data.voteId,
+    voteId: data.voteId
+      ? data.voteId
+      : await generateIPFSHash(data.replace(/(\r\n|\n|\r)/gm, '\n'), {
+          encoding: 'ascii'
+        }),
     title,
     summary,
     options: formatOptions(options),
@@ -284,19 +296,26 @@ export const pollsInit = () => async dispatch => {
     }
     for (const poll of polls) {
       fetchPollFromUrl(poll.url)
-        .then(cmsData => {
-          if (cmsData === null)
+        .then(async pollDocument => {
+          if (pollDocument === null)
             throw new Error(
               `Error fetching data for poll with ID ${poll.pollId}. Is this a valid URL? ${poll.url}`
             );
-          const cmsPoll = formatYamlToJson(cmsData);
-          const pollData = { ...poll, ...cmsPoll };
-          pollData.active = isPollActive(pollData.startDate, pollData.endDate);
-          pollData.source = window.maker
-            .service('smartContract')
-            .getContract('POLLING').address;
-          dispatch(addPoll(pollData));
-          dispatch(pollDataInit(pollData));
+          try {
+            const documentData = await formatYamlToJson(pollDocument);
+            const pollData = { ...poll, ...documentData };
+            pollData.active = isPollActive(
+              pollData.startDate,
+              pollData.endDate
+            );
+            pollData.source = window.maker
+              .service('smartContract')
+              .getContract('POLLING').address;
+            dispatch(addPoll(pollData));
+            dispatch(pollDataInit(pollData));
+          } catch (e) {
+            throw e;
+          }
         })
         .catch(e => console.error(e))
         .finally(onPollFetchAttempt);
