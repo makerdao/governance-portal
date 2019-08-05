@@ -240,3 +240,45 @@ export const formatStringToConstantCase = kebob => {
     .join('_')
     .toUpperCase();
 };
+
+export const calculateTimeSpan = (earlier, later) => {
+  let timeSpanInSeconds = Math.abs(earlier.getTime() - later.getTime()) / 1000;
+  let span = {};
+  let timeUnits = {
+    week: 604800,
+    day: 86400,
+    hour: 3600,
+    minute: 60
+  };
+
+  Object.keys(timeUnits).forEach(key => {
+    span[key] = Math.floor(timeSpanInSeconds / timeUnits[key]);
+    timeSpanInSeconds -= span[key] * timeUnits[key];
+  });
+
+  return `${span.week} w : ${span.day} d : ${span.hour} h : ${span.minute} m`;
+};
+
+export const check = async res => {
+  if (!res.ok) {
+    throw new Error(
+      `unable to fetch topics: ${res.status} - ${await res.text()}`
+    );
+  }
+};
+
+export const getUtcDateObject = () => {
+  const now = new Date();
+  const year = now.getUTCFullYear();
+  const month = now.getUTCMonth();
+  const day = now.getUTCDate();
+  const hour = now.getUTCHours();
+  const minute = now.getUTCMinutes();
+  return new Date(year, month, day, hour, minute);
+};
+
+export const pollsFilter = (polls, list, property, negate = false) => {
+  return negate
+    ? polls.filter(poll => list.some(item => poll[property] !== item))
+    : polls.filter(poll => list.some(item => poll[property] === item));
+};

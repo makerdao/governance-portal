@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import mixpanel from 'mixpanel-browser';
 
 import { getActiveAccount } from '../../reducers/accounts';
 import { free, freeAll } from '../../reducers/proxy';
@@ -49,7 +50,6 @@ const Withdraw = ({
             <StyledTop>
               <StyledTitle>Withdraw MKR</StyledTitle>
             </StyledTop>
-            {/* TODO check verbiage from the blurb for singlewallet voting */}
             <StyledBlurb>
               Please select the amount of MKR to withdraw from the voting
               contract. This will be sent back to the designated cold wallet.
@@ -60,6 +60,12 @@ const Withdraw = ({
               maxAmount={balance}
               onCancel={modalClose}
               onSubmit={(amount, useFreeAll) => {
+                mixpanel.track('btn-click', {
+                  id: 'withdraw-mkr',
+                  product: 'governance-dashboard',
+                  page: 'Withdraw',
+                  section: 'withdraw-modal'
+                });
                 if (useFreeAll) {
                   freeAll(amount);
                 } else {

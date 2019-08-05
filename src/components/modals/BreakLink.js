@@ -1,5 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
+import mixpanel from 'mixpanel-browser';
 
 import { getActiveAccount } from '../../reducers/accounts';
 import { StyledTitle, StyledBlurb, StyledTop } from './shared/styles';
@@ -89,6 +90,12 @@ class BreakLink extends Component {
                   <Button
                     slim
                     onClick={() => {
+                      mixpanel.track('btn-click', {
+                        id: 'break-link-withdraw',
+                        product: 'governance-dashboard',
+                        page: 'BreakLink',
+                        section: 'break-link-withdraw-modal'
+                      });
                       modalOpen(Withdraw);
                     }}
                   >
@@ -125,6 +132,12 @@ class BreakLink extends Component {
                 <Button
                   slim
                   onClick={() => {
+                    mixpanel.track('btn-click', {
+                      id: 'break-link',
+                      product: 'governance-dashboard',
+                      page: 'BreakLink',
+                      section: 'break-link-modal'
+                    });
                     breakLink();
                     onNext();
                   }}

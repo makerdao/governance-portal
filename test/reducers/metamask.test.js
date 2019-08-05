@@ -4,8 +4,10 @@ import * as proposals from '../../src/reducers/proposals';
 import * as hat from '../../src/reducers/hat';
 import * as eth from '../../src/reducers/eth';
 import * as accounts from '../../src/reducers/accounts';
+import * as polling from '../../src/reducers/polling';
 import { getAction } from '../helpers/getAction';
 import * as ethereumUtils from '../../src/utils/ethereum';
+import mixpanel from 'mixpanel-browser';
 
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -70,6 +72,7 @@ const initialState = {
 const mockAction = { type: 'MOCK_ACTION', payload: true };
 tally.voteTallyInit = jest.fn(() => mockAction);
 proposals.proposalsInit = jest.fn(() => mockAction);
+polling.pollsInit = jest.fn(() => mockAction);
 hat.hatInit = jest.fn(() => mockAction);
 eth.ethInit = jest.fn(() => mockAction);
 accounts.setActiveAccount = jest.fn(() => mockAction);
@@ -127,6 +130,7 @@ describe('actions', () => {
 
 describe('async actions', () => {
   beforeAll(() => {
+    mixpanel.init('mockToken', 'mockConfig');
     mockWeb3();
   });
   beforeEach(() => {
@@ -144,14 +148,11 @@ describe('async actions', () => {
     expect(tally.voteTallyInit).toBeCalledTimes(1);
     expect(proposals.proposalsInit).toBeCalledTimes(1);
     expect(proposals.proposalsInit).toBeCalledWith(network);
+    expect(polling.pollsInit).toBeCalledTimes(1);
     expect(hat.hatInit).toBeCalledTimes(1);
     expect(eth.ethInit).toBeCalledTimes(1);
     expect(await getAction(store, reducer.CONNECT_REQUEST)).toEqual({
       type: reducer.CONNECT_REQUEST
-    });
-    expect(await getAction(store, reducer.CONNECT_SUCCESS)).toEqual({
-      type: reducer.CONNECT_SUCCESS,
-      payload: { network }
     });
     expect(await getAction(store, 'accounts/NO_METAMASK_ACCOUNTS')).toEqual({
       type: NO_METAMASK_ACCOUNTS
@@ -159,11 +160,15 @@ describe('async actions', () => {
     expect(await getAction(store, reducer.NOT_AVAILABLE)).toEqual({
       type: reducer.NOT_AVAILABLE
     });
+    expect(await getAction(store, reducer.CONNECT_SUCCESS)).toEqual({
+      type: reducer.CONNECT_SUCCESS,
+      payload: { network }
+    });
     expect(await getAction(store, reducer.UPDATE_NETWORK)).toEqual({
       type: reducer.UPDATE_NETWORK,
       payload: { network }
     });
-    expect(store.getActions().length).toBe(9);
+    expect(store.getActions().length).toBe(10);
   });
 
   test.skip('init with an invalid network, and no web3 accounts', async () => {
@@ -201,16 +206,16 @@ describe('async actions', () => {
       type: reducer.UPDATE_NETWORK,
       payload: { network }
     });
-    expect(store.getActions()[7]).toEqual({
+    expect(store.getActions()[8]).toEqual({
       type: reducer.UPDATE_ADDRESS,
       payload: mockDefaultAccount
     });
     // Since our mock store doesn't get updated, initWeb3Accounts will update address again
-    expect(store.getActions()[10]).toEqual({
+    expect(store.getActions()[11]).toEqual({
       type: reducer.UPDATE_ADDRESS,
       payload: mockDefaultAccount
     });
-    expect(store.getActions().length).toBe(13);
+    expect(store.getActions().length).toBe(14);
   });
 
   test('initWeb3Accounts and update address with web3 default address', async () => {

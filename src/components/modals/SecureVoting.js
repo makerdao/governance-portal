@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import mixpanel from 'mixpanel-browser';
 import { getActiveAccount } from '../../reducers/accounts';
 import { modalOpen, modalClose } from '../../reducers/modal';
 import { cutMiddle, formatRound } from '../../utils/misc';
@@ -95,6 +96,12 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
           slim
           disabled={!isColdWallet && !activeAccount.singleWallet}
           onClick={() => {
+            mixpanel.track('btn-click', {
+              id: 'top-up',
+              product: 'governance-dashboard',
+              page: 'SecureVoting',
+              section: 'secure-voting-modal'
+            });
             modalOpen(Lock);
           }}
         >
@@ -107,6 +114,12 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
                 mr={10}
                 mt={13}
                 onClick={() => {
+                  mixpanel.track('btn-click', {
+                    id: 'break-link-anchor',
+                    product: 'governance-dashboard',
+                    page: 'SecureVoting',
+                    section: 'secure-voting-modal'
+                  });
                   modalOpen(BreakLink, {}, true);
                 }}
               >
@@ -115,7 +128,20 @@ const SecureVoting = ({ modalOpen, modalClose, activeAccount, network }) => {
               <LineSpacer> | </LineSpacer>
             </Fragment>
           )}
-          <Skip ml={10} mr={0} mt={13} onClick={() => modalOpen(Withdraw)}>
+          <Skip
+            ml={10}
+            mr={0}
+            mt={13}
+            onClick={() => {
+              mixpanel.track('btn-click', {
+                id: 'withdraw-anchor',
+                product: 'governance-dashboard',
+                page: 'SecureVoting',
+                section: 'secure-voting-modal'
+              });
+              modalOpen(Withdraw);
+            }}
+          >
             Withdraw from voting contract
           </Skip>
         </FlexRowEnd>

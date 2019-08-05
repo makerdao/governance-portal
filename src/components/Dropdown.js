@@ -19,28 +19,44 @@ export default class Dropdown extends Component {
     if (this.state.shown) this.setState({ shown: false });
   };
 
-  select(item) {
+  select(item, index) {
     this.setState({ shown: false });
-    this.props.onSelect(item);
+    this.props.onSelect(item, index);
   }
 
   render() {
-    const { items, itemKey, renderItem, value, emptyMsg } = this.props;
+    const {
+      items,
+      itemKey,
+      renderItem,
+      renderRowItem,
+      value,
+      emptyMsg,
+      color
+    } = this.props;
     const hasItems = items.length > 0;
     const noItemMsg = emptyMsg || 'nothing to show';
     const selected = value ? renderItem(value) : <div />;
     return (
       <ClickOutside onOutsideClick={this.clickOutside}>
         <Wrapper>
-          <Selection onClick={this.toggle} clickable={hasItems} dim={!hasItems}>
+          <Selection
+            onClick={this.toggle}
+            clickable={hasItems}
+            dim={!hasItems}
+            color={color}
+          >
             {hasItems ? selected : noItemMsg}
-            <Arrow hide={!hasItems} />
+            <Arrow hide={!hasItems} color={color} />
           </Selection>
           {this.state.shown && (
             <List>
-              {items.map(item => (
-                <Row key={item[itemKey]} onClick={() => this.select(item)}>
-                  {renderItem(item)}
+              {items.map((item, index) => (
+                <Row
+                  key={item[itemKey] || index}
+                  onClick={() => this.select(item, index)}
+                >
+                  {renderRowItem ? renderRowItem(item) : renderItem(item)}
                 </Row>
               ))}
             </List>
@@ -56,7 +72,8 @@ const Wrapper = styled.div`
 `;
 
 const Selection = styled.div`
-  border: 1px solid #d1d8da;
+  border: 1px solid
+    ${({ color }) => (color ? `rgb(${colors[color]})` : '#d1d8da')};
   border-radius: 4px;
   position: relative;
   height: 40px;
@@ -67,6 +84,7 @@ const Selection = styled.div`
   cursor: ${({ clickable }) => (clickable ? 'pointer' : 'auto')};
   pointer-events: ${({ clickable }) => (clickable ? 'auto' : 'none')};
   align-items: center;
+  white-space: nowrap;
 `;
 
 export const Input = styled.input`
@@ -81,7 +99,8 @@ const Arrow = styled.img`
   visibility: ${({ hide }) => (hide ? 'hidden' : 'visible')};
   mask: url(${arrow}) center no-repeat;
   mask-size: 90%;
-  background-color: black;
+  background-color: ${({ color }) =>
+    color ? `rgb(${colors[color]})` : 'black'};
   height: 9px;
   width: 16px;
   margin-left: 5px;
