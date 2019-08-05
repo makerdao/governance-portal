@@ -194,8 +194,10 @@ const VotedFor = ({
     );
   else
     return (
-      <VoteStatusText>
-        <Black>{active ? 'Not currently voting' : 'You did not vote'}</Black>
+      <VoteStatusText style={{ display: 'flex' }}>
+        <Black style={{ margin: 'auto', fontStyle: 'oblique' }}>
+          {active ? 'Not currently voting' : 'You did not vote'}
+        </Black>
       </VoteStatusText>
     );
 };
@@ -523,7 +525,7 @@ function VoteBreakdown({ poll }) {
     <>
       <CardTitle>Vote breakdown</CardTitle>
       {voteBreakdownFetching ? (
-        <Loader mt={34} mb={34} color="header" background="background" />
+        <Loader mt={34} mb={34} color="header" background="white" />
       ) : voteBreakdownExists ? (
         <>
           {voteBreakdown.map((item, i) => (
