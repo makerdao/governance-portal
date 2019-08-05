@@ -121,7 +121,7 @@ const getAllWhiteListedPolls = async () => {
     .service('govPolling')
     .getAllWhitelistedPolls();
 
-  const uniqPolls = uniqBy(pollsList, p => p.url);
+  const uniqPolls = uniqBy(pollsList, p => p.multiHash);
   // Don't process polls where startDate is in the future
   const polls = uniqPolls.filter(poll => poll.startDate <= new Date());
   return polls;
@@ -178,7 +178,7 @@ const formatYamlToJson = async data => {
     options: formatOptions(options),
     discussion_link,
     content,
-    rawData: data.about
+    rawData: data.about || data
   };
 };
 
@@ -299,7 +299,7 @@ export const pollsInit = () => async dispatch => {
         .then(async pollDocument => {
           if (pollDocument === null)
             throw new Error(
-              `Error fetching data for poll with ID ${poll.pollId}. Is this a valid URL? ${poll.url}`
+              `Error fetching data for poll with ID ${poll.pollId}`
             );
           try {
             const documentData = await formatYamlToJson(pollDocument);
