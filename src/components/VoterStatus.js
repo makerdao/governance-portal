@@ -147,10 +147,17 @@ const VoterStatus = ({
   const coldWallet =
     isColdWallet || account.singleWallet ? account : linkedAccount;
 
-  const pollVotingPower = add(
+  // Outlier possibility that someone has MKR locked in chief as well as a proxy
+  const mkrLockedInChief = add(
+    account.mkrLockedChiefHot,
+    account.mkrLockedChiefCold
+  );
+  const votingWeight = add(
     add(account.proxy.votingPower, account.mkrBalance),
     linkedAccount.mkrBalance
   );
+
+  const pollVotingPower = add(votingWeight, mkrLockedInChief);
   return (
     <FadeIn>
       {!account.singleWallet ? (
