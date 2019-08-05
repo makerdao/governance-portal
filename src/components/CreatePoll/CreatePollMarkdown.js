@@ -32,7 +32,7 @@ const SectionWrapper = styled.div`
 `;
 
 const StyledBody = styled.p`
-  width: 150px;
+  width: 200px;
   text-align: left;
   line-height: 30px;
   margin-top: 5px;

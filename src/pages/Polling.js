@@ -284,10 +284,27 @@ class VotingPanel extends React.Component {
   }
 }
 
-const timeLeft = (startDate, endDate) => {
-  const timeLeft = Math.floor(endDate / 1000) - Math.floor(startDate / 1000);
+const timeLeft = (startDate, endDate, active) => {
+  let timeLeft = Math.floor(endDate / 1000) - Math.floor(startDate / 1000);
   const days = Math.floor(timeLeft / (3600 * 24));
-  return days !== 1 ? `${days} days` : `${days} day`;
+  const Sday = days !== 1 ? 's' : '';
+  timeLeft -= days * 3600 * 24;
+  const hours = Math.floor(timeLeft / 3600);
+  const Shour = hours !== 1 ? 's' : '';
+  timeLeft -= hours * 3600;
+  const minutes = Math.floor(timeLeft / 60);
+  const Sminute = minutes !== 1 ? 's' : '';
+
+  return active
+    ? `${days} day${Sday} ${hours} hr${Shour} ${minutes} min${Sminute}`
+    : endDate.toLocaleDateString('en-GB', {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+      });
 };
 
 const downloadRawPollData = (multiHash, rawData) => {
@@ -373,6 +390,8 @@ class Polling extends React.Component {
       ? poll.numUniqueVoters.toString()
       : '0';
 
+    const timeLeftString = active ? 'Ends In' : 'Ended On';
+
     return (
       <Fragment>
         <VotingWeightBanner
@@ -441,8 +460,8 @@ class Polling extends React.Component {
                     })
                   },
                   {
-                    name: 'Duration',
-                    value: timeLeft(poll.startDate, poll.endDate)
+                    name: timeLeftString,
+                    value: timeLeft(poll.startDate, poll.endDate, active)
                   },
                   {
                     name: 'Questions?',
