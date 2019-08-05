@@ -192,7 +192,7 @@ const VotedFor = ({
         )}
       </VoteStatusText>
     );
-  else
+  else if (!poll.legacyPoll)
     return (
       <VoteStatusText style={{ display: 'flex' }}>
         <Black style={{ margin: 'auto', fontStyle: 'oblique' }}>
@@ -200,6 +200,7 @@ const VotedFor = ({
         </Black>
       </VoteStatusText>
     );
+  else return null;
 };
 
 class VotingPanel extends React.Component {
