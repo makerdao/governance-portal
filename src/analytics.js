@@ -12,7 +12,7 @@ const config = {
   prod: {
     mixpanel: {
       token: 'a030d8845e34bfdc11be3d9f3054ad67',
-      config: { ip: false }
+      config: { ip: false, api_host: 'https://api.mixpanel.com' }
     }
   }
 }[env];
