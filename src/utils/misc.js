@@ -271,7 +271,7 @@ export const getUtcDateObject = () => {
   const now = new Date();
   const year = now.getUTCFullYear();
   const month = now.getUTCMonth();
-  const day = now.getUTCDate();
+  const day = now.getUTCDay();
   const hour = now.getUTCHours();
   const minute = now.getUTCMinutes();
   return new Date(year, month, day, hour, minute);

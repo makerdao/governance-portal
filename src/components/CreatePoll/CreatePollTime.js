@@ -5,7 +5,7 @@ import DateTimePicker from 'react-datetime-picker';
 import { Box } from '@makerdao/ui-components-core';
 
 const StyledBody = styled.p`
-  width: 150px;
+  width: 200px;
   text-align: left;
   line-height: 30px;
   margin-top: 5px;
@@ -38,7 +38,7 @@ export default function CreatePollTime({
   return (
     <Fragment>
       <SectionWrapper>
-        <StyledBody>Poll Start Time:</StyledBody>
+        <StyledBody>Poll Start Time (UTC):</StyledBody>
         <DateTimePicker
           css={{ width: '600px' }}
           disableClock
@@ -54,7 +54,7 @@ export default function CreatePollTime({
         />
       </SectionWrapper>
       <SectionWrapper>
-        <StyledBody>Poll End Time:</StyledBody>
+        <StyledBody>Poll End Time (UTC):</StyledBody>
         <DateTimePicker
           css={{ width: '600px' }}
           disableClock
