@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import React, { Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
+import mixpanel from 'mixpanel-browser';
 import { modalOpen } from '../reducers/modal';
 import { onboardingOpen } from '../reducers/onboarding';
 import { getActiveAccount } from '../reducers/accounts';
@@ -16,7 +17,7 @@ import {
 } from './Banner';
 import Button from './Button';
 import Loader from './Loader';
-import { cutMiddle, firstLetterCapital, formatRound } from '../utils/misc';
+import { cutMiddle, firstLetterCapital, formatRound, add } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
 import Lock from './modals/Lock';
 import Withdraw from './modals/Withdraw';
@@ -89,7 +90,15 @@ const WelcomeBanner = ({ onboardingOpen, activeAccount }) => {
         textColor={theme.text.darker_default}
         hoverTextColor={theme.text.darker_default}
         activeColor={'grey'}
-        onClick={onboardingOpen}
+        onClick={() => {
+          mixpanel.track('btn-click', {
+            id: 'onboarding-open',
+            product: 'governance-dashboard',
+            page: 'Home',
+            section: 'welcome-banner'
+          });
+          onboardingOpen();
+        }}
         disabled={!activeAccount}
       >
         Set up now
@@ -109,7 +118,8 @@ const VoterStatus = ({
   modalOpen,
   fetching,
   signaling,
-  onboardingState
+  onboardingState,
+  legacy
 }) => {
   if (fetching) {
     return (
@@ -136,6 +146,18 @@ const VoterStatus = ({
   const isColdWallet = account.proxyRole === 'cold';
   const coldWallet =
     isColdWallet || account.singleWallet ? account : linkedAccount;
+
+  // Outlier possibility that someone has MKR locked in chief as well as a proxy
+  const mkrLockedInChief = add(
+    account.mkrLockedChiefHot,
+    account.mkrLockedChiefCold
+  );
+  const votingWeight = add(
+    add(account.proxy.votingPower, account.mkrBalance),
+    linkedAccount.mkrBalance
+  );
+
+  const pollVotingPower = add(votingWeight, mkrLockedInChief);
   return (
     <FadeIn>
       {!account.singleWallet ? (
@@ -170,6 +192,13 @@ const VoterStatus = ({
               </a>
             </Fragment>
           )}
+          <DotSpacer />
+          {!legacy && (
+            <Fragment>
+              Total voting weight:{' '}
+              <Black>{formatRound(pollVotingPower, 4)} MKR</Black>{' '}
+            </Fragment>
+          )}
           <br />
           {account.votingFor && account.proxy.votingPower > 0 ? (
             <Fragment>
@@ -194,9 +223,9 @@ const VoterStatus = ({
                 }
               </WithVote>
             </Fragment>
-          ) : (
+          ) : legacy ? (
             'Currently not voting'
-          )}
+          ) : null}
         </SmallMediumText>
       ) : (
         <SmallMediumText>
@@ -251,9 +280,9 @@ const VoterStatus = ({
                 }
               </WithVote>
             </Fragment>
-          ) : (
+          ) : legacy ? (
             'Currently not voting'
-          )}
+          ) : null}
         </SmallMediumText>
       )}
     </FadeIn>

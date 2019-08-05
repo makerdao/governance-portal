@@ -19,9 +19,9 @@ export default class Dropdown extends Component {
     if (this.state.shown) this.setState({ shown: false });
   };
 
-  select(item) {
+  select(item, index) {
     this.setState({ shown: false });
-    this.props.onSelect(item);
+    this.props.onSelect(item, index);
   }
 
   render() {
@@ -51,8 +51,11 @@ export default class Dropdown extends Component {
           </Selection>
           {this.state.shown && (
             <List>
-              {items.map(item => (
-                <Row key={item[itemKey]} onClick={() => this.select(item)}>
+              {items.map((item, index) => (
+                <Row
+                  key={item[itemKey] || index}
+                  onClick={() => this.select(item, index)}
+                >
                   {renderRowItem ? renderRowItem(item) : renderItem(item)}
                 </Row>
               ))}
@@ -81,6 +84,7 @@ const Selection = styled.div`
   cursor: ${({ clickable }) => (clickable ? 'pointer' : 'auto')};
   pointer-events: ${({ clickable }) => (clickable ? 'auto' : 'none')};
   align-items: center;
+  white-space: nowrap;
 `;
 
 export const Input = styled.input`

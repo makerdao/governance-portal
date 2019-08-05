@@ -5,8 +5,6 @@ import { connect } from 'react-redux';
 import VoterStatus from '../components/VoterStatus';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import Timer from '../components/Timer';
-import ClosedStatus from '../components/ClosedStatus';
 import { toSlug, eq, formatDate, formatRound } from '../utils/misc';
 import theme, { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
@@ -44,10 +42,6 @@ const SubHeading = styled.p`
   position: relative;
 `;
 
-const TopicSubHeading = styled(SubHeading)`
-  margin-bottom: 30px;
-`;
-
 const Body = styled.p`
   font-size: 16px;
   line-height: 26px;
@@ -67,12 +61,6 @@ const ProposalDetails = styled.div`
 
 const StyledCard = styled(Card)`
   margin-bottom: 30px;
-`;
-const StyledTopicCard = styled(Card)`
-  padding-top: 30px;
-  padding-left: 30px;
-  padding-right: 30px;
-  margin-bottom: 50px;
 `;
 
 const Tag = styled.p`
@@ -195,22 +183,10 @@ const Timeline = ({
   );
   otherProposals.sort((a, b) => b.end_timestamp - a.end_timestamp);
 
-  const topicInfo = otherProposals.reduce((accumulator, current) => {
-    if (!accumulator.find(({ topicKey }) => topicKey === current.topicKey)) {
-      return [
-        ...accumulator,
-        {
-          topicKey: current.topicKey,
-          topicTitle: current.topicTitle
-        }
-      ];
-    }
-    return accumulator;
-  }, []);
   return (
     <Fragment>
       <MigrationNotificationBanner />
-      <VoterStatus signaling={signaling} />
+      <VoterStatus signaling={signaling} legacy={true} />
       <RiseUp key={otherProposals.toString()}>
         {signaling || !hatProposal ? null : (
           <StyledCard>
@@ -273,163 +249,81 @@ const Timeline = ({
             </Card.Element>
           </StyledCard>
         )}
-        {signaling
-          ? topicInfo.map(({ topicKey, topicTitle }) => (
-              <StyledTopicCard key={topicKey}>
-                <TopicSubHeading>{topicTitle}</TopicSubHeading>
-                {otherProposals.map(proposal =>
-                  topicKey === proposal.topicKey ? (
-                    <StyledCard key={proposal.key}>
-                      <Card.Element
-                        key={proposal.title}
-                        height={proposalWrapperHeight}
-                      >
-                        <ProposalDetails>
-                          <ExtendedLink
-                            to={`/polling-proposal/${toSlug(proposal.title)}`}
-                          >
-                            <SubHeading>{proposal.title}</SubHeading>
-                          </ExtendedLink>
-                          <Body
-                            dangerouslySetInnerHTML={{
-                              __html: proposal.proposal_blurb
-                            }}
-                          />
-                          <ExtendedLink
-                            to={`/polling-proposal/${toSlug(proposal.title)}`}
-                          >
-                            Read more...
-                          </ExtendedLink>
-                          {hat.approvals <
-                          approvals.approvals[proposal.source] ? (
-                            <div>
-                              <Tag>Available for execution</Tag>
-                            </div>
-                          ) : null}
-                          {proposal.active && signaling ? (
-                            <Timer
-                              endTimestamp={proposal.end_timestamp}
-                              small
-                              mb="-6"
-                            />
-                          ) : null}
-                        </ProposalDetails>
-                        <div>
-                          {proposal.active ? (
-                            <Fragment>
-                              <Button
-                                disabled={
-                                  !canVote ||
-                                  (!proposal.active && proposal.govVote)
-                                }
-                                loading={fetching}
-                                onClick={() =>
-                                  modalOpen(Vote, {
-                                    proposal: {
-                                      address: proposal.source,
-                                      title: proposal.title
-                                    }
-                                  })
-                                }
-                              >
-                                {votingFor.includes(
-                                  proposal.source.toLowerCase()
-                                )
-                                  ? 'Withdraw vote'
-                                  : 'Vote for this Proposal'}
-                              </Button>
-                              <br />
-                              <TillHat candidate={proposal.source} />
-                            </Fragment>
-                          ) : (
-                            <ClosedStatus
-                              topicKey={proposal.topicKey}
-                              proposalAddress={proposal.source}
-                            />
-                          )}
-                        </div>
-                      </Card.Element>
-                    </StyledCard>
-                  ) : null
-                )}
-              </StyledTopicCard>
-            ))
-          : otherProposals.map(proposal => (
-              <StyledCard key={proposal.key}>
-                <Card.Element
-                  key={proposal.title}
-                  height={proposalWrapperHeight}
+        {otherProposals.map(proposal => (
+          <StyledCard key={proposal.key}>
+            <Card.Element key={proposal.title} height={proposalWrapperHeight}>
+              <ProposalDetails>
+                <ExtendedLink
+                  to={`/executive-proposal/${toSlug(proposal.title)}`}
                 >
-                  <ProposalDetails>
-                    <ExtendedLink
-                      to={`/executive-proposal/${toSlug(proposal.title)}`}
-                    >
-                      <SubHeading>{proposal.title}</SubHeading>
-                    </ExtendedLink>
-                    <Body
-                      dangerouslySetInnerHTML={{
-                        __html: proposal.proposal_blurb
-                      }}
-                    />
-                    <ExtendedLink
-                      to={`/executive-proposal/${toSlug(proposal.title)}`}
-                    >
-                      Read more...
-                    </ExtendedLink>
-                    {!!proposal.end_approvals ? (
-                      <div>
-                        <Tag>{`Executed on ${formatDate(
-                          proposal.end_timestamp
-                        )} with ${formatRound(
-                          proposal.end_approvals
-                        )} MKR`}</Tag>
-                      </div>
-                    ) : hat.approvals < approvals.approvals[proposal.source] ? (
-                      <div>
-                        <Tag>Available for execution</Tag>
-                      </div>
-                    ) : null}
-                  </ProposalDetails>
+                  <SubHeading>{proposal.title}</SubHeading>
+                </ExtendedLink>
+                <Body
+                  dangerouslySetInnerHTML={{
+                    __html: proposal.proposal_blurb
+                  }}
+                />
+                <ExtendedLink
+                  to={`/executive-proposal/${toSlug(proposal.title)}`}
+                >
+                  Read more...
+                </ExtendedLink>
+                {!!proposal.end_approvals ? (
                   <div>
-                    <Fragment>
-                      <Button
-                        disabled={
-                          !canVote || (!proposal.active && proposal.govVote)
-                        }
-                        loading={fetching}
-                        onClick={() =>
-                          modalOpen(Vote, {
-                            proposal: {
-                              address: proposal.source,
-                              title: proposal.title
-                            }
-                          })
-                        }
-                      >
-                        {votingFor.includes(proposal.source.toLowerCase())
-                          ? 'Withdraw vote'
-                          : 'Vote for this Proposal'}
-                      </Button>
-                      <br />
-                      <TillHat candidate={proposal.source} />
-                    </Fragment>
+                    <Tag>{`Executed on ${formatDate(
+                      proposal.end_timestamp
+                    )} with ${formatRound(proposal.end_approvals)} MKR`}</Tag>
                   </div>
-                </Card.Element>
-              </StyledCard>
-            ))}
+                ) : hat.approvals < approvals.approvals[proposal.source] ? (
+                  <div>
+                    <Tag>Available for execution</Tag>
+                  </div>
+                ) : null}
+              </ProposalDetails>
+              <div>
+                <Fragment>
+                  <Button
+                    disabled={
+                      !canVote || (!proposal.active && proposal.govVote)
+                    }
+                    loading={fetching}
+                    onClick={() =>
+                      modalOpen(Vote, {
+                        proposal: {
+                          address: proposal.source,
+                          title: proposal.title
+                        }
+                      })
+                    }
+                  >
+                    {votingFor.includes(proposal.source.toLowerCase())
+                      ? 'Withdraw vote'
+                      : 'Vote for this Proposal'}
+                  </Button>
+                  <br />
+                  <TillHat candidate={proposal.source} />
+                </Fragment>
+              </div>
+            </Card.Element>
+          </StyledCard>
+        ))}
       </RiseUp>
     </Fragment>
   );
 };
 
-const reduxProps = ({ proposals, accounts, hat, approvals }, { signaling }) => {
+const reduxProps = (
+  { proposals, accounts, hat, approvals, topics },
+  { signaling }
+) => {
   return {
     hat,
     approvals,
     proposals: proposals.filter(p => !!p.govVote === !!signaling),
     canVote: activeCanVote({ accounts }),
     fetching: accounts.fetching,
-    votingFor: getActiveVotingFor({ accounts })
+    votingFor: getActiveVotingFor({ accounts }),
+    topics
   };
 };
 

@@ -1,4 +1,6 @@
+import mixpanel from 'mixpanel-browser';
 import { createReducer } from '../utils/redux';
+import { mixpanelIdentify } from '../../src/analytics';
 import {
   setActiveAccount,
   addMetamaskAccount,
@@ -8,6 +10,7 @@ import { netIdToName } from '../utils/ethereum';
 import { ethInit } from './eth';
 import { voteTallyInit } from './tally';
 import { proposalsInit } from './proposals';
+import { pollsInit } from './polling';
 import { hatInit } from './hat';
 
 // Constants ----------------------------------------------
@@ -81,7 +84,7 @@ let triedEnabling = false;
 
 export const initWeb3Accounts = () => async (dispatch, getState) => {
   const {
-    metamask: { activeAddress },
+    metamask: { activeAddress, network },
     accounts: { fetching }
   } = getState();
 
@@ -91,6 +94,13 @@ export const initWeb3Accounts = () => async (dispatch, getState) => {
       dispatch(updateAddress(address));
       await dispatch(addMetamaskAccount(address));
       await dispatch(setActiveAccount(address, true));
+      mixpanelIdentify(address, { wallet: 'metamask' });
+      mixpanel.track('account-change', {
+        product: 'governance-dashboard',
+        account: address,
+        network,
+        wallet: 'metamask'
+      });
     }
   }
 
@@ -125,6 +135,7 @@ export const init = (network = 'mainnet') => async dispatch => {
   dispatch(proposalsInit(network));
   dispatch(hatInit());
   dispatch(ethInit());
+  dispatch(pollsInit());
   await dispatch(initWeb3Accounts());
   dispatch(pollForMetamaskChanges());
 };

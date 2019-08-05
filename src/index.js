@@ -5,6 +5,7 @@ import Raven from 'raven-js';
 import ReactGA from 'react-ga';
 import { ThemeProvider } from 'styled-components';
 
+import { mixpanelInit } from './analytics';
 import createStore from './store';
 import Router from './Routes';
 import createMaker from './chain/maker';
@@ -93,6 +94,8 @@ if (testchainConfigId) {
     store.dispatch(init());
   })();
 }
+
+mixpanelInit();
 
 function render() {
   ReactDOM.render(

@@ -5,25 +5,24 @@ import { Link } from 'react-router-dom';
 
 import descend from '../imgs/descend.svg';
 import { toSlug } from '../utils/misc';
-import theme, { fonts, shadows } from '../theme';
+import theme, { fonts } from '../theme';
 
 const Card = styled.div`
   transition: ${({ theme }) => theme.transitions.base};
   position: relative;
   width: 100%;
-  border: none;
-  border-style: none;
-  border-radius: 4px;
   display: block;
   color: ${({ theme }) => theme.generic.black};
   background-color: ${({ background, theme }) => theme.generic[background]};
-  box-shadow: ${shadows.soft};
   font-size: ${fonts.size.medium};
   font-weight: ${fonts.weight.normal};
   flex-direction: column;
   margin: 0 auto;
   text-align: left;
   overflow: hidden;
+  border: 1px solid #d4d9e1;
+  box-sizing: border-box;
+  border-radius: 4px;
 `;
 
 Card.propTypes = {
@@ -48,7 +47,6 @@ const CardElementWrapper = styled.div`
   min-height: ${({ minHeight }) => (minHeight ? `${minHeight}px` : '0')};
   height: ${({ height }) => (height ? `${height}px` : 'auto')};
   max-height: auto;
-  border-top: solid 2px #eaeaea;
   color: ${({ theme }) => theme.generic.dark};
   background-color: ${({ background, theme }) => theme.generic[background]};
   font-size: ${({ theme }) => theme.fonts.size.large};

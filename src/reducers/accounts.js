@@ -101,7 +101,12 @@ export const addAccounts = accounts => async dispatch => {
       : '';
 
     let currProposal = Promise.resolve([]);
+
+    let mkrLockedChiefHot = 0;
+    let mkrLockedChiefCold = 0;
+
     if (hasProxy) {
+      const chiefService = window.maker.service('chief');
       currProposal = currProposal
         .then(() =>
           promiseRetry({
@@ -111,6 +116,12 @@ export const addAccounts = accounts => async dispatch => {
         .then(addresses =>
           (addresses || []).map(address => address.toLowerCase())
         );
+      mkrLockedChiefHot = (await chiefService.getNumDeposits(
+        voteProxy.getHotAddress()
+      )).toNumber();
+      mkrLockedChiefCold = (await chiefService.getNumDeposits(
+        voteProxy.getColdAddress()
+      )).toNumber();
     }
 
     const chiefAddress = window.maker
@@ -160,7 +171,9 @@ export const addAccounts = accounts => async dispatch => {
             hasInfIouApproval: false,
             hasInfMkrApproval: false,
             linkedAccount: {}
-          }
+          },
+      mkrLockedChiefHot,
+      mkrLockedChiefCold
     };
 
     try {

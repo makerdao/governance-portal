@@ -1,19 +1,24 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import { isNil, isEmpty } from 'ramda';
-import { toSlug } from '../utils/misc';
+import mixpanel from 'mixpanel-browser';
+import { toSlug, formatRound, cutMiddle, eq } from '../utils/misc';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import VoterStatus from '../components/VoterStatus';
-import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
+import Loader from '../components/Loader';
+import PollingVote from '../components/modals/PollingVote';
 import NotFound from './NotFound';
+import { VotingWeightBanner } from './PollingList';
+import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import { modalOpen } from '../reducers/modal';
+import { getWinningProp } from '../reducers/proposals';
+import { getOptionVotingFor } from '../reducers/polling';
 import theme, { colors } from '../theme';
-import { cutMiddle } from '../utils/misc';
-import ExternalLink from '../components/Onboarding/shared/ExternalLink';
 import { ethScanLink } from '../utils/ethereum';
+import { MIN_MKR_PERCENTAGE } from '../utils/constants';
+import ExternalLink from '../components/Onboarding/shared/ExternalLink';
 import Dropdown from '../components/Dropdown';
 
 const riseUp = keyframes`
@@ -45,7 +50,7 @@ const RightPanels = styled.div`
 
 const VoteSelection = styled.div`
   display: flex;
-  flex-diretion: row;
+  flex-direction: row;
   justify-content: space-between;
 `;
 
@@ -53,14 +58,6 @@ const DetailsPanelCard = styled(Card)`
   margin-bottom: 29px;
   font-size: ${({ theme }) => theme.fonts.size.medium};
   padding: 14px 20px;
-`;
-
-const DescriptionCard = styled(Card)`
-  margin: 0;
-  max-width: 750px;
-  padding: 0px 25px 18px 25px;
-  color: #546978;
-  line-height: 30px;
 `;
 
 const CardTitle = styled.p`
@@ -112,9 +109,30 @@ const DetailsCardText = styled.p`
 `;
 
 const DropdownText = styled.p`
-  margin-left: 20px;
-  margin-right: 20px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 125px;
+  margin-left: 13px;
+  margin-right: 13px;
   color: ${({ color }) => (color ? `rgb(${colors[color]})` : 'black')};
+`;
+
+const VoteButton = styled(Button)`
+  border: 0px;
+  padding: 0px;
+`;
+
+const DescriptionCard = styled(Card)`
+  margin: 0;
+  max-width: 750px;
+  padding: 0px 25px 93px 25px;
+  color: #546978;
+  line-height: 30px;
+`;
+
+const DownloadButton = styled(Button)`
+  position: absolute;
+  bottom: 20px;
 `;
 
 const DetailsCardItem = ({ name, value, component }) => (
@@ -124,128 +142,429 @@ const DetailsCardItem = ({ name, value, component }) => (
   </DetailsItem>
 );
 
-const VotingPanel = ({ proposal }) => (
-  <React.Fragment>
-    <VoteSelection>
-      <Dropdown
-        color="green"
-        items={['17.5%', '19.5%', 'No change', '14.5%', '15.5%', '16.5%']}
-        renderItem={item => <DropdownText color="green">{item}</DropdownText>}
-        renderRowItem={item => <DropdownText>{item}</DropdownText>}
-        value="Please choose..."
-        onSelect={() => null}
-      />
-      <Button
-        bgColor="green"
-        color="white"
-        hoverColor="white"
-        width="135px"
-        disabled={!!proposal.active}
-      >
-        Vote Now
-      </Button>
-    </VoteSelection>
-    <VoteStatusText>
-      <Black>Currently voting: </Black>
-      <Strong>17.5% </Strong>
-      <Black>| </Black>
-      <Blue onClick={() => null}>Withdraw Vote</Blue>
-    </VoteStatusText>
-  </React.Fragment>
-);
+const getTotalVotesForOption = (voteBreakdown, selectedOptionId) => {
+  return voteBreakdown[selectedOptionId].mkrSupport;
+};
 
-function Polling({
-  proposal,
-  voteState,
+const VotedFor = ({
   voteStateFetching,
+  optionVotingFor,
+  optionVotingForId,
   modalOpen,
-  accountDataFetching,
-  network,
-  canVote,
-  votingFor,
-  isValidRoute
-}) {
-  if (isNil(proposal) || isEmpty(proposal) || !isValidRoute)
-    return <NotFound />;
-  return (
-    <RiseUp>
-      <VoterStatus />
-      <ContentWrapper>
-        <DescriptionCard>
-          <ReactMarkdown
-            className="markdown"
-            skipHtml={true}
-            source={proposal.about}
+  poll
+}) => {
+  if (voteStateFetching) {
+    return <Loader mt={34} mb={34} color="header" background="background" />;
+  }
+  const { voteBreakdown, active, pollId } = poll;
+  const totalVotes =
+    voteBreakdown && (optionVotingForId || optionVotingForId === 0)
+      ? getTotalVotesForOption(voteBreakdown, optionVotingForId)
+      : null;
+  if (optionVotingFor)
+    return (
+      <VoteStatusText>
+        <Black>{active ? 'Currently voting: ' : 'Voted for: '}</Black>
+        <Strong>{optionVotingFor} </Strong>
+        {active && (
+          <Fragment>
+            <Black>| </Black>
+            <Blue
+              onClick={() => {
+                mixpanel.track('btn-click', {
+                  id: 'withdraw',
+                  product: 'governance-dashboard',
+                  page: 'Polling',
+                  section: 'voting-panel'
+                });
+                modalOpen(PollingVote, {
+                  poll: {
+                    pollId,
+                    alreadyVotingFor: true,
+                    totalVotes
+                  }
+                });
+              }}
+            >
+              Withdraw Vote
+            </Blue>
+          </Fragment>
+        )}
+      </VoteStatusText>
+    );
+  else
+    return (
+      <VoteStatusText style={{ display: 'flex' }}>
+        <Black style={{ margin: 'auto', fontStyle: 'oblique' }}>
+          {active ? 'Not currently voting' : 'You did not vote'}
+        </Black>
+      </VoteStatusText>
+    );
+};
+
+class VotingPanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedOption: null
+    };
+  }
+
+  onDropdownSelect = (value, index) => {
+    const selectedOptionId = parseInt(index);
+    this.setState({
+      selectedOption: value,
+      selectedOptionId
+    });
+    mixpanel.track('input-change', {
+      id: 'dropdown-select',
+      product: 'governance-dashboard',
+      page: 'Polling',
+      section: 'voting-panel'
+    });
+  };
+
+  render() {
+    const { poll, activeAccount, optionVotingFor, modalOpen } = this.props;
+    const { pollId, options, voteBreakdown } = poll;
+    const { selectedOption, selectedOptionId } = this.state;
+    const totalVotes =
+      voteBreakdown && (selectedOptionId || selectedOptionId === 0)
+        ? getTotalVotesForOption(voteBreakdown, selectedOptionId)
+        : null;
+
+    return (
+      <React.Fragment>
+        <VoteSelection>
+          <Dropdown
+            color="green"
+            items={options}
+            renderItem={item => (
+              <DropdownText color="green">{item}</DropdownText>
+            )}
+            renderRowItem={item => <DropdownText>{item}</DropdownText>}
+            value={selectedOption || optionVotingFor || 'Please choose...'}
+            onSelect={this.onDropdownSelect}
+            emptyMsg="Not available"
           />
-        </DescriptionCard>
-        <RightPanels>
-          <VotingPanel proposal />
-          <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
-            <CardTitle>Details</CardTitle>
-            {[
-              {
-                name: 'Source',
-                component: (
-                  <ExternalLink
-                    href={ethScanLink(proposal.source, network)}
-                    target="_blank"
-                  >
-                    {cutMiddle(proposal.source, 8, 8)}
-                  </ExternalLink>
-                )
-              },
-              { name: 'Started', value: '12 Sept 18' },
-              { name: 'Duration', value: '3 days' },
-              {
-                name: 'Questions?',
-                component: (
-                  <ExternalLink href="https://makerdao.com/en/" target="_blank">
-                    Governance FAQ's
-                  </ExternalLink>
-                )
-              }
-            ].map((item, i) => (
-              <DetailsCardItem key={i} {...item} />
-            ))}
+          <VoteButton
+            bgColor="green"
+            color="white"
+            hoverColor="white"
+            width="135px"
+            disabled={
+              !poll.active ||
+              !activeAccount ||
+              selectedOptionId === undefined ||
+              selectedOption === optionVotingFor
+            }
+            onClick={() => {
+              mixpanel.track('btn-click', {
+                id: 'vote',
+                product: 'governance-dashboard',
+                page: 'Polling',
+                section: 'voting-panel'
+              });
+              modalOpen(PollingVote, {
+                poll: {
+                  pollId,
+                  selectedOption,
+                  selectedOptionId,
+                  totalVotes
+                }
+              });
+            }}
+          >
+            Vote Now
+          </VoteButton>
+        </VoteSelection>
+      </React.Fragment>
+    );
+  }
+}
 
-            <CardTitle>Voting Stats</CardTitle>
-            {[
-              { name: 'Total votes', value: '200,324.43 MKR' },
-              { name: 'Participation', value: '20.1%' },
-              { name: 'Unique voters', value: '1041' }
-            ].map((item, i) => (
-              <DetailsCardItem key={i} {...item} />
-            ))}
+const timeLeft = (startDate, endDate) => {
+  const timeLeft = Math.floor(endDate / 1000) - Math.floor(startDate / 1000);
+  const days = Math.floor(timeLeft / (3600 * 24));
+  return days !== 1 ? `${days} days` : `${days} day`;
+};
 
-            <CardTitle>Vote breakdown</CardTitle>
-            {[
-              { name: '17.5%', value: '170,324 MKR (82%)' },
-              { name: '19.5%', value: '20,520 MKR (12%)' },
-              { name: 'No change', value: '100 MKR (0.5%)' },
-              { name: '14.5%', value: '0 MKR' },
-              { name: '15.5%', value: '0 MKR' },
-              { name: '16.5%', value: '0 MKR' }
-            ].map((item, i) => (
-              <DetailsCardItem key={i} {...item} />
-            ))}
-          </DetailsPanelCard>
-        </RightPanels>
-      </ContentWrapper>
-    </RiseUp>
+const downloadRawPollData = (multiHash, rawData) => {
+  const element = document.createElement('a');
+  const file = new Blob([rawData], { type: 'text/plain' });
+  element.href = URL.createObjectURL(file);
+  element.download = `${multiHash}.txt`;
+  document.body.appendChild(element);
+  element.click();
+};
+
+class Polling extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeAccount: this.props.activeAccount,
+      voteStateFetching: true
+    };
+  }
+
+  static getDerivedStateFromProps(newProps, state) {
+    /* Replaces componentWillReceiveProps
+    https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#fetching-external-data-when-props-change */
+
+    if (newProps.activeAccount !== state.activeAccount) {
+      return { activeAccount: newProps.activeAccount };
+    } else return null;
+  }
+
+  async componentDidUpdate(prevProps) {
+    if (
+      this.state.activeAccount !== prevProps.activeAccount ||
+      (this.props.poll && prevProps.poll === undefined)
+    ) {
+      await this.updateVotedPollOption();
+    }
+  }
+
+  updateVotedPollOption = async () => {
+    if (!this.props.poll || !this.state.activeAccount) return null;
+    await this.props.getOptionVotingFor(
+      this.state.activeAccount.address,
+      this.props.poll.pollId
+    );
+    this.setState({
+      voteStateFetching: false
+    });
+  };
+
+  validateLink = link => {
+    if (!link) return null;
+    return link.indexOf('http') === 0 ? link : `https://${link}`;
+  };
+
+  render() {
+    const { activeAccount, voteStateFetching } = this.state;
+    const {
+      poll,
+      isValidRoute,
+      network,
+      accountDataFetching,
+      modalOpen,
+      pollsFetching
+    } = this.props;
+    if (pollsFetching && !poll) return null;
+    if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
+    const {
+      discussion_link,
+      rawData,
+      multiHash,
+      active,
+      options,
+      optionVotingFor,
+      totalVotes
+    } = poll;
+    const optionVotingForName = options[optionVotingFor];
+
+    const winningProposalName = poll.legacyPoll
+      ? poll.winningProposal
+      : poll.options[poll.winningProposal];
+
+    const numUniqueVoters = poll.numUniqueVoters
+      ? poll.numUniqueVoters.toString()
+      : '0';
+
+    return (
+      <Fragment>
+        <VotingWeightBanner
+          fetching={accountDataFetching}
+          activeAccount={activeAccount}
+        />
+        <RiseUp>
+          <ContentWrapper>
+            <DescriptionCard>
+              <ReactMarkdown
+                className="markdown"
+                skipHtml={true}
+                source={poll.content}
+              />
+              {rawData && (
+                <DownloadButton
+                  onClick={() => downloadRawPollData(multiHash, rawData)}
+                >
+                  Download raw document
+                </DownloadButton>
+              )}
+            </DescriptionCard>
+            <RightPanels>
+              {active && (
+                <VotingPanel
+                  optionVotingFor={optionVotingForName}
+                  poll={poll}
+                  activeAccount={activeAccount}
+                  modalOpen={modalOpen}
+                  totalVotes={totalVotes}
+                />
+              )}
+              <VotedFor
+                poll={poll}
+                optionVotingFor={optionVotingForName}
+                optionVotingForId={optionVotingFor}
+                voteStateFetching={voteStateFetching && accountDataFetching}
+                withdrawVote={this.withdrawVote}
+                modalOpen={modalOpen}
+                totalVotes={totalVotes}
+                alreadyVotingFor={true}
+              />
+              <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
+                <CardTitle>Details</CardTitle>
+                {[
+                  {
+                    name: 'Source',
+                    component: (
+                      <ExternalLink
+                        href={ethScanLink(poll.source, network)}
+                        target="_blank"
+                      >
+                        {cutMiddle(poll.source, 8, 8)}
+                      </ExternalLink>
+                    )
+                  },
+                  {
+                    name: 'Started',
+                    value: poll.startDate.toLocaleDateString('en-GB', {
+                      weekday: 'short',
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric'
+                    })
+                  },
+                  {
+                    name: 'Duration',
+                    value: timeLeft(poll.startDate, poll.endDate)
+                  },
+                  {
+                    name: 'Questions?',
+                    component: (
+                      <ExternalLink
+                        href="https://makerdao.com/en/"
+                        target="_blank"
+                      >
+                        Governance FAQ's
+                      </ExternalLink>
+                    )
+                  },
+                  {
+                    name: 'Discussion',
+                    component: (
+                      <ExternalLink
+                        href={this.validateLink(discussion_link)}
+                        target="_blank"
+                      >
+                        Here
+                      </ExternalLink>
+                    ),
+                    hide: !discussion_link
+                  }
+                ].map((item, i) => {
+                  if (!item.hide) return <DetailsCardItem key={i} {...item} />;
+                  return null;
+                })}
+
+                {poll.legacyPoll ? null : (
+                  <>
+                    <CardTitle>Voting Stats</CardTitle>
+                    {[
+                      {
+                        name: 'Total votes',
+                        value: isNaN(poll.totalVotes)
+                          ? '----'
+                          : `${formatRound(poll.totalVotes, 2)} MKR`
+                      },
+                      {
+                        name: 'Participation',
+                        value: isNaN(poll.participation)
+                          ? '----'
+                          : parseFloat(poll.participation) <
+                              MIN_MKR_PERCENTAGE &&
+                            parseFloat(poll.participation) !== 0
+                          ? `< ${MIN_MKR_PERCENTAGE}%`
+                          : `${formatRound(poll.participation, 2)}%`
+                      },
+                      {
+                        name: 'Unique voters',
+                        value: numUniqueVoters
+                      }
+                    ].map((item, i) => (
+                      <DetailsCardItem key={i} {...item} />
+                    ))}
+                  </>
+                )}
+
+                <VoteBreakdown poll={poll} />
+                {winningProposalName && (
+                  <>
+                    <CardTitle>Winning Proposal</CardTitle>
+                    <span>{winningProposalName}</span>
+                  </>
+                )}
+              </DetailsPanelCard>
+            </RightPanels>
+          </ContentWrapper>
+        </RiseUp>
+      </Fragment>
+    );
+  }
+}
+
+function VoteBreakdown({ poll }) {
+  const { voteBreakdownFetching, voteBreakdown, options, legacyPoll } = poll;
+  if (legacyPoll) return null;
+  const voteBreakdownExists = voteBreakdown && voteBreakdown.length > 0;
+  return (
+    <>
+      <CardTitle>Vote breakdown</CardTitle>
+      {voteBreakdownFetching ? (
+        <Loader mt={34} mb={34} color="header" background="white" />
+      ) : voteBreakdownExists ? (
+        <>
+          {voteBreakdown.map((item, i) => (
+            <DetailsCardItem key={i} {...item} />
+          ))}
+        </>
+      ) : (
+        <>
+          {options.map((_, i) => (
+            <DetailsCardItem key={i} {...{ name: options[i], value: '----' }} />
+          ))}
+        </>
+      )}
+    </>
   );
 }
 
-const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
+const reduxProps = (state, { match }) => {
+  const { accounts, metamask, polling } = state;
+  const { polls, pollsFetching } = polling;
   const { pollSlug } = match.params;
-  const proposal = proposals.find(({ title }) => {
-    return toSlug(title) === pollSlug;
+
+  const poll = polls.find(({ voteId }) => {
+    return toSlug(voteId) === pollSlug;
   });
-  const isValidRoute = proposal && pollSlug;
+  const isValidRoute = poll && pollSlug;
+  const activeAccount = accounts.activeAccount
+    ? accounts.allAccounts.find(a => eq(a.address, accounts.activeAccount))
+    : null;
+
+  if (poll && poll.legacyPoll) {
+    const winningProp = getWinningProp(state, poll.pollId);
+    poll.winningProposal = winningProp ? winningProp.title : 'Not applicable';
+  }
 
   return {
-    proposal,
-    voteStateFetching: tally.fetching,
-    voteState: tally.tally,
+    poll,
+    pollsFetching,
+    activeAccount,
     accountDataFetching: accounts.fetching,
     canVote: activeCanVote({ accounts }),
     votingFor: getActiveVotingFor({ accounts }),
@@ -256,5 +575,8 @@ const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
 
 export default connect(
   reduxProps,
-  { modalOpen }
+  {
+    modalOpen,
+    getOptionVotingFor
+  }
 )(Polling);
