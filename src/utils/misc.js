@@ -267,14 +267,13 @@ export const check = async res => {
   }
 };
 
-export const getUtcDateObject = () => {
-  const now = new Date();
+export const getUTC = now => {
   const year = now.getUTCFullYear();
   const month = now.getUTCMonth();
   const day = now.getUTCDate();
   const hour = now.getUTCHours();
   const minute = now.getUTCMinutes();
-  return new Date(year, month, day, hour, minute);
+  return new Date(year, month, day, hour, minute, 0, 0);
 };
 
 export const pollsFilter = (polls, list, property, negate = false) => {
