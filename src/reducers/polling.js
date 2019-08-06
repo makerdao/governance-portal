@@ -143,11 +143,11 @@ const fetchPollFromUrl = async url => {
   await check(res);
   const contentType = res.headers.get('content-type');
   if (!contentType) return null;
-  if (contentType && contentType.indexOf('application/json') !== -1) {
+  if (contentType.indexOf('application/json') !== -1) {
     const json = await res.json();
     if (!json.about || typeof json.about !== 'string') return null;
     return json;
-  } else if (contentType && contentType.indexOf('text/plain') !== -1) {
+  } else if (contentType.indexOf('text/plain') !== -1) {
     return res.text();
   } else return null;
 };
