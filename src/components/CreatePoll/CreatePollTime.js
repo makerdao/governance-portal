@@ -20,7 +20,7 @@ const SectionWrapper = styled.div`
 `;
 
 const TimeLabel = styled(StyledBody)`
-  width: 250px;
+  width: 400px;
 `;
 
 const WarningText = styled.p`
@@ -38,7 +38,7 @@ export default function CreatePollTime({
   return (
     <Fragment>
       <SectionWrapper>
-        <StyledBody>Poll Start Time (UTC):</StyledBody>
+        <StyledBody>Poll Start Time (Local):</StyledBody>
         <DateTimePicker
           css={{ width: '600px' }}
           disableClock
@@ -47,14 +47,20 @@ export default function CreatePollTime({
           onChange={t =>
             handleParentState({
               start: t,
-              end: t.getTime() > end.getTime() ? t : end
+              end: t.getTime() > end ? t.getTime() : end
             })
           }
-          value={start}
+          value={new Date(start)}
         />
       </SectionWrapper>
       <SectionWrapper>
-        <StyledBody>Poll End Time (UTC):</StyledBody>
+        <StyledBody>Poll Start Time (UTC):</StyledBody>
+        <Box width="600px">
+          <TimeLabel>{new Date(start).toUTCString()}</TimeLabel>
+        </Box>
+      </SectionWrapper>
+      <SectionWrapper>
+        <StyledBody>Poll End Time (Local):</StyledBody>
         <DateTimePicker
           css={{ width: '600px' }}
           disableClock
@@ -62,12 +68,18 @@ export default function CreatePollTime({
           clearIcon={null}
           onChange={t =>
             handleParentState({
-              start: t.getTime() < start.getTime() ? t : start,
+              start: t.getTime() < start ? t.getTime() : start,
               end: t
             })
           }
-          value={end}
+          value={new Date(end)}
         />
+      </SectionWrapper>
+      <SectionWrapper>
+        <StyledBody>Poll Start Time (UTC):</StyledBody>
+        <Box width="600px">
+          <TimeLabel>{new Date(end).toUTCString()}</TimeLabel>
+        </Box>
       </SectionWrapper>
       <SectionWrapper>
         <StyledBody>Poll Duration</StyledBody>

@@ -242,7 +242,7 @@ export const formatStringToConstantCase = kebob => {
 };
 
 export const calculateTimeSpan = (earlier, later) => {
-  let timeSpanInSeconds = Math.abs(earlier.getTime() - later.getTime()) / 1000;
+  let timeSpanInSeconds = Math.abs(earlier - later) / 1000;
   let span = {};
   let timeUnits = {
     week: 604800,
@@ -265,15 +265,6 @@ export const check = async res => {
       `unable to fetch topics: ${res.status} - ${await res.text()}`
     );
   }
-};
-
-export const getUTC = now => {
-  const year = now.getUTCFullYear();
-  const month = now.getUTCMonth();
-  const day = now.getUTCDate();
-  const hour = now.getUTCHours();
-  const minute = now.getUTCMinutes();
-  return new Date(year, month, day, hour, minute, 0, 0);
 };
 
 export const pollsFilter = (polls, list, property, negate = false) => {

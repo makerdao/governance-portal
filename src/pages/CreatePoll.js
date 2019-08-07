@@ -127,8 +127,8 @@ class CreatePoll extends Component {
         .service('govPolling')
         ._pollingContract()
         .createPoll(
-          Math.floor(start.getTime() / 1000),
-          Math.floor(end.getTime() / 1000),
+          Math.floor(start / 1000),
+          Math.floor(end / 1000),
           hash,
           url
         );
