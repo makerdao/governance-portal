@@ -344,6 +344,10 @@ class Polling extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.updateVotedPollOption();
+  }
+
   updateVotedPollOption = async () => {
     if (!this.props.poll || !this.state.activeAccount) return null;
     await this.props.getOptionVotingFor(
@@ -429,7 +433,7 @@ class Polling extends React.Component {
                 poll={poll}
                 optionVotingFor={optionVotingForName}
                 optionVotingForId={optionVotingFor}
-                voteStateFetching={voteStateFetching && accountDataFetching}
+                voteStateFetching={voteStateFetching || accountDataFetching}
                 withdrawVote={this.withdrawVote}
                 modalOpen={modalOpen}
                 totalVotes={totalVotes}
