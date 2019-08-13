@@ -14,7 +14,7 @@ import { VotingWeightBanner } from './PollingList';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import { modalOpen } from '../reducers/modal';
 import { getWinningProp } from '../reducers/proposals';
-import { getOptionVotingFor } from '../reducers/polling';
+import { getOptionVotingFor, pollDataInit } from '../reducers/polling';
 import theme, { colors } from '../theme';
 import { ethScanLink } from '../utils/ethereum';
 import { MIN_MKR_PERCENTAGE } from '../utils/constants';
@@ -340,7 +340,8 @@ class Polling extends React.Component {
       this.state.activeAccount !== prevProps.activeAccount ||
       (this.props.poll && prevProps.poll === undefined)
     ) {
-      await this.updateVotedPollOption();
+      this.props.pollDataInit(this.props.poll);
+      this.updateVotedPollOption();
     }
   }
 
@@ -602,6 +603,7 @@ export default connect(
   reduxProps,
   {
     modalOpen,
-    getOptionVotingFor
+    getOptionVotingFor,
+    pollDataInit
   }
 )(Polling);

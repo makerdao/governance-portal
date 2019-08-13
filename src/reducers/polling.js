@@ -1,5 +1,6 @@
 import matter from 'gray-matter';
 import uniqBy from 'lodash.uniqby';
+import throttle from 'lodash/throttle';
 import { createReducer } from '../utils/redux';
 import { formatRound, check } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
@@ -212,7 +213,9 @@ export const updateVoteBreakdown = pollId => (dispatch, getState) => {
   checkForVoteBreakdownUpdates(NUM_TRIES);
 };
 
-export const getVoteBreakdown = async (pollId, options, endDate) => {
+const SPOCK_THROTTLE = 10000; // 10s
+
+export const getVoteBreakdown = throttle(async (pollId, options, endDate) => {
   // returns either the block on which this poll ended,
   // or, if the poll hasn't ended, the current block
   const pollEndBlock = await window.maker
@@ -253,35 +256,35 @@ export const getVoteBreakdown = async (pollId, options, endDate) => {
   voteBreakdown.sort((a, b) => a.optionId - b.optionId);
 
   return voteBreakdown;
-};
+}, SPOCK_THROTTLE);
 
-export const getTotalVotes = async pollId => {
+export const getTotalVotes = throttle(async pollId => {
   const totalVotes = await window.maker
     .service('govPolling')
     .getMkrAmtVoted(pollId);
   return totalVotes.toNumber();
-};
+}, SPOCK_THROTTLE);
 
-export const getParticipation = async pollId => {
+export const getParticipation = throttle(async pollId => {
   const participation = await window.maker
     .service('govPolling')
     .getPercentageMkrVoted(pollId);
   return participation;
-};
+}, SPOCK_THROTTLE);
 
-export const getNumUniqueVoters = async pollId => {
+export const getNumUniqueVoters = throttle(async pollId => {
   const numUniqueVoters = await window.maker
     .service('govPolling')
     .getNumUniqueVoters(pollId);
   return numUniqueVoters;
-};
+}, SPOCK_THROTTLE);
 
-export const getWinningProposal = async pollId => {
+export const getWinningProposal = throttle(async pollId => {
   const winningProposal = window.maker
     .service('govPolling')
     .getWinningProposal(pollId);
   return winningProposal;
-};
+}, SPOCK_THROTTLE);
 
 export const pollsInit = () => async dispatch => {
   dispatch(pollsRequest());
@@ -312,7 +315,6 @@ export const pollsInit = () => async dispatch => {
               .service('smartContract')
               .getContract('POLLING').address;
             dispatch(addPoll(pollData));
-            dispatch(pollDataInit(pollData));
           } catch (e) {
             throw e;
           }
@@ -326,12 +328,9 @@ export const pollsInit = () => async dispatch => {
   }
 };
 
-export const pollDataInit = ({
-  pollId,
-  options,
-  endDate,
-  active
-}) => dispatch => {
+export const pollDataInit = poll => dispatch => {
+  if (!poll) return;
+  const { pollId, options, endDate, active } = poll;
   getTotalVotes(pollId).then(totalVotes =>
     dispatch(updatePoll(pollId, { totalVotes }))
   );

@@ -20,6 +20,7 @@
     "history": "^4.9.0",
     "ipfs-only-hash": "^1.0.2",
     "jazzicon": "^1.5.0",
+    "lodash": "^4.17.15",
     "lodash.round": "^4.0.4",
     "lodash.uniq": "^4.5.0",
     "lodash.uniqby": "^4.7.0",
