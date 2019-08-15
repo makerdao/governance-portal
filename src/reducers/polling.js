@@ -213,9 +213,7 @@ export const updateVoteBreakdown = pollId => (dispatch, getState) => {
   checkForVoteBreakdownUpdates(NUM_TRIES);
 };
 
-const SPOCK_THROTTLE = 10000; // 10s
-
-export const getVoteBreakdown = throttle(async (pollId, options, endDate) => {
+export const getVoteBreakdown = async (pollId, options, endDate) => {
   // returns either the block on which this poll ended,
   // or, if the poll hasn't ended, the current block
   const pollEndBlock = await window.maker
@@ -256,7 +254,9 @@ export const getVoteBreakdown = throttle(async (pollId, options, endDate) => {
   voteBreakdown.sort((a, b) => a.optionId - b.optionId);
 
   return voteBreakdown;
-}, SPOCK_THROTTLE);
+};
+
+const SPOCK_THROTTLE = 10000; // invoke spock query at most once per every 10s
 
 export const getTotalVotes = throttle(async pollId => {
   const totalVotes = await window.maker
