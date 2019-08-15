@@ -346,6 +346,7 @@ class Polling extends React.Component {
   }
 
   componentDidMount() {
+    if (!!this.props.poll) this.props.pollDataInit(this.props.poll);
     this.updateVotedPollOption();
   }
 
@@ -375,7 +376,8 @@ class Polling extends React.Component {
       modalOpen,
       pollsFetching
     } = this.props;
-    if (pollsFetching && !poll) return null;
+    if (pollsFetching && !poll)
+      return <Loader mt={34} mb={34} color="header" background="background" />;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
     const {
       discussion_link,

@@ -189,15 +189,8 @@ const Strong = styled(Black)`
   font-weight: bold;
 `;
 
-export const VotingWeightBanner = ({ fetching, activeAccount }) => {
-  if (fetching) {
-    return (
-      <Padding>
-        <Loader mt={34} mb={34} color="header" background="background" />
-      </Padding>
-    );
-  }
-  if (!activeAccount) return <Padding />;
+export const VotingWeightBanner = ({ accountsFetching, activeAccount }) => {
+  if (accountsFetching || !activeAccount) return <Padding />;
 
   // mkr in wallet + mkr locked in chief (including mkr locked via a vote proxy)
   const pollVotingPower = add(
@@ -220,11 +213,12 @@ export const VotingWeightBanner = ({ fetching, activeAccount }) => {
 };
 
 const PollingList = ({
-  fetching,
+  accountsFetching,
   polling: { polls },
   activeAccount,
   proposals,
-  approvals
+  approvals,
+  pollsFetching
 }) => {
   polls.sort((a, b) => b.startDate - a.startDate);
   const winningProposal = poll => {
@@ -240,7 +234,15 @@ const PollingList = ({
   return (
     <Fragment>
       <MigrationNotificationBanner />
-      <VotingWeightBanner fetching={fetching} activeAccount={activeAccount} />
+      <VotingWeightBanner
+        accountsFetching={accountsFetching}
+        activeAccount={activeAccount}
+      />
+      {accountsFetching || pollsFetching ? (
+        <Padding>
+          <Loader mt={34} mb={34} color="header" background="background" />
+        </Padding>
+      ) : null}
       <RiseUp key={polls.toString()}>
         {polls.map(poll => (
           <StyledCard key={poll.pollId}>
@@ -317,11 +319,13 @@ const PollingList = ({
 };
 
 const reduxProps = ({ accounts, polling, approvals, proposals }) => {
+  const { pollsFetching } = polling;
   const activeAccount = accounts.activeAccount
     ? accounts.allAccounts.find(a => eq(a.address, accounts.activeAccount))
     : null;
   return {
-    fetching: accounts.fetching,
+    pollsFetching,
+    accountsFetching: accounts.fetching,
     polling,
     activeAccount,
     approvals,
