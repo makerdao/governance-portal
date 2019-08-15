@@ -256,7 +256,7 @@ export const getVoteBreakdown = async (pollId, options, endDate) => {
   return voteBreakdown;
 };
 
-const SPOCK_THROTTLE = 10000; // invoke spock query at most once per every 10s
+const SPOCK_THROTTLE = 2000; // invoke spock query at most once per every 2s
 
 export const getTotalVotes = throttle(async pollId => {
   const totalVotes = await window.maker
