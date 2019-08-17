@@ -1,6 +1,5 @@
 import matter from 'gray-matter';
 import uniqBy from 'lodash.uniqby';
-import throttle from 'lodash/throttle';
 import { createReducer } from '../utils/redux';
 import { formatRound, check } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
@@ -256,35 +255,33 @@ export const getVoteBreakdown = async (pollId, options, endDate) => {
   return voteBreakdown;
 };
 
-const SPOCK_THROTTLE = 2000; // invoke spock query at most once per every 2s
-
-export const getTotalVotes = throttle(async pollId => {
+export const getTotalVotes = async pollId => {
   const totalVotes = await window.maker
     .service('govPolling')
     .getMkrAmtVoted(pollId);
   return totalVotes.toNumber();
-}, SPOCK_THROTTLE);
+};
 
-export const getParticipation = throttle(async pollId => {
+export const getParticipation = async pollId => {
   const participation = await window.maker
     .service('govPolling')
     .getPercentageMkrVoted(pollId);
   return participation;
-}, SPOCK_THROTTLE);
+};
 
-export const getNumUniqueVoters = throttle(async pollId => {
+export const getNumUniqueVoters = async pollId => {
   const numUniqueVoters = await window.maker
     .service('govPolling')
     .getNumUniqueVoters(pollId);
   return numUniqueVoters;
-}, SPOCK_THROTTLE);
+};
 
-export const getWinningProposal = throttle(async pollId => {
+export const getWinningProposal = async pollId => {
   const winningProposal = window.maker
     .service('govPolling')
     .getWinningProposal(pollId);
   return winningProposal;
-}, SPOCK_THROTTLE);
+};
 
 export const pollsInit = () => async dispatch => {
   dispatch(pollsRequest());
