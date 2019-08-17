@@ -312,7 +312,6 @@ export const pollsInit = () => async dispatch => {
               .service('smartContract')
               .getContract('POLLING').address;
             dispatch(addPoll(pollData));
-            dispatch(pollDataInit(pollData));
           } catch (e) {
             throw e;
           }
@@ -326,12 +325,9 @@ export const pollsInit = () => async dispatch => {
   }
 };
 
-export const pollDataInit = ({
-  pollId,
-  options,
-  endDate,
-  active
-}) => dispatch => {
+export const pollDataInit = poll => dispatch => {
+  if (!poll) return;
+  const { pollId, options, endDate, active } = poll;
   getTotalVotes(pollId).then(totalVotes =>
     dispatch(updatePoll(pollId, { totalVotes }))
   );
