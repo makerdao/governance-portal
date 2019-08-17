@@ -14,7 +14,7 @@ import { VotingWeightBanner } from './PollingList';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import { modalOpen } from '../reducers/modal';
 import { getWinningProp } from '../reducers/proposals';
-import { getOptionVotingFor } from '../reducers/polling';
+import { getOptionVotingFor, pollDataInit } from '../reducers/polling';
 import theme, { colors } from '../theme';
 import { ethScanLink } from '../utils/ethereum';
 import { MIN_MKR_PERCENTAGE } from '../utils/constants';
@@ -340,11 +340,13 @@ class Polling extends React.Component {
       this.state.activeAccount !== prevProps.activeAccount ||
       (this.props.poll && prevProps.poll === undefined)
     ) {
-      await this.updateVotedPollOption();
+      this.props.pollDataInit(this.props.poll);
+      this.updateVotedPollOption();
     }
   }
 
   componentDidMount() {
+    if (!!this.props.poll) this.props.pollDataInit(this.props.poll);
     this.updateVotedPollOption();
   }
 
@@ -374,7 +376,8 @@ class Polling extends React.Component {
       modalOpen,
       pollsFetching
     } = this.props;
-    if (pollsFetching && !poll) return null;
+    if (pollsFetching && !poll)
+      return <Loader mt={34} mb={34} color="header" background="background" />;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
     const {
       discussion_link,
@@ -602,6 +605,7 @@ export default connect(
   reduxProps,
   {
     modalOpen,
-    getOptionVotingFor
+    getOptionVotingFor,
+    pollDataInit
   }
 )(Polling);

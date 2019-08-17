@@ -1087,10 +1087,10 @@
     babel-runtime "^6.26.0"
     ramda "^0.26.1"
 
-"@makerdao/dai-plugin-governance@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.7.0.tgz#e838627aa54fa5650894e23b09fbac174be5ea73"
-  integrity sha512-Fjw3UTgXPqSYxwcC2qSLXT9Y8kKmL9JwKpdh0kCoR3TKyOI7EwSY7rbhBMVLXstKcZ8Z8Xl+J8r2QhnFIOoMlg==
+"@makerdao/dai-plugin-governance@0.7.2":
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.7.2.tgz#b84fb0a35eace3e29f2795bbf7ebf44f656314b9"
+  integrity sha512-foNjsTbPhpReYnnuGWXafdfcKIAMgBq2GZeSG+70gJ6mFK++Ez1D4oaSMhMtXZqHcfUHFiduYIY+aD0vKipk3g==
   dependencies:
     "@babel/runtime" "^7.4.3"
     "@makerdao/currency" "^0.9.5"
