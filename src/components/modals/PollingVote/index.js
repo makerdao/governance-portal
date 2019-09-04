@@ -45,12 +45,17 @@ class PollingVote extends Component {
       selectedOptionId,
       totalVotes
     } = poll;
-
+    const { linkedAccount } = activeAccount.proxy;
     const pollVotingPower = add(
       activeAccount.proxy.votingPower,
-      activeAccount.mkrBalance
+      add(
+        activeAccount.mkrBalance,
+        add(
+          linkedAccount.mkrBalance,
+          add(activeAccount.mkrLockedChiefHot, activeAccount.mkrLockedChiefCold)
+        )
+      )
     );
-
     return (
       <TransactionModal
         txHash={voteTxHash}

@@ -181,7 +181,8 @@ const VotedFor = ({
                   poll: {
                     pollId,
                     alreadyVotingFor: true,
-                    totalVotes
+                    totalVotes,
+                    selectedOption: optionVotingFor
                   }
                 });
               }}
