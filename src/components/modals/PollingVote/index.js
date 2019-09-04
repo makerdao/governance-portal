@@ -46,9 +46,13 @@ class PollingVote extends Component {
       totalVotes
     } = poll;
 
+    const { linkedAccount } = activeAccount.proxy;
     const pollVotingPower = add(
       activeAccount.proxy.votingPower,
-      activeAccount.mkrBalance
+      activeAccount.mkrBalance,
+      linkedAccount.mkrBalance,
+      activeAccount.mkrLockedChiefHot,
+      activeAccount.mkrLockedChiefCold
     );
 
     return (
