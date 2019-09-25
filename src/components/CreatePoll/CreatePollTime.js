@@ -49,7 +49,7 @@ export default function CreatePollTime({
           clearIcon={null}
           onChange={t =>
             handleParentState({
-              start: t,
+              start: t.getTime(),
               end: t.getTime() > end ? t.getTime() : end
             })
           }
@@ -59,7 +59,7 @@ export default function CreatePollTime({
       <SectionWrapper>
         <StyledBody>Poll Start Time (UTC):</StyledBody>
         <Box width="600px">
-          <TimeLabel>{startUTC.substring(0, startUTC.length - 3)}</TimeLabel>
+          <TimeLabel>{startUTC.substring(0, startUTC.length - 4)}</TimeLabel>
         </Box>
       </SectionWrapper>
       <SectionWrapper>
@@ -72,7 +72,7 @@ export default function CreatePollTime({
           onChange={t =>
             handleParentState({
               start: t.getTime() < start ? t.getTime() : start,
-              end: t
+              end: t.getTime()
             })
           }
           value={new Date(end)}
@@ -81,7 +81,7 @@ export default function CreatePollTime({
       <SectionWrapper>
         <StyledBody>Poll Start Time (UTC):</StyledBody>
         <Box width="600px">
-          <TimeLabel>{endUTC.substring(0, endUTC.length - 3)}</TimeLabel>
+          <TimeLabel>{endUTC.substring(0, endUTC.length - 4)}</TimeLabel>
         </Box>
       </SectionWrapper>
       <SectionWrapper>
