@@ -35,6 +35,9 @@ export default function CreatePollTime({
   timeError,
   handleParentState
 }) {
+  const startUTC = new Date(start).toUTCString();
+  const endUTC = new Date(end).toUTCString();
+
   return (
     <Fragment>
       <SectionWrapper>
@@ -56,7 +59,7 @@ export default function CreatePollTime({
       <SectionWrapper>
         <StyledBody>Poll Start Time (UTC):</StyledBody>
         <Box width="600px">
-          <TimeLabel>{new Date(start).toUTCString()}</TimeLabel>
+          <TimeLabel>{startUTC.substring(0, startUTC.length - 3)}</TimeLabel>
         </Box>
       </SectionWrapper>
       <SectionWrapper>
@@ -78,7 +81,7 @@ export default function CreatePollTime({
       <SectionWrapper>
         <StyledBody>Poll Start Time (UTC):</StyledBody>
         <Box width="600px">
-          <TimeLabel>{new Date(end).toUTCString()}</TimeLabel>
+          <TimeLabel>{endUTC.substring(0, endUTC.length - 3)}</TimeLabel>
         </Box>
       </SectionWrapper>
       <SectionWrapper>

@@ -87,12 +87,15 @@ class CreatePollOverview extends Component {
       });
     };
 
+    const startUTC = new Date(start).toUTCString();
+    const endUTC = new Date(end).toUTCString();
+
     return (
       <Fragment>
         <SectionText>
           This is an overview of the new poll. The polling window will be open
-          from the {new Date(start).toUTCString()} and will close on
-          {new Date(end).toUTCString()}.
+          from {startUTC.substring(0, startUTC.length - 4)} UTC and will close
+          on {endUTC.substring(0, endUTC.length - 4)} UTC.
         </SectionText>
         <SectionText>
           The markdown and hash below should be copied into the cms and a the
