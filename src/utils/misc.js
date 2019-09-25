@@ -101,7 +101,7 @@ export const firstLetterCapital = string =>
  * @param  {Number|String} b
  * @return {String}
  */
-export const add = (a, b) =>
+export const add = (a = 0, b = 0) =>
   BigNumber(a)
     .plus(BigNumber(b))
     .toFixed();
