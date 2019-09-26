@@ -20,7 +20,7 @@ const SectionWrapper = styled.div`
 `;
 
 const TimeLabel = styled(StyledBody)`
-  width: 250px;
+  width: 400px;
 `;
 
 const WarningText = styled.p`
@@ -35,10 +35,13 @@ export default function CreatePollTime({
   timeError,
   handleParentState
 }) {
+  const startUTC = new Date(start).toUTCString();
+  const endUTC = new Date(end).toUTCString();
+
   return (
     <Fragment>
       <SectionWrapper>
-        <StyledBody>Poll Start Time (UTC):</StyledBody>
+        <StyledBody>Poll Start Time (Local):</StyledBody>
         <DateTimePicker
           css={{ width: '600px' }}
           disableClock
@@ -46,15 +49,21 @@ export default function CreatePollTime({
           clearIcon={null}
           onChange={t =>
             handleParentState({
-              start: t,
-              end: t.getTime() > end.getTime() ? t : end
+              start: t.getTime(),
+              end: t.getTime() > end ? t.getTime() : end
             })
           }
-          value={start}
+          value={new Date(start)}
         />
       </SectionWrapper>
       <SectionWrapper>
-        <StyledBody>Poll End Time (UTC):</StyledBody>
+        <StyledBody>Poll Start Time (UTC):</StyledBody>
+        <Box width="600px">
+          <TimeLabel>{startUTC.substring(0, startUTC.length - 4)}</TimeLabel>
+        </Box>
+      </SectionWrapper>
+      <SectionWrapper>
+        <StyledBody>Poll End Time (Local):</StyledBody>
         <DateTimePicker
           css={{ width: '600px' }}
           disableClock
@@ -62,12 +71,18 @@ export default function CreatePollTime({
           clearIcon={null}
           onChange={t =>
             handleParentState({
-              start: t.getTime() < start.getTime() ? t : start,
-              end: t
+              start: t.getTime() < start ? t.getTime() : start,
+              end: t.getTime()
             })
           }
-          value={end}
+          value={new Date(end)}
         />
+      </SectionWrapper>
+      <SectionWrapper>
+        <StyledBody>Poll Start Time (UTC):</StyledBody>
+        <Box width="600px">
+          <TimeLabel>{endUTC.substring(0, endUTC.length - 4)}</TimeLabel>
+        </Box>
       </SectionWrapper>
       <SectionWrapper>
         <StyledBody>Poll Duration</StyledBody>

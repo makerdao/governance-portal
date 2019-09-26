@@ -97,7 +97,7 @@ export default function CreatePollMarkdown({
   const linkValid = link.match(URL_REGEX);
   const choicesValid = choices.length > 1;
   const contentValid = !!content;
-  const timeValid = start.getTime() >= POLL_DEFAULT_START.getTime();
+  const timeValid = start >= POLL_DEFAULT_START;
 
   const isValidSubmission =
     titleValid &&
