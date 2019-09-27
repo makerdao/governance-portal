@@ -13,6 +13,7 @@ import Vote from '../components/modals/Vote';
 import TillHat from '../components/TillHatMeta';
 import ExtendedLink from '../components/Onboarding/shared/ExtendedLink';
 import { Banner, BannerBody, BannerContent } from '../components/Banner';
+import useModal from '../hooks/useModal';
 
 const riseUp = keyframes`
 0% {
@@ -183,10 +184,24 @@ const Timeline = ({
   );
   otherProposals.sort((a, b) => b.end_timestamp - a.end_timestamp);
 
+  const { show } = useModal();
+
   return (
     <Fragment>
       <MigrationNotificationBanner />
       <VoterStatus signaling={signaling} legacy={true} />
+      <Button
+        p="s"
+        css={{ cursor: 'pointer' }}
+        onClick={() =>
+          show({
+            modalType: 'dsrdeposit',
+            modalTemplate: 'fullscreen'
+          })
+        }
+      >
+        Show Test Modal
+      </Button>
       <RiseUp key={otherProposals.toString()}>
         {signaling || !hatProposal ? null : (
           <StyledCard>
