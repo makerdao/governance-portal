@@ -1,15 +1,17 @@
 import React from 'react';
-import { Box, Text, Button } from '@makerdao/ui-components-core';
+import { Box, Text } from '@makerdao/ui-components-core';
+import ScreenFooter from '../../ScreenFooter';
 
-const ModalTest = ({ dispatch, onClose }) => {
+const ModalTest = ({ dispatch }) => {
   return (
     <Box maxWidth="71.8rem">
-      <Button onClick={onClose} width="145px">
-        Exit
-      </Button>
       <Text.h2 textAlign="center" mb="xl">
         Modal Test2
       </Text.h2>
+      <ScreenFooter
+        onNext={() => dispatch({ type: 'increment-step' })}
+        onBack={() => dispatch({ type: 'decrement-step' })}
+      />
     </Box>
   );
 };

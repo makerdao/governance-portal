@@ -33,6 +33,9 @@ function reducer(state, action) {
 function ModalTestStepper({ onClose }) {
   const [{ step }, dispatch] = useReducer(reducer, initialState);
 
+  //TODO get the address from state
+  const mockAddress = '0xa24df0420de1f3b8d740a52aaeb9d55d6d64478e';
+
   const screenProps = {
     dispatch,
     onClose
@@ -42,7 +45,9 @@ function ModalTestStepper({ onClose }) {
     <StepperUI
       step={step}
       steps={screens.map(([title]) => title)}
-      renderStepperHeader={() => <StepperHeader onClose={onClose} />}
+      renderStepperHeader={() => (
+        <StepperHeader address={mockAddress} onClose={onClose} />
+      )}
     >
       {screens.map(([, getComponent], screenIndex) =>
         getComponent({ ...screenProps, screenIndex, key: screenIndex })

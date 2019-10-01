@@ -1,13 +1,9 @@
 import React from 'react';
 import { Flex, Grid, Box, Text } from '@makerdao/ui-components-core';
 import ActiveAccount from './ActiveAccount';
-// import useMaker from 'hooks/useMaker';
-// import { ReactComponent as CloseIcon } from 'images/close-circle.svg';
+import { ReactComponent as CloseIcon } from '../imgs/close-circle.svg';
 
-const mockAddress = '0xa24df0420de1f3b8d740a52aaeb9d55d6d64478e';
-
-const StepperHeader = ({ onClose }) => {
-  //   const { account } = useMaker();
+const StepperHeader = ({ address, onClose }) => {
   return (
     <Flex justifyContent="flex-end" mb="m">
       <Grid
@@ -17,7 +13,7 @@ const StepperHeader = ({ onClose }) => {
       >
         <Box>
           <ActiveAccount
-            address={mockAddress}
+            address={address}
             textColor="steel"
             t="1.6rem"
             readOnly
@@ -32,7 +28,7 @@ const StepperHeader = ({ onClose }) => {
           gridColumnGap="xs"
           css={{ cursor: 'pointer' }}
         >
-          {/* <CloseIcon /> */}
+          <CloseIcon />
           <Text color="steel" t="1.6rem" fontWeight="medium">
             Close
           </Text>
