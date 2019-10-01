@@ -13,6 +13,7 @@ import { init, wrongNetwork } from './reducers/metamask';
 import { netIdToName, getUrlParam } from './utils/ethereum';
 
 import './global.css.js';
+import { GlobalStyle } from './global.css.js';
 import theme from './theme';
 import { themeDark, themeLight } from '@makerdao/ui-components';
 import '@makerdao/ui-components/dist/styles/global.css';
@@ -103,6 +104,7 @@ function render() {
       <Provider store={store}>
         <Router />
       </Provider>
+      <GlobalStyle />
     </ThemeProvider>,
     document.getElementById('root')
   );

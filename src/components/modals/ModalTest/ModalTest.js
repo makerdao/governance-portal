@@ -8,7 +8,7 @@ const ModalTest = ({ dispatch, onClose }) => {
         Exit
       </Button>
       <Text.h2 textAlign="center" mb="xl">
-        Modal Test
+        Modal Test2
       </Text.h2>
     </Box>
   );

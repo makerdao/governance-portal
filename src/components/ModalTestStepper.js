@@ -1,8 +1,8 @@
 import React, { useReducer } from 'react';
 import { hot } from 'react-hot-loader/root';
-import StepperUI from 'components/StepperUI';
-import StepperHeader from 'components/StepperHeader';
-import { ModalTest } from 'components/ModalTest';
+import StepperUI from './StepperUI';
+import StepperHeader from './StepperHeader';
+import { ModalTest } from './modals/ModalTest';
 
 const screens = [['A Test Stepper', props => <ModalTest {...props} />]];
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box } from '@makerdao/ui-components-core';
-import ModalTest from './ModalTest/ModalTest';
+// import ModalTest from './ModalTest/ModalTest';
+import ModalTestStepper from '../ModalTestStepper';
 import templates from './templates';
 
 const modals = {
@@ -11,7 +12,7 @@ const modals = {
       p="m"
       onClick={e => e.stopPropagation()}
     >
-      <ModalTest onClose={onClose} />
+      <ModalTestStepper onClose={onClose} />
     </Box>
   )
 };
