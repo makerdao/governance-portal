@@ -1,5 +1,4 @@
 import React, { useReducer } from 'react';
-import { hot } from 'react-hot-loader/root';
 import StepperUI from './StepperUI';
 import StepperHeader from './StepperHeader';
 import { ModalTest } from './modals/ModalTest';
@@ -56,4 +55,4 @@ function ModalTestStepper({ onClose }) {
   );
 }
 
-export default hot(ModalTestStepper);
+export default ModalTestStepper;
