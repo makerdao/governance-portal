@@ -271,5 +271,3 @@ const globalStyles = `
   `;
 
 export const GlobalStyle = createGlobalStyle`${globalStyles}`;
-
-// injectGlobal`${globalStyles}`;
