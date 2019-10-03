@@ -1,9 +1,12 @@
 import React, { useReducer } from 'react';
 import StepperUI from './StepperUI';
 import StepperHeader from './StepperHeader';
-import { ModalTest } from './modals/ModalTest';
+import { EsmStakeMkr, EsmConfirm } from './modals/EsmStake';
 
-const screens = [['A Test Stepper', props => <ModalTest {...props} />]];
+const screens = [
+  ['Stake MKR', props => <EsmStakeMkr {...props} />],
+  ['Confirmation', props => <EsmConfirm {...props} />]
+];
 
 const initialState = {
   step: 0
@@ -29,7 +32,7 @@ function reducer(state, action) {
   }
 }
 
-function ModalTestStepper({ onClose }) {
+function EsmStakeModal({ onClose }) {
   const [{ step }, dispatch] = useReducer(reducer, initialState);
 
   //TODO get the address from state
@@ -55,4 +58,4 @@ function ModalTestStepper({ onClose }) {
   );
 }
 
-export default ModalTestStepper;
+export default EsmStakeModal;

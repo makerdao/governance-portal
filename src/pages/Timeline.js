@@ -195,7 +195,7 @@ const Timeline = ({
         css={{ cursor: 'pointer' }}
         onClick={() =>
           show({
-            modalType: 'modaltest',
+            modalType: 'esmstake',
             modalTemplate: 'fullscreen'
           })
         }
