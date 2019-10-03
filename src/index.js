@@ -4,6 +4,8 @@ import { Provider } from 'react-redux';
 import Raven from 'raven-js';
 import ReactGA from 'react-ga';
 import { ThemeProvider } from 'styled-components';
+import { ModalProvider } from './providers/ModalProvider';
+import modals, { templates } from './components/modals/ModalController';
 
 import { mixpanelInit } from './analytics';
 import createStore from './store';
@@ -102,7 +104,9 @@ function render() {
   ReactDOM.render(
     <ThemeProvider theme={currTheme}>
       <Provider store={store}>
-        <Router />
+        <ModalProvider modals={modals} templates={templates}>
+          <Router />
+        </ModalProvider>
       </Provider>
       <GlobalStyle />
     </ThemeProvider>,

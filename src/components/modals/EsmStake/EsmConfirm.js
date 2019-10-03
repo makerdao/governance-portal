@@ -9,7 +9,6 @@ import {
   Checkbox,
   Card
 } from '@makerdao/ui-components-core';
-import ScreenHeader from '../../ScreenHeader';
 import ScreenFooter from '../../ScreenFooter';
 import { netIdToName, ethScanLink } from '../../../utils/ethereum';
 

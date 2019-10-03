@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { Router, Switch, Route, withRouter, Redirect } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import mixpanel from 'mixpanel-browser';
-import { ModalProvider } from './providers/ModalProvider';
-import modals, { templates } from './components/modals/ModalController';
 import BaseLayout from './layouts/base';
 import Timeline from './pages/Timeline';
 import PollingList from './pages/PollingList';
@@ -67,47 +65,45 @@ history.listen(location => {
 class App extends Component {
   render = () => (
     <Router history={history}>
-      <ModalProvider modals={modals} templates={templates}>
-        <ScrollToTop>
-          <div className="App">
-            <ErrorBoundary>
-              <BaseLayout>
-                <Switch>
-                  <Route
-                    exact
-                    path="/"
-                    render={routeProps => <Timeline {...routeProps} />}
-                  />
-                  <Route
-                    path="/polling/create"
-                    render={routeProps => <CreatePoll {...routeProps} />}
-                  />
-                  <Route
-                    path="/polling"
-                    render={routeProps => (
-                      <PollingList signaling {...routeProps} />
-                    )}
-                  />
-                  <Route path="/not-found" component={NotFound} />
-                  <Route
-                    exact
-                    path="/:topicSlug"
-                    render={() => <Redirect to="/" />}
-                  />
-                  <Route
-                    path="/polling-proposal/:pollSlug"
-                    render={routeProps => <Polling {...routeProps} />}
-                  />
-                  <Route
-                    path="/executive-proposal/:execSlug"
-                    render={routeProps => <Executive {...routeProps} />}
-                  />
-                </Switch>
-              </BaseLayout>
-            </ErrorBoundary>
-          </div>
-        </ScrollToTop>
-      </ModalProvider>
+      <ScrollToTop>
+        <div className="App">
+          <ErrorBoundary>
+            <BaseLayout>
+              <Switch>
+                <Route
+                  exact
+                  path="/"
+                  render={routeProps => <Timeline {...routeProps} />}
+                />
+                <Route
+                  path="/polling/create"
+                  render={routeProps => <CreatePoll {...routeProps} />}
+                />
+                <Route
+                  path="/polling"
+                  render={routeProps => (
+                    <PollingList signaling {...routeProps} />
+                  )}
+                />
+                <Route path="/not-found" component={NotFound} />
+                <Route
+                  exact
+                  path="/:topicSlug"
+                  render={() => <Redirect to="/" />}
+                />
+                <Route
+                  path="/polling-proposal/:pollSlug"
+                  render={routeProps => <Polling {...routeProps} />}
+                />
+                <Route
+                  path="/executive-proposal/:execSlug"
+                  render={routeProps => <Executive {...routeProps} />}
+                />
+              </Switch>
+            </BaseLayout>
+          </ErrorBoundary>
+        </div>
+      </ScrollToTop>
     </Router>
   );
 }
