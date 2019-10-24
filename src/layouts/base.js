@@ -152,8 +152,6 @@ const BaseLayout = ({
   return (
     <StyledLayout>
       <StyledHeader>
-        <Header />
-        <BorderLine />
         <HeaderBottom>
           <HeaderBottomContent>
             <div style={{ display: 'flex', paddingLeft: '2.5rem' }}>
