@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import mixpanel from 'mixpanel-browser';
-import { Header, Footer } from '@makerdao/ui-components';
+import { Footer } from '@makerdao/ui-components';
 import { colors, fonts } from '../theme';
 import { onboardingOpen, OnboardingStates } from '../reducers/onboarding';
 import { modalOpen } from '../reducers/modal';
@@ -101,11 +101,6 @@ const StyledLink = styled(NavLink).attrs({
 
 const Padding = styled.div`
   height: 25px;
-`;
-
-const BorderLine = styled.div`
-  height: 1px;
-  background-color: #445162;
 `;
 
 const NetworkNotification = styled.div`
