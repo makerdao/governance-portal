@@ -412,7 +412,7 @@ class Polling extends React.Component {
             <DescriptionCard>
               <ReactMarkdown
                 className="markdown"
-                skipHtml={true}
+                skipHtml={false}
                 source={poll.content}
               />
               {rawData && (
