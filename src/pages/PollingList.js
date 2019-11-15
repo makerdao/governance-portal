@@ -233,7 +233,7 @@ const PollingList = ({
   };
   return (
     <Fragment>
-      <MigrationNotificationBanner />
+      {/* <MigrationNotificationBanner /> */}
       <VotingWeightBanner
         accountsFetching={accountsFetching}
         activeAccount={activeAccount}

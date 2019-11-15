@@ -183,9 +183,11 @@ const Timeline = ({
   );
   otherProposals.sort((a, b) => b.end_timestamp - a.end_timestamp);
 
+  const MCD_SOURCE = '0xF44113760c4f70aFeEb412C63bC713B13E6e202E';
+
   return (
     <Fragment>
-      <MigrationNotificationBanner />
+      {/* <MigrationNotificationBanner /> */}
       <VoterStatus signaling={signaling} legacy={true} />
       <RiseUp key={otherProposals.toString()}>
         {signaling || !hatProposal ? null : (
@@ -221,7 +223,11 @@ const Timeline = ({
                     )} MKR`}</Tag>
                   ) : (
                     <div>
-                      <Tag>Available for execution</Tag>
+                      <Tag>
+                        {hatProposal.source === MCD_SOURCE
+                          ? 'Available for execution on November 18th at 16:00 UTC'
+                          : 'Available for execution'}
+                      </Tag>
                     </div>
                   )}
                 </div>
@@ -276,7 +282,11 @@ const Timeline = ({
                   </div>
                 ) : hat.approvals < approvals.approvals[proposal.source] ? (
                   <div>
-                    <Tag>Available for execution</Tag>
+                    <Tag>
+                      {proposal.source === MCD_SOURCE
+                        ? 'Available for execution on November 18th at 16:00 UTC'
+                        : 'Available for execution'}
+                    </Tag>
                   </div>
                 ) : null}
               </ProposalDetails>
