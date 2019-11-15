@@ -85,6 +85,7 @@ const BannerLink = styled.a`
   font-weight: bold;
 `;
 
+const DEV_USE_MIGRATION_BANNER = false;
 const HIDE_MIGRATION_BANNER_KEY = 'hide-migration-banner-0.1.0';
 
 const hasHiddenMigrationBanner = JSON.parse(
@@ -233,7 +234,7 @@ const PollingList = ({
   };
   return (
     <Fragment>
-      {/* <MigrationNotificationBanner /> */}
+      {DEV_USE_MIGRATION_BANNER ? <MigrationNotificationBanner /> : null}
       <VotingWeightBanner
         accountsFetching={accountsFetching}
         activeAccount={activeAccount}
