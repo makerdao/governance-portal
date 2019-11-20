@@ -188,11 +188,11 @@ const BaseLayout = ({
                   Polling
                 </StyledLink>
                 <ExternalNavLink
-                  href="https://github.com/makerdao/developerguides/blob/master/governance/Emergency-Shutdown-CLI-Documentation.md"
+                  href="https://docs.makerdao.com/clis/emergency-shutdown-es-cli"
                   target="_blank"
                   r={6}
                 >
-                  Guides
+                  Modules
                 </ExternalNavLink>
               </StyledLinkWrapper>
               <DimHeaderElement
