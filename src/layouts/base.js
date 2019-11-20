@@ -83,6 +83,19 @@ const StyledLinkWrapper = styled.div`
   right: -18px;
 `;
 
+const ExternalNavLink = styled.a`
+  position: absolute;
+  right: ${({ r }) => (!isNaN(r) ? `${r}px` : '')};
+  opacity: 0.9;
+  padding: 5px 14px;
+  color: rgb(${colors.white});
+  font-size: ${fonts.size.medium};
+  font-weight: ${fonts.weight.normal};
+  &:hover {
+    background-color: #4a4b584d;
+  }
+`;
+
 const StyledLink = styled(NavLink).attrs({
   exact: true,
   activeStyle: { fontWeight: 'bold' }
@@ -164,16 +177,23 @@ const BaseLayout = ({
               <StyledLinkWrapper>
                 <StyledLink
                   to={{ pathname: '/', search: location.search }}
-                  r={107}
+                  r={207}
                 >
                   Executive
                 </StyledLink>
                 <StyledLink
                   to={{ pathname: '/polling', search: location.search }}
-                  r={6}
+                  r={106}
                 >
                   Polling
                 </StyledLink>
+                <ExternalNavLink
+                  href="https://docs.makerdao.com/clis/emergency-shutdown-es-cli"
+                  target="_blank"
+                  r={6}
+                >
+                  Modules
+                </ExternalNavLink>
               </StyledLinkWrapper>
               <DimHeaderElement
                 onClick={() => {
