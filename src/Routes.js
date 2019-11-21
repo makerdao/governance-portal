@@ -5,6 +5,7 @@ import mixpanel from 'mixpanel-browser';
 import BaseLayout from './layouts/base';
 import Timeline from './pages/Timeline';
 import PollingList from './pages/PollingList';
+import Modules from './pages/Modules';
 import NotFound from './pages/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
 import Polling from './pages/Polling';
@@ -84,6 +85,10 @@ class App extends Component {
                   render={routeProps => (
                     <PollingList signaling {...routeProps} />
                   )}
+                />
+                <Route
+                  path="/modules"
+                  render={routeProps => <Modules {...routeProps} />}
                 />
                 <Route path="/not-found" component={NotFound} />
                 <Route
