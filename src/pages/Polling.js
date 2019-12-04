@@ -125,7 +125,7 @@ const VoteButton = styled(Button)`
 const DescriptionCard = styled(Card)`
   margin: 0;
   max-width: 750px;
-  padding: 0px 25px 93px 25px;
+  padding: 15px 25px 93px 25px;
   color: #546978;
   line-height: 30px;
 `;
