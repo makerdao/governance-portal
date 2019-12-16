@@ -64,6 +64,7 @@ const StyledCard = styled(Card)`
 `;
 
 const Tag = styled.p`
+  white-space: nowrap;
   padding: 1px 10px;
   border-radius: 4px;
   line-height: 21px;
