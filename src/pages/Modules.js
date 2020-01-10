@@ -1,22 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Flex, Grid, Text, Link } from '@makerdao/ui-components-core';
 
 import MKRBurn from '../components/Modules/MKRBurn';
 import ESMHistory from '../components/Modules/ESMHistory';
 
 export default class ESM extends React.Component {
-  state = {
-    esmCliDocContent: null
-  };
-
-  componentDidMount() {
-    fetch(require('../esCliDoc.md'))
-      .then(res => res.text())
-      .then(esmCliDocContent => this.setState({ esmCliDocContent }));
-  }
-
   render() {
-    const { esmCliDocContent } = this.state;
     return (
       <Flex flexDirection="column" minHeight="100vh">
         <Grid gridRowGap="m" mx={'2xl'} my={'2xl'} px={'2xl'}>
