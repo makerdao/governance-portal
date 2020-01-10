@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardBody,
-  Flex,
-  Grid,
-  Text,
-  Link
-} from '@makerdao/ui-components-core';
+import { Flex, Grid, Text, Link } from '@makerdao/ui-components-core';
 
 import MKRBurn from '../components/Modules/MKRBurn';
 import ESMHistory from '../components/Modules/ESMHistory';
