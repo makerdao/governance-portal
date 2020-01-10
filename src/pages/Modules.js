@@ -18,7 +18,9 @@ const MKRBurn = () => {
   const [mkrStaked, setMkrStaked] = useState('0.00');
   return (
     <Grid gridRowGap="m" my={'s'}>
-      <Text.h4 textAlign="left">Total MKR Burned</Text.h4>
+      <Text.h4 textAlign="left" fontWeight="700">
+        Total MKR Burned
+      </Text.h4>
       <Card>
         <CardBody p={'s'} pb={'m'}>
           <Flex flexDirection="row" m={'s'}>
@@ -60,7 +62,9 @@ const ESMHistory = () => {
   const [stakingHistory, setStakingHistory] = useState(false);
   return (
     <Grid gridRowGap="m" my={'s'}>
-      <Text.h4 textAlign="left">ESM History</Text.h4>
+      <Text.h4 textAlign="left" fontWeight="700">
+        ESM History
+      </Text.h4>
       <Card>
         {!stakingHistory ? (
           <Text.p
