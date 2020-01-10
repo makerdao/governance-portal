@@ -101,7 +101,7 @@ const ModalContent = ({
             <path d="M 10,10 L 30,30 M 30,10 L 10,30"></path>
           </ModalCloseIcon>
         </ModalClose>
-        <ModalBody>{content}</ModalBody>
+        <ModalBody>{content(onClose)}</ModalBody>
       </ModalBox>
     </ModalCover>,
     document.body
@@ -132,11 +132,6 @@ export default class Modal extends Component {
   render() {
     const { isOpen } = this.state;
     const { triggerText, ariaLabel, role, ModalTrigger, children } = this.props;
-    const childrenWithProps = React.Children.map(children, child => {
-      return React.cloneElement(child, {
-        onClose: () => this.onClose()
-      });
-    });
     return (
       <Fragment>
         {
@@ -155,7 +150,7 @@ export default class Modal extends Component {
             modalRef={n => (this.modalNode = n)}
             buttonRef={n => (this.closeButtonNode = n)}
             role={role}
-            content={childrenWithProps}
+            content={onClose => children(onClose)}
           />
         )}
       </Fragment>

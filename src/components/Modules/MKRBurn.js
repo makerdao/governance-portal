@@ -126,7 +126,11 @@ export default () => {
         <CardBody>
           <Flex flexDirection="row" justifyContent="space-between" m={'m'}>
             <ModalPortal {...modalProps}>
-              <ModalContent />
+              {onClose => (
+                <Fragment>
+                  <ModalContent onClose={onClose} />
+                </Fragment>
+              )}
             </ModalPortal>
             <Text.p color="#9FAFB9" fontWeight="300" alignSelf="center">
               You have no MKR in the ESM
