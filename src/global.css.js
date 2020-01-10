@@ -268,6 +268,9 @@ const globalStyles = `
     font-variant: small-caps;
     color: #0E1029;
   }
+  .u-lock-scroll {
+    overflow: hidden !important;
+  }
   `;
 
 injectGlobal`${globalStyles}`;
