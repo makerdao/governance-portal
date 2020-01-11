@@ -8,7 +8,8 @@ import {
   Flex,
   Grid,
   Text,
-  Link
+  Link,
+  Input
 } from '@makerdao/ui-components-core';
 import ModalPortal from '../ModalPortal';
 import warning from '../../imgs/warning.svg';
@@ -26,7 +27,7 @@ export default () => {
       {text}
     </Button>
   );
-  const Step0 = ({ onClose }) => {
+  const Step0 = ({ onClose, onContinue }) => {
     return (
       <Fragment>
         <WarningIcon />
@@ -53,15 +54,97 @@ export default () => {
           >
             Cancel
           </Button>
-          <Button variant="danger" ml={'s'}>
+          <Button variant="danger" ml={'s'} onClick={() => onContinue(1)}>
             Continue
           </Button>
         </Flex>
       </Fragment>
     );
   };
-  // const step1
-  // const step2
+
+  const Step1 = ({ onClose, onContinue }) => {
+    const [mkrBalance, setMkrBalance] = useState(0);
+    return (
+      <Grid gridRowGap="m" justifyContent="center">
+        <Text.h2 mt="m" textAlign="center">
+          Burn your MKR in the ESM
+        </Text.h2>
+        <Grid gridRowGap="s" width={'30em'} border="1px solid #D4D9E1">
+          <Text.h5 textAlign="left" mt="m" ml="m" fontWeight="500">
+            Enter the amount of MKR to burn.
+          </Text.h5>
+          <Input
+            mx={'m'}
+            after={
+              <button
+                css="text-decoration:none"
+                style={{ color: '#447AFB', fontSize: 15, fontWeight: '500' }}
+              >
+                Set Max
+              </button>
+            }
+          />
+          <Flex flexDirection="row" ml="m" alignItems="center" mb="m">
+            <Text
+              style={{
+                fontWeight: 'bold',
+                fontSize: 11,
+                color: '#708390',
+                lineHeight: 1
+              }}
+            >
+              MKR BALANCE IN WALLET
+            </Text>
+            <Text
+              t="caption"
+              ml="s"
+              style={{ fontSize: 14, color: '#48495F', lineHeight: 1 }}
+            >
+              {`${mkrBalance.toFixed(2)} MKR`}
+            </Text>
+          </Flex>
+        </Grid>
+        <Flex flexDirection="row" justifyContent="center" m={'m'}>
+          <Button
+            variant="secondary-outline"
+            color="black"
+            onClick={onClose}
+            mr="s"
+          >
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={() => onContinue(2)} ml="s">
+            Continue
+          </Button>
+        </Flex>
+      </Grid>
+    );
+  };
+  const Step2 = ({ onClose, onContinue }) => {
+    const [mkrBalance, setMkrBalance] = useState(0);
+    return (
+      <Grid gridRowGap="m" justifyContent="center">
+        <Text.h2 mt="m" textAlign="center">
+          Burn your MKR in the ESM
+        </Text.h2>
+        <Flex flexDirection="row" justifyContent="center" m={'m'}>
+          <Button
+            variant="secondary-outline"
+            color="black"
+            onClick={() => {
+              onContinue(1);
+            }}
+            mr="s"
+          >
+            Back
+          </Button>
+          <Button variant="danger" onClick={() => onContinue(2)} ml="s">
+            Burn MKR
+          </Button>
+        </Flex>
+      </Grid>
+    );
+  };
   // const step3
 
   const ModalContent = ({ onClose }) => {
@@ -69,15 +152,15 @@ export default () => {
     const renderStep = step => {
       switch (step) {
         case 0:
-          return <Step0 onClose={onClose} />;
-        // case 1:
-        //   return <Step1 />
-        // case 2:
-        //   return <Step2 />
+          return <Step0 onClose={onClose} onContinue={setStep} />;
+        case 1:
+          return <Step1 onClose={onClose} onContinue={setStep} />;
+        case 2:
+          return <Step2 onContinue={setStep} />;
         // case 3:
         //   return <Step3 />
         default:
-          return <Step0 />;
+          return <Step0 onClose={onClose} onContinue={setStep} />;
       }
     };
     const renderedStep = renderStep(step);
