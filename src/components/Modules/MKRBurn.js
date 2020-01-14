@@ -9,9 +9,11 @@ import {
   Grid,
   Text,
   Link,
-  Input
+  Input,
+  Checkbox
 } from '@makerdao/ui-components-core';
 import ModalPortal from '../ModalPortal';
+import LoadingToggle from '../LoadingToggle';
 import warning from '../../imgs/warning.svg';
 
 const WarningIcon = styled.p`
@@ -20,6 +22,32 @@ const WarningIcon = styled.p`
   background-color: #f77249;
   mask: url(${warning}) center no-repeat;
 `;
+
+const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
+  return (
+    <Grid alignItems="center" gridTemplateColumns="auto 1fr">
+      <Checkbox
+        mr="s"
+        fontSize="l"
+        checked={hasReadTOS}
+        onChange={() => setHasReadTOS(!hasReadTOS)}
+        data-testid={'tosCheck'}
+      />
+      <Text
+        ml="m"
+        t="caption"
+        color="steel"
+        onClick={() => setHasReadTOS(!hasReadTOS)}
+      >
+        I have read and accept the{' '}
+        <Link target="_blank" href="/terms">
+          Terms of Service
+        </Link>
+        .
+      </Text>
+    </Grid>
+  );
+};
 
 export default () => {
   const ModalTrigger = ({ text, onOpen, buttonRef }) => (
@@ -121,12 +149,86 @@ export default () => {
     );
   };
   const Step2 = ({ onClose, onContinue }) => {
-    const [mkrBalance, setMkrBalance] = useState(0);
+    const [burnAmount, setBurnAmount] = useState(0);
+    const [esmTotal, setEsmTotal] = useState(0);
+    const [hasReadTOS, setHasReadTOS] = useState(false);
+    const [mkrApprovePending, setMkrApprovePending] = useState(false);
+    const [proxyDetails, setProxyDetails] = useState({});
+    const giveProxyMkrAllowance = async () => {
+      // setMkrApprovePending(true);
+      // try {
+      //   await maker
+      //     .getToken(MKR)
+      //     .approve(proxyDetails.address, govFeeMKRExact.times(APPROVAL_FUDGE));
+      //   setProxyDetails(proxyDetails => ({
+      //     ...proxyDetails,
+      //     hasMkrAllowance: true
+      //   }));
+      // } catch (err) {
+      //   const message = err.message ? err.message : err;
+      //   const errMsg = `unlock mkr tx failed ${message}`;
+      //   console.error(errMsg);
+      //   addToastWithTimeout(errMsg, dispatch);
+      // }
+      // setMkrApprovePending(false);
+    };
+
     return (
-      <Grid gridRowGap="m" justifyContent="center">
+      <Grid gridRowGap="m" justifyContent="center" width={'200%'}>
         <Text.h2 mt="m" textAlign="center">
           Burn your MKR in the ESM
         </Text.h2>
+        <Card width={'28em'}>
+          <CardBody mx="m">
+            <Flex
+              flexDirection="row"
+              justifyContent="space-between"
+              mt="m"
+              mb="s"
+            >
+              <Text.h5>Burn amount</Text.h5>
+              <Text.h5>{`${burnAmount.toFixed(2)} MKR`}</Text.h5>
+            </Flex>
+          </CardBody>
+          <CardBody mx="m">
+            <Flex
+              flexDirection="row"
+              justifyContent="space-between"
+              mt="s"
+              mb="m"
+            >
+              <Text.h5>New ESM total</Text.h5>
+              <Text.h5>{`${esmTotal.toFixed(2)} MKR`}</Text.h5>
+            </Flex>
+            <Grid flexDirection="column" gridRowGap="s" mb="m">
+              <Text.h5 textAlign="left" mt="m" ml="m" fontWeight="500">
+                Enter the following phrase to continue.
+              </Text.h5>
+              <Input
+                mx={'m'}
+                placeholder={`I am burning ${burnAmount.toFixed(2)} MKR`}
+                disabled
+                style={{ backgroundColor: '#F6F8F9' }}
+              />
+              <Input mx={'m'} placeholder={'I am..'} />
+            </Grid>
+          </CardBody>
+        </Card>
+        <LoadingToggle
+          completeText={'MKR unlocked'}
+          loadingText={'Unlocking MKR'}
+          defaultText={'Unlock MKR to continue'}
+          tokenDisplayName={'MKR'}
+          isLoading={mkrApprovePending}
+          isComplete={proxyDetails.hasMkrAllowance}
+          onToggle={giveProxyMkrAllowance}
+          disabled={
+            // proxyDetails.hasMkrAllowance || !proxyDetails.address
+            false
+          }
+          data-testid="allowance-toggle"
+        />
+        <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
         <Flex flexDirection="row" justifyContent="center" m={'m'}>
           <Button
             variant="secondary-outline"
@@ -148,7 +250,7 @@ export default () => {
   // const step3
 
   const ModalContent = ({ onClose }) => {
-    const [step, setStep] = useState(0);
+    const [step, setStep] = useState(2);
     const renderStep = step => {
       switch (step) {
         case 0:
@@ -176,7 +278,7 @@ export default () => {
     ariaLabel: 'Modal to confirm burning your MKR for an emergency shutdown',
     ModalTrigger
   };
-  const [mkrStaked, setMkrStaked] = useState('0.00');
+  const [mkrStaked, setMkrStaked] = useState(0);
   return (
     <Grid gridRowGap="m" my={'s'}>
       <Text.h4 textAlign="left" fontWeight="700">
@@ -187,7 +289,7 @@ export default () => {
           <Flex flexDirection="row" m={'s'}>
             {/* Load Number */}
             <Text.h3>
-              {`${mkrStaked} MKR `}
+              {`${mkrStaked.toFixed(0)} MKR `}
               {` `}
             </Text.h3>
             <Text.p color="#708390" ml="xs" fontWeight="400">
@@ -209,15 +311,13 @@ export default () => {
         <CardBody>
           <Flex flexDirection="row" justifyContent="space-between" m={'m'}>
             <ModalPortal {...modalProps}>
-              {onClose => (
-                <Fragment>
-                  <ModalContent onClose={onClose} />
-                </Fragment>
-              )}
+              {onClose => <ModalContent onClose={onClose} />}
             </ModalPortal>
-            <Text.p color="#9FAFB9" fontWeight="300" alignSelf="center">
-              You have no MKR in the ESM
-            </Text.p>
+            {mkrStaked === 0 ? (
+              <Text.p color="#9FAFB9" fontWeight="300" alignSelf="center">
+                You have no MKR in the ESM
+              </Text.p>
+            ) : null}
           </Flex>
         </CardBody>
       </Card>
