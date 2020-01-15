@@ -1,3 +1,4 @@
+
 import React, { Fragment, useState } from 'react';
 import styled from 'styled-components';
 import {
@@ -289,7 +290,9 @@ export default () => {
           <Flex flexDirection="row" m={'s'}>
             {/* Load Number */}
             <Text.h3>
+
               {`${mkrStaked.toFixed(0)} MKR `}
+
               {` `}
             </Text.h3>
             <Text.p color="#708390" ml="xs" fontWeight="400">
