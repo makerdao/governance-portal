@@ -109,7 +109,7 @@ const ModalContent = ({
 };
 
 export default class Modal extends Component {
-  state = { isOpen: false };
+  state = { isOpen: true };
   toggleScrollLock = () =>
     document.querySelector('html').classList.toggle('u-lock-scroll');
   onOpen = () => {

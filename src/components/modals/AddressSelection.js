@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
-import { Button, Grid } from '@makerdao/ui-components';
+import { Button, Grid } from '@makerdao/ui-components-core';
 import styled from 'styled-components';
 import { StyledTitle, StyledBlurb, StyledTop } from './shared/styles';
 import { modalClose } from '../../reducers/modal';
@@ -209,16 +209,13 @@ const mapStateToProps = state => ({
   network: state.metamask.network
 });
 
-export default connect(
-  mapStateToProps,
-  {
-    setActiveAccount,
-    addToastWithTimeout,
-    modalClose,
-    connectHardwareAccounts,
-    addHardwareAccount
-  }
-)(AddressSelection);
+export default connect(mapStateToProps, {
+  setActiveAccount,
+  addToastWithTimeout,
+  modalClose,
+  connectHardwareAccounts,
+  addHardwareAccount
+})(AddressSelection);
 
 const LedgerLoading = () => (
   <ListContainer>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid } from '@makerdao/ui-components';
+import { Box, Grid } from '@makerdao/ui-components-core';
 import { oneOf } from 'prop-types';
 
 const containerWidth = '930px';

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import mixpanel from 'mixpanel-browser';
-import { Footer } from '@makerdao/ui-components';
+import Footer from '@makerdao/ui-components-footer';
 import { colors, fonts } from '../theme';
 import { onboardingOpen, OnboardingStates } from '../reducers/onboarding';
 import { modalOpen } from '../reducers/modal';
@@ -248,8 +248,5 @@ const reduxProps = (
 });
 
 export default withRouter(
-  connect(
-    reduxProps,
-    { onboardingOpen, modalOpen }
-  )(BaseLayout)
+  connect(reduxProps, { onboardingOpen, modalOpen })(BaseLayout)
 );

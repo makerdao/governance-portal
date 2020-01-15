@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, Button, Flex } from '@makerdao/ui-components';
+import { Grid, Button, Flex } from '@makerdao/ui-components-core';
 
 import { getAccount } from '../../reducers/accounts';
 import OnboardingHeader from './shared/OnboardingHeader';

@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
 import mixpanel from 'mixpanel-browser';
-import { Button } from '@makerdao/ui-components';
+import { Button } from '@makerdao/ui-components-core';
 
 import Card from '../components/Card';
 import Timer from '../components/Timer';
@@ -334,7 +334,4 @@ const reduxProps = ({ accounts, polling, approvals, proposals }) => {
   };
 };
 
-export default connect(
-  reduxProps,
-  { modalOpen }
-)(PollingList);
+export default connect(reduxProps, { modalOpen })(PollingList);

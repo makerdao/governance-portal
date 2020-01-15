@@ -1,4 +1,4 @@
-import { injectGlobal } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 import { fonts, colors } from './theme';
 
 const globalStyles = `
@@ -273,4 +273,4 @@ const globalStyles = `
   }
   `;
 
-injectGlobal`${globalStyles}`;
+export default createGlobalStyle`${globalStyles}`;
