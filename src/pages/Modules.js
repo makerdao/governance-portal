@@ -17,7 +17,7 @@ const ESM = ({ activeAccount = {}, esm = {} } = {}) => {
         <Text.p textAlign="justify">
           The ESM allows MKR holders to shutdown the system without a central
           authority. Once 50,000 MKR are entered into the ESM, emergency
-          shutdown can be executed.
+          shutdown can be executed.{` `}
           <Link
             target="_blank"
             rel="noopener noreferrer"
