@@ -1,28 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Grid, Text, Table, Link } from '@makerdao/ui-components-core';
 import { MKR } from '../../chain/maker';
 import { cutMiddle, formatDate, formatRound } from '../../utils/misc';
 import { netIdToName, ethScanLink } from '../../utils/ethereum';
 
 export default () => {
-  const mockSDKStakeHistory = [
-    {
-      senderAddress: '0x14341f81df14ca86e1420ec9e6abd343fb1c5bfc',
-      transactionHash:
-        '0x6cead96909408284c77dca7a96c18df75c3f0c0eb6e972c2c0fb84f569648bfe',
-      amount: MKR(0.01),
-      time: new Date('2020-01-10T00:16:16+00:00')
-    },
-    {
-      senderAddress: '0x16fb96a5fa0427af0c8f7cf1eb4870231c8154b6',
-      transactionHash:
-        '0x992dc7815d91eedb691ff4a7192bafc79f624534655ee0663c555252f9e48e22',
-      amount: MKR(49000),
-      time: new Date('2019-11-13T15:03:28+00:00')
-    }
-  ];
-  const rows = mockSDKStakeHistory;
-  const isLoading = false;
+  const [isLoading, setIsLoading] = useState(true);
+  const [rows, setRows] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      setRows(await window.maker.service('esm').getStakingHistory());
+      setIsLoading(false);
+    })();
+  }, []);
+
   return (
     <Grid gridRowGap="m" my={'s'}>
       <Text.h4 textAlign="left" fontWeight="700">
