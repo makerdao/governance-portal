@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import Loader from '../Loader';
 import {
   Box,
   Button,
@@ -9,8 +10,7 @@ import {
   Text
 } from '@makerdao/ui-components-core';
 
-export default () => {
-  const [mkrStaked, setMkrStaked] = useState('0.00');
+export default ({ mkrInEsm }) => {
   return (
     <Grid gridRowGap="m" my={'s'}>
       <Text.h4 textAlign="left" fontWeight="700">
@@ -19,10 +19,14 @@ export default () => {
       <Card>
         <CardBody p={'s'} pb={'m'}>
           <Flex flexDirection="row" m={'s'}>
-            {/* Load Number */}
             <Text.h3>
-              {`${mkrStaked} MKR `}
-              {` `}
+              {mkrInEsm ? (
+                mkrInEsm.toString()
+              ) : (
+                <Box pl="14px" pr="14px">
+                  <Loader size={20} color="header" background="white" />
+                </Box>
+              )}
             </Text.h3>
             <Text.p color="#708390" ml="xs" fontWeight="400">
               {' '}

@@ -9,11 +9,14 @@ import {
   Text,
   Link
 } from '@makerdao/ui-components-core';
+import { connect } from 'react-redux';
+import { getActiveAccount } from '../reducers/accounts';
+import { MKR } from '../chain/maker';
 
 import MKRBurn from '../components/Modules/MKRBurn';
 import ESMHistory from '../components/Modules/ESMHistory';
 
-export default class ESM extends React.Component {
+class ESM extends React.Component {
   state = {
     esmCliDocContent: null
   };
@@ -25,7 +28,9 @@ export default class ESM extends React.Component {
   }
 
   render() {
+    const { mkrInEsm } = this.props.activeAccount;
     const { esmCliDocContent } = this.state;
+
     return (
       <Flex flexDirection="column" minHeight="100vh">
         <Grid gridRowGap="m" mx={'2xl'} my={'2xl'} px={'2xl'}>
@@ -43,10 +48,18 @@ export default class ESM extends React.Component {
               Read the documentation here.
             </Link>
           </Text.p>
-          <MKRBurn />
+          <MKRBurn mkrInEsm={mkrInEsm} />
           <ESMHistory />
         </Grid>
       </Flex>
     );
   }
 }
+
+const reduxProps = ({ accounts }) => {
+  return {
+    activeAccount: getActiveAccount({ accounts }) || {}
+  };
+};
+
+export default connect(reduxProps)(ESM);

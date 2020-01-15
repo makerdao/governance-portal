@@ -8,7 +8,7 @@
     "@craco/craco": "^3.5.0",
     "@makerdao/dai": "^0.16.1",
     "@makerdao/dai-plugin-config": "^0.2.7-rc.3",
-    "@makerdao/dai-plugin-governance": "0.7.4-rc.2",
+    "@makerdao/dai-plugin-governance": "^0.9.0",
     "@makerdao/dai-plugin-ledger-web": "^0.9.7",
     "@makerdao/dai-plugin-trezor-web": "^0.9.6",
     "@makerdao/ui-components": "1.0.0-alpha.29",
