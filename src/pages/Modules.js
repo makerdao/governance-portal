@@ -6,8 +6,9 @@ import { getActiveAccount } from '../reducers/accounts';
 import MKRBurn from '../components/Modules/MKRBurn';
 import ESMHistory from '../components/Modules/ESMHistory';
 
-const ESM = ({ activeAccount = {} } = {}) => {
-  const { mkrInEsm } = activeAccount;
+const ESM = ({ activeAccount = {}, esm = {} } = {}) => {
+  const { totalStaked } = esm;
+  console.log(esm, 'esm');
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -17,7 +18,6 @@ const ESM = ({ activeAccount = {} } = {}) => {
           The ESM allows MKR holders to shutdown the system without a central
           authority. Once 50,000 MKR are entered into the ESM, emergency
           shutdown can be executed.
-          {` `}
           <Link
             target="_blank"
             rel="noopener noreferrer"
@@ -26,16 +26,21 @@ const ESM = ({ activeAccount = {} } = {}) => {
             Read the documentation here.
           </Link>
         </Text.p>
-        <MKRBurn mkrInEsm={mkrInEsm} />
+        <MKRBurn
+          esmThresholdAmount={esm.thresholdAmount}
+          accountMkrInEsm={activeAccount.mkrInEsm}
+          totalMkrInEsm={totalStaked}
+        />
         <ESMHistory />
       </Grid>
     </Flex>
   );
 };
 
-const reduxProps = ({ accounts }) => {
+const reduxProps = ({ accounts, esm }) => {
   return {
-    activeAccount: getActiveAccount({ accounts })
+    activeAccount: getActiveAccount({ accounts }),
+    esm
   };
 };
 
