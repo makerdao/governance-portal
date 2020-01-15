@@ -1,6 +1,5 @@
-
 import React, { Fragment, useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import {
   Box,
   Button,
@@ -15,7 +14,10 @@ import {
 } from '@makerdao/ui-components-core';
 import ModalPortal from '../ModalPortal';
 import LoadingToggle from '../LoadingToggle';
+import LoadingBar from '../LoadingBar';
 import warning from '../../imgs/warning.svg';
+import arrowTopRight from '../../imgs/arrowTopRight.svg';
+import { etherscanLink } from '../../utils/ui';
 
 const WarningIcon = styled.p`
   width: 63px;
@@ -24,18 +26,20 @@ const WarningIcon = styled.p`
   mask: url(${warning}) center no-repeat;
 `;
 
-const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
+const TOSCheck = props => {
+  const { hasReadTOS, setHasReadTOS } = props;
   return (
-    <Grid alignItems="center" gridTemplateColumns="auto 1fr">
+    <Grid alignItems="center" gridTemplateColumns="auto 1fr" {...props}>
       <Checkbox
-        mr="s"
+        ml="s"
         fontSize="l"
         checked={hasReadTOS}
         onChange={() => setHasReadTOS(!hasReadTOS)}
         data-testid={'tosCheck'}
       />
       <Text
-        ml="m"
+        ml="s"
+        pl="xs"
         t="caption"
         color="steel"
         onClick={() => setHasReadTOS(!hasReadTOS)}
@@ -52,7 +56,7 @@ const TOSCheck = ({ hasReadTOS, setHasReadTOS }) => {
 
 export default () => {
   const ModalTrigger = ({ text, onOpen, buttonRef }) => (
-    <Button variant="danger-outline" onClick={onOpen} innerRef={buttonRef}>
+    <Button variant="danger-outline" onClick={onOpen} ref={buttonRef}>
       {text}
     </Button>
   );
@@ -149,7 +153,7 @@ export default () => {
       </Grid>
     );
   };
-  const Step2 = ({ onClose, onContinue }) => {
+  const Step2 = ({ onContinue }) => {
     const [burnAmount, setBurnAmount] = useState(0);
     const [esmTotal, setEsmTotal] = useState(0);
     const [hasReadTOS, setHasReadTOS] = useState(false);
@@ -175,7 +179,7 @@ export default () => {
     };
 
     return (
-      <Grid gridRowGap="m" justifyContent="center" width={'200%'}>
+      <Grid gridRowGap="m" justifyContent="center">
         <Text.h2 mt="m" textAlign="center">
           Burn your MKR in the ESM
         </Text.h2>
@@ -215,21 +219,20 @@ export default () => {
             </Grid>
           </CardBody>
         </Card>
-        <LoadingToggle
-          completeText={'MKR unlocked'}
-          loadingText={'Unlocking MKR'}
-          defaultText={'Unlock MKR to continue'}
-          tokenDisplayName={'MKR'}
-          isLoading={mkrApprovePending}
-          isComplete={proxyDetails.hasMkrAllowance}
-          onToggle={giveProxyMkrAllowance}
-          disabled={
-            // proxyDetails.hasMkrAllowance || !proxyDetails.address
-            false
-          }
-          data-testid="allowance-toggle"
-        />
-        <TOSCheck {...{ hasReadTOS, setHasReadTOS }} />
+        <Box pl="l">
+          <LoadingToggle
+            completeText={'MKR unlocked'}
+            loadingText={'Unlocking MKR'}
+            defaultText={'Unlock MKR to continue'}
+            tokenDisplayName={'MKR'}
+            isLoading={mkrApprovePending}
+            isComplete={proxyDetails.hasMkrAllowance}
+            onToggle={giveProxyMkrAllowance}
+            disabled={proxyDetails.hasMkrAllowance || !proxyDetails.address}
+            data-testid="allowance-toggle"
+          />
+          <TOSCheck mt={'m'} {...{ hasReadTOS, setHasReadTOS }} />
+        </Box>
         <Flex flexDirection="row" justifyContent="center" m={'m'}>
           <Button
             variant="secondary-outline"
@@ -241,17 +244,59 @@ export default () => {
           >
             Back
           </Button>
-          <Button variant="danger" onClick={() => onContinue(2)} ml="s">
+          <Button variant="danger" onClick={() => onContinue(3)} ml="s">
             Burn MKR
           </Button>
         </Flex>
       </Grid>
     );
   };
-  // const step3
+
+  const Step3 = ({ onClose, migrationTxHash, network }) => {
+    return (
+      <Fragment>
+        <Text.h2 mt="m" textAlign="center">
+          Your MKR is being burned
+        </Text.h2>
+        <Text
+          style={{ fontSize: 17, color: '#48495F' }}
+          mt="m"
+          textAlign="center"
+        >
+          The estimated time is 8 minutes. You can close this modal
+        </Text>
+        <Link
+          justifySelf="center"
+          target="_blank"
+          mt="m"
+          // href={etherscanLink(migrationTxHash, network)}
+        >
+          <Button
+            justifySelf="center"
+            fontSize="s"
+            py="xs"
+            px="s"
+            variant="secondary"
+          >
+            View transaction details <img src={arrowTopRight} />
+          </Button>
+        </Link>
+        <LoadingBar />
+        <Button
+          variant="secondary-outline"
+          color="black"
+          onClick={onClose}
+          width={'10em'}
+          mt={'xl'}
+        >
+          Back
+        </Button>
+      </Fragment>
+    );
+  };
 
   const ModalContent = ({ onClose }) => {
-    const [step, setStep] = useState(2);
+    const [step, setStep] = useState(0);
     const renderStep = step => {
       switch (step) {
         case 0:
@@ -260,8 +305,8 @@ export default () => {
           return <Step1 onClose={onClose} onContinue={setStep} />;
         case 2:
           return <Step2 onContinue={setStep} />;
-        // case 3:
-        //   return <Step3 />
+        case 3:
+          return <Step3 onClose={onClose} />;
         default:
           return <Step0 onClose={onClose} onContinue={setStep} />;
       }
@@ -290,7 +335,6 @@ export default () => {
           <Flex flexDirection="row" m={'s'}>
             {/* Load Number */}
             <Text.h3>
-
               {`${mkrStaked.toFixed(0)} MKR `}
 
               {` `}

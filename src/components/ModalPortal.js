@@ -90,11 +90,11 @@ const ModalContent = ({
       onKeyDown={onKeyDown}
       onClick={onClickAway}
     >
-      <ModalBox innerRef={modalRef}>
+      <ModalBox ref={modalRef}>
         <ModalClose
           onClick={onClose}
           aria-labelledby="close-modal"
-          innerRef={buttonRef}
+          ref={buttonRef}
         >
           <ScreenReaderText id="close-modal">Close</ScreenReaderText>
           <ModalCloseIcon viewBox="0 0 40 40">
@@ -109,7 +109,7 @@ const ModalContent = ({
 };
 
 export default class Modal extends Component {
-  state = { isOpen: true };
+  state = { isOpen: false };
   toggleScrollLock = () =>
     document.querySelector('html').classList.toggle('u-lock-scroll');
   onOpen = () => {
