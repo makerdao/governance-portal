@@ -116,12 +116,12 @@ export const addAccounts = accounts => async dispatch => {
         .then(addresses =>
           (addresses || []).map(address => address.toLowerCase())
         );
-      mkrLockedChiefHot = (await chiefService.getNumDeposits(
-        voteProxy.getHotAddress()
-      )).toNumber();
-      mkrLockedChiefCold = (await chiefService.getNumDeposits(
-        voteProxy.getColdAddress()
-      )).toNumber();
+      mkrLockedChiefHot = (
+        await chiefService.getNumDeposits(voteProxy.getHotAddress())
+      ).toNumber();
+      mkrLockedChiefCold = (
+        await chiefService.getNumDeposits(voteProxy.getColdAddress())
+      ).toNumber();
     }
 
     const chiefAddress = window.maker
@@ -144,6 +144,9 @@ export const addAccounts = accounts => async dispatch => {
     const _payload = {
       ...account,
       address: account.address,
+      mkrInEsm: window.maker
+        .service('esm')
+        .getTotalStakedByAddress(account.address),
       mkrBalance: toNum(
         promiseRetry({ fn: () => mkrToken.balanceOf(account.address) })
       ),
@@ -205,19 +208,17 @@ export const addSingleWalletAccount = account => async dispatch => {
     return (slateAddresses || []).map(address => address.toLowerCase());
   })();
 
-  const votingPower = (await chiefService.getNumDeposits(
-    account.address
-  )).toNumber();
+  const votingPower = (
+    await chiefService.getNumDeposits(account.address)
+  ).toNumber();
 
-  const hasInfMkrApproval = (await mkrToken.allowance(
-    account.address,
-    chiefAddress
-  )).eq(MAX_UINT_ETH_BN);
+  const hasInfMkrApproval = (
+    await mkrToken.allowance(account.address, chiefAddress)
+  ).eq(MAX_UINT_ETH_BN);
 
-  const hasInfIouApproval = (await iouToken.allowance(
-    account.address,
-    chiefAddress
-  )).eq(MAX_UINT_ETH_BN);
+  const hasInfIouApproval = (
+    await iouToken.allowance(account.address, chiefAddress)
+  ).eq(MAX_UINT_ETH_BN);
 
   const _payload = {
     ...account,
@@ -400,10 +401,7 @@ export const addHardwareAccount = (address, accountType) => async (
 
 // Reducer helpers
 const uniqByAddress = uniqWith((a, b) => a.address === b.address);
-const uniqConcat = pipe(
-  concat,
-  uniqByAddress
-);
+const uniqConcat = pipe(concat, uniqByAddress);
 const addressCmp = (x, y) => x.address === y.address;
 const withUpdatedAccount = (accounts, updatedAccount) => {
   return accounts.map(account =>
