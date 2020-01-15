@@ -12,6 +12,7 @@ import { voteTallyInit } from './tally';
 import { proposalsInit } from './proposals';
 import { pollsInit } from './polling';
 import { hatInit } from './hat';
+import { esmInit } from './esm';
 
 // Constants ----------------------------------------------
 
@@ -136,6 +137,7 @@ export const init = (network = 'mainnet') => async dispatch => {
   dispatch(hatInit());
   dispatch(ethInit());
   dispatch(pollsInit());
+  dispatch(esmInit());
   await dispatch(initWeb3Accounts());
   dispatch(pollForMetamaskChanges());
 };
