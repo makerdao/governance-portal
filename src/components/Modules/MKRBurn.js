@@ -25,6 +25,7 @@ const Filler = styled.div`
 const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
   const accountMkrInEsm = account.mkrInEsm;
   const [burnAmount, setBurnAmount] = useState('');
+  const [txHash, setTxHash] = useState('');
   const [step, setStep] = useState(0);
   const [depositsInChief, setDepositsInChief] = useState(0);
   const chief = window.maker.service('chief');
@@ -45,7 +46,8 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
   );
 
   const modalProps =
-    totalMkrInEsm && totalMkrInEsm.lt(esmThresholdAmount)
+    // totalMkrInEsm && totalMkrInEsm.lt(esmThresholdAmount)
+    false
       ? {
           triggerText: 'Burn your MKR',
           ariaLabel:
@@ -65,14 +67,16 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
     step,
     setStep,
     depositsInChief,
-    totalMkrInEsm
+    totalMkrInEsm,
+    esmThresholdAmount,
+    txHash,
+    setTxHash
   };
   const burnModal = props => <BurnMkrModal {...props} />;
   const initiateModal = props => <InitiateShutdownModal {...props} />;
   const modal =
-    totalMkrInEsm && totalMkrInEsm.lt(esmThresholdAmount)
-      ? burnModal
-      : initiateModal;
+    // totalMkrInEsm && totalMkrInEsm.lt(esmThresholdAmount)
+    false ? burnModal : initiateModal;
 
   return (
     <Grid gridRowGap="m" my={'s'}>

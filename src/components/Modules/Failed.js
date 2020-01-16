@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Grid, Text, Button, Link } from '@makerdao/ui-components-core';
-import arrowTopRight from '../../../imgs/arrowTopRight.svg';
-import { etherscanLink } from '../../../utils/ui';
+import arrowTopRight from '../../imgs/arrowTopRight.svg';
+import { etherscanLink } from '../../utils/ui';
 
 function Failed(props) {
-  const { onClose, burnTxHash, network } = props;
+  const { onClose, txHash, network } = props;
 
   return (
     <Grid gridRowGap="m" mx={'s'}>
@@ -13,11 +13,11 @@ function Failed(props) {
       <Text.p fontSize="1.7rem" color="darkLavender" textAlign="center">
         {props.subtitle}
       </Text.p>
-      {burnTxHash ? (
+      {txHash ? (
         <Link
           justifySelf="center"
           target="_blank"
-          href={etherscanLink(burnTxHash, network)}
+          href={etherscanLink(txHash, network)}
         >
           <Button
             my="xs"

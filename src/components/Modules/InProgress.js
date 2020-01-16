@@ -1,11 +1,11 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Button, Text, Link } from '@makerdao/ui-components-core';
-import arrowTopRight from '../../../imgs/arrowTopRight.svg';
-import LoadingBar from '../../LoadingBar';
-import { etherscanLink } from '../../../utils/ui';
+import arrowTopRight from '../../imgs/arrowTopRight.svg';
+import LoadingBar from '../LoadingBar';
+import { etherscanLink } from '../../utils/ui';
 
-const Step3 = ({ onClose, burnTxHash, network }) => {
+const Step1 = ({ onClose, txHash, network, title }) => {
   const [waitTime, setWaitTime] = useState();
   const maker = window.maker;
   useEffect(() => {
@@ -27,7 +27,7 @@ const Step3 = ({ onClose, burnTxHash, network }) => {
   return (
     <Fragment>
       <Text.h2 mt="m" textAlign="center">
-        Your MKR is being burned
+        {title}
       </Text.h2>
       <Text
         style={{ fontSize: 17, color: '#48495F' }}
@@ -37,12 +37,12 @@ const Step3 = ({ onClose, burnTxHash, network }) => {
         The estimated time is {waitTime || 'being calculated'}. You can close
         this modal
       </Text>
-      {burnTxHash && (
+      {txHash && (
         <Link
           justifySelf="center"
           target="_blank"
           mt="m"
-          href={etherscanLink(burnTxHash, network)}
+          href={etherscanLink(txHash, network)}
         >
           <Button
             justifySelf="center"
@@ -64,7 +64,7 @@ const Step3 = ({ onClose, burnTxHash, network }) => {
         width={'10em'}
         mt={'xl'}
       >
-        Back
+        Exit
       </Button>
     </Fragment>
   );
@@ -72,4 +72,4 @@ const Step3 = ({ onClose, burnTxHash, network }) => {
 
 export default connect(state => ({
   network: state.metamask.network
-}))(Step3);
+}))(Step1);

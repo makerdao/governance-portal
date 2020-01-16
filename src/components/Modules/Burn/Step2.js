@@ -42,13 +42,7 @@ const TOSCheck = props => {
   );
 };
 
-export default ({
-  setStep,
-  burnAmount,
-  totalMkrInEsm,
-  address,
-  setBurnTxHash
-}) => {
+export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
   const [localValue, setLocalValue] = useState('');
   const [error, setError] = useState('');
   const [hasReadTOS, setHasReadTOS] = useState(false);
@@ -59,7 +53,7 @@ export default ({
   const giveProxyMkrAllowance = async () => {
     setMkrApprovePending(true);
     try {
-      await window.maker.getToken(MKR).approve(address, MKR(burnAmount));
+      await maker.getToken(MKR).approve(address, MKR(burnAmount));
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
         hasMkrAllowance: true
@@ -90,7 +84,7 @@ export default ({
       const burnTxObject = esm.stake(burnAmount);
       maker.service('transactionManager').listen(burnTxObject, {
         pending: tx => {
-          setBurnTxHash(tx.hash);
+          setTxHash(tx.hash);
           setStep(3);
         },
         error: () => setStep(4)

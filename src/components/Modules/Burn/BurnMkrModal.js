@@ -3,8 +3,8 @@ import { Flex } from '@makerdao/ui-components-core';
 import Step0 from './Step0';
 import Step1 from './Step1';
 import Step2 from './Step2';
-import Step3 from './Step3';
-import Step4 from './Step4';
+import Step3 from '../InProgress';
+import Step4 from '../Failed';
 
 export default props => {
   const {
@@ -16,8 +16,8 @@ export default props => {
     step,
     setStep,
     totalMkrInEsm,
-    burnTxHash,
-    setBurnTxHash
+    txHash,
+    setTxHash
   } = props;
   const renderStep = step => {
     switch (step) {
@@ -41,16 +41,22 @@ export default props => {
             burnAmount={burnAmount}
             totalMkrInEsm={totalMkrInEsm}
             address={account.address}
-            setBurnTxHash={setBurnTxHash}
+            setTxHash={setTxHash}
           />
         );
       case 3:
-        return <Step3 burnTxHash={burnTxHash} onClose={onClose} />;
+        return (
+          <Step3
+            txHash={txHash}
+            onClose={onClose}
+            title={'Your MKR is being burned'}
+          />
+        );
       case 4:
         return (
           <Step4
-            title={'Burn Tx Failed'}
-            burnTxHash={burnTxHash}
+            title={'Burn MKR Tx Failed'}
+            txHash={txHash}
             onClose={onClose}
           />
         );
