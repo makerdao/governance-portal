@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Loader from '../Loader';
 import styled from 'styled-components';
 import {
@@ -10,13 +10,6 @@ import {
   Grid,
   Text
 } from '@makerdao/ui-components-core';
-import ModalPortal from '../ModalPortal';
-import Step0 from './BurnModal/Step0';
-import Step1 from './BurnModal/Step1';
-import Step2 from './BurnModal/Step2';
-import Step3 from './BurnModal/Step3';
-
-// import { etherscanLink } from '../../utils/ui';
 
 const Filler = styled.div`
   border-radius: inherit;
@@ -31,6 +24,7 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
   const [burnAmount, setBurnAmount] = useState('');
   const [step, setStep] = useState(0);
   const [depositsInChief, setDepositsInChief] = useState(0);
+  const [burnTxHash, setBurnTxHash] = useState('');
   const chief = window.maker.service('chief');
 
   useEffect(() => {
@@ -48,11 +42,20 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
     </Button>
   );
 
-  const modalProps = {
-    triggerText: 'Burn your MKR',
-    ariaLabel: 'Modal to confirm burning your MKR for an emergency shutdown',
-    ModalTrigger
-  };
+  const modalProps =
+    totalMkrInEsm && totalMkrInEsm.lt(esmThresholdAmount)
+      ? {
+          triggerText: 'Burn your MKR',
+          ariaLabel:
+            'Modal to confirm burning your MKR for an emergency shutdown',
+          ModalTrigger
+        }
+      : {
+          triggerText: 'Initiate Emergency Shutdown',
+          ariaLabel: 'Modal to confirm initiation of emergency shutdown',
+          ModalTrigger
+        };
+
   const contentProps = {
     account,
     burnAmount,
@@ -60,54 +63,17 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
     step,
     setStep,
     depositsInChief,
-    totalMkrInEsm
+    totalMkrInEsm,
+    setBurnTxHash,
+    burnTxHash
   };
 
-  const ModalContent = props => {
-    const {
-      onClose,
-      account,
-      burnAmount,
-      setBurnAmount,
-      depositsInChief
-    } = props;
-    const renderStep = step => {
-      switch (step) {
-        case 0:
-          return <Step0 onClose={onClose} onContinue={setStep} />;
-        case 1:
-          return (
-            <Step1
-              onClose={onClose}
-              onContinue={setStep}
-              mkrBalance={account.mkrBalance}
-              update={setBurnAmount}
-              value={burnAmount}
-              deposits={depositsInChief}
-            />
-          );
-        case 2:
-          return (
-            <Step2
-              setStep={setStep}
-              burnAmount={burnAmount}
-              totalMkrInEsm={totalMkrInEsm}
-              address={account.address}
-            />
-          );
-        case 3:
-          return <Step3 onClose={onClose} />;
-        default:
-          return <Step0 onClose={onClose} onContinue={setStep} />;
-      }
-    };
-    const renderedStep = renderStep(step);
-    return (
-      <Flex flexDirection="column" alignItems="center">
-        {renderedStep}
-      </Flex>
-    );
-  };
+  const burnModal = props => <BurnMkrModal {...props} />;
+  const initiateModal = props => <InitiateShutdownModal {...props} />;
+  const modal =
+    totalMkrInEsm && totalMkrInEsm.lt(esmThresholdAmount)
+      ? burnModal
+      : initiateModal;
 
   return (
     <Grid gridRowGap="m" my={'s'}>
@@ -159,11 +125,15 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
         </CardBody>
         <CardBody>
           <Flex flexDirection="row" justifyContent="space-between" m={'m'}>
-            <ModalPortal {...modalProps} {...contentProps}>
-              {props => {
-                return <ModalContent {...props} />;
-              }}
-            </ModalPortal>
+            {totalMkrInEsm ? (
+              <ModalPortal {...modalProps} {...contentProps}>
+                {modal}
+              </ModalPortal>
+            ) : (
+              <Box pl="14px" pr="14px">
+                <Loader size={20} color="header" background="white" />
+              </Box>
+            )}
             <Text.p color="#9FAFB9" fontWeight="300" alignSelf="center">
               {accountMkrInEsm && accountMkrInEsm.gt(0) ? (
                 <Box>
@@ -183,5 +153,3 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
     </Grid>
   );
 };
-
-export default MKRBurn;
