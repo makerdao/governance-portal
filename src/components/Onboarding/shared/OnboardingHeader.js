@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Text } from '@makerdao/ui-components';
+import { Box, Text } from '@makerdao/ui-components-core';
 import { H2 } from '../../../utils/typography';
 
 const OnboardingHeader = ({ title, subtitle, ...props }) => {

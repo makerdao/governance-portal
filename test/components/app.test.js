@@ -9,7 +9,7 @@ import Routes from '../../src/Routes';
 import rootReducer from '../../src/reducers';
 import theme from '../../src/theme';
 
-import { themeDark, themeLight } from '@makerdao/ui-components';
+import { themeDark, themeLight } from '@makerdao/ui-components-core';
 
 const currTheme = {
   ...theme,

@@ -8,7 +8,7 @@ import ESMHistory from '../components/Modules/ESMHistory';
 
 const ESM = ({ activeAccount = {}, esm = {} } = {}) => {
   const { totalStaked } = esm;
-  console.log(esm, 'esm');
+  // console.log(esm, 'esm');
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -17,8 +17,9 @@ const ESM = ({ activeAccount = {}, esm = {} } = {}) => {
         <Text.p textAlign="justify">
           The ESM allows MKR holders to shutdown the system without a central
           authority. Once 50,000 MKR are entered into the ESM, emergency
-          shutdown can be executed.
+          shutdown can be executed.{` `}
           <Link
+            href="https://docs.makerdao.com/smart-contract-modules/emergency-shutdown-module"
             target="_blank"
             rel="noopener noreferrer"
             css="text-decoration: none"
@@ -28,7 +29,7 @@ const ESM = ({ activeAccount = {}, esm = {} } = {}) => {
         </Text.p>
         <MKRBurn
           esmThresholdAmount={esm.thresholdAmount}
-          accountMkrInEsm={activeAccount.mkrInEsm}
+          account={activeAccount}
           totalMkrInEsm={totalStaked}
         />
         <ESMHistory />

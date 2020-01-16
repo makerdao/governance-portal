@@ -31,10 +31,7 @@ const fallDownOut = keyframes`
 `;
 
 const Column = styled.div`
-  ${({ modal }) =>
-    modal
-      ? `animation: ${fallDownIn} 0.4s forwards;`
-      : `animation: ${fallDownOut} 0.4s forwards;`};
+  animation: ${({ modal }) => (modal ? fallDownIn : fallDownOut)} 0.4s forwards;
   position: relative;
   width: 100%;
   height: ${({ spanHeight }) => (spanHeight ? '100%' : 'auto')};
@@ -147,7 +144,6 @@ const Modals = ({ stack, modalClose }) => {
   ));
 };
 
-export default connect(
-  state => ({ stack: state.modal.stack }),
-  { modalClose }
-)(Modals);
+export default connect(state => ({ stack: state.modal.stack }), { modalClose })(
+  Modals
+);

@@ -12,8 +12,8 @@ import {
   Link
 } from '@makerdao/ui-components-core';
 
-const containerWidth = '54.8rem';
-const termsMaxHeight = '30rem';
+const containerWidth = '75.8rem';
+const termsMaxHeight = '60rem';
 
 const terms = `
 #### 1. Acceptance of Terms
@@ -122,7 +122,7 @@ const TermsWrapper = styled.div`
 
 const Terms = ({ onCancel, onComplete }) => {
   return (
-    <Box maxWidth={`${containerWidth}`} m="0 auto">
+    <Box mt="l" maxWidth={`${containerWidth}`} m="0 auto">
       <Grid gridRowGap="m">
         <Box mb="s" textAlign="center">
           <h2>Terms of Use</h2>
@@ -136,25 +136,6 @@ const Terms = ({ onCancel, onComplete }) => {
             </TermsWrapper>
           </Overflow>
         </Card>
-        <Text textAlign="center">
-          <p>
-            By clicking 'I agree' you confirm you have read and agree to the
-            terms of service and agree to our{' '}
-            <Link
-              href="https://makerdao.com/privacy/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              privacy policy
-            </Link>
-          </p>
-        </Text>
-        <Flex justifyContent="center">
-          <Button variant="secondary-outline" onClick={onCancel} mr="s">
-            Cancel
-          </Button>
-          <Button onClick={onComplete}>I agree</Button>
-        </Flex>
       </Grid>
     </Box>
   );

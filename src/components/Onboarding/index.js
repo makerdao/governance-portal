@@ -19,7 +19,7 @@ import InitiateLink from './InitiateLink';
 import LockMKR from './LockMKR';
 import StartVoting from './StartVoting';
 
-import { Box } from '@makerdao/ui-components';
+import { Box } from '@makerdao/ui-components-core';
 import OnboardingFullScreen from '@makerdao/ui-components-onboarding';
 import SingleWallet from './SingleWallet';
 

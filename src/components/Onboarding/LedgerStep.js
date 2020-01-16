@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Box, Button } from '@makerdao/ui-components';
+import { Grid, Box, Button } from '@makerdao/ui-components-core';
 
 import ButtonCard from './shared/ButtonCard';
 import WalletIcon from './shared/WalletIcon';

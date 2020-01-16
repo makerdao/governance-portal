@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
-import { Box } from '@makerdao/ui-components-core';
-import { Button, Checkbox } from '@makerdao/ui-components';
+import { Box, Button, Checkbox } from '@makerdao/ui-components-core';
 import { copyToClipboard } from '../../utils/misc';
 import { URL_REGEX } from '../../utils/constants';
 import CreatePollInput from './CreatePollInput';

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Loader from '../Loader';
 import styled from 'styled-components';
 import {
@@ -10,6 +10,13 @@ import {
   Grid,
   Text
 } from '@makerdao/ui-components-core';
+import ModalPortal from '../ModalPortal';
+import Step0 from './BurnModal/Step0';
+import Step1 from './BurnModal/Step1';
+import Step2 from './BurnModal/Step2';
+import Step3 from './BurnModal/Step3';
+
+// import { etherscanLink } from '../../utils/ui';
 
 const Filler = styled.div`
   border-radius: inherit;
@@ -19,7 +26,89 @@ const Filler = styled.div`
   min-height: 20px;
 `;
 
-export default ({ totalMkrInEsm, accountMkrInEsm, esmThresholdAmount }) => {
+const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
+  const accountMkrInEsm = account.mkrInEsm;
+  const [burnAmount, setBurnAmount] = useState('');
+  const [step, setStep] = useState(0);
+  const [depositsInChief, setDepositsInChief] = useState(0);
+  const chief = window.maker.service('chief');
+
+  useEffect(() => {
+    (async () => {
+      if (typeof account.address !== 'undefined' && chief) {
+        const deposits = await chief.getNumDeposits(account.address);
+        setDepositsInChief(deposits.toNumber());
+      }
+    })();
+  }, [account, chief]);
+
+  const ModalTrigger = ({ text, onOpen, buttonRef }) => (
+    <Button variant="danger-outline" onClick={onOpen} ref={buttonRef}>
+      {text}
+    </Button>
+  );
+
+  const modalProps = {
+    triggerText: 'Burn your MKR',
+    ariaLabel: 'Modal to confirm burning your MKR for an emergency shutdown',
+    ModalTrigger
+  };
+  const contentProps = {
+    account,
+    burnAmount,
+    setBurnAmount,
+    step,
+    setStep,
+    depositsInChief,
+    totalMkrInEsm
+  };
+
+  const ModalContent = props => {
+    const {
+      onClose,
+      account,
+      burnAmount,
+      setBurnAmount,
+      depositsInChief
+    } = props;
+    const renderStep = step => {
+      switch (step) {
+        case 0:
+          return <Step0 onClose={onClose} onContinue={setStep} />;
+        case 1:
+          return (
+            <Step1
+              onClose={onClose}
+              onContinue={setStep}
+              mkrBalance={account.mkrBalance}
+              update={setBurnAmount}
+              value={burnAmount}
+              deposits={depositsInChief}
+            />
+          );
+        case 2:
+          return (
+            <Step2
+              setStep={setStep}
+              burnAmount={burnAmount}
+              totalMkrInEsm={totalMkrInEsm}
+              address={account.address}
+            />
+          );
+        case 3:
+          return <Step3 onClose={onClose} />;
+        default:
+          return <Step0 onClose={onClose} onContinue={setStep} />;
+      }
+    };
+    const renderedStep = renderStep(step);
+    return (
+      <Flex flexDirection="column" alignItems="center">
+        {renderedStep}
+      </Flex>
+    );
+  };
+
   return (
     <Grid gridRowGap="m" my={'s'}>
       <Text.h4 textAlign="left" fontWeight="700">
@@ -70,7 +159,11 @@ export default ({ totalMkrInEsm, accountMkrInEsm, esmThresholdAmount }) => {
         </CardBody>
         <CardBody>
           <Flex flexDirection="row" justifyContent="space-between" m={'m'}>
-            <Button variant="danger-outline">Burn your MKR</Button>
+            <ModalPortal {...modalProps} {...contentProps}>
+              {props => {
+                return <ModalContent {...props} />;
+              }}
+            </ModalPortal>
             <Text.p color="#9FAFB9" fontWeight="300" alignSelf="center">
               {accountMkrInEsm && accountMkrInEsm.gt(0) ? (
                 <Box>
@@ -90,3 +183,5 @@ export default ({ totalMkrInEsm, accountMkrInEsm, esmThresholdAmount }) => {
     </Grid>
   );
 };
+
+export default MKRBurn;

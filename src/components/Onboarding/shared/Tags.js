@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@makerdao/ui-components';
+import { Box } from '@makerdao/ui-components-core';
 
 export const HotWalletTag = props => (
   <Box
