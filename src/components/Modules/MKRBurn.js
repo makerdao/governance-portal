@@ -128,9 +128,15 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
         </CardBody>
         <CardBody>
           <Flex flexDirection="row" justifyContent="space-between" m={'m'}>
-            <ModalPortal {...modalProps} {...contentProps}>
-              {modal}
-            </ModalPortal>
+            {totalMkrInEsm ? (
+              <ModalPortal {...modalProps} {...contentProps}>
+                {modal}
+              </ModalPortal>
+            ) : (
+              <Box pl="14px" pr="14px">
+                <Loader size={20} color="header" background="white" />
+              </Box>
+            )}
             <Text.p color="#9FAFB9" fontWeight="300" alignSelf="center">
               {accountMkrInEsm && accountMkrInEsm.gt(0) ? (
                 <Box>
