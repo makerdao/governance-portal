@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Grid, Text, Table, Link } from '@makerdao/ui-components-core';
-import { MKR } from '../../chain/maker';
 import { cutMiddle, formatDate, formatRound } from '../../utils/misc';
 import { netIdToName, ethScanLink } from '../../utils/ethereum';
 
