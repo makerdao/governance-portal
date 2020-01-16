@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
-import { Button } from '@makerdao/ui-components';
-import { Box } from '@makerdao/ui-components-core';
+import { Button, Box } from '@makerdao/ui-components-core';
 import Card from '../Card';
 import closeImg from '../../imgs/close-inline.svg';
 import CreatePollInput from './CreatePollInput';

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Text } from '@makerdao/ui-components';
+import { Text } from '@makerdao/ui-components-core';
 
 // here only very temporarily as we standardize typography in the styleguide
 export const H1 = styled.h1`

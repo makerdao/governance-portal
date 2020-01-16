@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Box } from '@makerdao/ui-components';
+import { Box } from '@makerdao/ui-components-core';
 
 const Circle = styled.div`
   height: 10px;

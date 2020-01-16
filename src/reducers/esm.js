@@ -15,9 +15,14 @@ export const esmInit = () => async dispatch => {
     const totalStaked = await esmService.getTotalStaked();
     const canFire = await esmService.canFire();
     const thresholdAmount = await esmService.thresholdAmount();
+    const fired = await esmService.fired();
+    const cageTime = await maker
+      .service('smartContract')
+      .getContract('END')
+      .when();
     dispatch({
       type: ESM_STATE_SUCCESS,
-      payload: { totalStaked, canFire, thresholdAmount }
+      payload: { totalStaked, canFire, thresholdAmount, fired, cageTime }
     });
   } catch (err) {
     dispatch({ type: ESM_STATE_FAILURE });
@@ -30,7 +35,9 @@ const initialState = {
   fetching: true,
   canFire: false,
   thresholdAmount: 0,
-  totalStaked: 0
+  totalStaked: 0,
+  fired: false,
+  cageTime: 0
 };
 
 const esm = createReducer(initialState, {

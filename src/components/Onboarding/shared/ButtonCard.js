@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Grid, Box, Text, Button } from '@makerdao/ui-components';
+import { Card, Grid, Box, Text, Button } from '@makerdao/ui-components-core';
 
 const ButtonCard = ({
   icon,

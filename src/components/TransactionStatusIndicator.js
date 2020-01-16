@@ -1,6 +1,13 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Box, Flex, Grid, Text, Address, Link } from '@makerdao/ui-components';
+import {
+  Box,
+  Flex,
+  Grid,
+  Text,
+  Address,
+  Link
+} from '@makerdao/ui-components-core';
 
 import WalletIcon from './Onboarding/shared/WalletIcon';
 import { TransactionStatus } from '../utils/constants';

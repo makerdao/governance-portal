@@ -11,6 +11,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import Polling from './pages/Polling';
 import Executive from './pages/Executive';
 import Loader from './components/Loader';
+import Terms from './components/Terms';
 
 class DynamicImport extends Component {
   state = {
@@ -89,6 +90,10 @@ class App extends Component {
                 <Route
                   path="/modules"
                   render={routeProps => <Modules {...routeProps} />}
+                />
+                <Route
+                  path="/terms"
+                  render={routeProps => <Terms {...routeProps} />}
                 />
                 <Route path="/not-found" component={NotFound} />
                 <Route
