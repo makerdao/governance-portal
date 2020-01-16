@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -11,6 +11,7 @@ import {
   Input,
   Checkbox
 } from '@makerdao/ui-components-core';
+import { MKR } from '../../../chain/maker';
 import LoadingToggle from '../../LoadingToggle';
 
 const TOSCheck = props => {
@@ -41,30 +42,55 @@ const TOSCheck = props => {
   );
 };
 
-export default ({ onContinue, burnAmount, totalMkrInEsm }) => {
+export default ({ setStep, burnAmount, totalMkrInEsm, address }) => {
+  const [localValue, setLocalValue] = useState('');
+  const [error, setError] = useState('');
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [mkrApprovePending, setMkrApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
+  const maker = window.maker;
   const giveProxyMkrAllowance = async () => {
-    // setMkrApprovePending(true);
-    // try {
-    //   await maker
-    //     .getToken(MKR)
-    //     .approve(proxyDetails.address, govFeeMKRExact.times(APPROVAL_FUDGE));
-    //   setProxyDetails(proxyDetails => ({
-    //     ...proxyDetails,
-    //     hasMkrAllowance: true
-    //   }));
-    // } catch (err) {
-    //   const message = err.message ? err.message : err;
-    //   const errMsg = `unlock mkr tx failed ${message}`;
-    //   console.error(errMsg);
-    //   addToastWithTimeout(errMsg, dispatch);
-    // }
-    // setMkrApprovePending(false);
+    setMkrApprovePending(true);
+    try {
+      await window.maker.getToken(MKR).approve(address, MKR(burnAmount));
+      setProxyDetails(proxyDetails => ({
+        ...proxyDetails,
+        hasMkrAllowance: true
+      }));
+    } catch (err) {
+      const message = err.message ? err.message : err;
+      const errMsg = `unlock mkr tx failed ${message}`;
+      console.error(errMsg);
+      // addToastWithTimeout(errMsg, dispatch);
+    }
+    setMkrApprovePending(false);
   };
-  console.log(totalMkrInEsm.toNumber());
-  console.log(burnAmount);
+  const verifyText = `I am burning ${burnAmount} MKR`;
+  const onChange = event => {
+    const { value } = event.target;
+    setLocalValue(value);
+    if (value !== verifyText) {
+      setError('Please enter the exact phrase');
+    } else {
+      setError('');
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (maker && address) {
+        const proxyAddress = await maker.service('proxy').currentProxy();
+        if (proxyAddress) {
+          const connectedWalletAllowance = await maker
+            .getToken(MKR)
+            .allowance(address, proxyAddress);
+          const hasMkrAllowance = connectedWalletAllowance.gte(MKR(burnAmount));
+          setProxyDetails({ hasMkrAllowance, address: proxyAddress });
+        }
+      }
+    })();
+  }, [address, maker, burnAmount]);
+
   return (
     <Grid gridRowGap="m" justifyContent="center">
       <Text.h2 mt="m" textAlign="center">
@@ -103,7 +129,14 @@ export default ({ onContinue, burnAmount, totalMkrInEsm }) => {
               disabled
               style={{ backgroundColor: '#F6F8F9' }}
             />
-            <Input mx={'m'} placeholder={'I am..'} />
+            <Input
+              mx={'m'}
+              type="text"
+              value={localValue}
+              onChange={onChange}
+              failureMessage={error}
+              placeholder={'I am..'}
+            />
           </Grid>
         </CardBody>
       </Card>
@@ -126,13 +159,22 @@ export default ({ onContinue, burnAmount, totalMkrInEsm }) => {
           variant="secondary-outline"
           color="black"
           onClick={() => {
-            onContinue(1);
+            setStep(1);
           }}
           mr="s"
         >
           Back
         </Button>
-        <Button variant="danger" onClick={() => onContinue(3)} ml="s">
+        <Button
+          variant="danger"
+          disabled={
+            localValue !== verifyText ||
+            !hasReadTOS ||
+            !proxyDetails.hasMkrAllowance
+          }
+          onClick={() => setStep(3)}
+          ml="s"
+        >
           Burn MKR
         </Button>
       </Flex>

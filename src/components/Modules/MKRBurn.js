@@ -89,9 +89,10 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
         case 2:
           return (
             <Step2
-              onContinue={setStep}
+              setStep={setStep}
               burnAmount={burnAmount}
               totalMkrInEsm={totalMkrInEsm}
+              address={account.address}
             />
           );
         case 3:

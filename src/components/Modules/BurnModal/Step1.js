@@ -17,7 +17,7 @@ export default ({
   value,
   deposits
 }) => {
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const [localValue, setLocalValue] = useState(value);
   const setMax = () => {
     setLocalValue(mkrBalance);
