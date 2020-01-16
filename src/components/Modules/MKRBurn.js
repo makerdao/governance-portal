@@ -46,8 +46,7 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
   );
 
   const modalProps =
-    // totalMkrInEsm && totalMkrInEsm.lt(esmThresholdAmount)
-    false
+    totalMkrInEsm && totalMkrInEsm.lt(esmThresholdAmount)
       ? {
           triggerText: 'Burn your MKR',
           ariaLabel:
@@ -75,8 +74,9 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
   const burnModal = props => <BurnMkrModal {...props} />;
   const initiateModal = props => <InitiateShutdownModal {...props} />;
   const modal =
-    // totalMkrInEsm && totalMkrInEsm.lt(esmThresholdAmount)
-    false ? burnModal : initiateModal;
+    totalMkrInEsm && totalMkrInEsm.lt(esmThresholdAmount)
+      ? burnModal
+      : initiateModal;
 
   return (
     <Grid gridRowGap="m" my={'s'}>
