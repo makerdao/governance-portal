@@ -27,7 +27,8 @@ function Failed(props) {
             px="s"
             variant="secondary"
           >
-            View transaction details <img src={arrowTopRight} />
+            View transaction details{' '}
+            <img alt="link arrow" src={arrowTopRight} />
           </Button>
         </Link>
       ) : (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Loader from '../Loader';
 import styled from 'styled-components';
 import {
@@ -10,6 +10,9 @@ import {
   Grid,
   Text
 } from '@makerdao/ui-components-core';
+import ModalPortal from '../ModalPortal';
+import BurnMkrModal from './Burn/BurnMkrModal';
+import InitiateShutdownModal from './InitiateShutdown/InitiateShutdownModal';
 
 const Filler = styled.div`
   border-radius: inherit;
@@ -24,7 +27,6 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
   const [burnAmount, setBurnAmount] = useState('');
   const [step, setStep] = useState(0);
   const [depositsInChief, setDepositsInChief] = useState(0);
-  const [burnTxHash, setBurnTxHash] = useState('');
   const chief = window.maker.service('chief');
 
   useEffect(() => {
@@ -63,11 +65,8 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
     step,
     setStep,
     depositsInChief,
-    totalMkrInEsm,
-    setBurnTxHash,
-    burnTxHash
+    totalMkrInEsm
   };
-
   const burnModal = props => <BurnMkrModal {...props} />;
   const initiateModal = props => <InitiateShutdownModal {...props} />;
   const modal =
@@ -111,7 +110,7 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
               style={{
                 width: totalMkrInEsm
                   ? `${
-                      totalMkrInEsm.gt(esmThresholdAmount)
+                      totalMkrInEsm.gte(esmThresholdAmount)
                         ? '100'
                         : totalMkrInEsm
                             .times(100)
@@ -125,15 +124,9 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
         </CardBody>
         <CardBody>
           <Flex flexDirection="row" justifyContent="space-between" m={'m'}>
-            {totalMkrInEsm ? (
-              <ModalPortal {...modalProps} {...contentProps}>
-                {modal}
-              </ModalPortal>
-            ) : (
-              <Box pl="14px" pr="14px">
-                <Loader size={20} color="header" background="white" />
-              </Box>
-            )}
+            <ModalPortal {...modalProps} {...contentProps}>
+              {modal}
+            </ModalPortal>
             <Text.p color="#9FAFB9" fontWeight="300" alignSelf="center">
               {accountMkrInEsm && accountMkrInEsm.gt(0) ? (
                 <Box>
@@ -153,3 +146,5 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
     </Grid>
   );
 };
+
+export default MKRBurn;

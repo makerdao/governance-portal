@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Box,
   Grid,
   Input,
   Flex,
@@ -28,18 +27,12 @@ export default ({
   const onChange = event => {
     const { value } = event.target;
     setLocalValue(value);
-
-    if (isNaN(parseFloat(value)))
+    if (isNaN(parseFloat(value)) || parseFloat(value) <= 0) {
       return setError('Please enter a valid number');
-
-    const newError = isNotValid(value);
-    if (newError) setError(newError);
-    // try {
-    //   newError = isValid(value);
-    //   // if (!newError) update(value);
-    // } catch (e) {
-    //   newError = e.message;
-    // }
+    } else if (isNotValid(value)) {
+      return setError(isNotValid(value));
+    }
+    setError('');
   };
   return (
     <Grid gridRowGap="m" justifyContent="center">
@@ -119,7 +112,7 @@ export default ({
         </Button>
         <Button
           variant="danger"
-          disabled={!!error}
+          disabled={error.length > 0 || localValue === '' || localValue <= 0}
           onClick={() => {
             onContinue(2);
             update(localValue);

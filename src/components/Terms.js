@@ -1,16 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import ReactMarkdown from 'react-markdown';
-import {
-  Box,
-  Text,
-  Grid,
-  Card,
-  Button,
-  Flex,
-  Overflow,
-  Link
-} from '@makerdao/ui-components-core';
+import { Box, Text, Grid, Card, Overflow } from '@makerdao/ui-components-core';
 
 const containerWidth = '75.8rem';
 const termsMaxHeight = '60rem';
