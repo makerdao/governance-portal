@@ -16,7 +16,7 @@ export const esmInit = () => async dispatch => {
     const canFire = await esmService.canFire();
     const thresholdAmount = await esmService.thresholdAmount();
     const fired = await esmService.fired();
-    const cageTime = await maker
+    const cageTime = await window.maker
       .service('smartContract')
       .getContract('END')
       .when();
