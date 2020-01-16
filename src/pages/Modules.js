@@ -8,7 +8,7 @@ import ESMHistory from '../components/Modules/ESMHistory';
 
 const ESM = ({ activeAccount = {}, esm = {} } = {}) => {
   const { totalStaked } = esm;
-  console.log(esm, 'esm');
+  // console.log(esm, 'esm');
 
   return (
     <Flex flexDirection="column" minHeight="100vh">
@@ -28,7 +28,7 @@ const ESM = ({ activeAccount = {}, esm = {} } = {}) => {
         </Text.p>
         <MKRBurn
           esmThresholdAmount={esm.thresholdAmount}
-          accountMkrInEsm={activeAccount.mkrInEsm}
+          account={activeAccount}
           totalMkrInEsm={totalStaked}
         />
         <ESMHistory />

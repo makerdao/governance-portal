@@ -73,6 +73,7 @@ const ModalBody = styled.div`
 
 const ModalContent = ({
   content,
+  componentProps,
   buttonRef,
   modalRef,
   onClose,
@@ -81,6 +82,7 @@ const ModalContent = ({
   ariaLabel,
   role = 'dialog'
 }) => {
+  const contentProps = Object.assign({}, componentProps, { onClose });
   return createPortal(
     <ModalCover
       aria-label={ariaLabel}
@@ -101,7 +103,7 @@ const ModalContent = ({
             <path d="M 10,10 L 30,30 M 30,10 L 10,30"></path>
           </ModalCloseIcon>
         </ModalClose>
-        <ModalBody>{content(onClose)}</ModalBody>
+        <ModalBody>{content(contentProps)}</ModalBody>
       </ModalBox>
     </ModalCover>,
     document.body
@@ -121,6 +123,7 @@ export default class Modal extends Component {
   onClose = () => {
     this.setState({ isOpen: false });
     this.openButtonNode.focus();
+    this.props.setStep(0);
     this.toggleScrollLock();
   };
   onKeyDown = ({ keyCode }) => keyCode === 27 && this.onClose();
@@ -150,7 +153,8 @@ export default class Modal extends Component {
             modalRef={n => (this.modalNode = n)}
             buttonRef={n => (this.closeButtonNode = n)}
             role={role}
-            content={onClose => children(onClose)}
+            componentProps={this.props}
+            content={props => children(props)}
           />
         )}
       </Fragment>
