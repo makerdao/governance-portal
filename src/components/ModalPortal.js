@@ -134,7 +134,14 @@ export default class Modal extends Component {
 
   render() {
     const { isOpen } = this.state;
-    const { triggerText, ariaLabel, role, ModalTrigger, children } = this.props;
+    const {
+      triggerText,
+      ariaLabel,
+      role,
+      ModalTrigger,
+      children,
+      canInitiate
+    } = this.props;
     return (
       <Fragment>
         {
@@ -142,6 +149,7 @@ export default class Modal extends Component {
             text={triggerText}
             onOpen={this.onOpen}
             buttonRef={n => (this.openButtonNode = n)}
+            canInitiate={canInitiate}
           />
         }
         {isOpen && (

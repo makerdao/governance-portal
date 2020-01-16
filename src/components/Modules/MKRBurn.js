@@ -22,7 +22,13 @@ const Filler = styled.div`
   min-height: 20px;
 `;
 
-const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
+const MKRBurn = ({
+  totalMkrInEsm,
+  account,
+  esmThresholdAmount,
+  initiated,
+  canInitiate
+}) => {
   const accountMkrInEsm = account.mkrInEsm;
   const [burnAmount, setBurnAmount] = useState('');
   const [txHash, setTxHash] = useState('');
@@ -39,8 +45,18 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
     })();
   }, [account, chief]);
 
-  const ModalTrigger = ({ text, onOpen, buttonRef }) => (
+  const ModalTriggerBurn = ({ text, onOpen, buttonRef }) => (
     <Button variant="danger-outline" onClick={onOpen} ref={buttonRef}>
+      {text}
+    </Button>
+  );
+  const ModalTriggerInitiate = ({ text, onOpen, buttonRef, canInitiate }) => (
+    <Button
+      variant="danger-outline"
+      onClick={onOpen}
+      ref={buttonRef}
+      disabled={!canInitiate}
+    >
       {text}
     </Button>
   );
@@ -51,12 +67,12 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
           triggerText: 'Burn your MKR',
           ariaLabel:
             'Modal to confirm burning your MKR for an emergency shutdown',
-          ModalTrigger
+          ModalTrigger: ModalTriggerBurn
         }
       : {
           triggerText: 'Initiate Emergency Shutdown',
           ariaLabel: 'Modal to confirm initiation of emergency shutdown',
-          ModalTrigger
+          ModalTrigger: ModalTriggerInitiate
         };
 
   const contentProps = {
@@ -69,7 +85,8 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
     totalMkrInEsm,
     esmThresholdAmount,
     txHash,
-    setTxHash
+    setTxHash,
+    canInitiate
   };
   const burnModal = props => <BurnMkrModal {...props} />;
   const initiateModal = props => <InitiateShutdownModal {...props} />;

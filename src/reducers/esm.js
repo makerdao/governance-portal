@@ -15,9 +15,10 @@ export const esmInit = () => async dispatch => {
     const totalStaked = await esmService.getTotalStaked();
     const canFire = await esmService.canFire();
     const thresholdAmount = await esmService.thresholdAmount();
+    const fired = await esmService.fired();
     dispatch({
       type: ESM_STATE_SUCCESS,
-      payload: { totalStaked, canFire, thresholdAmount }
+      payload: { totalStaked, canFire, thresholdAmount, fired }
     });
   } catch (err) {
     dispatch({ type: ESM_STATE_FAILURE });
@@ -30,7 +31,8 @@ const initialState = {
   fetching: true,
   canFire: false,
   thresholdAmount: 0,
-  totalStaked: 0
+  totalStaked: 0,
+  fired: false
 };
 
 const esm = createReducer(initialState, {

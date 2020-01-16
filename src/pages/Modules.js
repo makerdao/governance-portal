@@ -29,6 +29,8 @@ const ESM = ({ activeAccount = {}, esm = {} } = {}) => {
         </Text.p>
         <MKRBurn
           esmThresholdAmount={esm.thresholdAmount}
+          initiated={esm.fired}
+          canInitiate={esm.canFire}
           account={activeAccount}
           totalMkrInEsm={totalStaked}
         />
