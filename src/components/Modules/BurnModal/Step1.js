@@ -17,29 +17,29 @@ export default ({
   value,
   deposits
 }) => {
-  const [error, setError] = useState();
+  const [error, setError] = useState(false);
+  const [localValue, setLocalValue] = useState(value);
   const setMax = () => {
-    update(mkrBalance);
+    setLocalValue(mkrBalance);
   };
-  const isValid = value => {
-    return value <= mkrBalance;
+  const isNotValid = value => {
+    return value >= mkrBalance ? `You don't have enough MKR` : false;
   };
   const onChange = event => {
     const { value } = event.target;
-    setValue(value);
+    setLocalValue(value);
 
     if (isNaN(parseFloat(value)))
       return setError('Please enter a valid number');
 
-    let newError;
-    try {
-      newError = !isValid(value);
-      if (!newError) update(value);
-    } catch (e) {
-      newError = e.message;
-    }
-
-    setError(newError);
+    const newError = isNotValid(value);
+    if (newError) setError(newError);
+    // try {
+    //   newError = isValid(value);
+    //   // if (!newError) update(value);
+    // } catch (e) {
+    //   newError = e.message;
+    // }
   };
   return (
     <Grid gridRowGap="m" justifyContent="center">
@@ -58,7 +58,7 @@ export default ({
         <Input
           mx={'m'}
           type="number"
-          value={value}
+          value={localValue}
           placeholder={`0.00 MKR`}
           onChange={onChange}
           failureMessage={error}
@@ -117,7 +117,15 @@ export default ({
         >
           Cancel
         </Button>
-        <Button variant="danger" onClick={() => onContinue(2)} ml="s">
+        <Button
+          variant="danger"
+          disabled={!!error}
+          onClick={() => {
+            onContinue(2);
+            update(localValue);
+          }}
+          ml="s"
+        >
           Continue
         </Button>
       </Flex>

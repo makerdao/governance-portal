@@ -28,7 +28,7 @@ const Filler = styled.div`
 
 const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
   const accountMkrInEsm = account.mkrInEsm;
-  const [amountToBurn, setAmountToBurn] = useState(null);
+  const [burnAmount, setBurnAmount] = useState('');
   const [step, setStep] = useState(0);
   const [depositsInChief, setDepositsInChief] = useState(0);
   const chief = window.maker.service('chief');
@@ -55,19 +55,20 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
   };
   const contentProps = {
     account,
-    amountToBurn,
-    setAmountToBurn,
+    burnAmount,
+    setBurnAmount,
     step,
     setStep,
-    depositsInChief
+    depositsInChief,
+    totalMkrInEsm
   };
 
   const ModalContent = props => {
     const {
       onClose,
       account,
-      amountToBurn,
-      setAmountToBurn,
+      burnAmount,
+      setBurnAmount,
       depositsInChief
     } = props;
     const renderStep = step => {
@@ -80,13 +81,19 @@ const MKRBurn = ({ totalMkrInEsm, account, esmThresholdAmount }) => {
               onClose={onClose}
               onContinue={setStep}
               mkrBalance={account.mkrBalance}
-              update={setAmountToBurn}
-              value={amountToBurn}
+              update={setBurnAmount}
+              value={burnAmount}
               deposits={depositsInChief}
             />
           );
         case 2:
-          return <Step2 onContinue={setStep} />;
+          return (
+            <Step2
+              onContinue={setStep}
+              burnAmount={burnAmount}
+              totalMkrInEsm={totalMkrInEsm}
+            />
+          );
         case 3:
           return <Step3 onClose={onClose} />;
         default:

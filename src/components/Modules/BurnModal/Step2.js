@@ -41,9 +41,7 @@ const TOSCheck = props => {
   );
 };
 
-export default ({ onContinue }) => {
-  const [burnAmount, setBurnAmount] = useState(0);
-  const [esmTotal, setEsmTotal] = useState(0);
+export default ({ onContinue, burnAmount, totalMkrInEsm }) => {
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [mkrApprovePending, setMkrApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
@@ -65,7 +63,8 @@ export default ({ onContinue }) => {
     // }
     // setMkrApprovePending(false);
   };
-
+  console.log(totalMkrInEsm.toNumber());
+  console.log(burnAmount);
   return (
     <Grid gridRowGap="m" justifyContent="center">
       <Text.h2 mt="m" textAlign="center">
@@ -80,7 +79,7 @@ export default ({ onContinue }) => {
             mb="s"
           >
             <Text.h5>Burn amount</Text.h5>
-            <Text.h5>{`${burnAmount.toFixed(2)} MKR`}</Text.h5>
+            <Text.h5>{`${burnAmount} MKR`}</Text.h5>
           </Flex>
         </CardBody>
         <CardBody mx="m">
@@ -91,7 +90,8 @@ export default ({ onContinue }) => {
             mb="m"
           >
             <Text.h5>New ESM total</Text.h5>
-            <Text.h5>{`${esmTotal.toFixed(2)} MKR`}</Text.h5>
+            <Text.h5>{`${totalMkrInEsm.toNumber() +
+              parseFloat(burnAmount)} MKR`}</Text.h5>
           </Flex>
           <Grid flexDirection="column" gridRowGap="s" mb="m">
             <Text.h5 textAlign="left" mt="m" ml="m" fontWeight="500">
@@ -99,7 +99,7 @@ export default ({ onContinue }) => {
             </Text.h5>
             <Input
               mx={'m'}
-              placeholder={`I am burning ${burnAmount.toFixed(2)} MKR`}
+              placeholder={`I am burning ${burnAmount} MKR`}
               disabled
               style={{ backgroundColor: '#F6F8F9' }}
             />

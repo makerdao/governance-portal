@@ -19,6 +19,7 @@ const ESM = ({ activeAccount = {}, esm = {} } = {}) => {
           authority. Once 50,000 MKR are entered into the ESM, emergency
           shutdown can be executed.{` `}
           <Link
+            href="https://docs.makerdao.com/smart-contract-modules/emergency-shutdown-module"
             target="_blank"
             rel="noopener noreferrer"
             css="text-decoration: none"
