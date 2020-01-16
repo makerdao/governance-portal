@@ -1415,7 +1415,7 @@
     babel-runtime "^6.26.0"
     ramda "^0.26.1"
 
-"@makerdao/dai-plugin-governance@^0.9.0":
+"@makerdao/dai-plugin-governance@0.9.0":
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.9.0.tgz#c61cc1ac120ebc1f059b557439264b0a1858d910"
   integrity sha512-dyWmTRLmHNZRhWTA7CpWpu6uyrx88U2sVEO8FTA/dIkJZFFOcBaO30oqfHSODAhv5QO35qX6pm1F+pZpYCe8KQ==
@@ -10235,6 +10235,11 @@ module-lookup-amd@^6.1.0:
     find "^0.3.0"
     requirejs "^2.3.5"
     requirejs-config-file "^3.1.1"
+
+moment@^2.24.0:
+  version "2.24.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
+  integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
 
 moo@^0.4.3:
   version "0.4.3"
