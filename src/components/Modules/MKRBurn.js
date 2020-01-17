@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Loader from '../Loader';
 import styled from 'styled-components';
 import {
@@ -33,17 +33,9 @@ const MKRBurn = ({
   const [burnAmount, setBurnAmount] = useState('');
   const [txHash, setTxHash] = useState('');
   const [step, setStep] = useState(0);
-  const [depositsInChief, setDepositsInChief] = useState(0);
-  const chief = window.maker.service('chief');
 
-  useEffect(() => {
-    (async () => {
-      if (typeof account.address !== 'undefined' && chief) {
-        const deposits = await chief.getNumDeposits(account.address);
-        setDepositsInChief(deposits.toNumber());
-      }
-    })();
-  }, [account, chief]);
+  const depositsInChief =
+    Object.keys(account).length > 0 ? account.proxy.votingPower : 0;
 
   const ModalTriggerBurn = ({ text, onOpen, buttonRef }) => (
     <Button variant="danger-outline" onClick={onOpen} ref={buttonRef}>

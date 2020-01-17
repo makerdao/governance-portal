@@ -136,8 +136,7 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
             mb="m"
           >
             <Text.h5>New ESM total</Text.h5>
-            <Text.h5>{`${totalMkrInEsm.toNumber() +
-              parseFloat(burnAmount)} MKR`}</Text.h5>
+            <Text.h5>{totalMkrInEsm.plus(burnAmount).toString()}</Text.h5>
           </Flex>
           <Grid flexDirection="column" gridRowGap="s" mb="m">
             <Text.h5 textAlign="left" mt="m" ml="m" fontWeight="500">

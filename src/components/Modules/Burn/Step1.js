@@ -81,7 +81,7 @@ export default ({
           </Text>
         </Flex>
       </Grid>
-      {deposits > 0 ? (
+      {parseFloat(deposits) > 0 ? (
         <Flex
           mt="xs"
           mb="s"
