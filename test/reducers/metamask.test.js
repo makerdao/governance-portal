@@ -168,7 +168,7 @@ describe('async actions', () => {
       type: reducer.UPDATE_NETWORK,
       payload: { network }
     });
-    expect(store.getActions().length).toBe(12);
+    expect(store.getActions().length).toBe(13);
   });
 
   test.skip('init with an invalid network, and no web3 accounts', async () => {
@@ -226,7 +226,7 @@ describe('async actions', () => {
           obj.payload === mockDefaultAccount
       )
     ).toBeTruthy();
-    expect(storeActions.length).toBe(16);
+    expect(storeActions.length).toBe(17);
   });
 
   test('initWeb3Accounts and update address with web3 default address', async () => {
