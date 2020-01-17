@@ -15,6 +15,7 @@
     "@makerdao/ui-components-footer": "^0.1.17",
     "@makerdao/ui-components-onboarding": "0.1.4",
     "bignumber.js": "^9.0.0",
+    "core-js": "3",
     "ethers": "^4.0.43",
     "gray-matter": "^4.0.2",
     "history": "^4.9.0",

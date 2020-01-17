@@ -168,7 +168,7 @@ describe('async actions', () => {
       type: reducer.UPDATE_NETWORK,
       payload: { network }
     });
-    expect(store.getActions().length).toBe(10);
+    expect(store.getActions().length).toBe(12);
   });
 
   test.skip('init with an invalid network, and no web3 accounts', async () => {
@@ -192,30 +192,41 @@ describe('async actions', () => {
     mockWeb3();
 
     await store.dispatch(reducer.init(network));
-
+    const storeActions = store.getActions();
     expect(accounts.setActiveAccount).toBeCalledTimes(2);
     expect(accounts.addMetamaskAccount).toBeCalledTimes(2);
-    expect(store.getActions()[0]).toEqual({
-      type: reducer.CONNECT_REQUEST
-    });
-    expect(store.getActions()[1]).toEqual({
-      type: reducer.CONNECT_SUCCESS,
-      payload: { network }
-    });
-    expect(store.getActions()[2]).toEqual({
-      type: reducer.UPDATE_NETWORK,
-      payload: { network }
-    });
-    expect(store.getActions()[8]).toEqual({
-      type: reducer.UPDATE_ADDRESS,
-      payload: mockDefaultAccount
-    });
+    expect(
+      storeActions.some(obj => obj.type === reducer.CONNECT_REQUEST)
+    ).toBeTruthy();
+    expect(
+      storeActions.some(
+        obj =>
+          obj.type === reducer.CONNECT_SUCCESS &&
+          obj.payload.network === network
+      )
+    ).toBeTruthy();
+    expect(
+      storeActions.some(
+        obj =>
+          obj.type === reducer.UPDATE_NETWORK && obj.payload.network === network
+      )
+    ).toBeTruthy();
+    expect(
+      storeActions.some(
+        obj =>
+          obj.type === reducer.UPDATE_ADDRESS &&
+          obj.payload === mockDefaultAccount
+      )
+    ).toBeTruthy();
     // Since our mock store doesn't get updated, initWeb3Accounts will update address again
-    expect(store.getActions()[11]).toEqual({
-      type: reducer.UPDATE_ADDRESS,
-      payload: mockDefaultAccount
-    });
-    expect(store.getActions().length).toBe(14);
+    expect(
+      storeActions.some(
+        obj =>
+          obj.type === reducer.UPDATE_ADDRESS &&
+          obj.payload === mockDefaultAccount
+      )
+    ).toBeTruthy();
+    expect(storeActions.length).toBe(16);
   });
 
   test('initWeb3Accounts and update address with web3 default address', async () => {
