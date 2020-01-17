@@ -867,9 +867,9 @@ describe('Hardware wallets', () => {
     expect(newState.onHardwareAccountChosen).not.toBe(oldCallback);
   });
 
-  each([[AccountTypes.TREZOR], [AccountTypes.LEDGER]]).describe(
+  describe.each([[AccountTypes.TREZOR], [AccountTypes.LEDGER]])(
     'When a hardware wallet is chosen',
-    async accountType => {
+    accountType => {
       test('it is added to the maker object', async () => {
         store.getState().accounts.onHardwareAccountChosen = jest
           .fn()

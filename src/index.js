@@ -61,14 +61,14 @@ const store = createStore();
 if (testchainConfigId) {
   const network = 'ganache';
   (async () => {
-    window.maker = await createMaker(
+    const maker = (window.maker = await createMaker(
       network,
       useMcdKovanContracts,
       testchainConfigId,
       backendEnv
-    );
+    ));
     await window.maker.authenticate();
-    store.dispatch(init(network));
+    store.dispatch(init(maker, network));
   })();
 } else if (window.web3) {
   window.web3.version.getNetwork(async (err, _netId) => {
@@ -83,7 +83,7 @@ if (testchainConfigId) {
         useMcdKovanContracts
       ));
       await maker.authenticate();
-      store.dispatch(init(network));
+      store.dispatch(init(maker, network));
     }
   });
 } else {
@@ -91,7 +91,7 @@ if (testchainConfigId) {
   (async () => {
     const maker = (window.maker = await createMaker());
     await maker.authenticate();
-    store.dispatch(init());
+    store.dispatch(init(maker));
   })();
 }
 
