@@ -107,7 +107,7 @@ const setupMocks = (opts = defaults, services = {}) => {
     .mockImplementation(() => Promise.resolve(opts.proposalAddresses));
 
   const getContractAddressByName = jest.fn();
-
+  const getTotalStakedByAddress = jest.fn();
   const service = jest.fn().mockImplementation(service => {
     const allServices = {
       voteProxy: {
@@ -119,6 +119,7 @@ const setupMocks = (opts = defaults, services = {}) => {
         getSlateAddresses
       },
       smartContract: { getContractAddressByName },
+      esm: { getTotalStakedByAddress },
       ...services
     };
     return allServices[service];
