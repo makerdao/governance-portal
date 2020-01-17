@@ -28,7 +28,6 @@ const ESM = ({ activeAccount = {}, esm = {} } = {}) => {
           >
             {`Emergency shutdown has been initiated on ${formattedTime} UTC. This dashboard is currently read-only.`}
             <br />
-            {`You can read more information about next steps [Insert Link].`}
           </Text>
         </Flex>
       ) : null}
