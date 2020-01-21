@@ -24,7 +24,7 @@ const currTheme = {
   }
 };
 
-test.skip('render everything', () => {
+test('render everything', () => {
   const store = createStore(rootReducer);
 
   const node = mount(
