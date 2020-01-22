@@ -50,10 +50,12 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
   const [proxyDetails, setProxyDetails] = useState({});
   const [burnInitiated, setBurnInitiated] = useState(false);
   const maker = window.maker;
+  const esmAddress = maker.service('smartContract').getContractAddresses().ESM;
+
   const giveProxyMkrAllowance = async () => {
     setMkrApprovePending(true);
     try {
-      await maker.getToken(MKR).approve(address, MKR(burnAmount));
+      await maker.getToken(MKR).approve(esmAddress, MKR(burnAmount));
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
         hasMkrAllowance: true
@@ -89,7 +91,6 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
         },
         error: () => setStep(4)
       });
-      // setStep(3)
     } catch (err) {
       const message = err.message ? err.message : err;
       const errMsg = `burn tx failed ${message}`;
@@ -103,7 +104,8 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
         if (proxyAddress) {
           const connectedWalletAllowance = await maker
             .getToken(MKR)
-            .allowance(address, proxyAddress);
+            .allowance(address, esmAddress);
+          console.log(connectedWalletAllowance, 'connectedWalletAllowance');
           const hasMkrAllowance = connectedWalletAllowance.gte(MKR(burnAmount));
           setProxyDetails({ hasMkrAllowance, address: proxyAddress });
         }
