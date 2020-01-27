@@ -208,7 +208,7 @@ class VotingPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedOption: null
+      selectedOption: undefined
     };
   }
 
@@ -235,6 +235,13 @@ class VotingPanel extends React.Component {
         ? getTotalVotesForOption(voteBreakdown, selectedOptionId)
         : null;
 
+    const dropdownValue =
+      selectedOption !== undefined
+        ? selectedOption.toString()
+        : optionVotingFor !== undefined
+        ? optionVotingFor.toString()
+        : 'Please choose...';
+
     return (
       <React.Fragment>
         <VoteSelection>
@@ -245,7 +252,7 @@ class VotingPanel extends React.Component {
               <DropdownText color="green">{item}</DropdownText>
             )}
             renderRowItem={item => <DropdownText>{item}</DropdownText>}
-            value={selectedOption || optionVotingFor || 'Please choose...'}
+            value={dropdownValue}
             onSelect={this.onDropdownSelect}
             emptyMsg="Not available"
           />
@@ -602,11 +609,8 @@ const reduxProps = (state, { match }) => {
   };
 };
 
-export default connect(
-  reduxProps,
-  {
-    modalOpen,
-    getOptionVotingFor,
-    pollDataInit
-  }
-)(Polling);
+export default connect(reduxProps, {
+  modalOpen,
+  getOptionVotingFor,
+  pollDataInit
+})(Polling);
