@@ -118,6 +118,7 @@ const MKRBurn = ({
             my="s"
             mb="m"
             style={{ borderRadius: 5, minHeight: 20 }}
+            data-testid="progress-bar"
           >
             <Filler
               style={{

@@ -105,7 +105,7 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
           const connectedWalletAllowance = await maker
             .getToken(MKR)
             .allowance(address, esmAddress);
-          console.log(connectedWalletAllowance, 'connectedWalletAllowance');
+          // console.log(connectedWalletAllowance, 'connectedWalletAllowance');
           const hasMkrAllowance = connectedWalletAllowance.gte(MKR(burnAmount));
           setProxyDetails({ hasMkrAllowance, address: proxyAddress });
         }
