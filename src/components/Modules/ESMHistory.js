@@ -67,7 +67,10 @@ export default () => {
                     `}
                   >
                     <Text color="darkLavender" t="caption">
-                      {formatRound(event.amount.toNumber())} MKR
+                      {event.amount.gte(0.01)
+                        ? formatRound(event.amount.toNumber())
+                        : formatRound(event.amount.toNumber(), 6)}{' '}
+                      MKR
                     </Text>
                   </td>
                   <td>
