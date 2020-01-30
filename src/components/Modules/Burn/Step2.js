@@ -157,6 +157,7 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
               onChange={onChange}
               failureMessage={error}
               placeholder={'I am..'}
+              data-testid={'confirm-input'}
             />
           </Grid>
         </CardBody>
@@ -194,6 +195,7 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
             !proxyDetails.hasMkrAllowance
           }
           onClick={() => burnMKR()}
+          data-testid="submit-burn"
           ml="s"
         >
           Burn MKR

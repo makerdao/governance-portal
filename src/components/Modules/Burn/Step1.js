@@ -92,6 +92,7 @@ export default ({
           justifyContent="center"
         >
           <Text
+            data-testid="voting-power"
             my="s"
             style={{ textAlign: 'center', fontSize: 14, color: '#826318' }}
           >

@@ -129,9 +129,14 @@ describe('renders summary page', () => {
   });
 
   test('Burn MKR Modal Flow', async () => {
-    const { getByText, getByRole, debug } = await render(
-      <Modules store={store} />
-    );
+    const {
+      getByTestId,
+      getAllByTestId,
+      getByText,
+      getByRole,
+      getByPlaceholderText,
+      debug
+    } = await render(<Modules store={store} />);
     click(getByText('Burn your MKR'));
 
     // First Step Render
@@ -140,24 +145,58 @@ describe('renders summary page', () => {
 
     // Second Step Render
     await wait(() => getByText('Burn your MKR in the ESM'));
+
     // Not Enough MKR Check
     const amount = 3;
     fireEvent.change(getByRole('textbox'), { target: { value: amount } });
     await wait(() => getByText("You don't have enough MKR"));
-    let continueButton = getByText('Continue');
+    const continueButton = getByText('Continue');
     expect(continueButton.disabled).toBeTruthy();
+
     // Set Max Check
     click(getByText('Set max'));
     expect(getByRole('textbox').value).toEqual('2.0000');
+
+    // MKR is Chief Check
+    getByTestId('voting-power');
+
     // Valid Amount Check
     fireEvent.change(getByRole('textbox'), { target: { value: amount - 2 } });
-    continueButton = getByText('Continue');
     expect(continueButton.disabled).toBeFalsy();
     click(continueButton);
 
     // Third Step Render
     await wait(() => getByText('Burn amount'));
     await wait(() => getByText('New ESM total'));
+    let confirmInput;
+    act(() => {
+      confirmInput = getAllByTestId('confirm-input')[2];
+    });
+    let burnMKRbutton;
+    act(() => {
+      burnMKRbutton = getByText('Burn MKR');
+    });
+    expect(burnMKRbutton.disabled).toBeTruthy();
+
+    // click the terms of service
+    click(getByTestId('tosCheck'));
+
+    // click the unlock mkr
+    const toggle = getByTestId('allowance-toggle');
+    await waitForElement(() => !toggle.disabled);
+    click(toggle);
+
+    // Incorrect Input Check
+    fireEvent.change(confirmInput, { target: { value: 'I am burning 2 MKR' } });
+    expect(burnMKRbutton.disabled).toBeTruthy();
+
+    // Correct Input Check
+    fireEvent.change(confirmInput, { target: { value: 'I am burning 1 MKR' } });
     debug();
+    console.log(getByTestId('submit-burn').disabled);
+    // await waitForElement(() => !burnMKRbutton.disabled)
+    // expect(burnMKRbutton.disabled).toBeFalsy()
+
+    // debug();
   });
 });
