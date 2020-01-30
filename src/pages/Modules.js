@@ -21,6 +21,7 @@ const ESM = ({ activeAccount = {}, esm = {} } = {}) => {
           style={{ backgroundColor: '#FDEDE8' }}
           mt={'l'}
           borderRadius={'6'}
+          data-testid="shutdown-initiated"
         >
           <Text
             my="s"
