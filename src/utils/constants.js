@@ -46,3 +46,4 @@ const expr = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.
 export const URL_REGEX = new RegExp(expr);
 
 export const MIN_MKR_PERCENTAGE = 0.01;
+export const POSTGRES_MAX_INT = 2147483647;

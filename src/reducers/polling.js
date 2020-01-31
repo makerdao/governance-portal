@@ -3,7 +3,7 @@ import uniqBy from 'lodash.uniqby';
 import { createReducer } from '../utils/redux';
 import { formatRound, check } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
-import { TransactionStatus } from '../utils/constants';
+import { TransactionStatus, POSTGRES_MAX_INT } from '../utils/constants';
 import { generateIPFSHash } from '../utils/ipfs';
 
 // Constants ----------------------------------------------
@@ -190,11 +190,19 @@ const isPollActive = (startDate, endDate) => {
 export const updateVoteBreakdown = pollId => (dispatch, getState) => {
   const poll = getState().polling.polls.find(poll => poll.pollId === pollId);
   if (!poll) return;
-  const { options, endDate } = poll;
+  const { options, endDate, active } = poll;
   async function checkForVoteBreakdownUpdates(triesRemaining) {
     if (triesRemaining === 0) return;
-    const voteBreakdown = await getVoteBreakdown(pollId, options, endDate);
-    const totalVotes = await getTotalVotes(pollId);
+    const voteBreakdown = await getVoteBreakdown(
+      pollId,
+      options,
+      endDate,
+      active
+    );
+    const totalVotes = voteBreakdown.reduce(
+      (acc, cur) => acc + parseFloat(cur.mkrSupport),
+      0
+    );
     const participation = await getParticipation(pollId);
     const numUniqueVoters = await getNumUniqueVoters(pollId);
     dispatch(
@@ -212,12 +220,19 @@ export const updateVoteBreakdown = pollId => (dispatch, getState) => {
   checkForVoteBreakdownUpdates(NUM_TRIES);
 };
 
-export const getVoteBreakdown = async (pollId, options, endDate) => {
+export const getVoteBreakdown = async (
+  pollId,
+  options,
+  endDate,
+  pollActive
+) => {
   // returns either the block on which this poll ended,
   // or, if the poll hasn't ended, the current block
-  const pollEndBlock = await window.maker
-    .service('govQueryApi')
-    .getBlockNumber(Math.floor(endDate.getTime() / 1000));
+  const pollEndBlock = pollActive
+    ? POSTGRES_MAX_INT
+    : await window.maker
+        .service('govQueryApi')
+        .getBlockNumber(Math.floor(endDate.getTime() / 1000));
 
   const mkrSupport = await window.maker
     .service('govQueryApi')
@@ -253,13 +268,6 @@ export const getVoteBreakdown = async (pollId, options, endDate) => {
   voteBreakdown.sort((a, b) => a.optionId - b.optionId);
 
   return voteBreakdown;
-};
-
-export const getTotalVotes = async pollId => {
-  const totalVotes = await window.maker
-    .service('govPolling')
-    .getMkrAmtVoted(pollId);
-  return totalVotes.toNumber();
 };
 
 export const getParticipation = async pollId => {
@@ -328,27 +336,34 @@ export const pollsInit = () => async dispatch => {
 export const pollDataInit = poll => dispatch => {
   if (!poll) return;
   const { pollId, options, endDate, active } = poll;
-  getTotalVotes(pollId).then(totalVotes =>
-    dispatch(updatePoll(pollId, { totalVotes }))
-  );
   getParticipation(pollId).then(participation =>
     dispatch(updatePoll(pollId, { participation }))
   );
   getNumUniqueVoters(pollId).then(numUniqueVoters =>
     dispatch(updatePoll(pollId, { numUniqueVoters }))
   );
-  getWinningProposal(pollId).then(proposalId => {
-    const winningProposal = proposalId === 0 ? null : parseInt(proposalId) - 1;
-    if (!active && winningProposal !== null)
-      dispatch(updatePoll(pollId, { winningProposal }));
-  });
-
+  if (!active) {
+    getWinningProposal(pollId).then(proposalId => {
+      const winningProposal =
+        proposalId === 0 ? null : parseInt(proposalId) - 1;
+      if (winningProposal !== null)
+        dispatch(updatePoll(pollId, { winningProposal }));
+    });
+  }
   dispatch(updatePoll(pollId, { voteBreakdownFetching: true }));
-  getVoteBreakdown(pollId, options, endDate).then(voteBreakdown =>
+  getVoteBreakdown(pollId, options, endDate, active).then(voteBreakdown => {
+    const totalvotes = voteBreakdown.reduce(
+      (acc, cur) => acc + parseFloat(cur.mkrSupport),
+      0
+    );
     dispatch(
-      updatePoll(pollId, { voteBreakdown, voteBreakdownFetching: false })
-    )
-  );
+      updatePoll(pollId, {
+        totalvotes,
+        voteBreakdown,
+        voteBreakdownFetching: false
+      })
+    );
+  });
 };
 
 export const formatHistoricalPolls = topics => async dispatch => {
