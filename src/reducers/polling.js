@@ -5,6 +5,7 @@ import { formatRound, check } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { TransactionStatus, POSTGRES_MAX_INT } from '../utils/constants';
 import { generateIPFSHash } from '../utils/ipfs';
+import { MKR } from '../chain/maker';
 
 // Constants ----------------------------------------------
 
@@ -200,10 +201,10 @@ export const updateVoteBreakdown = pollId => (dispatch, getState) => {
       active
     );
     const totalVotes = voteBreakdown.reduce(
-      (acc, cur) => acc + parseFloat(cur.mkrSupport),
+      (acc, cur) => acc + cur.mkrSupport,
       0
     );
-    const participation = await getParticipation(pollId);
+    const participation = await getParticipation(poll);
     const numUniqueVoters = await getNumUniqueVoters(pollId);
     dispatch(
       updatePoll(pollId, {
@@ -254,7 +255,7 @@ export const getVoteBreakdown = async (
           mkrSupport: matchingOption.mkrSupport,
           percentage: formatRound(matchingOption.percentage)
         }
-      : { mkrSupport: '0', percentage: '0' };
+      : { mkrSupport: 0, percentage: 0 };
     const breakdown = {
       name: val,
       optionId: index,
@@ -270,11 +271,22 @@ export const getVoteBreakdown = async (
   return voteBreakdown;
 };
 
-export const getParticipation = async pollId => {
-  const participation = await window.maker
-    .service('govPolling')
-    .getPercentageMkrVoted(pollId);
-  return participation;
+export const getParticipation = async poll => {
+  const { pollId, options, endDate, active } = poll;
+  const [voteBreakdown, mkrSupply] = await Promise.all([
+    getVoteBreakdown(pollId, options, endDate, active),
+    window.maker
+      .service('token')
+      .getToken('MKR')
+      .totalSupply()
+  ]);
+  const totalvotes = MKR(
+    voteBreakdown.reduce((acc, cur) => acc + cur.mkrSupport, 0)
+  );
+  return totalvotes
+    .div(mkrSupply)
+    .times(100)
+    .toNumber();
 };
 
 export const getNumUniqueVoters = async pollId => {
@@ -336,7 +348,7 @@ export const pollsInit = () => async dispatch => {
 export const pollDataInit = poll => dispatch => {
   if (!poll) return;
   const { pollId, options, endDate, active } = poll;
-  getParticipation(pollId).then(participation =>
+  getParticipation(poll).then(participation =>
     dispatch(updatePoll(pollId, { participation }))
   );
   getNumUniqueVoters(pollId).then(numUniqueVoters =>
@@ -352,13 +364,13 @@ export const pollDataInit = poll => dispatch => {
   }
   dispatch(updatePoll(pollId, { voteBreakdownFetching: true }));
   getVoteBreakdown(pollId, options, endDate, active).then(voteBreakdown => {
-    const totalvotes = voteBreakdown.reduce(
-      (acc, cur) => acc + parseFloat(cur.mkrSupport),
+    const totalVotes = voteBreakdown.reduce(
+      (acc, cur) => acc + cur.mkrSupport,
       0
     );
     dispatch(
       updatePoll(pollId, {
-        totalvotes,
+        totalVotes,
         voteBreakdown,
         voteBreakdownFetching: false
       })
