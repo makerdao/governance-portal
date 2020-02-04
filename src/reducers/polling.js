@@ -215,13 +215,11 @@ export const updateVoteBreakdown = pollId => (dispatch, getState) => {
 export const getVoteBreakdown = async (pollId, options, endDate) => {
   // returns either the block on which this poll ended,
   // or, if the poll hasn't ended, the current block
-  const pollEndBlock = await window.maker
-    .service('govQueryApi')
-    .getBlockNumber(Math.floor(endDate.getTime() / 1000));
+  const pollEndUnix = Math.floor(endDate / 1000);
 
   const mkrSupport = await window.maker
     .service('govQueryApi')
-    .getMkrSupport(pollId, pollEndBlock);
+    .getMkrSupport(pollId, pollEndUnix);
 
   const voteBreakdown = options.reduce((result, val, index) => {
     // correct for option 0: abstain here:
