@@ -15,6 +15,7 @@ jobs:
           paths:
             - node_modules
             - ./node_modules
+          key: dependency-cache-{{ checksum "package.json" }}
   test:
     docker:
       - image: makerdao/dapptools-node-latest
