@@ -135,6 +135,7 @@ describe('renders summary page', () => {
       getByText,
       getByRole,
       getByPlaceholderText,
+      rerender,
       debug
     } = await render(<Modules store={store} />);
     click(getByText('Burn your MKR'));
@@ -179,7 +180,8 @@ describe('renders summary page', () => {
     expect(burnMKRbutton.disabled).toBeTruthy();
 
     // click the terms of service
-    click(getByTestId('tosCheck'));
+    const tos = getByTestId('tosCheck');
+    click(tos);
 
     // click the unlock mkr
     const toggle = getByTestId('allowance-toggle');
@@ -192,11 +194,39 @@ describe('renders summary page', () => {
 
     // Correct Input Check
     fireEvent.change(confirmInput, { target: { value: 'I am burning 1 MKR' } });
-    debug();
-    console.log(getByTestId('submit-burn').disabled);
-    // await waitForElement(() => !burnMKRbutton.disabled)
-    // expect(burnMKRbutton.disabled).toBeFalsy()
+    const step2 = await waitForElement(() => getByTestId('step2'));
 
-    // debug();
+    // console.log(getByTestId('submit-burn').disabled);
+    // accounts = {
+    //   activeAccount: maker.currentAddress(),
+    //   allAccounts: [
+    //     {
+    //       address: maker.currentAddress(),
+    //       type: 'browser',
+    //       mkrInEsm: MKR(0),
+    //       mkrBalance: '2.0000',
+    //       hasProxy: false,
+    //       proxyRole: '',
+    //       votingFor: [],
+    //       hasInfMkrApproval: false,
+    //       hasInfIouApproval: false,
+    //       proxy: {
+    //         address: '',
+    //         votingPower: 1,
+    //         hasInfIouApproval: false,
+    //         hasInfMkrApproval: false,
+    //         linkedAccount: {}
+    //       },
+    //       mkrLockedChiefHot: 0,
+    //       mkrLockedChiefCold: 0
+    //     }
+    //   ]
+    // };
+    // store = mockStore({ accounts, esm });
+    //
+    await waitForElement(() => !burnMKRbutton.disabled);
+    expect(burnMKRbutton.disabled).toBeFalsy();
+    click(burnMKRbutton);
+    debug();
   });
 });
