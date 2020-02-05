@@ -24,7 +24,7 @@ export default props => {
             setTxHash={setTxHash}
           />
         );
-      case 3:
+      case 1:
         return (
           <Step1
             txHash={txHash}
@@ -32,7 +32,7 @@ export default props => {
             title={'Emergency Shutdown is being initiated'}
           />
         );
-      case 4:
+      case 2:
         return (
           <Step2
             title={'Emergency Shutdown Tx Failed'}
@@ -40,17 +40,6 @@ export default props => {
             onClose={onClose}
           />
         );
-
-      // return (
-      //   <Step1
-      //     onClose={onClose}
-      //     onContinue={setStep}
-      //     mkrBalance={account.mkrBalance}
-      //     update={setBurnAmount}
-      //     value={burnAmount}
-      //     deposits={depositsInChief}
-      //   />
-      // );
       default:
         return <div />;
     }
