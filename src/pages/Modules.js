@@ -9,6 +9,7 @@ import ESMHistory from '../components/Modules/ESMHistory';
 
 const ESM = ({ activeAccount = {}, esm = {} } = {}) => {
   const { totalStaked, thresholdAmount, fired, canFire, cageTime } = esm;
+  window.totalStaked = totalStaked;
   const time = cageTime === 0 ? cageTime : cageTime.toNumber();
   const formattedTime = moment.utc(time).format('do MMMM YYYY hh:mm');
   return (

@@ -42,7 +42,14 @@ const TOSCheck = props => {
   );
 };
 
-export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
+export default ({
+  setStep,
+  burnAmount,
+  totalMkrInEsm,
+  address,
+  setTxHash,
+  onClose
+}) => {
   const [localValue, setLocalValue] = useState('');
   const [error, setError] = useState('');
   const [hasReadTOS, setHasReadTOS] = useState(false);
@@ -89,7 +96,16 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
           setTxHash(tx.hash);
           setStep(3);
         },
-        error: () => setStep(4)
+        mined: tx => {
+          setTxHash(tx.hash);
+          setStep(4);
+        },
+        // confirmed: tx => {
+        //   console.log('confirmed')
+        //
+        //   // do something when tx is confirmed
+        // },
+        error: () => setStep(5)
       });
     } catch (err) {
       const message = err.message ? err.message : err;
@@ -105,7 +121,7 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
           const connectedWalletAllowance = await maker
             .getToken(MKR)
             .allowance(address, esmAddress);
-          // console.log(connectedWalletAllowance, 'connectedWalletAllowance');
+          console.log(connectedWalletAllowance, 'connectedWalletAllowance');
           const hasMkrAllowance = connectedWalletAllowance.gte(MKR(burnAmount));
           setProxyDetails({ hasMkrAllowance, address: proxyAddress });
         }
