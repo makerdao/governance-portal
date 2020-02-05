@@ -23,6 +23,9 @@
       }
     }
   ],
+  "github": {
+    "enabled": false
+  },
   "env": {
     "BLANK_SECRET": "@blank-secret"
   }
