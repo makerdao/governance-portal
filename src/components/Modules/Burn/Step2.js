@@ -102,12 +102,12 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
       if (maker && address) {
         const proxyAddress = await maker.service('proxy').currentProxy();
         if (proxyAddress) {
-          // const connectedWalletAllowance = await maker
-          //   .getToken(MKR)
-          //   .allowance(address, esmAddress);
+          const connectedWalletAllowance = await maker
+            .getToken(MKR)
+            .allowance(address, esmAddress);
           // console.log(connectedWalletAllowance, 'connectedWalletAllowance');
-          // const hasMkrAllowance = connectedWalletAllowance.gte(MKR(burnAmount));
-          setProxyDetails({ hasMkrAllowance: true, address: proxyAddress });
+          const hasMkrAllowance = connectedWalletAllowance.gte(MKR(burnAmount));
+          setProxyDetails({ hasMkrAllowance, address: proxyAddress });
         }
       }
     })();

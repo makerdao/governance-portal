@@ -196,34 +196,6 @@ describe('renders summary page', () => {
     fireEvent.change(confirmInput, { target: { value: 'I am burning 1 MKR' } });
     const step2 = await waitForElement(() => getByTestId('step2'));
 
-    // console.log(getByTestId('submit-burn').disabled);
-    // accounts = {
-    //   activeAccount: maker.currentAddress(),
-    //   allAccounts: [
-    //     {
-    //       address: maker.currentAddress(),
-    //       type: 'browser',
-    //       mkrInEsm: MKR(0),
-    //       mkrBalance: '2.0000',
-    //       hasProxy: false,
-    //       proxyRole: '',
-    //       votingFor: [],
-    //       hasInfMkrApproval: false,
-    //       hasInfIouApproval: false,
-    //       proxy: {
-    //         address: '',
-    //         votingPower: 1,
-    //         hasInfIouApproval: false,
-    //         hasInfMkrApproval: false,
-    //         linkedAccount: {}
-    //       },
-    //       mkrLockedChiefHot: 0,
-    //       mkrLockedChiefCold: 0
-    //     }
-    //   ]
-    // };
-    // store = mockStore({ accounts, esm });
-    //
     await waitForElement(() => !burnMKRbutton.disabled);
     expect(burnMKRbutton.disabled).toBeFalsy();
     click(burnMKRbutton);
