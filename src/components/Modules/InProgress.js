@@ -35,7 +35,7 @@ const InProgress = ({ onClose, txHash, network, title }) => {
         textAlign="center"
       >
         The estimated time is {waitTime || 'being calculated'}. You can close
-        this modal
+        this modal.
       </Text>
       {txHash && (
         <Link

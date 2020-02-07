@@ -68,7 +68,7 @@ exports[`render everything 1`] = `
         <div class=\\"sc-AykKI bYgVYs\\"><span color=\\"slate.600\\" class=\\"sc-fzXfLP cWqcIa\\"><div class=\\"sc-fzXfOY cNoEXU\\">Sign up for the latest content and updates.</div></span>
           <div class=\\"sc-AykKI eIWcxM\\">
             <div placeholder=\\"Email address\\" name=\\"email\\" type=\\"email\\" value=\\"\\" class=\\"sc-AykKI ipDseF\\">
-              <div placeholder=\\"Email address\\" name=\\"email\\" type=\\"email\\" value=\\"\\" class=\\"sc-AykKI esOQsH sc-fzXfNf sc-fzXfNg kLsOkg\\"><input placeholder=\\"Email address\\" name=\\"email\\" type=\\"email\\" id=\\"_j8p4glspt\\" class=\\"sc-fzXfNk dnuiIS\\" value=\\"\\"><label for=\\"_j8p4glspt\\" class=\\"sc-fzXfNj kYwfNB\\"><button type=\\"submit\\" class=\\"sc-fzXfOZ bemQMn\\">Subscribe</button></label></div>
+              <div placeholder=\\"Email address\\" name=\\"email\\" type=\\"email\\" value=\\"\\" class=\\"sc-AykKI esOQsH sc-fzXfNf sc-fzXfNg kLsOkg\\"><input placeholder=\\"Email address\\" name=\\"email\\" type=\\"email\\" id=\\"_uynbzw864\\" class=\\"sc-fzXfNk dnuiIS\\" value=\\"\\"><label for=\\"_uynbzw864\\" class=\\"sc-fzXfNj kYwfNB\\"><button type=\\"submit\\" class=\\"sc-fzXfOZ bemQMn\\">Subscribe</button></label></div>
             </div>
           </div>
           <div class=\\"sc-AykKI deRKoG sc-fzXfNf sc-fzXfPa jfqyjC\\"><a href=\\"https://twitter.com/MakerDAO\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\">
