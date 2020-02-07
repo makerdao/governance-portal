@@ -42,7 +42,14 @@ const TOSCheck = props => {
   );
 };
 
-export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
+export default ({
+  setStep,
+  burnAmount,
+  totalMkrInEsm,
+  address,
+  setTxHash,
+  onClose
+}) => {
   const [localValue, setLocalValue] = useState('');
   const [error, setError] = useState('');
   const [hasReadTOS, setHasReadTOS] = useState(false);
@@ -55,7 +62,7 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
   const giveProxyMkrAllowance = async () => {
     setMkrApprovePending(true);
     try {
-      await maker.getToken(MKR).approve(esmAddress, MKR(burnAmount));
+      await maker.getToken(MKR).approve(esmAddress, burnAmount);
       setProxyDetails(proxyDetails => ({
         ...proxyDetails,
         hasMkrAllowance: true
@@ -89,7 +96,16 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
           setTxHash(tx.hash);
           setStep(3);
         },
-        error: () => setStep(4)
+        mined: tx => {
+          setTxHash(tx.hash);
+          setStep(4);
+        },
+        // confirmed: tx => {
+        //   console.log('confirmed')
+        //
+        //   // do something when tx is confirmed
+        // },
+        error: () => setStep(5)
       });
     } catch (err) {
       const message = err.message ? err.message : err;
@@ -114,7 +130,7 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
   }, [address, maker, burnAmount]);
 
   return (
-    <Grid gridRowGap="m" justifyContent="center">
+    <Grid gridRowGap="m" justifyContent="center" data-testid={'step2'}>
       <Text.h2 mt="m" textAlign="center">
         Burn your MKR in the ESM
       </Text.h2>
@@ -157,6 +173,7 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
               onChange={onChange}
               failureMessage={error}
               placeholder={'I am..'}
+              data-testid={'confirm-input'}
             />
           </Grid>
         </CardBody>
@@ -194,6 +211,7 @@ export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
             !proxyDetails.hasMkrAllowance
           }
           onClick={() => burnMKR()}
+          data-testid="submit-burn"
           ml="s"
         >
           Burn MKR

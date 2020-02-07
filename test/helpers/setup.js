@@ -2,6 +2,9 @@ import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import 'whatwg-fetch';
 
+process.env.TESTING = true;
+process.env.TEST_RPC_URL = 'http://localhost:2000';
+
 Enzyme.configure({ adapter: new Adapter() });
 class LocalStorageMock {
   constructor() {

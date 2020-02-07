@@ -4,7 +4,8 @@ import Step0 from './Step0';
 import Step1 from './Step1';
 import Step2 from './Step2';
 import Step3 from '../InProgress';
-import Step4 from '../Failed';
+import Step4a from '../Confirmed';
+import Step4b from '../Failed';
 
 export default props => {
   const {
@@ -42,6 +43,7 @@ export default props => {
             totalMkrInEsm={totalMkrInEsm}
             address={account.address}
             setTxHash={setTxHash}
+            onClose={onClose}
           />
         );
       case 3:
@@ -54,7 +56,11 @@ export default props => {
         );
       case 4:
         return (
-          <Step4
+          <Step4a title={'MKR Burned'} txHash={txHash} onClose={onClose} />
+        );
+      case 5:
+        return (
+          <Step4b
             title={'Burn MKR Tx Failed'}
             txHash={txHash}
             onClose={onClose}

@@ -92,6 +92,7 @@ export default ({
           justifyContent="center"
         >
           <Text
+            data-testid="voting-power"
             my="s"
             style={{ textAlign: 'center', fontSize: 14, color: '#826318' }}
           >
@@ -112,7 +113,12 @@ export default ({
         </Button>
         <Button
           variant="danger"
-          disabled={error.length > 0 || localValue === '' || localValue <= 0}
+          disabled={
+            error.length > 0 ||
+            localValue === '' ||
+            localValue <= 0 ||
+            localValue > mkrBalance
+          }
           onClick={() => {
             onContinue(2);
             update(localValue);

@@ -25,7 +25,6 @@ export default ({ onClose, setStep, esmThresholdAmount, setTxHash }) => {
         },
         error: () => setStep(2)
       });
-      //setStep(1)
     } catch (err) {
       const message = err.message ? err.message : err;
       const errMsg = `shutdown tx failed ${message}`;
