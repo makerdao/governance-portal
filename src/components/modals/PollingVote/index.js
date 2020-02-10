@@ -113,7 +113,8 @@ class PollingVote extends Component {
 
                 <div
                   style={{
-                    marginLeft: 'auto',
+                    display: 'flex',
+                    justifyContent: 'flex-end',
                     marginTop: '18px'
                   }}
                 >
@@ -185,7 +186,8 @@ class PollingVote extends Component {
                 </VoteImpact>
                 <div
                   style={{
-                    marginLeft: 'auto',
+                    display: 'flex',
+                    justifyContent: 'flex-end',
                     marginTop: '18px'
                   }}
                 >
