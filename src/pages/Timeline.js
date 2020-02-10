@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import VoterStatus from '../components/VoterStatus';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import { toSlug, eq, formatDate, formatRound } from '../utils/misc';
+import { toSlug, eq, formatDateWithTime, formatRound } from '../utils/misc';
 import theme, { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
@@ -218,7 +218,7 @@ const Timeline = ({
                 </ExtendedLink>
                 <div>
                   {!!hatProposal.end_approvals ? (
-                    <Tag>{`Executed on ${formatDate(
+                    <Tag>{`Executed on ${formatDateWithTime(
                       hatProposal.end_timestamp
                     )} with ${formatRound(
                       hatProposal.end_approvals
@@ -278,7 +278,7 @@ const Timeline = ({
                 </ExtendedLink>
                 {!!proposal.end_approvals ? (
                   <div>
-                    <Tag>{`Executed on ${formatDate(
+                    <Tag>{`Executed on ${formatDateWithTime(
                       proposal.end_timestamp
                     )} with ${formatRound(proposal.end_approvals)} MKR`}</Tag>
                   </div>
@@ -339,7 +339,4 @@ const reduxProps = (
   };
 };
 
-export default connect(
-  reduxProps,
-  { modalOpen }
-)(Timeline);
+export default connect(reduxProps, { modalOpen })(Timeline);
