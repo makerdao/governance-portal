@@ -94,7 +94,6 @@ export const formatDate = dateString => {
  */
 export const formatDateWithTime = dateString => {
   const date = new Date(dateString);
-  console.log('date.toString()', date.toString());
   const options = {
     year: 'numeric',
     month: 'short',

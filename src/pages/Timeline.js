@@ -184,8 +184,6 @@ const Timeline = ({
   );
   otherProposals.sort((a, b) => b.end_timestamp - a.end_timestamp);
 
-  const MCD_SOURCE = '0xF44113760c4f70aFeEb412C63bC713B13E6e202E';
-
   return (
     <Fragment>
       {DEV_USE_MIGRATION_BANNER ? <MigrationNotificationBanner /> : null}
@@ -216,12 +214,12 @@ const Timeline = ({
                   <Tag mr="16" green>
                     Governing Proposal
                   </Tag>
-                  {!!hatProposal.end_timestamp ? (
+                  {hatProposal.executed ? (
                     <Tag>{`Passed on ${formatDateWithTime(
-                      hatProposal.end_timestamp
+                      hatProposal.datePassed
                     )}.
                     Executed on ${formatDateWithTime(
-                      hatProposal.end_timestamp
+                      hatProposal.dateExecuted
                     )}.`}</Tag>
                   ) : (
                     <div>
@@ -270,15 +268,13 @@ const Timeline = ({
                 <ExtendedLink
                   to={`/executive-proposal/${toSlug(proposal.title)}`}
                 >
-                  Read more...
+                  Read more
                 </ExtendedLink>
-                {!!proposal.end_timestamp ? (
+                {proposal.executed ? (
                   <div>
-                    <Tag>{`Passed on ${formatDateWithTime(
-                      proposal.end_timestamp
-                    )}.
+                    <Tag>{`Passed on ${formatDateWithTime(proposal.datePassed)}.
                     Executed on ${formatDateWithTime(
-                      proposal.end_timestamp
+                      proposal.dateExecuted
                     )}.`}</Tag>
                   </div>
                 ) : hat.approvals < approvals.approvals[proposal.source] ? (
