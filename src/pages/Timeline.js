@@ -217,18 +217,12 @@ const Timeline = ({
                   <Tag mr="16" green>
                     Governing Proposal
                   </Tag>
-                  {governingProposal.executed ? (
-                    <Tag>{`Passed on ${formatDateWithTime(
-                      governingProposal.datePassed
-                    )}.
-                    Executed on ${formatDateWithTime(
-                      governingProposal.dateExecuted
-                    )}.`}</Tag>
-                  ) : (
-                    <div>
-                      <Tag>{'Available for execution'}</Tag>
-                    </div>
-                  )}
+                  <Tag>{`Passed on ${formatDateWithTime(
+                    governingProposal.datePassed
+                  )}.
+                  Executed on ${formatDateWithTime(
+                    governingProposal.dateExecuted
+                  )}.`}</Tag>
                 </div>
               </ProposalDetails>
               <div>
@@ -280,9 +274,16 @@ const Timeline = ({
                       proposal.dateExecuted
                     )}.`}</Tag>
                   </div>
+                ) : proposal.eta ? (
+                  <div>
+                    <Tag>{`Passed on ${formatDateWithTime(proposal.datePassed)}.
+                    Available for execution on ${formatDateWithTime(
+                      proposal.eta
+                    )}.`}</Tag>
+                  </div>
                 ) : hat.approvals < approvals.approvals[proposal.source] ? (
                   <div>
-                    <Tag>{'Available for execution'}</Tag>
+                    <Tag>{'Ready to be passed'}</Tag>
                   </div>
                 ) : null}
               </ProposalDetails>
