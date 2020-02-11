@@ -179,8 +179,9 @@ const Timeline = ({
   approvals
 }) => {
   const hatProposal = proposals.find(({ source }) => eq(source, hat.address));
+  const governingProposal = hatProposal.executed ? hatProposal : null;
   const otherProposals = proposals.filter(
-    ({ source }) => !eq(source, hat.address)
+    ({ key }) => !eq(key, governingProposal.key)
   );
   otherProposals.sort((a, b) => b.end_timestamp - a.end_timestamp);
 
@@ -189,24 +190,26 @@ const Timeline = ({
       {DEV_USE_MIGRATION_BANNER ? <MigrationNotificationBanner /> : null}
       <VoterStatus signaling={signaling} legacy={true} />
       <RiseUp key={otherProposals.toString()}>
-        {signaling || !hatProposal ? null : (
+        {signaling || !governingProposal ? null : (
           <StyledCard>
             <Card.Element height={proposalWrapperHeight}>
               <ProposalDetails>
                 <div style={{ display: 'flex' }}>
                   <ExtendedLink
-                    to={`/executive-proposal/${toSlug(hatProposal.title)}`}
+                    to={`/executive-proposal/${toSlug(
+                      governingProposal.title
+                    )}`}
                   >
-                    <SubHeading>{hatProposal.title}</SubHeading>
+                    <SubHeading>{governingProposal.title}</SubHeading>
                   </ExtendedLink>
                 </div>
                 <Body
                   dangerouslySetInnerHTML={{
-                    __html: hatProposal.proposal_blurb
+                    __html: governingProposal.proposal_blurb
                   }}
                 />
                 <ExtendedLink
-                  to={`/executive-proposal/${toSlug(hatProposal.title)}`}
+                  to={`/executive-proposal/${toSlug(governingProposal.title)}`}
                 >
                   Read more.
                 </ExtendedLink>
@@ -214,12 +217,12 @@ const Timeline = ({
                   <Tag mr="16" green>
                     Governing Proposal
                   </Tag>
-                  {hatProposal.executed ? (
+                  {governingProposal.executed ? (
                     <Tag>{`Passed on ${formatDateWithTime(
-                      hatProposal.datePassed
+                      governingProposal.datePassed
                     )}.
                     Executed on ${formatDateWithTime(
-                      hatProposal.dateExecuted
+                      governingProposal.dateExecuted
                     )}.`}</Tag>
                   ) : (
                     <div>
@@ -236,7 +239,7 @@ const Timeline = ({
                     modalOpen(Vote, {
                       proposal: {
                         address: hat.address,
-                        title: hatProposal.title
+                        title: governingProposal.title
                       }
                     })
                   }
@@ -246,7 +249,7 @@ const Timeline = ({
                     : 'Vote for no change'}
                 </Button>
                 <br />
-                <TillHat candidate={hatProposal.source} />
+                <TillHat candidate={governingProposal.source} />
               </div>
             </Card.Element>
           </StyledCard>
