@@ -65,17 +65,16 @@ const StyledCard = styled(Card)`
 
 const Tag = styled.p`
   white-space: nowrap;
-  padding: 1px 10px;
-  border-radius: 4px;
-  line-height: 21px;
-  font-weight: bold;
+  padding: 4px 15px;
+  border-radius: 20px;
+  line-height: 22px;
   font-size: 14px;
   align-self: center;
   margin: auto;
   display: inline-block;
-  margin-left: ${({ ml }) => (ml ? `${ml}px` : '')};
-  background-color: ${({ green }) => (green ? '#c3f5ea' : '#FFE2D9')};
-  color: ${({ green }) => (green ? '#30BD9F' : '#E45432')};
+  margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
+  background-color: ${({ green }) => (green ? '#c3f5ea' : '#ECF1F3')};
+  color: ${({ green }) => (green ? '#139D8D' : '#31424E')};
 `;
 
 const Content = styled.div`
@@ -202,9 +201,6 @@ const Timeline = ({
                   >
                     <SubHeading>{hatProposal.title}</SubHeading>
                   </ExtendedLink>
-                  <Tag ml="16" green>
-                    GOVERNING PROPOSAL
-                  </Tag>
                 </div>
                 <Body
                   dangerouslySetInnerHTML={{
@@ -214,22 +210,22 @@ const Timeline = ({
                 <ExtendedLink
                   to={`/executive-proposal/${toSlug(hatProposal.title)}`}
                 >
-                  Read more...
+                  Read more.
                 </ExtendedLink>
-                <div>
-                  {!!hatProposal.end_approvals ? (
-                    <Tag>{`Executed on ${formatDateWithTime(
+                <div style={{ display: 'flex' }}>
+                  <Tag mr="16" green>
+                    Governing Proposal
+                  </Tag>
+                  {!!hatProposal.end_timestamp ? (
+                    <Tag>{`Passed on ${formatDateWithTime(
                       hatProposal.end_timestamp
-                    )} with ${formatRound(
-                      hatProposal.end_approvals
-                    )} MKR`}</Tag>
+                    )}.
+                    Executed on ${formatDateWithTime(
+                      hatProposal.end_timestamp
+                    )}.`}</Tag>
                   ) : (
                     <div>
-                      <Tag>
-                        {hatProposal.source === MCD_SOURCE
-                          ? 'Available for execution on November 18th at 16:00 UTC'
-                          : 'Available for execution'}
-                      </Tag>
+                      <Tag>{'Available for execution'}</Tag>
                     </div>
                   )}
                 </div>
@@ -276,19 +272,18 @@ const Timeline = ({
                 >
                   Read more...
                 </ExtendedLink>
-                {!!proposal.end_approvals ? (
+                {!!proposal.end_timestamp ? (
                   <div>
-                    <Tag>{`Executed on ${formatDateWithTime(
+                    <Tag>{`Passed on ${formatDateWithTime(
                       proposal.end_timestamp
-                    )} with ${formatRound(proposal.end_approvals)} MKR`}</Tag>
+                    )}.
+                    Executed on ${formatDateWithTime(
+                      proposal.end_timestamp
+                    )}.`}</Tag>
                   </div>
                 ) : hat.approvals < approvals.approvals[proposal.source] ? (
                   <div>
-                    <Tag>
-                      {proposal.source === MCD_SOURCE
-                        ? 'Available for execution on November 18th at 16:00 UTC'
-                        : 'Available for execution'}
-                    </Tag>
+                    <Tag>{'Available for execution'}</Tag>
                   </div>
                 ) : null}
               </ProposalDetails>
