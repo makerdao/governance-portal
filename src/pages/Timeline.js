@@ -73,8 +73,10 @@ const Tag = styled.p`
   margin: auto;
   display: inline-block;
   margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
-  background-color: ${({ green }) => (green ? '#c3f5ea' : '#ECF1F3')};
-  color: ${({ green }) => (green ? '#139D8D' : '#31424E')};
+  background-color: ${({ green, lavender }) =>
+    green ? '#c3f5ea' : lavender ? '#EDEFFF' : '#ECF1F3'};
+  color: ${({ green, lavender }) =>
+    green ? '#139D8D' : lavender ? '#48495F' : '#31424E'};
 `;
 
 const Content = styled.div`
@@ -179,12 +181,15 @@ const Timeline = ({
   approvals
 }) => {
   const hatProposal = proposals.find(({ source }) => eq(source, hat.address));
-  const governingProposal = hatProposal.executed ? hatProposal : null;
-  const otherProposals = proposals.filter(
-    ({ key }) => !eq(key, governingProposal.key)
-  );
+  const governingProposal =
+    hatProposal && (hatProposal.executed || hatProposal.end_approvals)
+      ? hatProposal
+      : null;
+  const otherProposals = proposals.filter(({ source }) => {
+    if (governingProposal) return !eq(source, governingProposal.source);
+    return true;
+  });
   otherProposals.sort((a, b) => b.end_timestamp - a.end_timestamp);
-
   return (
     <Fragment>
       {DEV_USE_MIGRATION_BANNER ? <MigrationNotificationBanner /> : null}
@@ -203,23 +208,29 @@ const Timeline = ({
                     <SubHeading>{governingProposal.title}</SubHeading>
                   </ExtendedLink>
                 </div>
-                <Body
-                  dangerouslySetInnerHTML={{
-                    __html: governingProposal.proposal_blurb
-                  }}
-                />
-                <ExtendedLink
-                  to={`/executive-proposal/${toSlug(governingProposal.title)}`}
-                >
-                  Read more.
-                </ExtendedLink>
+                <Body>
+                  {governingProposal.proposal_blurb}.
+                  <ExtendedLink
+                    to={`/executive-proposal/${toSlug(
+                      governingProposal.title
+                    )}`}
+                  >
+                    {' Read more.'}
+                  </ExtendedLink>
+                </Body>
                 <div style={{ display: 'flex' }}>
                   <Tag mr="16" green>
                     Governing Proposal
                   </Tag>
                   <Tag>{`Passed on ${formatDateWithTime(
                     governingProposal.datePassed
-                  )}.
+                  )}${
+                    governingProposal.end_approvals
+                      ? ' with ' +
+                        formatRound(governingProposal.end_approvals) +
+                        ' MKR'
+                      : ''
+                  }.
                   Executed on ${formatDateWithTime(
                     governingProposal.dateExecuted
                   )}.`}</Tag>
@@ -257,26 +268,33 @@ const Timeline = ({
                 >
                   <SubHeading>{proposal.title}</SubHeading>
                 </ExtendedLink>
-                <Body
-                  dangerouslySetInnerHTML={{
-                    __html: proposal.proposal_blurb
-                  }}
-                />
-                <ExtendedLink
-                  to={`/executive-proposal/${toSlug(proposal.title)}`}
-                >
-                  Read more
-                </ExtendedLink>
-                {proposal.executed ? (
+                <Body>
+                  {proposal.proposal_blurb}.
+                  <ExtendedLink
+                    to={`/executive-proposal/${toSlug(proposal.title)}`}
+                  >
+                    {' Read more.'}
+                  </ExtendedLink>
+                </Body>
+                {proposal.executed || proposal.end_approvals ? (
                   <div>
-                    <Tag>{`Passed on ${formatDateWithTime(proposal.datePassed)}.
+                    <Tag>{`Passed on ${formatDateWithTime(proposal.datePassed)}
+                    ${
+                      proposal.end_approvals
+                        ? ' with ' +
+                          formatRound(proposal.end_approvals) +
+                          ' MKR'
+                        : ''
+                    }.
                     Executed on ${formatDateWithTime(
                       proposal.dateExecuted
                     )}.`}</Tag>
                   </div>
                 ) : proposal.eta ? (
                   <div>
-                    <Tag>{`Passed on ${formatDateWithTime(proposal.datePassed)}.
+                    <Tag lavender>{`Passed on ${formatDateWithTime(
+                      proposal.datePassed
+                    )}.
                     Available for execution on ${formatDateWithTime(
                       proposal.eta
                     )}.`}</Tag>

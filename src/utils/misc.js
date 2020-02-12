@@ -93,6 +93,7 @@ export const formatDate = dateString => {
  * @return {String} a date string like: shortMonthName dayNum, year, hour, minute, 'UTC'
  */
 export const formatDateWithTime = dateString => {
+  if (!dateString) return;
   const date = new Date(dateString);
   const options = {
     year: 'numeric',

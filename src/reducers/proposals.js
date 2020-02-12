@@ -132,19 +132,23 @@ async function extractProposalsAndGetSdkInfo(topics, network) {
   }, []);
   return Promise.all(
     proposals.map(async p => {
-      if (p.active) {
-        const [eta, executed] = await Promise.all([
-          window.maker.service('spell').getEta(p.source),
-          window.maker.service('spell').getDone(p.source)
-        ]);
-        p.eta = eta;
-        p.executed = executed;
-        p.datePassed = p.eta
-          ? await window.maker.service('spell').getScheduledDate(p.source)
-          : undefined;
-        p.dateExecuted = p.executed
-          ? await window.maker.service('spell').getExecutionDate(p.source)
-          : undefined;
+      if (!p.govVote) {
+        try {
+          const [eta, executed] = await Promise.all([
+            window.maker.service('spell').getEta(p.source),
+            window.maker.service('spell').getDone(p.source)
+          ]);
+          p.eta = eta;
+          p.executed = executed;
+          p.datePassed = p.eta
+            ? await window.maker.service('spell').getScheduledDate(p.source)
+            : undefined;
+          p.dateExecuted = p.executed
+            ? await window.maker.service('spell').getExecutionDate(p.source)
+            : undefined;
+        } catch (e) {
+          console.log(`error getting info for spell ${p.source}`, e);
+        }
       }
       return p;
     })
@@ -166,6 +170,7 @@ export const proposalsInit = network => async dispatch => {
       payload: await extractProposalsAndGetSdkInfo(topics, network)
     });
     dispatch(formatHistoricalPolls(topics));
+    dispatch(initApprovalsFetch());
   } catch (err) {
     dispatch({
       type: PROPOSALS_FAILURE,
@@ -174,7 +179,6 @@ export const proposalsInit = network => async dispatch => {
       }
     });
   }
-  dispatch(initApprovalsFetch());
 };
 
 // Reducer ------------------------------------------------

@@ -68,7 +68,7 @@ export default [
       {
         key: 'governance-fee-raise',
         date: '2018-12-12T00:00:00.000Z',
-        end_approvals: 72402.7,
+        //end_approvals: 72402.7,
         source:
           '{"mainnet":"0x6091295974c12c4305b8bf6d2062bf48f37a3b36","kovan":"0x0c0fC0952790A96D60CD82cA865C7bb1233477C3","ganache":"0x0c0fC0952790A96D60CD82cA865C7bb1233477C3"}',
         end_timestamp: 1535606394000,
@@ -78,7 +78,11 @@ export default [
         documents: [],
         submitted_by: { link: 'https://makerdao.com/', name: 'Dai Foundation' },
         verified: true,
-        about: 'Nothing to see here folks'
+        about: 'Nothing to see here folks',
+        eta: 1535692794000,
+        datePassed: '2018-08-30T00:00:00.000Z'
+        //executed: true,
+        //dateExecuted: '2020-12-12T00:00:00.000Z'
       }
     ]
   }
