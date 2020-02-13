@@ -300,7 +300,7 @@ const Timeline = ({
                       .
                     </Tag>
                   </div>
-                ) : proposal.eta || proposal.end_approvals ? (
+                ) : proposal.eta ? (
                   <div>
                     <Tag lavender>
                       {`Passed on ${formatDateWithTime(proposal.datePassed)}${
