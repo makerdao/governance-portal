@@ -3,6 +3,15 @@ import each from 'jest-each';
 
 const dateRegex = '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$';
 
+const mockGetEta = jest.fn(async () => new Date('2020-02-04T11:35:48.000Z'));
+const mockGetDone = jest.fn(async () => true);
+const mockGetScheduledDate = jest.fn(
+  async () => new Date('2020-02-03T11:35:48.000Z')
+);
+const mockGetExecutionDate = jest.fn(
+  async () => new Date('2020-02-04T11:36:48.000Z')
+);
+
 // MOCK WEB3 AND SPELL SERVICE
 beforeAll(() => {
   const mockProvider = {
@@ -27,14 +36,10 @@ beforeAll(() => {
   const mockService = name => {
     if (name === 'spell')
       return {
-        getEta: jest.fn(async () => new Date('2020-02-04T11:35:48.000Z')),
-        getDone: jest.fn(async () => true),
-        getScheduledDate: jest.fn(
-          async () => new Date('2020-02-03T11:35:48.000Z')
-        ),
-        getExecutionDate: jest.fn(
-          async () => new Date('2020-02-04T11:36:48.000Z')
-        )
+        getEta: mockGetEta,
+        getDone: mockGetDone,
+        getScheduledDate: mockGetScheduledDate,
+        getExecutionDate: mockGetExecutionDate
       };
   };
   window.maker = {
@@ -90,6 +95,11 @@ each([
     process.env.REACT_APP_GOV_BACKEND = backend;
 
     await proposalsInit(network)(dispatch);
+
+    expect(mockGetEta).toBeCalled();
+    expect(mockGetDone).toBeCalled();
+    expect(mockGetScheduledDate).toBeCalled();
+    expect(mockGetExecutionDate).toBeCalled();
 
     expect(dispatch.mock.calls.length).toBe(4);
     expect(dispatch.mock.calls[0][0]).toEqual({
