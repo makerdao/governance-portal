@@ -13,6 +13,7 @@ import Vote from '../components/modals/Vote';
 import TillHat from '../components/TillHatMeta';
 import ExtendedLink from '../components/Onboarding/shared/ExtendedLink';
 import { Banner, BannerBody, BannerContent } from '../components/Banner';
+import WithTally from '../components/hocs/WithTally';
 
 const riseUp = keyframes`
 0% {
@@ -73,10 +74,10 @@ const Tag = styled.p`
   margin: auto;
   display: inline-block;
   margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
-  background-color: ${({ green, lavender }) =>
-    green ? '#c3f5ea' : lavender ? '#EDEFFF' : '#ECF1F3'};
-  color: ${({ green, lavender }) =>
-    green ? '#139D8D' : lavender ? '#48495F' : '#31424E'};
+  background-color: ${({ green, lavender, powder }) =>
+    green ? '#c3f5ea' : lavender ? '#EDEFFF' : powder ? '#EDF5F9' : '#ECF1F3'};
+  color: ${({ green, lavender, powder }) =>
+    green ? '#139D8D' : lavender ? '#48495F' : powder ? '#31424E' : '#31424E'};
 `;
 
 const Bold = styled.span`
@@ -322,7 +323,25 @@ const Timeline = ({
                   <div>
                     <Tag>{'Ready to be passed'}</Tag>
                   </div>
-                ) : null}
+                ) : (
+                  <div>
+                    <WithTally candidate={proposal.source}>
+                      {spellDetails =>
+                        spellDetails.loadingApprovals ? null : (
+                          <Tag powder>
+                            Competing proposal.{' '}
+                            <Bold>
+                              {formatRound(
+                                hat.approvals - spellDetails.approvals
+                              ) + ' MKR'}
+                            </Bold>{' '}
+                            needed to pass.
+                          </Tag>
+                        )
+                      }
+                    </WithTally>
+                  </div>
+                )}
               </ProposalDetails>
               <div>
                 <Fragment>
