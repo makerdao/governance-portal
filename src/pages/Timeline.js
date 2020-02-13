@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import VoterStatus from '../components/VoterStatus';
 import Button from '../components/Button';
 import Card from '../components/Card';
-import { toSlug, eq, formatDate, formatRound } from '../utils/misc';
+import { toSlug, eq, formatDateWithTime, formatRound } from '../utils/misc';
 import theme, { fonts } from '../theme';
 import { modalOpen } from '../reducers/modal';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
@@ -65,17 +65,22 @@ const StyledCard = styled(Card)`
 
 const Tag = styled.p`
   white-space: nowrap;
-  padding: 1px 10px;
-  border-radius: 4px;
-  line-height: 21px;
-  font-weight: bold;
+  padding: 4px 15px;
+  border-radius: 20px;
+  line-height: 22px;
   font-size: 14px;
   align-self: center;
   margin: auto;
   display: inline-block;
-  margin-left: ${({ ml }) => (ml ? `${ml}px` : '')};
-  background-color: ${({ green }) => (green ? '#c3f5ea' : '#FFE2D9')};
-  color: ${({ green }) => (green ? '#30BD9F' : '#E45432')};
+  margin-right: ${({ mr }) => (mr ? `${mr}px` : '')};
+  background-color: ${({ green, lavender }) =>
+    green ? '#c3f5ea' : lavender ? '#EDEFFF' : '#ECF1F3'};
+  color: ${({ green, lavender }) =>
+    green ? '#139D8D' : lavender ? '#48495F' : '#31424E'};
+`;
+
+const Bold = styled.span`
+  font-weight: bold;
 `;
 
 const Content = styled.div`
@@ -180,58 +185,61 @@ const Timeline = ({
   approvals
 }) => {
   const hatProposal = proposals.find(({ source }) => eq(source, hat.address));
-  const otherProposals = proposals.filter(
-    ({ source }) => !eq(source, hat.address)
-  );
+  const governingProposal =
+    hatProposal && hatProposal.executed ? hatProposal : null;
+  const otherProposals = proposals.filter(({ source }) => {
+    if (governingProposal) return !eq(source, governingProposal.source);
+    return true;
+  });
   otherProposals.sort((a, b) => b.end_timestamp - a.end_timestamp);
-
-  const MCD_SOURCE = '0xF44113760c4f70aFeEb412C63bC713B13E6e202E';
-
   return (
     <Fragment>
       {DEV_USE_MIGRATION_BANNER ? <MigrationNotificationBanner /> : null}
       <VoterStatus signaling={signaling} legacy={true} />
       <RiseUp key={otherProposals.toString()}>
-        {signaling || !hatProposal ? null : (
+        {signaling || !governingProposal ? null : (
           <StyledCard>
             <Card.Element height={proposalWrapperHeight}>
               <ProposalDetails>
                 <div style={{ display: 'flex' }}>
                   <ExtendedLink
-                    to={`/executive-proposal/${toSlug(hatProposal.title)}`}
+                    to={`/executive-proposal/${toSlug(
+                      governingProposal.title
+                    )}`}
                   >
-                    <SubHeading>{hatProposal.title}</SubHeading>
+                    <SubHeading>{governingProposal.title}</SubHeading>
                   </ExtendedLink>
-                  <Tag ml="16" green>
-                    GOVERNING PROPOSAL
-                  </Tag>
                 </div>
-                <Body
-                  dangerouslySetInnerHTML={{
-                    __html: hatProposal.proposal_blurb
-                  }}
-                />
-                <ExtendedLink
-                  to={`/executive-proposal/${toSlug(hatProposal.title)}`}
-                >
-                  Read more...
-                </ExtendedLink>
-                <div>
-                  {!!hatProposal.end_approvals ? (
-                    <Tag>{`Executed on ${formatDate(
-                      hatProposal.end_timestamp
-                    )} with ${formatRound(
-                      hatProposal.end_approvals
-                    )} MKR`}</Tag>
-                  ) : (
-                    <div>
-                      <Tag>
-                        {hatProposal.source === MCD_SOURCE
-                          ? 'Available for execution on November 18th at 16:00 UTC'
-                          : 'Available for execution'}
-                      </Tag>
-                    </div>
-                  )}
+                <Body>
+                  {governingProposal.proposal_blurb}.
+                  <ExtendedLink
+                    to={`/executive-proposal/${toSlug(
+                      governingProposal.title
+                    )}`}
+                  >
+                    {' Read more.'}
+                  </ExtendedLink>
+                </Body>
+                <div style={{ display: 'flex' }}>
+                  <Tag mr="16" green>
+                    Governing Proposal
+                  </Tag>
+                  <Tag>
+                    {`Passed on ${formatDateWithTime(
+                      governingProposal.datePassed
+                    )}${governingProposal.end_approvals ? ' with ' : ''}`}
+                    <Bold>
+                      {governingProposal.end_approvals
+                        ? `${formatRound(governingProposal.end_approvals) +
+                            ' MKR'}`
+                        : ''}
+                    </Bold>
+                    .
+                    {` Executed on ${formatDateWithTime(
+                      governingProposal.dateExecuted
+                    )}`}
+                    .
+                  </Tag>
                 </div>
               </ProposalDetails>
               <div>
@@ -242,7 +250,7 @@ const Timeline = ({
                     modalOpen(Vote, {
                       proposal: {
                         address: hat.address,
-                        title: hatProposal.title
+                        title: governingProposal.title
                       }
                     })
                   }
@@ -252,7 +260,7 @@ const Timeline = ({
                     : 'Vote for no change'}
                 </Button>
                 <br />
-                <TillHat candidate={hatProposal.source} />
+                <TillHat candidate={governingProposal.source} />
               </div>
             </Card.Element>
           </StyledCard>
@@ -266,29 +274,53 @@ const Timeline = ({
                 >
                   <SubHeading>{proposal.title}</SubHeading>
                 </ExtendedLink>
-                <Body
-                  dangerouslySetInnerHTML={{
-                    __html: proposal.proposal_blurb
-                  }}
-                />
-                <ExtendedLink
-                  to={`/executive-proposal/${toSlug(proposal.title)}`}
-                >
-                  Read more...
-                </ExtendedLink>
-                {!!proposal.end_approvals ? (
+                <Body>
+                  {proposal.proposal_blurb}.
+                  <ExtendedLink
+                    to={`/executive-proposal/${toSlug(proposal.title)}`}
+                  >
+                    {' Read more.'}
+                  </ExtendedLink>
+                </Body>
+                {proposal.executed ? (
                   <div>
-                    <Tag>{`Executed on ${formatDate(
-                      proposal.end_timestamp
-                    )} with ${formatRound(proposal.end_approvals)} MKR`}</Tag>
+                    <Tag>
+                      {`Passed on ${formatDateWithTime(proposal.datePassed)}${
+                        proposal.end_approvals ? ' with ' : ''
+                      }`}
+                      <Bold>
+                        {proposal.end_approvals
+                          ? `${formatRound(proposal.end_approvals) + ' MKR'}`
+                          : ''}
+                      </Bold>
+                      .
+                      {` Executed on ${formatDateWithTime(
+                        proposal.dateExecuted
+                      )}`}
+                      .
+                    </Tag>
+                  </div>
+                ) : proposal.eta ? (
+                  <div>
+                    <Tag lavender>
+                      {`Passed on ${formatDateWithTime(proposal.datePassed)}${
+                        proposal.end_approvals ? ' with ' : ''
+                      }`}
+                      <Bold>
+                        {proposal.end_approvals
+                          ? `${formatRound(proposal.end_approvals) + ' MKR'}`
+                          : ''}
+                      </Bold>
+                      .
+                      {` Available for execution on ${formatDateWithTime(
+                        proposal.eta
+                      )}`}
+                      .
+                    </Tag>
                   </div>
                 ) : hat.approvals < approvals.approvals[proposal.source] ? (
                   <div>
-                    <Tag>
-                      {proposal.source === MCD_SOURCE
-                        ? 'Available for execution on November 18th at 16:00 UTC'
-                        : 'Available for execution'}
-                    </Tag>
+                    <Tag>{'Ready to be passed'}</Tag>
                   </div>
                 ) : null}
               </ProposalDetails>
@@ -339,7 +371,4 @@ const reduxProps = (
   };
 };
 
-export default connect(
-  reduxProps,
-  { modalOpen }
-)(Timeline);
+export default connect(reduxProps, { modalOpen })(Timeline);

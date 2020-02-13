@@ -88,6 +88,27 @@ export const formatDate = dateString => {
 };
 
 /**
+ * @desc format date string to show date and time
+ * @param  {String} dateString any parsable date string
+ * @return {String} a date string like: shortMonthName dayNum, year, hour, minute, 'UTC'
+ */
+export const formatDateWithTime = dateString => {
+  if (!dateString) return;
+  const date = new Date(dateString);
+  const options = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: false,
+    timeZone: 'UTC',
+    timeZoneName: 'short'
+  };
+  return new Intl.DateTimeFormat('en-US', options).format(date);
+};
+
+/**
  * @desc capitalize the first letter and lowercase the rest
  * @param  {String}
  * @return {String}

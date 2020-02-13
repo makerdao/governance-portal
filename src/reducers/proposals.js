@@ -115,11 +115,11 @@ const updateSourceForTestnet = topics => {
   return topics;
 };
 
-function extractProposals(topics, network) {
+async function extractProposalsAndGetSdkInfo(topics, network) {
   // if we're using a testnet, overwrite proposal source with provided ganache addresses.
   if (network === 'ganache') updateSourceForTestnet(topics);
 
-  return topics.reduce((acc, topic) => {
+  const proposals = topics.reduce((acc, topic) => {
     const proposals = topic.proposals.map(({ source, ...otherProps }) => ({
       ...otherProps,
       source: source.startsWith('{') ? JSON.parse(source)[network] : source,
@@ -130,6 +130,29 @@ function extractProposals(topics, network) {
     }));
     return acc.concat(proposals);
   }, []);
+  return Promise.all(
+    proposals.map(async p => {
+      if (!p.govVote) {
+        try {
+          const [eta, executed] = await Promise.all([
+            window.maker.service('spell').getEta(p.source),
+            window.maker.service('spell').getDone(p.source)
+          ]);
+          p.eta = eta;
+          p.executed = executed;
+          p.datePassed = p.eta
+            ? await window.maker.service('spell').getScheduledDate(p.source)
+            : undefined;
+          p.dateExecuted = p.executed
+            ? await window.maker.service('spell').getExecutionDate(p.source)
+            : undefined;
+        } catch (e) {
+          console.log(`error getting info for spell ${p.source}`, e);
+        }
+      }
+      return p;
+    })
+  );
 }
 
 export const proposalsInit = network => async dispatch => {
@@ -144,9 +167,10 @@ export const proposalsInit = network => async dispatch => {
 
     dispatch({
       type: PROPOSALS_SUCCESS,
-      payload: extractProposals(topics, network)
+      payload: await extractProposalsAndGetSdkInfo(topics, network)
     });
     dispatch(formatHistoricalPolls(topics));
+    dispatch(initApprovalsFetch());
   } catch (err) {
     dispatch({
       type: PROPOSALS_FAILURE,
@@ -155,7 +179,6 @@ export const proposalsInit = network => async dispatch => {
       }
     });
   }
-  dispatch(initApprovalsFetch());
 };
 
 // Reducer ------------------------------------------------
