@@ -329,7 +329,6 @@ const Timeline = ({
                       {spellDetails =>
                         spellDetails.loadingApprovals ? null : (
                           <Tag powder>
-                            Competing proposal.{' '}
                             <Bold>
                               {formatRound(
                                 hat.approvals - spellDetails.approvals
