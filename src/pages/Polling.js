@@ -161,7 +161,7 @@ const VotedFor = ({
     voteBreakdown && (optionVotingForId || optionVotingForId === 0)
       ? getTotalVotesForOption(voteBreakdown, optionVotingForId)
       : null;
-  if (optionVotingFor)
+  if (optionVotingFor || optionVotingFor === 0)
     return (
       <VoteStatusText>
         <Black>{active ? 'Currently voting: ' : 'Voted for: '}</Black>
