@@ -55,7 +55,6 @@ export default ({
   const [hasReadTOS, setHasReadTOS] = useState(false);
   const [mkrApprovePending, setMkrApprovePending] = useState(false);
   const [proxyDetails, setProxyDetails] = useState({});
-  const [burnInitiated, setBurnInitiated] = useState(false);
   const maker = window.maker;
   const esmAddress = maker.service('smartContract').getContractAddresses().ESM;
 
@@ -88,7 +87,6 @@ export default ({
 
   const burnMKR = async () => {
     try {
-      setBurnInitiated(true);
       const esm = await maker.service('esm');
       const burnTxObject = esm.stake(burnAmount);
       maker.service('transactionManager').listen(burnTxObject, {
@@ -127,7 +125,7 @@ export default ({
         }
       }
     })();
-  }, [address, maker, burnAmount]);
+  }, [address, maker, burnAmount, esmAddress]);
 
   return (
     <Grid gridRowGap="m" justifyContent="center" data-testid={'step2'}>

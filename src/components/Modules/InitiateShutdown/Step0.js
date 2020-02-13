@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import warning from '../../../imgs/warning.svg';
 import { Button, Flex, Text } from '@makerdao/ui-components-core';
@@ -11,11 +11,9 @@ const WarningIcon = styled.p`
 `;
 
 export default ({ onClose, setStep, esmThresholdAmount, setTxHash }) => {
-  const [shutdownInitiated, setShutdownInitiated] = useState(false);
   const maker = window.maker;
   const completeShutdown = async () => {
     try {
-      setShutdownInitiated(true);
       const esm = await maker.service('esm');
       const shutdownTxObject = esm.triggerEmergencyShutdown();
       maker.service('transactionManager').listen(shutdownTxObject, {
