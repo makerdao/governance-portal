@@ -6,7 +6,7 @@ const INFURA_KEY = '6ba7a95268bf4ccda9bf1373fe582b43';
 
 export default async function instantiateMaker(network) {
   const url =
-    network === 'test'
+    network === 'testnet'
       ? process.env.TEST_RPC_URL
       : `https://${network}.infura.io/v3/${INFURA_KEY}`;
 
@@ -18,7 +18,7 @@ export default async function instantiateMaker(network) {
     url,
     log: false,
     multicall: true,
-    plugins: [trezorPlugin, ledgerPlugin, governancePlugin],
+    plugins: [trezorPlugin, ledgerPlugin, [governancePlugin, { network }]],
     autoAuthenticate: true
   };
 
