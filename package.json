@@ -53,7 +53,7 @@
     "deploy": "yarn build && now ./build -A ../now.json",
     "testchain": "./scripts/run-testchain.sh",
     "test": "yarn testchain --ci yarn jest",
-    "cover": "jest --coverage",
+    "cover": "yarn testchain --ci yarn jest --coverage",
     "eject": "react-scripts eject",
     "precommit": "lint-staged",
     "remove-sourcemaps": "rm -rf build/static/js/*.map"
