@@ -42,14 +42,7 @@ const TOSCheck = props => {
   );
 };
 
-export default ({
-  setStep,
-  burnAmount,
-  totalMkrInEsm,
-  address,
-  setTxHash,
-  onClose
-}) => {
+export default ({ setStep, burnAmount, totalMkrInEsm, address, setTxHash }) => {
   const [localValue, setLocalValue] = useState('');
   const [error, setError] = useState('');
   const [hasReadTOS, setHasReadTOS] = useState(false);
@@ -114,15 +107,11 @@ export default ({
   useEffect(() => {
     (async () => {
       if (maker && address) {
-        const proxyAddress = await maker.service('proxy').currentProxy();
-        if (proxyAddress) {
-          const connectedWalletAllowance = await maker
-            .getToken(MKR)
-            .allowance(address, esmAddress);
-          console.log(connectedWalletAllowance, 'connectedWalletAllowance');
-          const hasMkrAllowance = connectedWalletAllowance.gte(MKR(burnAmount));
-          setProxyDetails({ hasMkrAllowance, address: proxyAddress });
-        }
+        const connectedWalletAllowance = await maker
+          .getToken(MKR)
+          .allowance(address, esmAddress);
+        const hasMkrAllowance = connectedWalletAllowance.gte(MKR(burnAmount));
+        setProxyDetails({ hasMkrAllowance });
       }
     })();
   }, [address, maker, burnAmount, esmAddress]);
@@ -185,7 +174,7 @@ export default ({
           isLoading={mkrApprovePending}
           isComplete={proxyDetails.hasMkrAllowance}
           onToggle={giveProxyMkrAllowance}
-          disabled={proxyDetails.hasMkrAllowance || !proxyDetails.address}
+          disabled={proxyDetails.hasMkrAllowance}
           data-testid="allowance-toggle"
         />
         <TOSCheck mt={'m'} {...{ hasReadTOS, setHasReadTOS }} />

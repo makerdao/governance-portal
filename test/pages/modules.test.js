@@ -1,9 +1,7 @@
 import React from 'react';
-import { Provider } from 'react-redux';
 import Modules from '../../src/pages/Modules';
-import { takeSnapshot, restoreSnapshot } from '@makerdao/test-helpers';
 import instantiateMaker from '../helpers/maker';
-import Maker, { ETH, MKR } from '@makerdao/dai';
+import { MKR } from '@makerdao/dai';
 import {
   act,
   cleanup,
@@ -12,9 +10,6 @@ import {
   wait,
   waitForElement
 } from '@testing-library/react';
-import governancePlugin from '@makerdao/dai-plugin-governance';
-import trezorPlugin from '@makerdao/dai-plugin-trezor-web';
-import ledgerPlugin from '@makerdao/dai-plugin-ledger-web';
 
 const { click } = fireEvent;
 
@@ -128,16 +123,10 @@ describe('renders summary page', () => {
     await wait(() => getByTestId('shutdown-initiated'));
   });
 
-  test.skip('Burn MKR Modal Flow', async () => {
-    const {
-      getByTestId,
-      getAllByTestId,
-      getByText,
-      getByRole,
-      getByPlaceholderText,
-      rerender,
-      debug
-    } = await render(<Modules store={store} />);
+  test('Burn MKR Modal Flow', async () => {
+    const { getByTestId, getAllByTestId, getByText, getByRole } = await render(
+      <Modules store={store} />
+    );
     click(getByText('Burn your MKR'));
 
     // First Step Render
@@ -182,11 +171,13 @@ describe('renders summary page', () => {
     // click the terms of service
     const tos = getByTestId('tosCheck');
     click(tos);
+    expect(tos.checked).toBeTruthy();
 
     // click the unlock mkr
-    const toggle = getByTestId('allowance-toggle');
-    await waitForElement(() => !toggle.disabled);
-    click(toggle);
+    const allowanceBtn = getByTestId('allowance-toggle').children[0];
+    await waitForElement(() => !allowanceBtn.disabled);
+    click(allowanceBtn);
+    await waitForElement(() => allowanceBtn.disabled);
 
     // Incorrect Input Check
     fireEvent.change(confirmInput, { target: { value: 'I am burning 2 MKR' } });
@@ -197,8 +188,12 @@ describe('renders summary page', () => {
     const step2 = await waitForElement(() => getByTestId('step2'));
 
     await waitForElement(() => !burnMKRbutton.disabled);
-    expect(burnMKRbutton.disabled).toBeFalsy();
     click(burnMKRbutton);
-    debug();
+
+    // Third Step Render
+    await wait(() => getByText('Your MKR is being burned'));
+
+    // Fourth Step Success Render
+    await wait(() => getByText('MKR Burned'));
   });
 });

@@ -1,11 +1,11 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { netIdToName } from '../../utils/ethereum';
 import { Button, Text, Link } from '@makerdao/ui-components-core';
 import arrowTopRight from '../../imgs/arrowTopRight.svg';
 import LoadingBar from '../LoadingBar';
 import { etherscanLink } from '../../utils/ui';
 
-const InProgress = ({ onClose, txHash, network, title }) => {
+const InProgress = ({ onClose, txHash, title }) => {
   const [waitTime, setWaitTime] = useState();
   const maker = window.maker;
   useEffect(() => {
@@ -42,7 +42,10 @@ const InProgress = ({ onClose, txHash, network, title }) => {
           justifySelf="center"
           target="_blank"
           mt="m"
-          href={etherscanLink(txHash, network)}
+          href={etherscanLink(
+            txHash,
+            netIdToName(window.maker.service('web3').networkId())
+          )}
         >
           <Button
             justifySelf="center"
@@ -70,6 +73,4 @@ const InProgress = ({ onClose, txHash, network, title }) => {
   );
 };
 
-export default connect(state => ({
-  network: state.metamask.network
-}))(InProgress);
+export default InProgress;

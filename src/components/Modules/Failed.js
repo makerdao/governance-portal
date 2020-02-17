@@ -1,11 +1,11 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { netIdToName } from '../../utils/ethereum';
 import { Grid, Text, Button, Link } from '@makerdao/ui-components-core';
 import arrowTopRight from '../../imgs/arrowTopRight.svg';
 import { etherscanLink } from '../../utils/ui';
 
 function Failed(props) {
-  const { onClose, txHash, network } = props;
+  const { onClose, txHash } = props;
 
   return (
     <Grid gridRowGap="m" mx={'s'}>
@@ -17,7 +17,10 @@ function Failed(props) {
         <Link
           justifySelf="center"
           target="_blank"
-          href={etherscanLink(txHash, network)}
+          href={etherscanLink(
+            txHash,
+            netIdToName(window.maker.service('web3').networkId())
+          )}
         >
           <Button
             my="xs"
@@ -42,6 +45,4 @@ function Failed(props) {
     </Grid>
   );
 }
-export default connect(state => ({
-  network: state.metamask.network
-}))(Failed);
+export default Failed;

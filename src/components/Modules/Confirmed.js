@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
+import { netIdToName } from '../../utils/ethereum';
 import { Button, Text, Link } from '@makerdao/ui-components-core';
 import arrowTopRight from '../../imgs/arrowTopRight.svg';
 import { etherscanLink } from '../../utils/ui';
@@ -22,7 +22,10 @@ const Confirmed = ({ onClose, txHash, network, title }) => {
           justifySelf="center"
           target="_blank"
           mt="m"
-          href={etherscanLink(txHash, network)}
+          href={etherscanLink(
+            txHash,
+            netIdToName(window.maker.service('web3').networkId())
+          )}
         >
           <Button
             justifySelf="center"
@@ -49,6 +52,4 @@ const Confirmed = ({ onClose, txHash, network, title }) => {
   );
 };
 
-export default connect(state => ({
-  network: state.metamask.network
-}))(Confirmed);
+export default Confirmed;

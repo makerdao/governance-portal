@@ -43,7 +43,6 @@ export default props => {
             totalMkrInEsm={totalMkrInEsm}
             address={account.address}
             setTxHash={setTxHash}
-            onClose={onClose}
           />
         );
       case 3:
