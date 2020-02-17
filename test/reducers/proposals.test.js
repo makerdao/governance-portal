@@ -3,7 +3,16 @@ import each from 'jest-each';
 
 const dateRegex = '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}Z$';
 
-// MOCK WEB3
+const mockGetEta = jest.fn(async () => new Date('2020-02-04T11:35:48.000Z'));
+const mockGetDone = jest.fn(async () => true);
+const mockGetScheduledDate = jest.fn(
+  async () => new Date('2020-02-03T11:35:48.000Z')
+);
+const mockGetExecutionDate = jest.fn(
+  async () => new Date('2020-02-04T11:36:48.000Z')
+);
+
+// MOCK WEB3 AND SPELL SERVICE
 beforeAll(() => {
   const mockProvider = {
     sendAsync: ({ method }, callback) => {
@@ -22,6 +31,19 @@ beforeAll(() => {
     enable: async () => {
       window.ethereum['sendAsync'] = mockProvider.sendAsync;
     }
+  };
+
+  const mockService = name => {
+    if (name === 'spell')
+      return {
+        getEta: mockGetEta,
+        getDone: mockGetDone,
+        getScheduledDate: mockGetScheduledDate,
+        getExecutionDate: mockGetExecutionDate
+      };
+  };
+  window.maker = {
+    service: jest.fn(mockService)
   };
 });
 
@@ -47,7 +69,7 @@ test('proposalsInit dispatches a FAILURE action when it cannot reach the backend
 
   // ASSERT
   expect(fetch.mock.calls.length).toBe(5);
-  expect(dispatch.mock.calls.length).toBe(3);
+  expect(dispatch.mock.calls.length).toBe(2);
   expect(dispatch.mock.calls[0][0]).toEqual({
     type: 'proposals/REQUEST',
     payload: {}
@@ -73,6 +95,11 @@ each([
     process.env.REACT_APP_GOV_BACKEND = backend;
 
     await proposalsInit(network)(dispatch);
+
+    expect(mockGetEta).toBeCalled();
+    expect(mockGetDone).toBeCalled();
+    expect(mockGetScheduledDate).toBeCalled();
+    expect(mockGetExecutionDate).toBeCalled();
 
     expect(dispatch.mock.calls.length).toBe(4);
     expect(dispatch.mock.calls[0][0]).toEqual({

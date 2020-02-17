@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Flex, Button } from '@makerdao/ui-components';
+import { Grid, Flex, Button } from '@makerdao/ui-components-core';
 
 import TransactionStatusIndicator from '../../TransactionStatusIndicator';
 import OnboardingHeader from './OnboardingHeader';

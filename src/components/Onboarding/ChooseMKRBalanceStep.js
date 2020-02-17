@@ -10,7 +10,7 @@ import {
   Checkbox,
   Address,
   Flex
-} from '@makerdao/ui-components';
+} from '@makerdao/ui-components-core';
 
 import Loader from '../Loader';
 import OnboardingHeader from './shared/OnboardingHeader';
@@ -172,9 +172,6 @@ class ChooseMKRBalance extends React.Component {
   }
 }
 
-export default connect(
-  state => ({}),
-  {
-    connectHardwareAccounts
-  }
-)(ChooseMKRBalance);
+export default connect(state => ({}), {
+  connectHardwareAccounts
+})(ChooseMKRBalance);

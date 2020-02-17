@@ -44,7 +44,7 @@ const Lock = ({
 
   return (
     <TransactionModal
-      txPurpose="This transaction is to lock your MKR. Your funds are safe. You can withdrawn them at anytime"
+      txPurpose="This transaction is to lock your MKR. Your funds are safe. You can withdraw them at anytime"
       txHash={txHash}
       txStatus={txStatus}
       account={account}
@@ -77,7 +77,4 @@ const Lock = ({
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Lock);
+export default connect(mapStateToProps, mapDispatchToProps)(Lock);

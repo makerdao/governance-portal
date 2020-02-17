@@ -9,7 +9,7 @@ import {
   Input,
   Card,
   Address
-} from '@makerdao/ui-components';
+} from '@makerdao/ui-components-core';
 
 import linkImg from '../../imgs/onboarding/link-lock.svg';
 import lockImg from '../../imgs/onboarding/lock.svg';
@@ -97,9 +97,7 @@ class LockMKR extends React.Component {
     } else if (mkr === 0) {
       error = 'Please enter a number greater than zero';
     } else if (mkr > this.state.storageWallet.mkrBalance) {
-      error = `The maximum amount of MKR you can lock is ${
-        this.state.storageWallet.mkrBalance
-      }`;
+      error = `The maximum amount of MKR you can lock is ${this.state.storageWallet.mkrBalance}`;
     }
 
     this.setState({

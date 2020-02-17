@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Box, Button, Flex } from '@makerdao/ui-components';
+import { Grid, Box, Button, Flex } from '@makerdao/ui-components-core';
 import { connect } from 'react-redux';
 
 import { AccountTypes } from '../../utils/constants';

@@ -10,7 +10,7 @@ import {
   Flex,
   Overflow,
   Link
-} from '@makerdao/ui-components';
+} from '@makerdao/ui-components-core';
 
 const containerWidth = '54.8rem';
 const termsMaxHeight = '30rem';

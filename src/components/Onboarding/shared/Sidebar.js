@@ -8,7 +8,7 @@ import {
   Card,
   Link,
   Address
-} from '@makerdao/ui-components';
+} from '@makerdao/ui-components-core';
 
 import NetworkIndicator from '../../NetworkIndicator';
 import { TransactionStatus } from '../../../utils/constants';

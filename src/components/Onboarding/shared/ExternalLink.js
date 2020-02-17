@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Link } from '@makerdao/ui-components';
+import { Link } from '@makerdao/ui-components-core';
 
 import newTab from '../../../imgs/onboarding/newtab.svg';
 

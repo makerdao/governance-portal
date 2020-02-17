@@ -12,6 +12,7 @@ import toasts from './toasts';
 import eth from './eth';
 import onboarding from './onboarding';
 import polling from './polling';
+import esm from './esm';
 
 const rootReducer = combineReducers({
   metamask,
@@ -26,7 +27,8 @@ const rootReducer = combineReducers({
   eth,
   toasts,
   onboarding,
-  polling
+  polling,
+  esm
 });
 
 export default rootReducer;

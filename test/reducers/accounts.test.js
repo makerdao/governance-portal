@@ -107,7 +107,7 @@ const setupMocks = (opts = defaults, services = {}) => {
     .mockImplementation(() => Promise.resolve(opts.proposalAddresses));
 
   const getContractAddressByName = jest.fn();
-
+  const getTotalStakedByAddress = jest.fn();
   const service = jest.fn().mockImplementation(service => {
     const allServices = {
       voteProxy: {
@@ -119,6 +119,7 @@ const setupMocks = (opts = defaults, services = {}) => {
         getSlateAddresses
       },
       smartContract: { getContractAddressByName },
+      esm: { getTotalStakedByAddress },
       ...services
     };
     return allServices[service];
@@ -867,9 +868,9 @@ describe('Hardware wallets', () => {
     expect(newState.onHardwareAccountChosen).not.toBe(oldCallback);
   });
 
-  each([[AccountTypes.TREZOR], [AccountTypes.LEDGER]]).describe(
+  describe.each([[AccountTypes.TREZOR], [AccountTypes.LEDGER]])(
     'When a hardware wallet is chosen',
-    async accountType => {
+    accountType => {
       test('it is added to the maker object', async () => {
         store.getState().accounts.onHardwareAccountChosen = jest
           .fn()

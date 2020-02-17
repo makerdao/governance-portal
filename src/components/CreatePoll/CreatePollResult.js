@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
-import { Box, Link } from '@makerdao/ui-components-core';
-import { Button } from '@makerdao/ui-components';
+import { Button, Box, Link } from '@makerdao/ui-components-core';
 import Loader from '../Loader';
 import { copyToClipboard, cutMiddle } from '../../utils/misc';
 import { PollTxState } from '../../utils/constants';

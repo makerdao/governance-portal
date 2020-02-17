@@ -1,62 +1,71 @@
 import React from 'react';
-import styled from 'styled-components';
-import ReactMarkdown from 'react-markdown';
+import { Flex, Grid, Text, Link } from '@makerdao/ui-components-core';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import { getActiveAccount } from '../reducers/accounts';
 
-import Loader from '../components/Loader';
+import MKRBurn from '../components/Modules/MKRBurn';
+import ESMHistory from '../components/Modules/ESMHistory';
 
-const Container = styled.div`
-  padding: 50px;
-`;
+const ESM = ({ activeAccount = {}, esm = {} } = {}) => {
+  const { totalStaked, thresholdAmount, fired, canFire, cageTime } = esm;
+  window.totalStaked = totalStaked;
+  const time = cageTime === 0 ? cageTime : cageTime.toNumber();
+  const formattedTime = moment.utc(time).format('do MMMM YYYY hh:mm');
+  return (
+    <Flex flexDirection="column" minHeight="100vh">
+      {time ? (
+        <Flex
+          justifyContent="center"
+          alignItems="center"
+          border={'1px solid #F77249'}
+          style={{ backgroundColor: '#FDEDE8' }}
+          mt={'l'}
+          borderRadius={'6'}
+          data-testid="shutdown-initiated"
+        >
+          <Text
+            my="s"
+            style={{ textAlign: 'center', fontSize: 14, color: '#994126' }}
+          >
+            {`Emergency shutdown has been initiated on ${formattedTime} UTC. This dashboard is currently read-only.`}
+            <br />
+          </Text>
+        </Flex>
+      ) : null}
+      <Grid gridRowGap="m" mx={'2xl'} my={'2xl'} px={'2xl'}>
+        <Text.h2 textAlign="left">Emergency Shutdown Module</Text.h2>
+        <Text.p>
+          The ESM allows MKR holders to shutdown the system without a central
+          authority. Once 50,000 MKR are entered into the ESM, emergency
+          shutdown can be executed.{` `}
+          <Link
+            href="https://docs.makerdao.com/smart-contract-modules/emergency-shutdown-module"
+            target="_blank"
+            rel="noopener noreferrer"
+            css="text-decoration: none"
+          >
+            Read the documentation here.
+          </Link>
+        </Text.p>
+        <MKRBurn
+          esmThresholdAmount={thresholdAmount}
+          initiated={fired}
+          canInitiate={canFire}
+          account={activeAccount}
+          totalMkrInEsm={totalStaked}
+        />
+        <ESMHistory />
+      </Grid>
+    </Flex>
+  );
+};
 
-export default class Dropdown extends React.Component {
-  state = {
-    esmCliDocContent: null
+const reduxProps = ({ accounts, esm }) => {
+  return {
+    activeAccount: getActiveAccount({ accounts }),
+    esm
   };
+};
 
-  componentDidMount() {
-    fetch(require('../esCliDoc.md'))
-      .then(res => res.text())
-      .then(esmCliDocContent => this.setState({ esmCliDocContent }));
-  }
-
-  render() {
-    const { esmCliDocContent } = this.state;
-    return (
-      <Container>
-        {esmCliDocContent ? (
-          <div>
-            <p>
-              Emergency Shutdown is currently only available through the command
-              line interface as we are in the process of building a frontend UI
-              for users to interact with. This guide therefore outlines the
-              steps and procedures necessary to check, interact with and trigger
-              the ESM.
-            </p>
-            <br />
-            <p>
-              The Emergency Shutdown Module (ESM) is responsible for a process
-              that gracefully shuts down the Maker Protocol and properly
-              allocates collateral to both Vault users and Dai holders. This
-              acts as a last resort to protect the Maker Protocol against a
-              serious threat, such as but not limited to governance attacks,
-              long-term market irrationality, hacks and security breaches.
-            </p>
-            <br />
-            <p>
-              Please be aware that the triggering of the ESM is not to be taken
-              lightly as this action permanently burns the users MKR tokens.
-            </p>
-            <br />
-            <ReactMarkdown
-              className="markdown"
-              skipHtml={false}
-              source={esmCliDocContent}
-            />
-          </div>
-        ) : (
-          <Loader mt={34} mb={34} color="header" background="background" />
-        )}
-      </Container>
-    );
-  }
-}
+export default connect(reduxProps)(ESM);

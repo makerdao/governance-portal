@@ -1,0 +1,61 @@
+version: 2
+jobs:
+  install:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install dependencies
+          command: yarn
+      - save_cache:
+          paths:
+            - node_modules
+            - ./node_modules
+          key: dependency-cache-{{ checksum "package.json" }}
+  test:
+    docker:
+      - image: levity/dapptools-node-latest
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Run tests
+          command: |
+            source /home/circleci/setup-env.sh
+            yarn cover
+            npm i --no-save codecov
+            ./node_modules/.bin/codecov
+  deploy_staging:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Deploy to Now
+          command: |
+            yarn build
+            npm i --no-save now@16.7.3
+            ./scripts/now-deploy.sh
+workflows:
+  version: 2
+  mainflow:
+    jobs:
+      - install
+      - test:
+          requires:
+            - install
+      - deploy_staging:
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: master

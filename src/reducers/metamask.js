@@ -12,6 +12,7 @@ import { voteTallyInit } from './tally';
 import { proposalsInit } from './proposals';
 import { pollsInit } from './polling';
 import { hatInit } from './hat';
+import { esmInit } from './esm';
 
 // Constants ----------------------------------------------
 
@@ -22,6 +23,7 @@ export const CONNECT_SUCCESS = 'metamask/CONNECT_SUCCESS';
 export const CONNECT_FAILURE = 'metamask/CONNECT_FAILURE';
 export const NOT_AVAILABLE = 'metamask/NOT_AVAILABLE';
 export const WRONG_NETWORK = 'metamask/WRONG_NETWORK';
+export const UPDATE_MAKER = 'metamask/UPDATE_MAKER';
 
 // Actions ------------------------------------------------
 
@@ -50,6 +52,11 @@ export const notAvailable = () => ({
 
 export const wrongNetwork = () => ({
   type: WRONG_NETWORK
+});
+
+export const updateMaker = maker => ({
+  type: UPDATE_MAKER,
+  payload: { maker }
 });
 
 export const pollForMetamaskChanges = () => async dispatch => {
@@ -121,7 +128,7 @@ export const initWeb3Accounts = () => async (dispatch, getState) => {
   }
 };
 
-export const init = (network = 'mainnet') => async dispatch => {
+export const init = (maker, network = 'mainnet') => async dispatch => {
   dispatch(connectRequest());
 
   if (!window.web3 || !window.web3.eth.defaultAccount) {
@@ -130,12 +137,13 @@ export const init = (network = 'mainnet') => async dispatch => {
   }
   dispatch(connectSuccess(network));
   dispatch(updateNetwork(network));
-
+  dispatch(updateMaker(maker));
   dispatch(voteTallyInit());
   dispatch(proposalsInit(network));
   dispatch(hatInit());
   dispatch(ethInit());
   dispatch(pollsInit());
+  dispatch(esmInit());
   await dispatch(initWeb3Accounts());
   dispatch(pollForMetamaskChanges());
 };
@@ -147,7 +155,8 @@ const initialState = {
   activeAddress: '',
   available: false,
   network: 'mainnet',
-  wrongNetwork: false
+  wrongNetwork: false,
+  maker: {}
 };
 
 const metamask = createReducer(initialState, {
@@ -184,6 +193,10 @@ const metamask = createReducer(initialState, {
   [WRONG_NETWORK]: state => ({
     ...state,
     wrongNetwork: true
+  }),
+  [UPDATE_MAKER]: (state, { payload: maker }) => ({
+    ...state,
+    maker: maker
   })
 });
 

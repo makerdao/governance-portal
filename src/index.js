@@ -12,10 +12,10 @@ import createMaker from './chain/maker';
 import { init, wrongNetwork } from './reducers/metamask';
 import { netIdToName, getUrlParam } from './utils/ethereum';
 
-import './global.css.js';
+import GlobalStyle from './global.css.js';
 import theme from './theme';
-import { themeDark, themeLight } from '@makerdao/ui-components';
-import '@makerdao/ui-components/dist/styles/global.css';
+import { themeDark, themeLight } from '@makerdao/ui-components-core';
+import '@makerdao/ui-components-core/dist/styles/global.css';
 
 const currTheme = {
   ...theme,
@@ -61,14 +61,14 @@ const store = createStore();
 if (testchainConfigId) {
   const network = 'ganache';
   (async () => {
-    window.maker = await createMaker(
+    const maker = (window.maker = await createMaker(
       network,
       useMcdKovanContracts,
       testchainConfigId,
       backendEnv
-    );
+    ));
     await window.maker.authenticate();
-    store.dispatch(init(network));
+    store.dispatch(init(maker, network));
   })();
 } else if (window.web3) {
   window.web3.version.getNetwork(async (err, _netId) => {
@@ -83,7 +83,7 @@ if (testchainConfigId) {
         useMcdKovanContracts
       ));
       await maker.authenticate();
-      store.dispatch(init(network));
+      store.dispatch(init(maker, network));
     }
   });
 } else {
@@ -91,7 +91,7 @@ if (testchainConfigId) {
   (async () => {
     const maker = (window.maker = await createMaker());
     await maker.authenticate();
-    store.dispatch(init());
+    store.dispatch(init(maker));
   })();
 }
 
@@ -103,6 +103,7 @@ function render() {
       <Provider store={store}>
         <Router />
       </Provider>
+      <GlobalStyle />
     </ThemeProvider>,
     document.getElementById('root')
   );

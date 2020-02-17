@@ -1,4 +1,4 @@
-import { injectGlobal } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 import { fonts, colors } from './theme';
 
 const globalStyles = `
@@ -268,6 +268,9 @@ const globalStyles = `
     font-variant: small-caps;
     color: #0E1029;
   }
+  .u-lock-scroll {
+    overflow: hidden !important;
+  }
   `;
 
-injectGlobal`${globalStyles}`;
+export default createGlobalStyle`${globalStyles}`;

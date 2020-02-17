@@ -2,206 +2,162 @@
 
 exports[`render everything 1`] = `
 "<div class=\\"App\\">
-  <div class=\\"sc-cLQEGU jNxtbi\\">
-    <div class=\\"sc-bMVAic jQTmFK\\">
-      <div class=\\"header__HeaderDiv-eHZkLb iXFzMI\\">
-        <div class=\\"header__Level-jRuHJA joXakb\\">
-          <div><a href=\\"/\\">
-              <div class=\\"logo__LogoWrapper-bUjJFS hLfClz\\"><svg width=\\"117\\" height=\\"23\\" viewBox=\\"0 0 117 23\\" fill=\\"none\\" xmlns=\\"http://www.w3.org/2000/svg\\">
-                  <path class=\\"text\\" d=\\"M108.375 6.08c-.157 0-.236.08-.393.16a.614.614 0 0 0-.157.398v11.724c0 .16.079.24.157.399.079.08.236.16.393.16.157 0 .236-.08.393-.16a.614.614 0 0 0 .157-.399v-5.344h2.987l2.75 5.663c.08.16.237.319.472.319.079 0 .158 0 .236-.08.157-.08.236-.16.236-.319.079-.16 0-.239 0-.398l-2.515-5.185c.865-.16 1.65-.558 2.2-1.196.63-.638.865-1.356.865-2.233 0-.957-.393-1.755-1.1-2.472-.707-.638-1.572-1.037-2.594-1.037h-4.087zm5.895 5.104c-.472.479-1.1.718-1.808.718h-3.537V7.117h3.459c.707 0 1.336.239 1.886.717.55.479.786 1.037.786 1.675 0 .638-.314 1.197-.786 1.675zm-11.24 7.736c.158 0 .236-.08.393-.16a.614.614 0 0 0 .158-.398c0-.16-.079-.24-.158-.399a.596.596 0 0 0-.393-.16h-6.523v-4.785h4.873c.157 0 .236-.08.393-.16a.614.614 0 0 0 .157-.398c0-.16-.078-.24-.157-.399a.596.596 0 0 0-.393-.16h-4.873V7.118h6.523c.158 0 .236-.08.393-.16a.614.614 0 0 0 .158-.399c0-.16-.079-.239-.158-.398a.596.596 0 0 0-.393-.16h-7.073c-.157 0-.236.08-.393.16a.614.614 0 0 0-.157.398v11.804c0 .16.078.24.157.399.078.08.236.16.393.16h7.073zm-19.57-.239a.614.614 0 0 0 .157-.399v-3.43l1.572-1.674 5.266 5.583c.079.08.236.16.393.16.157 0 .236-.08.393-.16a.614.614 0 0 0 .157-.399c0-.16-.079-.24-.157-.399l-5.266-5.662 5.109-5.344a.614.614 0 0 0 .157-.399c0-.16-.079-.239-.157-.398A.595.595 0 0 0 90.69 6c-.157 0-.236.08-.393.16l-6.681 7.177V6.558c0-.16-.079-.239-.157-.398a.596.596 0 0 0-.393-.16c-.157 0-.236.08-.393.16 0 .159-.079.239-.079.398v11.724c0 .16.079.24.157.399.079.08.236.16.393.16.079 0 .236-.08.315-.16zm-14.934.24c.236 0 .393-.08.472-.32l1.1-2.711h6.445l1.1 2.711c.08.24.236.32.472.32.079 0 .157 0 .236-.08a.618.618 0 0 0 .314-.32c.079-.159.079-.239 0-.398l-1.257-3.031-3.616-8.773s0-.08-.078-.08v-.08h-.079c-.079-.08-.157-.08-.157-.08h-.157-.157c-.08 0-.158 0-.158.08h-.078v.08s0 .08-.079.08l-3.615 8.773-1.258 3.03c-.079.16-.079.24 0 .4.079.159.157.239.314.318.079.08.158.08.236.08zm1.965-4.068l2.83-6.86 2.83 6.86h-5.66zm-18.313-6.3l4.794 7.975v.08H57.916v-.08l4.794-7.976v9.89c0 .16.079.239.157.399.079.08.236.159.393.159.157 0 .236-.08.393-.16a.614.614 0 0 0 .157-.398V6.638c0-.24-.157-.478-.393-.478-.235-.08-.471 0-.628.239l-5.345 8.773-5.266-8.853c-.157-.24-.393-.319-.629-.24-.236.08-.393.24-.393.559v11.804c0 .16.079.239.157.398.079 0 .236.08.393.08.158 0 .236-.08.393-.16a.614.614 0 0 0 .158-.398v-9.81h-.079z\\" fill=\\"#291A41\\" stroke=\\"#291A41\\" stroke-width=\\".35\\"></path>
-                  <path class=\\"left-arch\\" d=\\"M15.872 20.69v-9.44a2 2 0 0 0-.893-1.666L3.602 2.031a1 1 0 0 0-1.553.833V20.69\\" stroke=\\"#291A41\\" stroke-width=\\"2.2\\"></path>
-                  <path class=\\"right-arch\\" d=\\"M21.212 20.69v-9.44a2 2 0 0 1 .894-1.666l11.377-7.553a1 1 0 0 1 1.553.833V20.69\\" stroke=\\"#291A41\\" stroke-width=\\"2.2\\"></path>
-                  <rect class=\\"left-arch-ends\\" width=\\"2.2\\" height=\\"3\\" rx=\\"1.1\\" transform=\\"translate(.95 19.2)\\" fill=\\"#291A41\\"></rect>
-                  <rect class=\\"right-arch-ends\\" width=\\"2.2\\" height=\\"3\\" rx=\\"1.1\\" transform=\\"translate(20.11 19.2)\\" fill=\\"#291A41\\"></rect>
-                  <rect class=\\"right-arch-ends\\" width=\\"2.2\\" height=\\"3\\" rx=\\"1.1\\" transform=\\"translate(33.93 19.2)\\" fill=\\"#291A41\\"></rect>
-                  <rect class=\\"left-arch-ends\\" width=\\"2.2\\" height=\\"3\\" rx=\\"1.1\\" transform=\\"translate(14.77 19.2)\\" fill=\\"#291A41\\"></rect>
-                </svg></div>
-            </a></div>
-          <div class=\\"header__MobileMenuSelector-cWAlPM kbMINR\\">
-            <div class=\\"header__Hamburger-fzpmda dZLXSr\\"><span></span><span></span><span></span></div>
+  <div class=\\"sc-LzLvJ giErUJ\\">
+    <div class=\\"sc-LzLvM eUlFII\\">
+      <div class=\\"sc-LzLvN bziOuo\\">
+        <div class=\\"sc-LzLvO iYOPtp\\">
+          <div style=\\"display: flex; padding-left: 2.5rem;\\"><a aria-current=\\"page\\" class=\\"active\\" style=\\"color: white;\\" href=\\"/\\">Governance</a>
+            <div style=\\"margin-left: 16px;\\" class=\\"sc-LzLws gfnCsa\\"></div>
           </div>
-          <div class=\\"header__HeaderItems-brUDbC jVIotE\\">
-            <div class=\\"header__HeaderItem-FLiNi LBZTs\\">
-              <div class=\\"dropdown__Dropdown-gSFiCr nmpWy\\"><a class=\\"trigger dropdown__Trigger-dtcGaF iqpfdg\\">Products</a>
-                <div class=\\"item-container dropdown__ItemContainer-iLlNYd ckjRGj\\">
-                  <ul>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://makerdao.com/dai\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Dai Stablecoin</a></li>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://dai.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Dai Dashboard</a></li>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://vote.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Governance</a></li>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://mkr.tools/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Platform Data</a></li>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://oasis.direct\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Oasis Direct</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class=\\"header__HeaderItem-FLiNi LBZTs\\">
-              <div class=\\"dropdown__Dropdown-gSFiCr nmpWy\\"><a class=\\"trigger dropdown__Trigger-dtcGaF iqpfdg\\">Learn</a>
-                <div class=\\"item-container dropdown__ItemContainer-iLlNYd ckjRGj\\">
-                  <ul>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://developer.makerdao.com/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Developer</a></li>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://makerdao.com/whitepaper\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">White Paper</a></li>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://makerdao.com/purple/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Purple Paper</a></li>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://stable.fund/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">The Stable Fund</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class=\\"header__HeaderItem-FLiNi LBZTs\\">
-              <div class=\\"dropdown__Dropdown-gSFiCr nmpWy\\"><a class=\\"trigger dropdown__Trigger-dtcGaF iqpfdg\\">Foundation</a>
-                <div class=\\"item-container dropdown__ItemContainer-iLlNYd ckjRGj\\">
-                  <ul>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://makerdao.com/team\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Team</a></li>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://makerdao.com/careers\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Careers</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class=\\"header__HeaderItem-FLiNi LBZTs\\">
-              <div class=\\"dropdown__Dropdown-gSFiCr nmpWy\\"><a class=\\"trigger dropdown__Trigger-dtcGaF iqpfdg\\">Community</a>
-                <div class=\\"item-container dropdown__ItemContainer-iLlNYd ckjRGj\\">
-                  <ul>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://medium.com/makerdao\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Blog</a></li>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://chat.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Chat</a></li>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://www.reddit.com/r/MakerDAO\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Subreddit</a></li>
-                    <li class=\\"dropdown__Item-loNfwr cmtitG\\"><a href=\\"https://makerdao.com/events\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Events</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class=\\"header__MobileMenu-eQkFKo fBKOvj\\">
-          <div class=\\"inner\\">
-            <div class=\\"header__MobileDropdownContainer-btzIvV hLFJCN\\">
-              <div class=\\"header__Level-iUkPoN hMiBSA\\">Products</div>
-              <div class=\\"header__MobileDropdownItemsContainer-feaEgk MxWPi\\">
-                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://makerdao.com/dai\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Dai Stablecoin</a></div>
-                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://dai.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Dai Dashboard</a></div>
-                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://mkr.tools/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Platform Data</a></div>
-                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://oasis.direct\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Oasis Direct</a></div>
-              </div>
-            </div>
-            <div class=\\"header__MobileDropdownContainer-btzIvV hLFJCN\\">
-              <div class=\\"header__Level-iUkPoN hMiBSA\\">Learn</div>
-              <div class=\\"header__MobileDropdownItemsContainer-feaEgk MxWPi\\">
-                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://developer.makerdao.com/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Developer</a></div>
-                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://makerdao.com/whitepaper\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">White Paper</a></div>
-                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://makerdao.com/purple/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Purple Paper</a></div>
-                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://stable.fund/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">The Stable Fund</a></div>
-              </div>
-            </div>
-            <div class=\\"header__MobileDropdownContainer-btzIvV hLFJCN\\">
-              <div class=\\"header__Level-iUkPoN hMiBSA\\">Foundation</div>
-              <div class=\\"header__MobileDropdownItemsContainer-feaEgk MxWPi\\">
-                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://makerdao.com/team\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Team</a></div>
-                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://makerdao.com/careers\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Careers</a></div>
-              </div>
-            </div>
-            <div class=\\"header__MobileDropdownContainer-btzIvV hLFJCN\\">
-              <div class=\\"header__Level-iUkPoN hMiBSA\\">Community</div>
-              <div class=\\"header__MobileDropdownItemsContainer-feaEgk MxWPi\\">
-                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://medium.com/makerdao\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Blog</a></div>
-                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://chat.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Chat</a></div>
-                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://www.reddit.com/r/MakerDAO\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Subreddit</a></div>
-                <div class=\\"header__MobileHeaderDropdownItem-ldVzhv hqlmyv\\"><a href=\\"https://makerdao.com/events\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Events</a></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class=\\"sc-eLExRp cYhKDv\\"></div>
-      <div class=\\"sc-bAeIUo fXYFqf\\">
-        <div class=\\"sc-iujRgT iLaFVK\\">
-          <div style=\\"display: flex;\\"><a class=\\"sc-bXGyLb ljsPys\\" href=\\"/\\">
-              <div class=\\"sc-GMQeP fToviv\\">Governance</div>
-            </a>
-            <div class=\\"sc-cbkKFq cNGYMw\\" style=\\"margin-left: 16px;\\"></div>
-          </div>
-          <div class=\\"sc-cQFLBn kKeAXz\\" style=\\"z-index: 100;\\"><a class=\\"sc-daURTG hqlFdx\\" href=\\"https://www.youtube.com/watch?v=wP7DedWcEmg\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\" style=\\"display: flex;\\">
-              <div class=\\"sc-fYiAbW jdSgsx\\"></div>Watch intro video
-            </a>
-            <div class=\\"sc-gojNiO feWkhi\\">Personal Voting Contract</div>
-            <div class=\\"sc-gxMtzJ flGjQB\\">
-              <div class=\\"sc-jTzLTM bBbWkd\\" size=\\"20\\" color=\\"background\\"></div>
+          <div class=\\"sc-LzLwn fxUihC\\">
+            <div class=\\"sc-LzLwp jpDhev\\"><a aria-current=\\"page\\" class=\\"sc-LzLwq cWlPGX active\\" style=\\"font-weight: bold;\\" r=\\"207\\" href=\\"/\\">Executive</a><a class=\\"sc-LzLwq eQnohZ\\" r=\\"106\\" href=\\"/polling\\">Polling</a><a class=\\"sc-LzLwq bjpgpY\\" r=\\"6\\" href=\\"/modules\\">Modules</a></div>
+            <div class=\\"sc-LzLwo ezhgZP\\">Voting Contract</div>
+            <div class=\\"sc-LzLux KCsVJ\\">
+              <div size=\\"20\\" color=\\"background\\" class=\\"sc-fzXfQs bBmZXu\\"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class=\\"sc-gqPbQI jocauR\\">
-      <div class=\\"sc-hORach eTnJTa\\">
-        <div class=\\"sc-exAgwC cFLXwF\\">
-          <div class=\\"sc-krvtoX kkeWTs\\">
-            <div class=\\"sc-jTzLTM jQOqgh\\" size=\\"20\\" color=\\"header\\"></div>
+    <div class=\\"sc-LzLvK fHFhHe\\">
+      <div class=\\"sc-LzLvL dqAcOx\\">
+        <div class=\\"sc-LzLvP qaxtu\\">
+          <div class=\\"sc-LzLwt hTHygL\\">
+            <div size=\\"20\\" color=\\"header\\" class=\\"sc-fzXfQs yDrM\\"></div>
           </div>
         </div>
-        <div class=\\"sc-lkqHmb hIlKiZ\\"></div>
+        <div class=\\"sc-LzLwr gLwMuL\\"></div>
       </div>
     </div>
-    <div class=\\"sc-cMhqgX jERTje\\"></div>
-    <footer class=\\"footer__FooterContainer-eSBSwT bcoNly\\">
-      <div class=\\"footer__Columns-fYZkS ldvJyo\\">
-        <div class=\\"footer__Column-wXdwK dyQhFg\\">
-          <div class=\\"footer__LinkListHeader-eSRxip iThdwF\\">Learn</div>
-          <ul class=\\"footer__LinkList-kvnAHi kkQpyy\\">
+    <div class=\\"sc-LzLva EXXkd\\"></div>
+    <footer class=\\"sc-fzXfOy bpnhiC\\">
+      <div class=\\"sc-AykKI blrbOm sc-fzXfNf kfvOJg\\">
+        <div>
+          <div class=\\"sc-fzXfOz hSGYZB\\">Learn</div>
+          <ul class=\\"sc-fzXfOX icrZqp\\">
             <li><a href=\\"https://makerdao.com/whitepaper\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">White Paper</a></li>
-            <li><a href=\\"https://makerdao.com/purple\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Purple Paper</a></li>
-            <li><a href=\\"https://stable.fund\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">The Stable Fund</a></li>
             <li><a href=\\"https://makerdao.com/privacy\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Privacy Policy</a></li>
+            <li><a href=\\"https://makerdao.com/roadmap\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Roadmap</a></li>
           </ul>
         </div>
-        <div class=\\"footer__Column-wXdwK dyQhFg\\">
-          <div class=\\"footer__LinkListHeader-eSRxip iThdwF\\">Products</div>
-          <ul class=\\"footer__LinkList-kvnAHi kkQpyy\\">
+        <div>
+          <div class=\\"sc-fzXfOz hSGYZB\\">Products</div>
+          <ul class=\\"sc-fzXfOX icrZqp\\">
             <li><a href=\\"https://makerdao.com/dai\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Dai Stablecoin</a></li>
-            <li><a href=\\"https://dai.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Dai Dashboard</a></li>
+            <li><a href=\\"https://cdp.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">CDP Portal</a></li>
             <li><a href=\\"https://vote.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Governance</a></li>
             <li><a href=\\"https://mkr.tools\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Platform Data</a></li>
           </ul>
         </div>
-        <div class=\\"footer__Column-wXdwK dyQhFg\\">
-          <div class=\\"footer__LinkListHeader-eSRxip iThdwF\\">Developer</div>
-          <ul class=\\"footer__LinkList-kvnAHi kkQpyy\\">
+        <div>
+          <div class=\\"sc-fzXfOz hSGYZB\\">Developer</div>
+          <ul class=\\"sc-fzXfOX icrZqp\\">
             <li><a href=\\"https://makerdao.com/documentation/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Documentation</a></li>
             <li><a href=\\"https://github.com/makerdao/dai.js\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Dai.js</a></li>
             <li><a href=\\"https://developer.makerdao.com/dai/1/graphql/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">GraphQL API</a></li>
           </ul>
         </div>
-        <div class=\\"footer__Column-wXdwK dyQhFg\\">
-          <div class=\\"footer__LinkListHeader-eSRxip iThdwF\\">Foundation</div>
-          <ul class=\\"footer__LinkList-kvnAHi kkQpyy\\">
+        <div>
+          <div class=\\"sc-fzXfOz hSGYZB\\">Foundation</div>
+          <ul class=\\"sc-fzXfOX icrZqp\\">
             <li><a href=\\"https://makerdao.com/team\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Team</a></li>
             <li><a href=\\"https://makerdao.com/careers\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Careers</a></li>
+            <li><a href=\\"https://makerdao.com/contact\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\">Contact</a></li>
           </ul>
         </div>
-        <div class=\\"narrow footer__Column-wXdwK dyQhFg\\">
-          <div class=\\"footer__FooterEnd-kzSZvq dWVijA\\">
-            <div class=\\"footer__Subscribe-fbCLXK dFEcCp\\">
-              <div>Sign up for the latest content and updates.</div>
-              <form action=\\"//makerdao.us16.list-manage.com/subscribe/post?u=f717b15a4a763e79ee910dbe6&amp;id=86313139e4\\" method=\\"post\\" target=\\"_blank\\" novalidate=\\"\\">
-                <div style=\\"position: absolute; left: -5000px;\\" aria-hidden=\\"true\\"><input type=\\"text\\" name=\\"b_f717b15a4a763e79ee910dbe6_86313139e4\\" tabindex=\\"-1\\" value=\\"\\"></div><input class=\\"footer__EmailInput-kVWabg eHSyLN\\" placeholder=\\"Email address\\" name=\\"EMAIL\\" type=\\"email\\" required=\\"\\"><button class=\\"footer__SubscribeButton-fLZZnx fTNbg\\" type=\\"submit\\">Subscribe</button>
-              </form>
+        <div class=\\"sc-AykKI bYgVYs\\"><span color=\\"slate.600\\" class=\\"sc-fzXfLP cWqcIa\\"><div class=\\"sc-fzXfOY cNoEXU\\">Sign up for the latest content and updates.</div></span>
+          <div class=\\"sc-AykKI eIWcxM\\">
+            <div placeholder=\\"Email address\\" name=\\"email\\" type=\\"email\\" value=\\"\\" class=\\"sc-AykKI ipDseF\\">
+              <div placeholder=\\"Email address\\" name=\\"email\\" type=\\"email\\" value=\\"\\" class=\\"sc-AykKI esOQsH sc-fzXfNf sc-fzXfNg kLsOkg\\"><input placeholder=\\"Email address\\" name=\\"email\\" type=\\"email\\" id=\\"_uynbzw864\\" class=\\"sc-fzXfNk dnuiIS\\" value=\\"\\"><label for=\\"_uynbzw864\\" class=\\"sc-fzXfNj kYwfNB\\"><button type=\\"submit\\" class=\\"sc-fzXfOZ bemQMn\\">Subscribe</button></label></div>
             </div>
-            <div class=\\"footer__Icons-fhsgGk isjdMT\\"><a href=\\"https://twitter.com/MakerDAO\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\">
-                  <path d=\\"M24 4.557a9.83 9.83 0 0 1-2.828.775 4.932 4.932 0 0 0 2.165-2.724 9.864 9.864 0 0 1-3.127 1.195 4.916 4.916 0 0 0-3.594-1.555c-3.179 0-5.515 2.966-4.797 6.045A13.978 13.978 0 0 1 1.671 3.149a4.93 4.93 0 0 0 1.523 6.574 4.903 4.903 0 0 1-2.229-.616c-.054 2.281 1.581 4.415 3.949 4.89a4.935 4.935 0 0 1-2.224.084 4.928 4.928 0 0 0 4.6 3.419A9.9 9.9 0 0 1 0 19.54a13.94 13.94 0 0 0 7.548 2.212c9.142 0 14.307-7.721 13.995-14.646A10.025 10.025 0 0 0 24 4.557z\\"></path>
-                </svg></a><a href=\\"https://www.reddit.com/r/MakerDAO/\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\">
-                  <path d=\\"M14.238 15.348a.215.215 0 0 1 0 .306c-.465.462-1.194.687-2.231.687l-.008-.002-.008.002c-1.036 0-1.766-.225-2.231-.688a.214.214 0 0 1 0-.305.219.219 0 0 1 .307 0c.379.377 1.008.561 1.924.561l.008.002.008-.002c.915 0 1.544-.184 1.924-.561a.219.219 0 0 1 .307 0zm-3.44-2.418a.922.922 0 0 0-1.845 0c0 .506.414.918.923.918a.92.92 0 0 0 .922-.918zM24 12c0 6.627-5.373 12-12 12S0 18.627 0 12 5.373 0 12 0s12 5.373 12 12zm-5-.129a1.548 1.548 0 0 0-2.624-1.108c-1.056-.695-2.485-1.137-4.066-1.194l.865-2.724 2.343.549-.003.034c0 .696.569 1.262 1.268 1.262.699 0 1.267-.566 1.267-1.262a1.266 1.266 0 0 0-2.446-.458l-2.525-.592a.216.216 0 0 0-.257.145l-.965 3.038c-1.656.02-3.155.466-4.258 1.181A1.546 1.546 0 0 0 5 11.871c0 .566.311 1.056.768 1.325-.03.164-.05.331-.05.5 0 2.281 2.805 4.137 6.253 4.137s6.253-1.856 6.253-4.137c0-.16-.017-.317-.044-.472.486-.261.82-.766.82-1.353zm-4.872.141a.921.921 0 0 0-.922.919.921.921 0 0 0 1.844 0 .921.921 0 0 0-.922-.919z\\"></path>
-                </svg></a><a href=\\"https://t.me/MakerdaoMKR\\"><svg width=\\"20\\" height=\\"17\\" viewBox=\\"0 0 20 17\\" fill=\\"none\\" xmlns=\\"http://www.w3.org/2000/svg\\">
-                  <path d=\\"M19.494 1.548l-2.95 14.426c-.223 1.018-.803 1.271-1.628.792l-4.495-3.435-2.169 2.163c-.24.249-.44.457-.903.457l.323-4.747 8.33-7.806c.363-.334-.078-.52-.562-.185L5.14 9.937.706 8.498c-.964-.312-.982-1 .201-1.48L18.25.092c.803-.313 1.506.185 1.244 1.457z\\"></path>
-                </svg></a><a href=\\"https://chat.makerdao.com/\\"><svg version=\\"1\\" xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"512\\" height=\\"512\\" viewBox=\\"0 0 512 512\\">
-                  <path d=\\"M496.293 255.338c0-24.103-7.21-47.215-21.437-68.699-12.771-19.288-30.666-36.362-53.184-50.745-43.474-27.771-100.612-43.065-160.885-43.065-20.131 0-39.974 1.702-59.222 5.072-11.942-11.176-25.919-21.233-40.712-29.187-79.026-38.298-144.561-.9-144.561-.9s60.931 50.053 51.023 93.93c-27.259 27.041-42.033 59.646-42.033 93.594 0 .108.005.216.006.324-.001.108-.006.216-.006.324 0 33.949 14.774 66.554 42.033 93.595 9.907 43.874-51.023 93.93-51.023 93.93s65.535 37.397 144.561-.901c14.792-7.953 28.77-18.01 40.712-29.188 19.249 3.372 39.091 5.072 59.222 5.072 60.272 0 117.411-15.294 160.885-43.064 22.518-14.383 40.412-31.457 53.184-50.742 14.227-21.487 21.437-44.599 21.437-68.702 0-.107-.006-.216-.006-.324 0-.108.006-.216.006-.324zM260.882 387.763c-25.367 0-49.66-2.932-72.107-8.282-22.81 27.443-72.993 65.596-121.742 53.26 15.857-17.031 39.352-45.81 34.32-93.207-29.218-22.738-46.759-51.832-46.759-83.541 0-72.776 92.36-131.769 206.288-131.769 113.928 0 206.288 58.993 206.288 131.769 0 72.772-92.36 131.77-206.288 131.77zm27.401-131.772c0 15.133-12.27 27.403-27.4 27.403-15.134 0-27.402-12.271-27.402-27.403s12.268-27.401 27.402-27.401c15.131 0 27.4 12.268 27.4 27.401zm67.88-27.401c-15.133 0-27.4 12.268-27.4 27.401s12.268 27.403 27.4 27.403c15.134 0 27.399-12.271 27.399-27.403s-12.265-27.401-27.399-27.401zm-190.562 0c-15.133 0-27.4 12.268-27.4 27.401s12.268 27.403 27.4 27.403c15.134 0 27.401-12.271 27.401-27.403s-12.267-27.401-27.401-27.401z\\"></path>
-                </svg></a><a href=\\"https://medium.com/makerdao/\\"><svg width=\\"20\\" height=\\"16\\" viewBox=\\"0 0 20 16\\" fill=\\"none\\" xmlns=\\"http://www.w3.org/2000/svg\\">
-                  <path fill=\\"none\\" d=\\"M0 0h19.234v15.27H0z\\"></path>
-                  <path fill=\\"none\\" d=\\"M0 0h19.234v15.27H0z\\"></path>
-                  <path fill=\\"none\\" d=\\"M0 0h19.234v15.27H0z\\"></path>
-                  <path d=\\"M2.28 3.115a.745.745 0 0 0-.242-.628L.242.323V0H5.82l4.31 9.453L13.919 0h5.315v.323L17.7 1.795a.449.449 0 0 0-.17.431v10.818a.449.449 0 0 0 .17.43l1.5 1.473v.323h-7.544v-.323l1.554-1.508c.153-.153.153-.198.153-.431V4.264l-4.32 10.97H8.46L3.43 4.264v7.352c-.042.31.06.62.279.844l2.02 2.45v.324H0v-.323l2.02-2.45a.978.978 0 0 0 .26-.845V3.115z\\"></path>
-                </svg></a><a href=\\"https://www.youtube.com/channel/UC4jqZlzQHUhzqf5rMd5ywTw\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\">
-                  <path d=\\"M19.615 3.184c-3.604-.246-11.631-.245-15.23 0C.488 3.45.029 5.804 0 12c.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0C23.512 20.55 23.971 18.196 24 12c-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 3.993L9 16z\\"></path>
-                </svg></a></div>
+          </div>
+          <div class=\\"sc-AykKI deRKoG sc-fzXfNf sc-fzXfPa jfqyjC\\"><a href=\\"https://twitter.com/MakerDAO\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\">
+                <path d=\\"M24 4.557a9.83 9.83 0 0 1-2.828.775 4.932 4.932 0 0 0 2.165-2.724 9.864 9.864 0 0 1-3.127 1.195 4.916 4.916 0 0 0-3.594-1.555c-3.179 0-5.515 2.966-4.797 6.045A13.978 13.978 0 0 1 1.671 3.149a4.93 4.93 0 0 0 1.523 6.574 4.903 4.903 0 0 1-2.229-.616c-.054 2.281 1.581 4.415 3.949 4.89a4.935 4.935 0 0 1-2.224.084 4.928 4.928 0 0 0 4.6 3.419A9.9 9.9 0 0 1 0 19.54a13.94 13.94 0 0 0 7.548 2.212c9.142 0 14.307-7.721 13.995-14.646A10.025 10.025 0 0 0 24 4.557z\\"></path>
+              </svg></a><a href=\\"https://www.reddit.com/r/MakerDAO/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\"><svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\">
+                <path d=\\"M14.238 15.348a.215.215 0 0 1 0 .306c-.465.462-1.194.687-2.231.687l-.008-.002-.008.002c-1.036 0-1.766-.225-2.231-.688a.214.214 0 0 1 0-.305.219.219 0 0 1 .307 0c.379.377 1.008.561 1.924.561l.008.002.008-.002c.915 0 1.544-.184 1.924-.561a.219.219 0 0 1 .307 0zm-3.44-2.418a.922.922 0 0 0-1.845 0c0 .506.414.918.923.918a.92.92 0 0 0 .922-.918zM24 12c0 6.627-5.373 12-12 12S0 18.627 0 12 5.373 0 12 0s12 5.373 12 12zm-5-.129a1.548 1.548 0 0 0-2.624-1.108c-1.056-.695-2.485-1.137-4.066-1.194l.865-2.724 2.343.549-.003.034c0 .696.569 1.262 1.268 1.262.699 0 1.267-.566 1.267-1.262a1.266 1.266 0 0 0-2.446-.458l-2.525-.592a.216.216 0 0 0-.257.145l-.965 3.038c-1.656.02-3.155.466-4.258 1.181A1.546 1.546 0 0 0 5 11.871c0 .566.311 1.056.768 1.325-.03.164-.05.331-.05.5 0 2.281 2.805 4.137 6.253 4.137s6.253-1.856 6.253-4.137c0-.16-.017-.317-.044-.472.486-.261.82-.766.82-1.353zm-4.872.141a.921.921 0 0 0-.922.919.921.921 0 0 0 1.844 0 .921.921 0 0 0-.922-.919z\\"></path>
+              </svg></a><a href=\\"https://t.me/makerdaoOfficial\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\"><svg width=\\"20\\" height=\\"17\\" viewBox=\\"0 0 20 17\\" fill=\\"none\\" xmlns=\\"http://www.w3.org/2000/svg\\">
+                <path d=\\"M19.494 1.548l-2.95 14.426c-.223 1.018-.803 1.271-1.628.792l-4.495-3.435-2.169 2.163c-.24.249-.44.457-.903.457l.323-4.747 8.33-7.806c.363-.334-.078-.52-.562-.185L5.14 9.937.706 8.498c-.964-.312-.982-1 .201-1.48L18.25.092c.803-.313 1.506.185 1.244 1.457z\\"></path>
+              </svg></a><a href=\\"https://chat.makerdao.com/\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\"><svg version=\\"1\\" xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"512\\" height=\\"512\\" viewBox=\\"0 0 512 512\\">
+                <path d=\\"M496.293 255.338c0-24.103-7.21-47.215-21.437-68.699-12.771-19.288-30.666-36.362-53.184-50.745-43.474-27.771-100.612-43.065-160.885-43.065-20.131 0-39.974 1.702-59.222 5.072-11.942-11.176-25.919-21.233-40.712-29.187-79.026-38.298-144.561-.9-144.561-.9s60.931 50.053 51.023 93.93c-27.259 27.041-42.033 59.646-42.033 93.594 0 .108.005.216.006.324-.001.108-.006.216-.006.324 0 33.949 14.774 66.554 42.033 93.595 9.907 43.874-51.023 93.93-51.023 93.93s65.535 37.397 144.561-.901c14.792-7.953 28.77-18.01 40.712-29.188 19.249 3.372 39.091 5.072 59.222 5.072 60.272 0 117.411-15.294 160.885-43.064 22.518-14.383 40.412-31.457 53.184-50.742 14.227-21.487 21.437-44.599 21.437-68.702 0-.107-.006-.216-.006-.324 0-.108.006-.216.006-.324zM260.882 387.763c-25.367 0-49.66-2.932-72.107-8.282-22.81 27.443-72.993 65.596-121.742 53.26 15.857-17.031 39.352-45.81 34.32-93.207-29.218-22.738-46.759-51.832-46.759-83.541 0-72.776 92.36-131.769 206.288-131.769 113.928 0 206.288 58.993 206.288 131.769 0 72.772-92.36 131.77-206.288 131.77zm27.401-131.772c0 15.133-12.27 27.403-27.4 27.403-15.134 0-27.402-12.271-27.402-27.403s12.268-27.401 27.402-27.401c15.131 0 27.4 12.268 27.4 27.401zm67.88-27.401c-15.133 0-27.4 12.268-27.4 27.401s12.268 27.403 27.4 27.403c15.134 0 27.399-12.271 27.399-27.403s-12.265-27.401-27.399-27.401zm-190.562 0c-15.133 0-27.4 12.268-27.4 27.401s12.268 27.403 27.4 27.403c15.134 0 27.401-12.271 27.401-27.403s-12.267-27.401-27.401-27.401z\\"></path>
+              </svg></a><a href=\\"https://blog.makerdao.com\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\"><svg width=\\"20\\" height=\\"16\\" viewBox=\\"0 0 20 16\\" fill=\\"none\\" xmlns=\\"http://www.w3.org/2000/svg\\">
+                <path fill=\\"none\\" d=\\"M0 0h19.234v15.27H0z\\"></path>
+                <path fill=\\"none\\" d=\\"M0 0h19.234v15.27H0z\\"></path>
+                <path fill=\\"none\\" d=\\"M0 0h19.234v15.27H0z\\"></path>
+                <path d=\\"M2.28 3.115a.745.745 0 0 0-.242-.628L.242.323V0H5.82l4.31 9.453L13.919 0h5.315v.323L17.7 1.795a.449.449 0 0 0-.17.431v10.818a.449.449 0 0 0 .17.43l1.5 1.473v.323h-7.544v-.323l1.554-1.508c.153-.153.153-.198.153-.431V4.264l-4.32 10.97H8.46L3.43 4.264v7.352c-.042.31.06.62.279.844l2.02 2.45v.324H0v-.323l2.02-2.45a.978.978 0 0 0 .26-.845V3.115z\\"></path>
+              </svg></a><svg width=\\"24\\" height=\\"24\\" xmlns=\\"http://www.w3.org/2000/svg\\" fill-rule=\\"evenodd\\" clip-rule=\\"evenodd\\" viewBox=\\"0 0 24 24\\" style=\\"cursor: pointer;\\">
+              <path d=\\"M21.502 19.525C23.026 18.42 24 16.787 24 14.971c0-3.326-3.237-6.023-7.229-6.023s-7.229 2.697-7.229 6.023c0 3.327 3.237 6.024 7.229 6.024.825 0 1.621-.117 2.36-.33l.212-.032c.139 0 .265.043.384.111l1.583.914.139.045a.241.241 0 0 0 .241-.241l-.039-.176-.326-1.215-.025-.154a.48.48 0 0 1 .202-.392zM8.675 2.297C3.884 2.297 0 5.533 0 9.526c0 2.178 1.168 4.139 2.997 5.464a.575.575 0 0 1 .243.471l-.03.184-.391 1.458-.047.211c0 .16.13.29.289.29l.168-.054 1.899-1.097a.908.908 0 0 1 .46-.133l.255.038c.886.255 1.842.397 2.832.397l.476-.012a5.586 5.586 0 0 1-.291-1.771c0-3.641 3.542-6.593 7.911-6.593l.471.012c-.653-3.453-4.24-6.094-8.567-6.094zm5.686 11.711a.964.964 0 1 1 .001-1.927.964.964 0 0 1-.001 1.927zm4.82 0a.964.964 0 1 1 0-1.928.964.964 0 0 1 0 1.928zM5.783 8.369a1.156 1.156 0 1 1 0-2.312 1.156 1.156 0 0 1 0 2.312zm5.783 0a1.156 1.156 0 1 1 0-2.312 1.156 1.156 0 0 1 0 2.312z\\"></path>
+            </svg><a href=\\"https://www.youtube.com/MakerDAO\\" target=\\"_blank\\" rel=\\"noopener noreferrer\\"><svg width=\\"24\\" height=\\"16\\" viewBox=\\"0 0 24 16\\" fill=\\"none\\" xmlns=\\"http://www.w3.org/2000/svg\\">
+                <path d=\\"M22.628 2.498a2.878 2.878 0 0 0-2.043-2.02C18.783 0 11.555 0 11.555 0S4.33 0 2.527.478a2.879 2.879 0 0 0-2.043 2.02C0 4.281 0 8 0 8s0 3.719.483 5.502a2.879 2.879 0 0 0 2.043 2.02c1.803.478 9.03.478 9.03.478s7.227 0 9.029-.478a2.879 2.879 0 0 0 2.043-2.02c.483-1.783.483-5.502.483-5.502s0-3.72-.483-5.502z\\" fill=\\"#48495F\\"></path>
+                <path d=\\"M9.192 11.377L15.232 8l-6.04-3.377v6.754z\\" fill=\\"#fff\\"></path>
+              </svg></a></div>
+          <div class=\\"sc-AykKI eDpObT\\"></div>
+        </div>
+      </div>
+      <div width=\\"100vw\\" height=\\"100vh\\" class=\\"sc-AykKI bhdxcc sc-fzXfNJ iVZaxS sc-fzXfNK bWOoVa\\">
+        <div height=\\"100%\\" class=\\"sc-AykKI hmzNFs sc-fzXfMA ksznOT\\"></div>
+      </div>
+    </footer>
+    <div height=\\"100%\\" width=\\"100%\\" class=\\"sc-AykKI iZImWr sc-LzLqC izjyeR\\">
+      <div height=\\"100%\\" class=\\"sc-AykKI iwBMnK sc-fzXfQZ csVVTj\\">
+        <div width=\\"100vw\\" height=\\"100%\\" style=\\"overflow: scroll;\\" class=\\"sc-AykKI hHHkAz sc-fzXfNf eXtAYR\\">
+          <div class=\\"sc-AykKI iJuwqO sc-fzXfMA kUYQNr\\">
+            <div class=\\"sc-AykKI fxwThW\\">
+              <div class=\\"sc-AykKI biojWE\\">
+                <h1 class=\\"sc-fzXfQl deDJpC\\">Set up your voting contract</h1>
+              </div>
+              <div class=\\"sc-AykKI bYgVYs sc-fzXfNf jswZUK\\"><img src=\\"test-file-stub\\" alt=\\"\\">
+                <div class=\\"sc-AykKI ilusVc\\">
+                  <div class=\\"sc-AykKI fUCmHJ\\">
+                    <h3 class=\\"sc-fzXfQn koVQcC\\">It will take about 5 minutes</h3>
+                  </div>
+                  <p><span class=\\"sc-fzXfLP fxGgNF\\">The total time to complete the contract set up is 5 minutes depending on transaction confirmation times.</span></p>
+                </div><img src=\\"test-file-stub\\" alt=\\"\\">
+                <div class=\\"sc-AykKI ilusVc\\">
+                  <div class=\\"sc-AykKI fUCmHJ\\">
+                    <h3 class=\\"sc-fzXfQn koVQcC\\">You will need to pay ETH gas costs</h3>
+                  </div>
+                  <p><span class=\\"sc-fzXfLP fxGgNF\\">You will need to submit up to 4 transactions.</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class=\\"sc-AykKI fEQigC\\">
+            <div class=\\"sc-AykKI bYgVYs sc-fzXfNf fRHaBU\\">
+              <div class=\\"sc-fzXfQU dJoxzr\\">
+                <div color=\\"#8D8EA7\\" class=\\"sc-AykKI ceMWQk sc-fzXfMA kZKJVv\\">
+                  <div height=\\"2.4rem\\" width=\\"2.4rem\\" color=\\"#8D8EA7\\" class=\\"sc-fzXfQV filJbG\\"></div>
+                  <div class=\\"sc-AykKI hA-dRUT\\">Save and Exit</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class=\\"sc-AykKI cEnsrj sc-fzXfMA kUYQNr\\">
+            <div class=\\"sc-AykKI bYgVYs sc-fzXfNf bOYGNC\\">
+              <div style=\\"cursor: pointer;\\" title=\\"Vote with a linked wallet\\" class=\\"sc-AykKD esCbFs\\">
+                <div class=\\"sc-AykKI bYgVYs sc-fzXfNf cflWdN\\"><img src=\\"test-file-stub\\" alt=\\"\\" style=\\"max-width: 3.4rem; max-height: 3.4rem;\\">
+                  <div class=\\"sc-AykKI bYgVYs\\">
+                    <div class=\\"sc-AykKI kjKVTb\\">
+                      <h3 class=\\"sc-fzXfQn koVQcC\\">Vote with a linked wallet</h3>
+                    </div>
+                    <p>We support Metamask, Ledger and Trezor.</p>
+                  </div><img src=\\"test-file-stub\\" alt=\\"\\">
+                </div>
+              </div>
+              <div style=\\"cursor: pointer;\\" title=\\"Vote with a single wallet\\" class=\\"sc-AykKD esCbFs\\">
+                <div class=\\"sc-AykKI bYgVYs sc-fzXfNf cflWdN\\"><img src=\\"test-file-stub\\" alt=\\"\\" style=\\"max-width: 3.4rem; max-height: 3.4rem;\\">
+                  <div class=\\"sc-AykKI bYgVYs\\">
+                    <div class=\\"sc-AykKI kjKVTb\\">
+                      <h3 class=\\"sc-fzXfQn koVQcC\\">Vote with a single wallet</h3>
+                    </div>
+                    <p>Vote with the account selected in the accounts dropdown.</p>
+                  </div><img src=\\"test-file-stub\\" alt=\\"\\">
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </footer>
+    </div>
   </div>
 </div>"
 `;

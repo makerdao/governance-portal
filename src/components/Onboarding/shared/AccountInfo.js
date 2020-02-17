@@ -1,5 +1,12 @@
 import React from 'react';
-import { Card, Grid, Box, Link, Address, Flex } from '@makerdao/ui-components';
+import {
+  Card,
+  Grid,
+  Box,
+  Link,
+  Address,
+  Flex
+} from '@makerdao/ui-components-core';
 
 import WalletIcon from './WalletIcon';
 
