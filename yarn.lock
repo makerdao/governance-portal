@@ -1452,14 +1452,14 @@
     trezor-connect "^7.0.2"
     web3-provider-engine "14.0.4"
 
-"@makerdao/dai@^0.23.0-rc.5":
-  version "0.23.0-rc.5"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.23.0-rc.5.tgz#18bcbc196e7c3a1fb745a65b09101669226eaae0"
-  integrity sha512-VgVr9q5oOIN//je678fRNkT3Us3AXAqPzR/XfKv2JMa2GUJK9wDvKHH7DpAeKc8iqFCAp/nV3kP2m9GX9aY2zA==
+"@makerdao/dai@^0.24.0":
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai/-/dai-0.24.0.tgz#e9d503eb3163b1ade0e7599ba2ad4e5150a08377"
+  integrity sha512-OXbKPBuHFoxP/9kaxsqUgoE1dqkblB4LTlnTrKS52ps8Aqur/RQEmsjwDLxYuLK4qul77jXFkjs3EpWBqF3v5g==
   dependencies:
     "@babel/runtime" "^7.3.4"
     "@makerdao/currency" "^0.9.5"
-    "@makerdao/multicall" "^0.9.0-rc.2"
+    "@makerdao/multicall" "^0.10.0-rc.4"
     "@makerdao/services-core" "^0.9.9"
     assert "^1.4.1"
     bignumber.js "^7.2.1"
@@ -1473,6 +1473,7 @@
     isomorphic-fetch "^2.2.1"
     lodash "^4.17.11"
     promise-props "^1.0.0"
+    rxjs "^6.5.4"
     toposort "^2.0.2"
     web3 "1.2.1"
     web3-provider-engine makerdao/provider-engine#kovan-fix-dist
@@ -1487,16 +1488,17 @@
   resolved "https://registry.yarnpkg.com/@makerdao/i18n-helper/-/i18n-helper-0.1.8.tgz#2860bc5ac04be120ef0c93fac90e0a8f468466dc"
   integrity sha512-EgPnHc8YKZ9S8mkkjf3OG89DiMHwi8qmr1N0xBpvS1MDD5EhGzx3H0/b2Cq9GzYbAA/KRUj7Gt/ayO4p2W4M0g==
 
-"@makerdao/multicall@^0.9.0-rc.2":
-  version "0.9.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@makerdao/multicall/-/multicall-0.9.0-rc.2.tgz#2a005df4f41f5097784781be077f09d9c82776e2"
-  integrity sha512-WRiMqugAIDvPFAadNg3+dgV16G94K5EGIJUUs2Ee9tzprX8+lPOhytVxQpnkAiLTP3ac108QtjTiKpKYLdOhpw==
+"@makerdao/multicall@^0.10.0-rc.4":
+  version "0.10.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@makerdao/multicall/-/multicall-0.10.0-rc.4.tgz#05cd24b3db34ba46f9173ede1c34347a2001e560"
+  integrity sha512-TTHXf78SPnBkNUGMhDKs42TnLCa8aoNBy4cMO/QzqWB+a0+/H8wI1SlFxD7mHLMjTdxVdncZ/99/p0Mk375kVg==
   dependencies:
+    "@babel/runtime" "^7.7.4"
     cross-fetch "^3.0.4"
     debug "^4.1.1"
     ethers "^4.0.27"
+    invariant "^2.2.4"
     isomorphic-ws "^4.0.1"
-    js-sha3 "^0.8.0"
     lodash "^4.17.11"
     ws "^7.2.0"
 
@@ -13624,7 +13626,7 @@ rustbn.js@~0.2.0:
   resolved "https://registry.yarnpkg.com/rustbn.js/-/rustbn.js-0.2.0.tgz#8082cb886e707155fd1cb6f23bd591ab8d55d0ca"
   integrity sha512-4VlvkRUuCJvr2J6Y0ImW7NvTCriMi7ErOAqWk1y69vAdoNIzCF3yPmgeNzx+RQTLEDFq5sHfscn1MwHxP9hNfA==
 
-rxjs@^6.3.3, rxjs@^6.4.0, rxjs@^6.5.3:
+rxjs@^6.3.3, rxjs@^6.4.0, rxjs@^6.5.3, rxjs@^6.5.4:
   version "6.5.4"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.4.tgz#e0777fe0d184cec7872df147f303572d414e211c"
   integrity sha512-naMQXcgEo3csAEGvw/NydRA0fuS2nDZJiw1YUWFKU7aPPAPGZEsD4Iimit96qwCieH6y614MCLYwdkrWx7z/7Q==
