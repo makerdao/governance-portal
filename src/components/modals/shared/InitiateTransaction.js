@@ -56,8 +56,8 @@ class Transaction extends React.Component {
             status={txStatus}
           />
           {txPurpose && (
-            <div>
-              <TxInfo style={{ textAlign: 'center' }}>{txPurpose}</TxInfo>
+            <div style={{ margin: 'auto' }}>
+              <TxInfo>{txPurpose}</TxInfo>
             </div>
           )}
           {finished && (
