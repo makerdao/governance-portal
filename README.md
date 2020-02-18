@@ -60,9 +60,7 @@ We run Prettier on-commit, which means you can write code in whatever style you 
 
 [license]: https://img.shields.io/badge/license-MIT-blue.svg
 [license-url]: https://github.com/makerdao/governance-dashboard.js/blob/master/LICENSE
-
-[build]: https://travis-ci.com/makerdao/governance-dashboard.svg?token=7qKLu97qQDDMKfaxt318&branch=master
-[build-url]: https://travis-ci.com/makerdao/governance-dashboard
-
+[build]: https://circleci.com/gh/makerdao/governance-dashboard.svg?style=svg
+[build-url]: https://circleci.com/gh/makerdao/governance-dashboard
 [cover]: https://codecov.io/gh/makerdao/governance-dashboard/branch/master/graph/badge.svg?token=dYGCyaCdNA
 [cover-url]: https://codecov.io/gh/makerdao/governance-dashboard
