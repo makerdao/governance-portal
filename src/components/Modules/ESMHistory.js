@@ -33,7 +33,7 @@ export default () => {
           <thead>
             <tr>
               <th>Date</th>
-              <th>Amount Staked</th>
+              <th>Amount Burned</th>
               <th>Sender Address</th>
             </tr>
           </thead>
