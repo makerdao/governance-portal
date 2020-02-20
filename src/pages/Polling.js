@@ -538,7 +538,7 @@ class Polling extends React.Component {
                 )}
 
                 <VoteBreakdown poll={poll} />
-                {winningProposalName && (
+                {(winningProposalName || winningProposalName === 0) && (
                   <>
                     <CardTitle>Winning Proposal</CardTitle>
                     <span>{winningProposalName}</span>
