@@ -119,7 +119,7 @@ Object {
                       Date
                     </th>
                     <th>
-                      Amount Staked
+                      Amount Burned
                     </th>
                     <th>
                       Sender Address
@@ -262,7 +262,7 @@ Object {
                     Date
                   </th>
                   <th>
-                    Amount Staked
+                    Amount Burned
                   </th>
                   <th>
                     Sender Address
