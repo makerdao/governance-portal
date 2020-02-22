@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
-
+import mixpanel from 'mixpanel-browser';
 import VoterStatus from '../components/VoterStatus';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -247,14 +247,29 @@ const Timeline = ({
                 <Button
                   disabled={!canVote}
                   loading={fetching}
-                  onClick={() =>
+                  onClick={() => {
+                    if (votingFor.includes(hat.address.toLowerCase())) {
+                      mixpanel.track('btn-click', {
+                        id: 'exec-hat-withdraw-from-home-page',
+                        product: 'governance-dashboard',
+                        page: 'Timeline',
+                        section: 'exec-card'
+                      });
+                    } else {
+                      mixpanel.track('btn-click', {
+                        id: 'exec-hat-vote-from-home-page',
+                        product: 'governance-dashboard',
+                        page: 'Timeline',
+                        section: 'exec-card'
+                      });
+                    }
                     modalOpen(Vote, {
                       proposal: {
                         address: hat.address,
                         title: governingProposal.title
                       }
-                    })
-                  }
+                    });
+                  }}
                 >
                   {votingFor.includes(hat.address.toLowerCase())
                     ? 'Withdraw vote'
@@ -272,6 +287,14 @@ const Timeline = ({
               <ProposalDetails>
                 <ExtendedLink
                   to={`/executive-proposal/${toSlug(proposal.title)}`}
+                  onClick={() => {
+                    mixpanel.track('btn-click', {
+                      id: 'exec-view-card',
+                      product: 'governance-dashboard',
+                      page: 'Timeline',
+                      section: 'exec-card'
+                    });
+                  }}
                 >
                   <SubHeading>{proposal.title}</SubHeading>
                 </ExtendedLink>
@@ -349,14 +372,29 @@ const Timeline = ({
                       !canVote || (!proposal.active && proposal.govVote)
                     }
                     loading={fetching}
-                    onClick={() =>
+                    onClick={() => {
+                      if (votingFor.includes(proposal.source.toLowerCase())) {
+                        mixpanel.track('btn-click', {
+                          id: 'exec-withdraw-from-home-page',
+                          product: 'governance-dashboard',
+                          page: 'Timeline',
+                          section: 'exec-card'
+                        });
+                      } else {
+                        mixpanel.track('btn-click', {
+                          id: 'exec-vote-from-home-page',
+                          product: 'governance-dashboard',
+                          page: 'Timeline',
+                          section: 'exec-card'
+                        });
+                      }
                       modalOpen(Vote, {
                         proposal: {
                           address: proposal.source,
                           title: proposal.title
                         }
-                      })
-                    }
+                      });
+                    }}
                   >
                     {votingFor.includes(proposal.source.toLowerCase())
                       ? 'Withdraw vote'
