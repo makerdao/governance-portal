@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import { isNil, isEmpty } from 'ramda';
-
+import mixpanel from 'mixpanel-browser';
 import { toSlug } from '../utils/misc';
 import { ethScanLink } from '../utils/ethereum';
 import Vote from '../components/modals/Vote';
@@ -208,14 +208,29 @@ function Executive({
                 disabled={!canVote || (!active && proposal.govVote)}
                 loading={accountDataFetching}
                 wide={true}
-                onClick={() =>
+                onClick={() => {
+                  if (votingFor.includes(proposal.source.toLowerCase())) {
+                    mixpanel.track('btn-click', {
+                      id: 'exec-withdraw-from-proposal-page',
+                      product: 'governance-dashboard',
+                      page: 'Executive',
+                      section: 'voting-header'
+                    });
+                  } else {
+                    mixpanel.track('btn-click', {
+                      id: 'exec-vote-from-proposal-page',
+                      product: 'governance-dashboard',
+                      page: 'Executive',
+                      section: 'voting-header'
+                    });
+                  }
                   modalOpen(Vote, {
                     proposal: {
                       address: proposal.source,
                       title: proposal.title
                     }
-                  })
-                }
+                  });
+                }}
               >
                 {votingFor.includes(proposal.source.toLowerCase())
                   ? 'Withdraw vote'
@@ -311,7 +326,4 @@ const reduxProps = ({ proposals, tally, accounts, metamask }, { match }) => {
   };
 };
 
-export default connect(
-  reduxProps,
-  { modalOpen }
-)(Executive);
+export default connect(reduxProps, { modalOpen })(Executive);
