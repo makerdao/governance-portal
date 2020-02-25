@@ -202,15 +202,11 @@ const Timeline = ({
           <StyledCard>
             <Card.Element height={proposalWrapperHeight}>
               <ProposalDetails>
-                <div style={{ display: 'flex' }}>
-                  <ExtendedLink
-                    to={`/executive-proposal/${toSlug(
-                      governingProposal.title
-                    )}`}
-                  >
-                    <SubHeading>{governingProposal.title}</SubHeading>
-                  </ExtendedLink>
-                </div>
+                <ExtendedLink
+                  to={`/executive-proposal/${toSlug(governingProposal.title)}`}
+                >
+                  <SubHeading>{governingProposal.title}</SubHeading>
+                </ExtendedLink>
                 <Body>
                   {governingProposal.proposal_blurb}.
                   <ExtendedLink
