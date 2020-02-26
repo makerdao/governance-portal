@@ -12,7 +12,7 @@
     "@makerdao/dai-plugin-ledger-web": "^0.9.7",
     "@makerdao/dai-plugin-trezor-web": "^0.9.6",
     "@makerdao/test-helpers": "^0.2.1",
-    "@makerdao/ui-components-core": "^0.3.4",
+    "@makerdao/ui-components-core": "0.3.5-rc.1",
     "@makerdao/ui-components-footer": "^0.1.18",
     "@makerdao/ui-components-onboarding": "0.1.4",
     "@testing-library/react": "^9.4.0",

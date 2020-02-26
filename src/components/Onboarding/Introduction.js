@@ -140,7 +140,7 @@ const Introduction = ({
         </Box>
         <Flex
           p="m"
-          bg="backgroundGrey"
+          bg="coolGrey.100"
           justifyContent="center"
           alignItems="center"
           flexDirection="column"

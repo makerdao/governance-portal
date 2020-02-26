@@ -52,7 +52,7 @@ const Onboarding = ({ open, step, state, ...props }) => {
     <Background
       show={open}
       zIndex="2"
-      bg="backgroundGrey"
+      bg="coolGrey.100"
       position="fixed"
       height="100%"
       width="100%"
