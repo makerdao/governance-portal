@@ -1543,10 +1543,10 @@
     "@makerdao/i18n-helper" "^0.1.8"
     react-qr-svg "^2.2.1"
 
-"@makerdao/ui-components-onboarding@0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@makerdao/ui-components-onboarding/-/ui-components-onboarding-0.1.4.tgz#7ed00e1ceacc328885694369504088bd597bbde7"
-  integrity sha512-gYYIjNjT0oV7fET0uW3KuIK3obZy1AdsIZ3NwQqJN3sJwFtMd0fIfmO8jYEscEravhG2orravgnxHUJuUxveZA==
+"@makerdao/ui-components-onboarding@0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@makerdao/ui-components-onboarding/-/ui-components-onboarding-0.1.5.tgz#32496e67d387233a974ff0ffb6d7be9e18e42edb"
+  integrity sha512-LZfBJQYXtjPbMDUHs13afBRO2qjcLKU5lyI2Mbi/5sa+PjRaXwBV0YQl+wF3W7gZ2oKqQk5yEuQDcV38EF8YKA==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
