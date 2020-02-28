@@ -177,6 +177,7 @@ export const TxInfo = styled.p`
   font-style: oblique;
   display: flex;
   font-size: 16px;
+  text-align: center;
 `;
 
 const Input = styled.input`

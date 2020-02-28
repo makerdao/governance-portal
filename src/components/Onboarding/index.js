@@ -50,14 +50,13 @@ const Onboarding = ({ open, step, state, ...props }) => {
 
   return (
     <Background
+      style={{ top: '0px', left: '0px' }}
       show={open}
       zIndex="2"
-      bg="backgroundGrey"
+      bg="coolGrey.100"
       position="fixed"
       height="100%"
       width="100%"
-      top="0"
-      left="0"
     >
       <Introduction
         show={open && state === OnboardingStates.INTRODUCTION}

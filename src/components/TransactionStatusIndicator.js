@@ -53,7 +53,7 @@ const TransactionStatusIndicator = ({
   ...props
 }) => {
   return (
-    <Grid alignItems="center" justifyItems="center" {...props}>
+    <Grid alignItems="center" style={{ justifyItems: 'center' }} {...props}>
       <Flex
         gridArea="1 / 2 / 1 / 2"
         height={spinnerSize}
