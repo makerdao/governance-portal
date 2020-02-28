@@ -81,7 +81,10 @@ const ConfirmWalletStep = ({
       />
       <div>
         <AccountInfo account={coldWallet} tag={<ColdWalletTag />} />
-        <Grid gridTemplateColumns={`${imageWidth} 1fr`} justifyItems="center">
+        <Grid
+          gridTemplateColumns={`${imageWidth} 1fr`}
+          style={{ justifyItems: 'center' }}
+        >
           <img src={linkImg} alt="" />
           <Box alignSelf="center" fontWeight="medium" color="greys.dark">
             <p>You are linking the above cold wallet to the below hot wallet</p>

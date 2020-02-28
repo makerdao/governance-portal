@@ -35,7 +35,7 @@ class Transaction extends React.Component {
     return (
       <Stepper step={this.state.step}>
         <div>{children(this.onNext)}</div>
-        <Grid justifyItems="center" gridRowGap="m">
+        <Grid style={{ justifyItems: 'center' }} gridRowGap="m">
           {txStatus === TransactionStatus.NOT_STARTED && (
             <StyledTitle>
               Approve transaction on {account.proxyRole} wallet

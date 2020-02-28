@@ -17,7 +17,7 @@ const SignTransactionStep = ({
   onCancel
 }) => {
   return (
-    <Grid gridRowGap="l" justifyItems="center">
+    <Grid gridRowGap="l" style={{ justifyItems: 'center' }}>
       <OnboardingHeader title={title} subtitle={subtitle} />
       <TransactionStatusIndicator
         provider={walletProvider}
