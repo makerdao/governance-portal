@@ -1,5 +1,6 @@
 import React from 'react';
 import { Flex } from '@makerdao/ui-components-core';
+import Intro from './Intro';
 import Step0 from './Step0';
 import Step1 from './Step1';
 import Step2 from './Step2';
@@ -22,6 +23,8 @@ export default props => {
   } = props;
   const renderStep = step => {
     switch (step) {
+      case -1:
+        return <Intro onClose={onClose} setStep={setStep} />;
       case 0:
         return <Step0 onClose={onClose} onContinue={setStep} />;
       case 1:
