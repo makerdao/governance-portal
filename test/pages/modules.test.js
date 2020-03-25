@@ -10,6 +10,7 @@ import {
   wait,
   waitForElement
 } from '@testing-library/react';
+import 'jest-styled-components';
 
 const { click } = fireEvent;
 
@@ -71,9 +72,9 @@ describe('renders summary page', () => {
     store = mockStore({ accounts, esm });
   });
 
-  test.skip('renders with state', async () => {
-    let renderedComponent = await render(<Modules store={store} />);
-    expect(renderedComponent).toMatchSnapshot();
+  test('renders with state', async () => {
+    let { container } = await render(<Modules store={store} />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
   test('show progress bar', async () => {
