@@ -32,7 +32,8 @@ const MKRBurn = ({
   const accountMkrInEsm = account.mkrInEsm;
   const [burnAmount, setBurnAmount] = useState('');
   const [txHash, setTxHash] = useState('');
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(-1);
+  const [introSeen, setIntroSeen] = useState(false);
 
   const depositsInChief =
     Object.keys(account).length > 0 ? account.proxy.votingPower : 0;
@@ -78,7 +79,9 @@ const MKRBurn = ({
     esmThresholdAmount,
     txHash,
     setTxHash,
-    canInitiate
+    canInitiate,
+    introSeen,
+    setIntroSeen
   };
   const burnModal = props => <BurnMkrModal {...props} />;
   const initiateModal = props => <InitiateShutdownModal {...props} />;
@@ -139,7 +142,7 @@ const MKRBurn = ({
         <CardBody>
           <Flex flexDirection="row" justifyContent="space-between" m={'m'}>
             {totalMkrInEsm ? (
-              <ModalPortal {...modalProps} {...contentProps}>
+              <ModalPortal startOpen={true} {...modalProps} {...contentProps}>
                 {modal}
               </ModalPortal>
             ) : (

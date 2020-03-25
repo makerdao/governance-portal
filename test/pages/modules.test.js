@@ -10,6 +10,7 @@ import {
   wait,
   waitForElement
 } from '@testing-library/react';
+import 'jest-styled-components';
 
 const { click } = fireEvent;
 
@@ -72,8 +73,8 @@ describe('renders summary page', () => {
   });
 
   test('renders with state', async () => {
-    let renderedComponent = await render(<Modules store={store} />);
-    expect(renderedComponent).toMatchSnapshot();
+    let { container } = await render(<Modules store={store} />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
   test('show progress bar', async () => {
@@ -127,9 +128,17 @@ describe('renders summary page', () => {
     const { getByTestId, getAllByTestId, getByText, getByRole } = await render(
       <Modules store={store} />
     );
-    click(getByText('Burn your MKR'));
+
+    // Intro Render
+    await wait(() =>
+      getByText('The Emergency Shutdown Module (ESM) is responsible for', {
+        exact: false
+      })
+    );
+    click(getByText('Continue'));
 
     // First Step Render
+    click(getByText('Burn your MKR'));
     await wait(() => getByText('Are you sure you want to burn MKR?'));
     click(getByText('Continue'));
 

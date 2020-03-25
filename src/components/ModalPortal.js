@@ -132,6 +132,10 @@ export default class Modal extends Component {
     this.onClose();
   };
 
+  componentDidMount() {
+    if (this.props.startOpen) this.onOpen();
+  }
+
   render() {
     const { isOpen } = this.state;
     const {

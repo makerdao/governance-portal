@@ -1,344 +1,366 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders summary page renders with state 1`] = `
-Object {
-  "asFragment": [Function],
-  "baseElement": <body>
-    <div>
-      <div
-        class="sc-AykKI jUzNZS sc-fzXfMA kDQaBL"
-      >
-        <div
-          class="sc-AykKI QuCGS sc-fzXfNf hYOpSW"
-        >
-          <h2
-            class="sc-fzXfLV sc-fzXfLW cYPrAS"
-          >
-            Emergency Shutdown Module
-          </h2>
-          <p
-            class="sc-fzXfLQ HiEwu"
-          >
-            The ESM allows MKR holders to shutdown the system without a central authority. Once 50,000 MKR are entered into the ESM, emergency shutdown can be executed.
-             
-            <a
-              class="sc-fzXfNl ehEzPg"
-              href="https://docs.makerdao.com/smart-contract-modules/emergency-shutdown-module"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Read the documentation here.
-            </a>
-          </p>
-          <div
-            class="sc-AykKI lkHIBU sc-fzXfNf hYOpSW"
-          >
-            <h4
-              class="sc-fzXfMw sc-fzXfMx ktDqRI"
-              font-weight="700"
-            >
-              Total MKR Burned
-            </h4>
-            <div
-              class="sc-AykKD eHBufN"
-            >
-              <div
-                class="sc-AykKC cOjTfu"
-              >
-                <div
-                  class="sc-AykKI lekkHg sc-fzXfMA lghjaB"
-                >
-                  <h3
-                    class="sc-fzXfLX sc-fzXfMv kUQhnt"
-                  >
-                    0.00 MKR
-                  </h3>
-                  <p
-                    class="sc-fzXfLQ gDZiLf"
-                    color="#708390"
-                    font-weight="400"
-                  >
-                     
-                    of 
-                    50000
-                  </p>
-                </div>
-                <div
-                  class="sc-AykKI DMwiT"
-                  data-testid="progress-bar"
-                  height="20"
-                  style="border-radius: 5px; min-height: 20px;"
-                >
-                  <div
-                    class="sc-fzXfPF bBgSKP"
-                    style="width: 0%;"
-                  />
-                </div>
-              </div>
-              <div
-                class="sc-AykKC QXPLA"
-              >
-                <div
-                  class="sc-AykKI eEvygQ sc-fzXfMA heGUAX"
-                >
-                  <button
-                    class="sc-fzXfLO ipwkKa"
-                  >
-                    Burn your MKR
-                  </button>
-                  <p
-                    class="sc-fzXfLQ OvbJe"
-                    color="#9FAFB9"
-                    font-weight="300"
-                  >
-                    You have no MKR in the ESM
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="sc-AykKI lkHIBU sc-fzXfNf hYOpSW"
-          >
-            <h4
-              class="sc-fzXfMw sc-fzXfMx ktDqRI"
-              font-weight="700"
-            >
-              ESM History
-            </h4>
-            <div
-              class="sc-AykKD gIqJED"
-            >
-              <table
-                class="sc-fzXfNS jeSlkx normal"
-                width="100%"
-              >
-                <thead>
-                  <tr>
-                    <th>
-                      Date
-                    </th>
-                    <th>
-                      Amount Burned
-                    </th>
-                    <th>
-                      Sender Address
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td
-                      colspan="3"
-                    >
-                      <span
-                        class="sc-fzXfLP cjzehg"
-                        color="darkLavender"
-                      >
-                        Loading
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </body>,
-  "container": <div>
-    <div
-      class="sc-AykKI jUzNZS sc-fzXfMA kDQaBL"
-    >
-      <div
-        class="sc-AykKI QuCGS sc-fzXfNf hYOpSW"
-      >
-        <h2
-          class="sc-fzXfLV sc-fzXfLW cYPrAS"
-        >
-          Emergency Shutdown Module
-        </h2>
-        <p
-          class="sc-fzXfLQ HiEwu"
-        >
-          The ESM allows MKR holders to shutdown the system without a central authority. Once 50,000 MKR are entered into the ESM, emergency shutdown can be executed.
-           
-          <a
-            class="sc-fzXfNl ehEzPg"
-            href="https://docs.makerdao.com/smart-contract-modules/emergency-shutdown-module"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Read the documentation here.
-          </a>
-        </p>
-        <div
-          class="sc-AykKI lkHIBU sc-fzXfNf hYOpSW"
-        >
-          <h4
-            class="sc-fzXfMw sc-fzXfMx ktDqRI"
-            font-weight="700"
-          >
-            Total MKR Burned
-          </h4>
-          <div
-            class="sc-AykKD eHBufN"
-          >
-            <div
-              class="sc-AykKC cOjTfu"
-            >
-              <div
-                class="sc-AykKI lekkHg sc-fzXfMA lghjaB"
-              >
-                <h3
-                  class="sc-fzXfLX sc-fzXfMv kUQhnt"
-                >
-                  0.00 MKR
-                </h3>
-                <p
-                  class="sc-fzXfLQ gDZiLf"
-                  color="#708390"
-                  font-weight="400"
-                >
-                   
-                  of 
-                  50000
-                </p>
-              </div>
-              <div
-                class="sc-AykKI DMwiT"
-                data-testid="progress-bar"
-                height="20"
-                style="border-radius: 5px; min-height: 20px;"
-              >
-                <div
-                  class="sc-fzXfPF bBgSKP"
-                  style="width: 0%;"
-                />
-              </div>
-            </div>
-            <div
-              class="sc-AykKC QXPLA"
-            >
-              <div
-                class="sc-AykKI eEvygQ sc-fzXfMA heGUAX"
-              >
-                <button
-                  class="sc-fzXfLO ipwkKa"
-                >
-                  Burn your MKR
-                </button>
-                <p
-                  class="sc-fzXfLQ OvbJe"
-                  color="#9FAFB9"
-                  font-weight="300"
-                >
-                  You have no MKR in the ESM
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="sc-AykKI lkHIBU sc-fzXfNf hYOpSW"
-        >
-          <h4
-            class="sc-fzXfMw sc-fzXfMx ktDqRI"
-            font-weight="700"
-          >
-            ESM History
-          </h4>
-          <div
-            class="sc-AykKD gIqJED"
-          >
-            <table
-              class="sc-fzXfNS jeSlkx normal"
-              width="100%"
-            >
-              <thead>
-                <tr>
-                  <th>
-                    Date
-                  </th>
-                  <th>
-                    Amount Burned
-                  </th>
-                  <th>
-                    Sender Address
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td
-                    colspan="3"
-                  >
-                    <span
-                      class="sc-fzXfLP cjzehg"
-                      color="darkLavender"
-                    >
-                      Loading
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>,
-  "debug": [Function],
-  "findAllByAltText": [Function],
-  "findAllByDisplayValue": [Function],
-  "findAllByLabelText": [Function],
-  "findAllByPlaceholderText": [Function],
-  "findAllByRole": [Function],
-  "findAllByTestId": [Function],
-  "findAllByText": [Function],
-  "findAllByTitle": [Function],
-  "findByAltText": [Function],
-  "findByDisplayValue": [Function],
-  "findByLabelText": [Function],
-  "findByPlaceholderText": [Function],
-  "findByRole": [Function],
-  "findByTestId": [Function],
-  "findByText": [Function],
-  "findByTitle": [Function],
-  "getAllByAltText": [Function],
-  "getAllByDisplayValue": [Function],
-  "getAllByLabelText": [Function],
-  "getAllByPlaceholderText": [Function],
-  "getAllByRole": [Function],
-  "getAllByTestId": [Function],
-  "getAllByText": [Function],
-  "getAllByTitle": [Function],
-  "getByAltText": [Function],
-  "getByDisplayValue": [Function],
-  "getByLabelText": [Function],
-  "getByPlaceholderText": [Function],
-  "getByRole": [Function],
-  "getByTestId": [Function],
-  "getByText": [Function],
-  "getByTitle": [Function],
-  "queryAllByAltText": [Function],
-  "queryAllByDisplayValue": [Function],
-  "queryAllByLabelText": [Function],
-  "queryAllByPlaceholderText": [Function],
-  "queryAllByRole": [Function],
-  "queryAllByTestId": [Function],
-  "queryAllByText": [Function],
-  "queryAllByTitle": [Function],
-  "queryByAltText": [Function],
-  "queryByDisplayValue": [Function],
-  "queryByLabelText": [Function],
-  "queryByPlaceholderText": [Function],
-  "queryByRole": [Function],
-  "queryByTestId": [Function],
-  "queryByText": [Function],
-  "queryByTitle": [Function],
-  "rerender": [Function],
-  "unmount": [Function],
+.c10 {
+  padding: s;
+  padding-bottom: m;
 }
+
+.c8 {
+  border: 1px solid #D4D9E1;
+  background-color: white;
+  border-radius: 4px;
+}
+
+.c8 .c9 + .c9 {
+  border-top: 1px solid #D4D9E1;
+}
+
+.c20 {
+  border: 1px solid #D4D9E1;
+  background-color: white;
+  border-radius: 4px;
+  padding: s;
+  padding-bottom: m;
+}
+
+.c20 .c9 + .c9 {
+  border-top: 1px solid #D4D9E1;
+}
+
+.c0 {
+  min-height: 100vh;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.c2 {
+  margin-left: 2xl;
+  margin-right: 2xl;
+  margin-top: 2xl;
+  margin-bottom: 2xl;
+  padding-left: 2xl;
+  padding-right: 2xl;
+  grid-row-gap: m;
+}
+
+.c6 {
+  margin-top: s;
+  margin-bottom: s;
+  grid-row-gap: m;
+}
+
+.c11 {
+  margin: s;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c14 {
+  margin-bottom: s;
+  margin-left: s;
+  margin-right: s;
+  margin-top: s;
+  height: 20;
+  background-color: #F6F8F9;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  border: default;
+}
+
+.c16 {
+  margin: m;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+.c18 {
+  padding: 13px 26px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  border: 1px solid;
+  border-radius: 4px;
+  box-shadow: none;
+  outline: none;
+  cursor: pointer;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+}
+
+.c18:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.c22 {
+  color: darkLavender;
+}
+
+.c13 {
+  margin-left: xs;
+  color: #708390;
+  font-weight: 400;
+}
+
+.c19 {
+  color: #9FAFB9;
+  font-weight: 300;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
+
+.c4 {
+  text-align: left;
+}
+
+.c7 {
+  text-align: left;
+  font-weight: 700;
+}
+
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.c12 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c17 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c3 {
+  display: grid;
+  grid-row-gap: m;
+}
+
+.c5 {
+  -webkit-transition: color 0.2s;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+
+.c5:hover {
+  color: #405361;
+}
+
+.c21 {
+  width: 100%;
+}
+
+.c21 tr {
+  border-bottom: 1px solid;
+  border-color: #EBEBEB;
+}
+
+.c21 tr:last-child {
+  border-bottom: none;
+}
+
+.c21 th {
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  -webkit-letter-spacing: 0.05em;
+  -moz-letter-spacing: 0.05em;
+  -ms-letter-spacing: 0.05em;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  font-weight: 700;
+  font-family: -apple-system,system-ui,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  color: #708390;
+  color: #48495F;
+  padding-bottom: 8px;
+}
+
+.c21 td {
+  padding-bottom: 12px;
+  padding-top: 12px;
+}
+
+.c15 {
+  border-radius: inherit;
+  height: 100%;
+  -webkit-transition: width 0.2s ease-in;
+  transition: width 0.2s ease-in;
+  background-color: #f75625;
+  min-height: 20px;
+}
+
+@media screen and (min-width:500px) {
+
+}
+
+<div
+  class="c0 c1"
+>
+  <div
+    class="c2 c3"
+  >
+    <h2
+      class="sc-fzXfLV c4"
+    >
+      Emergency Shutdown Module
+    </h2>
+    <p
+      class=""
+    >
+      The ESM allows MKR holders to shutdown the system without a central authority. Once 50,000 MKR are entered into the ESM, emergency shutdown can be executed.
+       
+      <a
+        class="c5"
+        href="https://docs.makerdao.com/smart-contract-modules/emergency-shutdown-module"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Read the documentation here.
+      </a>
+    </p>
+    <div
+      class="c6 c3"
+    >
+      <h4
+        class="sc-fzXfMw c7"
+        font-weight="700"
+      >
+        Total MKR Burned
+      </h4>
+      <div
+        class="c8"
+      >
+        <div
+          class="c9 c10"
+        >
+          <div
+            class="c11 c12"
+          >
+            <h3
+              class="sc-fzXfLX "
+            >
+              0.00 MKR
+            </h3>
+            <p
+              class="c13"
+              color="#708390"
+              font-weight="400"
+            >
+               
+              of 
+              50000
+            </p>
+          </div>
+          <div
+            class="c14"
+            data-testid="progress-bar"
+            height="20"
+            style="border-radius: 5px; min-height: 20px;"
+          >
+            <div
+              class="c15"
+              style="width: 0%;"
+            />
+          </div>
+        </div>
+        <div
+          class="c9 "
+        >
+          <div
+            class="c16 c17"
+          >
+            <button
+              class="c18"
+            >
+              Burn your MKR
+            </button>
+            <p
+              class="c19"
+              color="#9FAFB9"
+              font-weight="300"
+            >
+              You have no MKR in the ESM
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="c6 c3"
+    >
+      <h4
+        class="sc-fzXfMw c7"
+        font-weight="700"
+      >
+        ESM History
+      </h4>
+      <div
+        class="c20"
+      >
+        <table
+          class="c21 normal"
+          width="100%"
+        >
+          <thead>
+            <tr>
+              <th>
+                Date
+              </th>
+              <th>
+                Amount Burned
+              </th>
+              <th>
+                Sender Address
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                colspan="3"
+              >
+                <span
+                  class="c22"
+                  color="darkLavender"
+                >
+                  Loading
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 `;

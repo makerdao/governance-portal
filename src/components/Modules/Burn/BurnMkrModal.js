@@ -1,5 +1,6 @@
 import React from 'react';
 import { Flex } from '@makerdao/ui-components-core';
+import Intro from './Intro';
 import Step0 from './Step0';
 import Step1 from './Step1';
 import Step2 from './Step2';
@@ -18,8 +19,11 @@ export default props => {
     setStep,
     totalMkrInEsm,
     txHash,
-    setTxHash
+    setTxHash,
+    setIntroSeen,
+    introSeen
   } = props;
+
   const renderStep = step => {
     switch (step) {
       case 0:
@@ -69,10 +73,20 @@ export default props => {
         return <Step0 onClose={onClose} onContinue={setStep} />;
     }
   };
+
   const renderedStep = renderStep(step);
   return (
     <Flex flexDirection="column" alignItems="center">
-      {renderedStep}
+      {introSeen ? (
+        renderedStep
+      ) : (
+        <Intro
+          onClose={() => {
+            setIntroSeen(true);
+            onClose();
+          }}
+        />
+      )}
     </Flex>
   );
 };
