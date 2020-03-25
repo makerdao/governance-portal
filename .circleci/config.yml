@@ -121,3 +121,9 @@ workflows:
           filters:
             branches:
               only: develop
+      - deploy_aws_prod:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
