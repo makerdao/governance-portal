@@ -111,7 +111,7 @@ const ModalContent = ({
 };
 
 export default class Modal extends Component {
-  state = { isOpen: true };
+  state = { isOpen: false };
   toggleScrollLock = () =>
     document.querySelector('html').classList.toggle('u-lock-scroll');
   onOpen = () => {
@@ -131,6 +131,10 @@ export default class Modal extends Component {
     if (this.modalNode && this.modalNode.contains(e.target)) return;
     this.onClose();
   };
+
+  componentDidMount() {
+    if (this.props.startOpen) this.onOpen();
+  }
 
   render() {
     const { isOpen } = this.state;

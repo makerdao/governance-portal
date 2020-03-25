@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import warning from '../../../imgs/warning.svg';
-import { Button, Flex, Text, Link } from '@makerdao/ui-components-core';
+import { Button, Flex, Text } from '@makerdao/ui-components-core';
 
 const WarningIcon = styled.p`
   width: 63px;
@@ -10,7 +10,7 @@ const WarningIcon = styled.p`
   mask: url(${warning}) center no-repeat;
 `;
 
-export default ({ onClose, onContinue }) => {
+export default ({ onClose }) => {
   return (
     <Fragment>
       <WarningIcon />

@@ -129,6 +129,14 @@ describe('renders summary page', () => {
     );
     click(getByText('Burn your MKR'));
 
+    // Intro Render
+    await wait(() =>
+      getByText('The Emergency Shutdown Module (ESM) is responsible for', {
+        exact: false
+      })
+    );
+    click(getByText('Continue'));
+
     // First Step Render
     await wait(() => getByText('Are you sure you want to burn MKR?'));
     click(getByText('Continue'));

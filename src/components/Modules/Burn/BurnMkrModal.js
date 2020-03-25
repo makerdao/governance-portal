@@ -19,12 +19,13 @@ export default props => {
     setStep,
     totalMkrInEsm,
     txHash,
-    setTxHash
+    setTxHash,
+    setIntroSeen,
+    introSeen
   } = props;
+
   const renderStep = step => {
     switch (step) {
-      case -1:
-        return <Intro onClose={onClose} setStep={setStep} />;
       case 0:
         return <Step0 onClose={onClose} onContinue={setStep} />;
       case 1:
@@ -72,10 +73,20 @@ export default props => {
         return <Step0 onClose={onClose} onContinue={setStep} />;
     }
   };
+
   const renderedStep = renderStep(step);
   return (
     <Flex flexDirection="column" alignItems="center">
-      {renderedStep}
+      {introSeen ? (
+        renderedStep
+      ) : (
+        <Intro
+          onClose={() => {
+            setIntroSeen(true);
+            onClose();
+          }}
+        />
+      )}
     </Flex>
   );
 };

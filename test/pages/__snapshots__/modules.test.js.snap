@@ -70,7 +70,7 @@ Object {
                   style="border-radius: 5px; min-height: 20px;"
                 >
                   <div
-                    class="sc-fzXfPF bBgSKP"
+                    class="sc-fzXfPG cgxknw"
                     style="width: 0%;"
                   />
                 </div>
@@ -146,6 +146,93 @@ Object {
         </div>
       </div>
     </div>
+    <aside
+      aria-label="Modal to confirm burning your MKR for an emergency shutdown"
+      aria-modal="true"
+      class="sc-fzXfOY dOhhwf"
+      role="dialog"
+      tabindex="-1"
+    >
+      <div
+        class="sc-fzXfOZ hedIxw"
+      >
+        <button
+          aria-labelledby="close-modal"
+          class="sc-fzXfPa iHCtrV"
+        >
+          <span
+            class="sc-fzXfPc eXMOMk"
+            id="close-modal"
+          >
+            Close
+          </span>
+          <svg
+            class="sc-fzXfPb fEuIjW"
+            viewBox="0 0 40 40"
+          >
+            <path
+              d="M 10,10 L 30,30 M 30,10 L 10,30"
+            />
+          </svg>
+        </button>
+        <div
+          class="sc-fzXfPd fpJGvU"
+        >
+          <div
+            class="sc-AykKI bDFaQ sc-fzXfMA bimJAz"
+          >
+            <p
+              class="sc-fzXfPe cGBShT"
+            />
+            <h2
+              class="sc-fzXfLV sc-fzXfLW hbhVnZ"
+            >
+              Emergency Security Module
+            </h2>
+            <p
+              class="sc-fzXfLQ jWdVPC"
+            >
+              The Emergency Shutdown Module (ESM) is responsible for a
+          process that gracefully shuts down the Maker Protocol.
+          This acts as a last resort to protect against a serious
+          threat, such as but not limited to governance attacks,
+          long-term market irrationality, hacks and security breaches.
+        
+            </p>
+            <p
+              class="sc-fzXfLQ jWdVPC"
+            >
+              The following screens allow the user to burn MKR in support
+          of Emergency Shutdown. Outside of Governance, burning ones
+          tokens in the Emergency Shutdown Module (ESM) is a
+          non-reversible action.
+               
+            </p>
+            <p
+              class="sc-fzXfLQ FvoEQ"
+              font-weight="500"
+            >
+              Your MKR will be permanently burnt.
+            </p>
+            <div
+              class="sc-AykKI PMBfT sc-fzXfMA chihNC"
+            >
+              <button
+                class="sc-fzXfLO cDoYjE"
+                color="black"
+              >
+                Cancel
+              </button>
+              <button
+                class="sc-fzXfLO lmBVbQ"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
   </body>,
   "container": <div>
     <div
@@ -213,7 +300,7 @@ Object {
                 style="border-radius: 5px; min-height: 20px;"
               >
                 <div
-                  class="sc-fzXfPF bBgSKP"
+                  class="sc-fzXfPG cgxknw"
                   style="width: 0%;"
                 />
               </div>
