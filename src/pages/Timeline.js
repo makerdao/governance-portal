@@ -327,7 +327,9 @@ const Timeline = ({
                           <Tag powder>
                             <Bold>
                               {formatRound(
-                                hat.approvals - spellDetails.approvals
+                                hat.approvals - spellDetails.approvals < 0
+                                  ? 0
+                                  : hat.approvals - spellDetails.approvals
                               ) + ' MKR'}
                             </Bold>{' '}
                             needed to pass.
