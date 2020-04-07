@@ -19,13 +19,13 @@ export default ({ onClose }) => {
         {`The Emergency Shutdown Module (ESM) is responsible for a
           process that gracefully shuts down the Maker Protocol.
           This acts as a last resort to protect against a serious
-          threat, such as but not limited to governance attacks,
+          threat, such as, but not limited to, governance attacks,
           long-term market irrationality, hacks and security breaches.
         `}
       </Text.p>
       <Text.p mt="m" mx="l" textAlign="center">
         {`The following screens allow the user to burn MKR in support
-          of Emergency Shutdown. Outside of Governance, burning ones
+          of Emergency Shutdown. Outside of Governance, burning one's
           tokens in the Emergency Shutdown Module (ESM) is a
           non-reversible action.`}
         {` `}
