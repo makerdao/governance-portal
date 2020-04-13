@@ -28,7 +28,7 @@ const ESM = ({ activeAccount = {}, esm = {} } = {}) => {
             my="s"
             style={{ textAlign: 'center', fontSize: 14, color: '#994126' }}
           >
-            {`Emergency shutdown has been initiated on ${formattedTime} UTC. This dashboard is currently read-only.`}
+            {`Emergency shutdown has been initiated on ${formattedTime} UTC. This portal is currently read-only.`}
             <br />
           </Text>
         </Flex>

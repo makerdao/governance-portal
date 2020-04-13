@@ -74,9 +74,7 @@ const WelcomeBanner = ({ onboardingOpen, activeAccount }) => {
       <Content>
         <Flag mr={20} mt="-2" />
         <BannerBody whiteSpace="pre">
-          <BannerHeader>
-            Welcome to the governance voting dashboard
-          </BannerHeader>
+          <BannerHeader>Welcome to the governance voting portal</BannerHeader>
           <BannerContent>
             Before you can get started voting you will need to set up a voting
             contract
@@ -296,7 +294,6 @@ const mapStateToProps = state => ({
   onboardingState: state.onboarding.state
 });
 
-export default connect(
-  mapStateToProps,
-  { modalOpen, onboardingOpen }
-)(VoterStatus);
+export default connect(mapStateToProps, { modalOpen, onboardingOpen })(
+  VoterStatus
+);
