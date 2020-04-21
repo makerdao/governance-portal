@@ -147,7 +147,9 @@ export const addAccounts = accounts => async dispatch => {
       fn: () => mkrToken.balanceOf(account.address)
     });
 
-    const votingPowerPromise = voteProxy.getNumDeposits();
+    const votingPowerPromise = hasProxy
+      ? voteProxy.getNumDeposits()
+      : Promise.resolve(0);
 
     const _payload = {
       ...account,

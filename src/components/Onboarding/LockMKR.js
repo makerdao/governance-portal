@@ -29,6 +29,7 @@ import {
   SingleWalletTag
 } from './shared/Tags';
 import { Label } from '../../utils/typography';
+import { formatRound } from '../../utils/misc';
 
 const inputWidth = '33.4rem';
 const walletIconSize = '2.7rem';
@@ -70,7 +71,7 @@ class LockMKR extends React.Component {
   };
 
   toLockMKR = () => {
-    this.props.lock(parseFloat(this.state.votingMKR));
+    this.props.lock(this.state.votingMKR);
     this.setState({
       step: 2,
       faqs: faqs.lockMKR
@@ -96,8 +97,8 @@ class LockMKR extends React.Component {
       error = 'Please enter a valid number';
     } else if (mkr === 0) {
       error = 'Please enter a number greater than zero';
-    } else if (mkr > this.state.storageWallet.mkrBalance) {
-      error = `The maximum amount of MKR you can lock is ${this.state.storageWallet.mkrBalance}`;
+    } else if (this.state.storageWallet.mkrBalanceRaw.lt(amount)) {
+      error = `The maximum amount of MKR you can lock is ${this.state.storageWallet.mkrBalanceRaw}`;
     }
 
     this.setState({
@@ -107,7 +108,9 @@ class LockMKR extends React.Component {
 
   setMaxVotingMKR = () => {
     this.setState({
-      votingMKR: this.state.storageWallet.mkrBalance,
+      votingMKR: this.state.storageWallet.mkrBalanceRaw
+        .toBigNumber()
+        .toFixed(18),
       error: false
     });
   };
@@ -142,7 +145,10 @@ class LockMKR extends React.Component {
                 <div>
                   <Label mb="s">Available MKR</Label>
                   <div>
-                    {this.state.storageWallet.mkrBalance} MKR available to vote
+                    {this.state.storageWallet.mkrBalanceRaw
+                      .toBigNumber()
+                      .toFixed(6)}{' '}
+                    MKR available to vote
                   </div>
                 </div>
 
@@ -210,7 +216,7 @@ class LockMKR extends React.Component {
                       </Link>
                     </Box>
                     <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
-                      {this.state.storageWallet.mkrBalance} MKR
+                      {this.state.storageWallet.mkrBalanceRaw.toString(6)}
                     </Box>
                     <Flex justifyContent="flex-end">
                       {this.props.singleWallet ? (
@@ -240,7 +246,7 @@ class LockMKR extends React.Component {
                       <Link fontWeight="semibold">Address hidden</Link>
                     </Box> */}
                     <Box gridRow={['2', '1']} gridColumn={['1/3', '3']}>
-                      {this.state.votingMKR} MKR
+                      {formatRound(this.state.votingMKR, 6)} MKR
                     </Box>
                     <Flex justifyContent="flex-end">
                       <VotingContractTag />
