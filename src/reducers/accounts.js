@@ -134,12 +134,22 @@ export const addAccounts = accounts => async dispatch => {
         otherRole === 'hot'
           ? voteProxy.getHotAddress()
           : voteProxy.getColdAddress();
+      const linkedMkrBalancePromise = mkrToken.balanceOf(linkedAddress);
       return {
         proxyRole: otherRole,
         address: linkedAddress,
-        mkrBalance: await toNum(mkrToken.balanceOf(linkedAddress))
+        mkrBalance: await toNum(linkedMkrBalancePromise),
+        mkrBalanceRaw: await linkedMkrBalancePromise
       };
     };
+
+    const accountMkrBalancePromise = promiseRetry({
+      fn: () => mkrToken.balanceOf(account.address)
+    });
+
+    const votingPowerPromise = hasProxy
+      ? voteProxy.getNumDeposits()
+      : Promise.resolve(0);
 
     const _payload = {
       ...account,
@@ -147,9 +157,8 @@ export const addAccounts = accounts => async dispatch => {
       mkrInEsm: window.maker
         .service('esm')
         .getTotalStakedByAddress(account.address),
-      mkrBalance: toNum(
-        promiseRetry({ fn: () => mkrToken.balanceOf(account.address) })
-      ),
+      mkrBalance: toNum(accountMkrBalancePromise),
+      mkrBalanceRaw: accountMkrBalancePromise,
       hasProxy,
       proxyRole: proxyRole,
       votingFor: currProposal,
@@ -162,7 +171,8 @@ export const addAccounts = accounts => async dispatch => {
       proxy: hasProxy
         ? promisedProperties({
             address: voteProxy.getProxyAddress(),
-            votingPower: toNum(voteProxy.getNumDeposits()),
+            votingPower: toNum(votingPowerPromise),
+            votingPowerRaw: votingPowerPromise,
             hasInfMkrApproval: mkrToken
               .allowance(account.address, voteProxy.getProxyAddress())
               .then(val => val.eq(MAX_UINT_ETH_BN)),
@@ -208,9 +218,8 @@ export const addSingleWalletAccount = account => async dispatch => {
     return (slateAddresses || []).map(address => address.toLowerCase());
   })();
 
-  const votingPower = (
-    await chiefService.getNumDeposits(account.address)
-  ).toNumber();
+  const votingPowerRaw = await chiefService.getNumDeposits(account.address);
+  const votingPower = votingPowerRaw.toNumber();
 
   const hasInfMkrApproval = (
     await mkrToken.allowance(account.address, chiefAddress)
@@ -220,12 +229,15 @@ export const addSingleWalletAccount = account => async dispatch => {
     await iouToken.allowance(account.address, chiefAddress)
   ).eq(MAX_UINT_ETH_BN);
 
+  const accountMkrBalancePromise = promiseRetry({
+    fn: () => mkrToken.balanceOf(account.address)
+  });
+
   const _payload = {
     ...account,
     address: account.address,
-    mkrBalance: toNum(
-      promiseRetry({ fn: () => mkrToken.balanceOf(account.address) })
-    ),
+    mkrBalance: toNum(accountMkrBalancePromise),
+    mkrBalanceRaw: accountMkrBalancePromise,
     hasProxy: false,
     singleWallet: true,
     proxyRole: '',
@@ -234,6 +246,7 @@ export const addSingleWalletAccount = account => async dispatch => {
     hasInfIouApproval,
     proxy: {
       votingPower,
+      votingPowerRaw,
       address: account.address,
       hasInfMkrApproval,
       hasInfIouApproval,

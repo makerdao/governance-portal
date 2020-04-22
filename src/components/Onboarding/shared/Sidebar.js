@@ -15,6 +15,7 @@ import { TransactionStatus } from '../../../utils/constants';
 import WalletIcon from './WalletIcon';
 import { DataLabel, SubtitleDataLabel } from '../../../utils/typography';
 import { GreyTag } from './Tags';
+import { formatRound } from '../../../utils/misc';
 import linkImg from '../../../imgs/onboarding/link.svg';
 import logo from '../../../imgs/onboarding/maker-logomark.svg';
 
@@ -215,7 +216,7 @@ const Sidebar = ({
                     <DataLabel>STORED MKR</DataLabel>
                     <div>
                       <Text t="p2" fontWeight="semibold">
-                        {coldWallet.proxy.votingPower || 0} MKR
+                        {formatRound(coldWallet.proxy.votingPower, 4) || 0} MKR
                       </Text>
                     </div>
                     <SubtitleDataLabel>
@@ -253,7 +254,7 @@ const Sidebar = ({
                   <DataLabel>STORED MKR</DataLabel>
                   <div>
                     <Text t="p2" fontWeight="semibold">
-                      {singleWallet.mkrBalance || 0} MKR
+                      {formatRound(singleWallet.mkrBalance, 4) || 0} MKR
                     </Text>
                   </div>
                   <SubtitleDataLabel>

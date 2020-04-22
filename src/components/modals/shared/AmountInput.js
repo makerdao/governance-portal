@@ -9,7 +9,7 @@ import {
   FlexRowEnd
 } from './styles';
 import Input from '../../Input';
-import { countDecimals, formatRound, toSlug } from '../../../utils/misc';
+import { toSlug } from '../../../utils/misc';
 
 export default class AmountInput extends Component {
   constructor(props) {
@@ -25,15 +25,17 @@ export default class AmountInput extends Component {
   }
 
   setAmount = event => {
-    const useFreeAll =
-      parseFloat(event.target.value) === parseFloat(this.props.maxAmount)
-        ? true
-        : false;
+    const useFreeAll = this.props.maxAmount.eq(event.target.value)
+      ? true
+      : false;
     this.setState({ amount: event.target.value, useFreeAll });
   };
 
   setMaxAmount = () => {
-    this.setState({ amount: this.props.maxAmount, useFreeAll: true });
+    this.setState({
+      amount: this.props.maxAmount.toBigNumber().toFixed(18),
+      useFreeAll: true
+    });
   };
 
   handleKeyPress = event => {
@@ -45,7 +47,7 @@ export default class AmountInput extends Component {
     if (
       !amount ||
       isNaN(Number(amount)) ||
-      Number(amount) > maxAmount ||
+      maxAmount.lt(amount) ||
       Number(amount) === 0
     ) {
       window.alert('Please enter a valid amount');
@@ -56,13 +58,13 @@ export default class AmountInput extends Component {
 
   render() {
     const { amountLabel, maxAmount, buttonLabel, onCancel } = this.props;
+
     return (
       <Fragment>
         <InputLabels>
           <div>Enter MKR amount</div>
           <div>
-            <ValueLabel>{amountLabel}</ValueLabel> {formatRound(maxAmount, 6)}
-            {countDecimals(maxAmount) > 5 ? '...' : ''} MKR
+            <ValueLabel>{amountLabel}</ValueLabel> {maxAmount.toString(6)}
           </div>
         </InputLabels>
         <Input
