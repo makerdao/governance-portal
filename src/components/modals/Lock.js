@@ -14,8 +14,8 @@ const mapStateToProps = state => {
   const account = getActiveAccount(state);
   const balance =
     account.proxyRole === 'hot'
-      ? account.proxy.linkedAccount.mkrBalance
-      : account.mkrBalance;
+      ? account.proxy.linkedAccount.mkrBalanceRaw
+      : account.mkrBalanceRaw;
   return {
     balance,
     account,

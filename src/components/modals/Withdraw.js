@@ -12,7 +12,7 @@ import { StyledTop, StyledTitle, StyledBlurb } from './shared/styles';
 
 const mapStateToProps = state => {
   const account = getActiveAccount(state);
-  const balance = account.proxy.votingPower;
+  const balance = account.proxy.votingPowerRaw;
   return {
     balance,
     account,
@@ -81,7 +81,4 @@ const Withdraw = ({
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Withdraw);
+export default connect(mapStateToProps, mapDispatchToProps)(Withdraw);

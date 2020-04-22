@@ -143,7 +143,7 @@ const TransactionStatusIndicator = ({
               >
                 TX{' '}
                 <Link target="_blank" href={ethScanLink(tx, network)}>
-                  <Address full={tx} veryShort />
+                  <Address full={tx} shorten />
                 </Link>
               </Text>
             </Box>
