@@ -74,7 +74,7 @@ const WelcomeBanner = ({ onboardingOpen, activeAccount }) => {
       <Content>
         <Flag mr={20} mt="-2" />
         <BannerBody whiteSpace="pre">
-          <BannerHeader>Welcome to the governance voting portal</BannerHeader>
+          <BannerHeader>Welcome to the Governance Voting Portal</BannerHeader>
           <BannerContent>
             Before you can get started voting you will need to set up a voting
             contract
