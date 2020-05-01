@@ -129,6 +129,7 @@ const setupMocks = (opts = defaults, services = {}) => {
     getToken,
     service
   };
+  return { balanceOf };
 };
 
 describe('Add Account with Vote Proxy', () => {
@@ -140,7 +141,7 @@ describe('Add Account with Vote Proxy', () => {
   });
 
   test('should add an account enriched with information', async () => {
-    setupMocks({
+    const { balanceOf } = setupMocks({
       balance: 200.2,
       hasInfIouApproval: false,
       hasInfMkrApproval: false,
@@ -163,11 +164,12 @@ describe('Add Account with Vote Proxy', () => {
       type: FETCHING_ACCOUNT_DATA,
       payload: true
     });
-    expect(store.getActions()[1]).toEqual({
+    expect(store.getActions()[1]).toMatchObject({
       type: ADD_ACCOUNT,
       payload: {
         address: hotAddress,
         mkrBalance: 200.2,
+        mkrBalanceRaw: await balanceOf(),
         hasProxy: true,
         proxyRole: 'hot',
         hasInfIouApproval: false,
@@ -321,7 +323,7 @@ describe('Add Account for Single Wallet', () => {
   });
 
   test('should add a single wallet account enriched with information', async () => {
-    setupMocks({
+    const { balanceOf } = setupMocks({
       balance: 200.2,
       hasInfIouApproval: false,
       hasInfMkrApproval: false,
@@ -346,11 +348,12 @@ describe('Add Account for Single Wallet', () => {
       type: FETCHING_ACCOUNT_DATA,
       payload: true
     });
-    expect(store.getActions()[1]).toEqual({
+    expect(store.getActions()[1]).toMatchObject({
       type: ADD_ACCOUNT,
       payload: {
         address: singleAddress,
         mkrBalance: 200.2,
+        mkrBalanceRaw: await balanceOf(),
         hasProxy: false,
         singleWallet: true,
         proxyRole: '',

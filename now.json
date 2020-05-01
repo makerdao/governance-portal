@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "mkr-governance-dashboard",
+  "name": "mkr-governance-portal",
   "alias": "dai-gov-develop",
   "builds": [
     {

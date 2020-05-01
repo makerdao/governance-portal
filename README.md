@@ -1,5 +1,5 @@
 <h1 align="center">
-Maker Governance Dashboard
+Maker Governance Portal
 </h1>
 
 <h3 align="center">
@@ -20,7 +20,7 @@ Install project dependencies
 yarn
 ```
 
-## Running the Gov Dashboard
+## Running the Gov Portal
 
 For development
 
@@ -56,11 +56,11 @@ This project takes advantage of several other maker projects, including [Maker U
 
 We run Prettier on-commit, which means you can write code in whatever style you want and it will be automatically formatted according to the common style when you run `git commit`.
 
-**The Maker Governance Dashboard** is available under the MIT license included with the code.
+**The Maker Governance Portal** is available under the MIT license included with the code.
 
 [license]: https://img.shields.io/badge/license-MIT-blue.svg
-[license-url]: https://github.com/makerdao/governance-dashboard.js/blob/master/LICENSE
-[build]: https://circleci.com/gh/makerdao/governance-dashboard.svg?style=svg
-[build-url]: https://circleci.com/gh/makerdao/governance-dashboard
-[cover]: https://codecov.io/gh/makerdao/governance-dashboard/branch/master/graph/badge.svg?token=dYGCyaCdNA
-[cover-url]: https://codecov.io/gh/makerdao/governance-dashboard
+[license-url]: https://github.com/makerdao/governance-portal.js/blob/master/LICENSE
+[build]: https://circleci.com/gh/makerdao/governance-portal.svg?style=svg
+[build-url]: https://circleci.com/gh/makerdao/governance-portal
+[cover]: https://codecov.io/gh/makerdao/governance-portal/branch/master/graph/badge.svg?token=dYGCyaCdNA
+[cover-url]: https://codecov.io/gh/makerdao/governance-portal
