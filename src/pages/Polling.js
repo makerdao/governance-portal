@@ -77,6 +77,12 @@ const VoteStatusText = styled.p`
   font-size: 14px;
 `;
 
+const VotingBallotText = styled.p`
+  color: #546978;
+  font-size: 14px;
+  margin-bottom: 10px;
+`;
+
 const Black = styled.span`
   color: ${theme.text.default};
 `;
@@ -111,7 +117,7 @@ const DetailsCardText = styled.p`
 const DropdownText = styled.p`
   text-overflow: ellipsis;
   overflow: hidden;
-  width: 125px;
+  width: ${({ width }) => (width ? width : '125px')};
   margin-left: 13px;
   margin-right: 13px;
   color: ${({ color }) => (color ? `rgb(${colors[color]})` : 'black')};
@@ -292,6 +298,116 @@ class VotingPanel extends React.Component {
   }
 }
 
+function RankedChoiceDropdown({ selectedOption, optionVotingFor, options }) {
+  const choiceNumText = choiceNum =>
+    choiceNum === 1
+      ? '1st'
+      : choiceNum === 2
+      ? '2nd'
+      : choiceNum === 3
+      ? '3rd'
+      : choiceNum + 'th';
+
+  const dropdownValue = choiceNum =>
+    selectedOption !== undefined
+      ? selectedOption.toString()
+      : optionVotingFor !== undefined
+      ? optionVotingFor.toString()
+      : choiceNumText(choiceNum) + ' choice';
+
+  return (
+    <Dropdown
+      color="light_grey2"
+      items={options}
+      renderItem={item => <DropdownText width="225px">{item}</DropdownText>}
+      renderRowItem={item => <DropdownText width="225px">{item}</DropdownText>}
+      value={dropdownValue(1)}
+      onSelect={this.onDropdownSelect}
+      emptyMsg="Not available"
+      style={{ marginBottom: '15px' }}
+    />
+  );
+}
+
+class VotingPanelRankedChoice extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedOption: undefined
+    };
+  }
+
+  onDropdownSelect = (value, index) => {
+    const selectedOptionId = parseInt(index);
+    this.setState({
+      selectedOption: value,
+      selectedOptionId
+    });
+    mixpanel.track('input-change', {
+      id: 'dropdown-select',
+      product: 'governance-dashboard',
+      page: 'Polling',
+      section: 'voting-panel'
+    });
+  };
+
+  render() {
+    const { poll, activeAccount, optionVotingFor, modalOpen } = this.props;
+    const { pollId, options, voteBreakdown } = poll;
+    const { selectedOption, selectedOptionId } = this.state;
+    const totalVotes =
+      voteBreakdown && (selectedOptionId || selectedOptionId === 0)
+        ? getTotalVotesForOption(voteBreakdown, selectedOptionId)
+        : null;
+
+    return (
+      <React.Fragment>
+        <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
+          <CardTitle>Your Voting Ballot</CardTitle>
+          <VotingBallotText>
+            This poll uses instant runoff voting.
+          </VotingBallotText>
+          <RankedChoiceDropdown
+            selectedOption={selectedOption}
+            optionVotingFor={optionVotingFor}
+            options={options}
+          />
+          <VoteButton
+            bgColor="green"
+            color="white"
+            hoverColor="white"
+            width="278px"
+            disabled={
+              !poll.active ||
+              !activeAccount ||
+              selectedOptionId === undefined ||
+              selectedOption === optionVotingFor
+            }
+            onClick={() => {
+              mixpanel.track('btn-click', {
+                id: 'vote',
+                product: 'governance-dashboard',
+                page: 'Polling',
+                section: 'voting-panel'
+              });
+              modalOpen(PollingVote, {
+                poll: {
+                  pollId,
+                  selectedOption,
+                  selectedOptionId,
+                  totalVotes
+                }
+              });
+            }}
+          >
+            Submit Vote
+          </VoteButton>
+        </DetailsPanelCard>
+      </React.Fragment>
+    );
+  }
+}
+
 const timeLeft = (startDate, endDate, active) => {
   const now = new Date();
   let timeLeft = Math.floor(endDate / 1000) - Math.floor(now / 1000);
@@ -408,6 +524,8 @@ class Polling extends React.Component {
 
     const timeLeftString = active ? 'Ends In' : 'Ended On';
 
+    const rankedChoice = window.rankedChoice; //FIXME to not be hard-coded
+
     return (
       <Fragment>
         <VotingWeightBanner
@@ -431,7 +549,16 @@ class Polling extends React.Component {
               )}
             </DescriptionCard>
             <RightPanels>
-              {active && (
+              {active && rankedChoice && (
+                <VotingPanelRankedChoice
+                  optionVotingFor={optionVotingForName}
+                  poll={poll}
+                  activeAccount={activeAccount}
+                  modalOpen={modalOpen}
+                  totalVotes={totalVotes}
+                />
+              )}
+              {active && !rankedChoice && (
                 <VotingPanel
                   optionVotingFor={optionVotingForName}
                   poll={poll}
