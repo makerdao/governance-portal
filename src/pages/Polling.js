@@ -298,38 +298,7 @@ class VotingPanel extends React.Component {
   }
 }
 
-function RankedChoiceDropdown({ selectedOption, optionVotingFor, options }) {
-  const choiceNumText = choiceNum =>
-    choiceNum === 1
-      ? '1st'
-      : choiceNum === 2
-      ? '2nd'
-      : choiceNum === 3
-      ? '3rd'
-      : choiceNum + 'th';
-
-  const dropdownValue = choiceNum =>
-    selectedOption !== undefined
-      ? selectedOption.toString()
-      : optionVotingFor !== undefined
-      ? optionVotingFor.toString()
-      : choiceNumText(choiceNum) + ' choice';
-
-  return (
-    <Dropdown
-      color="light_grey2"
-      items={options}
-      renderItem={item => <DropdownText width="225px">{item}</DropdownText>}
-      renderRowItem={item => <DropdownText width="225px">{item}</DropdownText>}
-      value={dropdownValue(1)}
-      onSelect={this.onDropdownSelect}
-      emptyMsg="Not available"
-      style={{ marginBottom: '15px' }}
-    />
-  );
-}
-
-class VotingPanelRankedChoice extends React.Component {
+class RankedChoiceDropdown extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -344,7 +313,7 @@ class VotingPanelRankedChoice extends React.Component {
       selectedOptionId
     });
     mixpanel.track('input-change', {
-      id: 'dropdown-select',
+      id: 'dropdown-select-ranked-choice',
       product: 'governance-dashboard',
       page: 'Polling',
       section: 'voting-panel'
@@ -352,13 +321,52 @@ class VotingPanelRankedChoice extends React.Component {
   };
 
   render() {
+    const { options, optionVotingFor } = this.props;
+    const { selectedOption } = this.state;
+
+    const choiceNumText = choiceNum =>
+      choiceNum === 1
+        ? '1st'
+        : choiceNum === 2
+        ? '2nd'
+        : choiceNum === 3
+        ? '3rd'
+        : choiceNum + 'th';
+
+    const dropdownValue = choiceNum =>
+      selectedOption !== undefined
+        ? selectedOption.toString()
+        : optionVotingFor !== undefined
+        ? optionVotingFor.toString()
+        : choiceNumText(choiceNum) + ' choice';
+
+    return (
+      <Dropdown
+        color="light_grey2"
+        items={options}
+        renderItem={item => <DropdownText width="225px">{item}</DropdownText>}
+        renderRowItem={item => (
+          <DropdownText width="225px">{item}</DropdownText>
+        )}
+        value={dropdownValue(1)}
+        onSelect={this.onDropdownSelect}
+        emptyMsg="Not available"
+        style={{ marginBottom: '15px' }}
+      />
+    );
+  }
+}
+
+class VotingPanelRankedChoice extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  render() {
     const { poll, activeAccount, optionVotingFor, modalOpen } = this.props;
-    const { pollId, options, voteBreakdown } = poll;
-    const { selectedOption, selectedOptionId } = this.state;
-    const totalVotes =
-      voteBreakdown && (selectedOptionId || selectedOptionId === 0)
-        ? getTotalVotesForOption(voteBreakdown, selectedOptionId)
-        : null;
+    const { pollId, options } = poll;
+    const { selectedOptionId } = this.state;
 
     return (
       <React.Fragment>
@@ -368,7 +376,6 @@ class VotingPanelRankedChoice extends React.Component {
             This poll uses instant runoff voting.
           </VotingBallotText>
           <RankedChoiceDropdown
-            selectedOption={selectedOption}
             optionVotingFor={optionVotingFor}
             options={options}
           />
@@ -378,10 +385,7 @@ class VotingPanelRankedChoice extends React.Component {
             hoverColor="white"
             width="278px"
             disabled={
-              !poll.active ||
-              !activeAccount ||
-              selectedOptionId === undefined ||
-              selectedOption === optionVotingFor
+              !poll.active || !activeAccount || selectedOptionId === undefined
             }
             onClick={() => {
               mixpanel.track('btn-click', {
@@ -393,9 +397,7 @@ class VotingPanelRankedChoice extends React.Component {
               modalOpen(PollingVote, {
                 poll: {
                   pollId,
-                  selectedOption,
-                  selectedOptionId,
-                  totalVotes
+                  selectedOptionId
                 }
               });
             }}
