@@ -141,6 +141,11 @@ const DownloadButton = styled(Button)`
   bottom: 20px;
 `;
 
+const AddChoice = styled.div`
+  color: rgb(${colors.green});
+  cursor: pointer;
+`;
+
 const DetailsCardItem = ({ name, value, component }) => (
   <DetailsItem>
     <DetailsCardText>{name}</DetailsCardText>
@@ -312,6 +317,11 @@ class RankedChoiceDropdown extends React.Component {
       selectedOption: value,
       selectedOptionId
     });
+    if (this.props.onSelect)
+      this.props.onSelect({
+        selectedOption: value,
+        selectedOptionId
+      });
     mixpanel.track('input-change', {
       id: 'dropdown-select-ranked-choice',
       product: 'governance-dashboard',
@@ -321,7 +331,7 @@ class RankedChoiceDropdown extends React.Component {
   };
 
   render() {
-    const { options, optionVotingFor } = this.props;
+    const { options, optionVotingFor, choiceNum } = this.props;
     const { selectedOption } = this.state;
 
     const choiceNumText = choiceNum =>
@@ -348,7 +358,7 @@ class RankedChoiceDropdown extends React.Component {
         renderRowItem={item => (
           <DropdownText width="225px">{item}</DropdownText>
         )}
-        value={dropdownValue(1)}
+        value={dropdownValue(choiceNum)}
         onSelect={this.onDropdownSelect}
         emptyMsg="Not available"
         style={{ marginBottom: '15px' }}
@@ -358,35 +368,58 @@ class RankedChoiceDropdown extends React.Component {
 }
 
 class VotingPanelRankedChoice extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
+  state = {
+    ballot: [], // ordered by preference
+    optionCount: 1
+  };
 
   render() {
     const { poll, activeAccount, optionVotingFor, modalOpen } = this.props;
     const { pollId, options } = poll;
-    const { selectedOptionId } = this.state;
+    const { selectedOptionId, ballot } = this.state;
+    const unchosenOptions = options.filter(
+      option => !ballot.map(b => b.selectedOption).includes(option)
+    );
 
     return (
       <React.Fragment>
-        <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
+        <DetailsPanelCard
+          style={{ overflow: 'visible', padding: '0px 30px 15px 30px' }}
+        >
           <CardTitle>Your Voting Ballot</CardTitle>
           <VotingBallotText>
             This poll uses instant runoff voting.
           </VotingBallotText>
-          <RankedChoiceDropdown
-            optionVotingFor={optionVotingFor}
-            options={options}
-          />
+          {Array.from({ length: this.state.optionCount }).map((_, i) => (
+            <RankedChoiceDropdown
+              choiceNum={i + 1}
+              key={i}
+              onSelect={({ selectedOption, selectedOptionId }) => {
+                this.setState(({ ballot }) => {
+                  ballot[i] = { selectedOption, selectedOptionId };
+                  return { ballot };
+                });
+              }}
+              optionVotingFor={optionVotingFor}
+              options={unchosenOptions}
+            />
+          ))}
+          <AddChoice
+            onClick={() => {
+              this.setState(({ optionCount }) => ({
+                optionCount: optionCount + 1
+              }));
+            }}
+          >
+            + Add another choice
+          </AddChoice>
           <VoteButton
+            style={{ margin: '10px 0' }}
             bgColor="green"
             color="white"
             hoverColor="white"
             width="278px"
-            disabled={
-              !poll.active || !activeAccount || selectedOptionId === undefined
-            }
+            disabled={!poll.active || !activeAccount || ballot.length === 0}
             onClick={() => {
               mixpanel.track('btn-click', {
                 id: 'vote',
