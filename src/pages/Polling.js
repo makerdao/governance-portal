@@ -143,7 +143,7 @@ const DownloadButton = styled(Button)`
 
 const AddChoice = styled.div`
   color: rgb(${colors.green});
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? '' : 'pointer')};
 `;
 
 const DetailsCardItem = ({ name, value, component }) => (
@@ -405,10 +405,13 @@ class VotingPanelRankedChoice extends React.Component {
             />
           ))}
           <AddChoice
+            disabled={!ballot[this.state.optionCount - 1]}
             onClick={() => {
-              this.setState(({ optionCount }) => ({
-                optionCount: optionCount + 1
-              }));
+              if (ballot[this.state.optionCount - 1]) {
+                this.setState(({ optionCount }) => ({
+                  optionCount: optionCount + 1
+                }));
+              }
             }}
           >
             + Add another choice
