@@ -866,41 +866,77 @@ function VoteBreakdownRankedChoice({ poll }) {
       ) : (
         <>
           {sortedBallot.map(
-            ({ firstChoice, firstPct, transferPct, option }, i) => (
+            ({ firstChoice, firstPct, transferPct, transfer, option }) => (
               <div style={{ marginBottom: '12px' }}>
                 <div
                   style={{ display: 'flex', justifyContent: 'space-between' }}
                 >
                   <div>{option}</div>
                   <div>
-                    {firstChoice.toFixed(1)} MKR ({firstPct.toFixed(1)}%)
+                    {firstChoice.plus(transfer).toFixed(1)} MKR (
+                    {firstPct.plus(transferPct).toFixed(1)}%)
                   </div>
                 </div>
                 <div
                   style={{
+                    display: 'flex',
                     position: 'relative',
                     height: '6px',
                     borderBottom: '1px solid rgb(223, 223, 223)'
                   }}
                 >
-                  <div
-                    style={{
-                      position: 'absolute',
-                      height: '6px',
-                      background: 'rgb(110, 220, 208)',
-                      width: `${firstPct.toFixed(1)}%`,
-                      zIndex: '2'
-                    }}
-                  ></div>
-                  <div
-                    style={{
-                      position: 'absolute',
-                      height: '6px',
-                      background: 'rgb(182, 237, 231)',
-                      width: `${transferPct.plus(firstPct).toFixed(1)}%`,
-                      zIndex: '1'
-                    }}
-                  ></div>
+                  <Tooltip
+                    color="steel"
+                    fontSize="m"
+                    content={
+                      <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                        <Text.h4 fontSize="1.5rem">First choice votes</Text.h4>
+                        <Text.p
+                          t="caption"
+                          color="darkLavender"
+                          lineHeight="normal"
+                        >
+                          {firstChoice.toFixed(1)} MKR ({firstPct.toFixed(1)}%)
+                        </Text.p>
+                      </CardUI>
+                    }
+                  >
+                    <div
+                      style={{
+                        position: 'absolute',
+                        height: '6px',
+                        background: 'rgb(110, 220, 208)',
+                        width: `${firstPct.toFixed(1)}%`,
+                        zIndex: '2'
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip
+                    color="steel"
+                    fontSize="m"
+                    content={
+                      <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                        <Text.h4 fontSize="1.5rem">Transfer votes</Text.h4>
+                        <Text.p
+                          t="caption"
+                          color="darkLavender"
+                          lineHeight="normal"
+                        >
+                          {transfer.toFixed(1)} MKR ({transfer.toFixed(1)}%)
+                        </Text.p>
+                      </CardUI>
+                    }
+                  >
+                    <div
+                      style={{
+                        position: 'absolute',
+                        height: '6px',
+                        background: 'rgb(182, 237, 231)',
+                        width: `${transferPct.plus(firstPct).toFixed(1)}`,
+                        zIndex: '1'
+                      }}
+                    ></div>
+                  </Tooltip>
                 </div>
               </div>
             )
