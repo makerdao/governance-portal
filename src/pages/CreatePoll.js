@@ -52,12 +52,12 @@ const ContentWrapper = styled(Card)`
 `;
 
 const ABSTAIN = 'Abstain';
-const POLL_RULES =
-  'The voter may select to vote for one of the poll options or they may elect to abstain from the poll entirely';
+const voteTypes = ['Plurality Voting', 'Ranked Choice IRV'];
 
 const INITIAL_POLL_STATE = {
   title: '',
   summary: '',
+  selectedVoteType: voteTypes[0],
   start: POLL_DEFAULT_START,
   end: POLL_DEFAULT_END,
   link: '',
@@ -100,12 +100,19 @@ class CreatePoll extends Component {
   };
 
   parseMarkdown = async () => {
-    const { title, summary, link, choices, content } = this.state;
+    const {
+      title,
+      summary,
+      link,
+      choices,
+      content,
+      selectedVoteType
+    } = this.state;
     const choiceString = choices.reduce(
       (acc, opt, idx) => `${acc}   ${idx}: ${opt}\n`,
       ''
     );
-    const yml = `---\ntitle: ${title}\nsummary: ${summary}\ndiscussion_link: ${link}\npoll_rules: ${POLL_RULES}\noptions:\n${choiceString}---\n`;
+    const yml = `---\ntitle: ${title}\nsummary: ${summary}\ndiscussion_link: ${link}\nvote_type: ${selectedVoteType}\noptions:\n${choiceString}---\n`;
     const md = `# Poll: ${title}\n\n${content}`;
     const ipfsHash = await generateIPFSHash(`${yml}${md}`, {
       encoding: 'ascii'
@@ -189,6 +196,7 @@ class CreatePoll extends Component {
               case 0:
                 return (
                   <CreatePollMarkdown
+                    voteTypes={voteTypes}
                     parentState={this.state}
                     addPollOption={this.addPollOption}
                     removePollOption={this.removePollOption}

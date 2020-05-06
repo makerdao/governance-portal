@@ -5,6 +5,7 @@ import Card from '../Card';
 import closeImg from '../../imgs/close-inline.svg';
 import CreatePollInput from './CreatePollInput';
 import CreatePollTime from './CreatePollTime';
+import Dropdown from '../Dropdown';
 import { POLL_DEFAULT_START, URL_REGEX } from '../../utils/constants';
 
 import ReactMde from 'react-mde';
@@ -70,7 +71,17 @@ const CloseIcon = styled.p`
   cursor: pointer;
 `;
 
+const DropdownText = styled.p`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: ${({ width }) => (width ? width : '125px')};
+  margin-left: 13px;
+  margin-right: 13px;
+  color: black;
+`;
+
 export default function CreatePollMarkdown({
+  voteTypes,
   parentState,
   addPollOption,
   removePollOption,
@@ -87,6 +98,7 @@ export default function CreatePollMarkdown({
     option,
     choices,
     content,
+    selectedVoteType,
     submitAttempted,
     selectedTab
   } = parentState;
@@ -205,6 +217,25 @@ export default function CreatePollMarkdown({
           handleParentState
         }}
       />
+
+      <SectionWrapper>
+        <StyledBody>Vote Type:</StyledBody>
+        <Box width="600px">
+          <Dropdown
+            color="light_grey2"
+            items={voteTypes}
+            renderItem={item => (
+              <DropdownText width="225px">{item}</DropdownText>
+            )}
+            renderRowItem={item => (
+              <DropdownText width="225px">{item}</DropdownText>
+            )}
+            value={selectedVoteType}
+            onSelect={value => handleParentState({ selectedVoteType: value })}
+            allowEmpty={false}
+          />
+        </Box>
+      </SectionWrapper>
 
       <SectionWrapper>
         <StyledBody>Proposal:</StyledBody>

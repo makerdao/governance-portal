@@ -26,6 +26,7 @@ export default class Dropdown extends Component {
 
   render() {
     const {
+      disabled = false,
       items,
       itemKey,
       renderItem,
@@ -42,7 +43,7 @@ export default class Dropdown extends Component {
       <ClickOutside onOutsideClick={this.clickOutside}>
         <Wrapper>
           <Selection
-            onClick={this.toggle}
+            onClick={disabled ? () => {} : this.toggle}
             clickable={hasItems}
             dim={!hasItems}
             color={color}

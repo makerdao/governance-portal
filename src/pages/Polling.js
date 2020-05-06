@@ -337,7 +337,7 @@ class RankedChoiceDropdown extends React.Component {
   };
 
   render() {
-    const { options, optionVotingFor, choiceNum } = this.props;
+    const { options, optionVotingFor, choiceNum, selectable } = this.props;
     const { selectedOption } = this.state;
 
     const choiceNumText = choiceNum =>
@@ -359,9 +359,32 @@ class RankedChoiceDropdown extends React.Component {
     return (
       <div style={{ marginBottom: '6px' }}>
         <Dropdown
+          disabled={!selectable}
           color="light_grey2"
           items={options}
-          renderItem={item => <DropdownText width="225px">{item}</DropdownText>}
+          renderItem={item =>
+            selectable ? (
+              <DropdownText width="225px">{item}</DropdownText>
+            ) : (
+              <span style={{ display: 'flex' }}>
+                <DropdownText width="225px">{item}</DropdownText>
+                <span
+                  onClick={() => {
+                    this.props.close();
+                  }}
+                  style={{
+                    cursor: 'pointer',
+                    right: '12px',
+                    position: 'absolute',
+                    color: '#708390',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  ✕
+                </span>
+              </span>
+            )
+          }
           renderRowItem={item => (
             <DropdownText width="225px">{item}</DropdownText>
           )}
@@ -382,7 +405,7 @@ class VotingPanelRankedChoice extends React.Component {
   };
 
   render() {
-    const { poll, activeAccount, optionVotingFor, modalOpen } = this.props;
+    const { poll, activeAccount, modalOpen } = this.props;
     const { pollId, options } = poll;
     const { selectedOptionId, ballot } = this.state;
     const unchosenOptions = options.filter(
@@ -415,15 +438,24 @@ class VotingPanelRankedChoice extends React.Component {
           </BallotTextWapper>
           {Array.from({ length: this.state.optionCount }).map((_, i) => (
             <RankedChoiceDropdown
+              close={() =>
+                this.setState(state => {
+                  const ballot = state.ballot;
+                  ballot.splice(i, 1);
+                  const optionCount = state.optionCount - 1;
+                  return { optionCount, ballot };
+                })
+              }
+              selectable={this.state.optionCount - 1 === i}
               choiceNum={i + 1}
-              key={i}
+              key={ballot[i] ? ballot[i].optionVotingFor : i}
               onSelect={({ selectedOption, selectedOptionId }) => {
                 this.setState(({ ballot }) => {
                   ballot[i] = { selectedOption, selectedOptionId };
                   return { ballot };
                 });
               }}
-              optionVotingFor={optionVotingFor}
+              optionVotingFor={ballot[i] ? ballot[i].selectedOption : undefined}
               options={unchosenOptions}
             />
           ))}
@@ -725,11 +757,21 @@ class Polling extends React.Component {
                   </>
                 )}
 
-                <VoteBreakdown poll={poll} />
-                {(winningProposalName || winningProposalName === 0) && (
-                  <>
-                    <CardTitle>Winning Proposal</CardTitle>
+                {rankedChoice ? (
+                  <div>
+                    <CardTitle>INSTANT RUNOFF LEADER </CardTitle>
                     <span>{winningProposalName}</span>
+                    <VoteBreakdownRankedChoice poll={poll} />
+                  </div>
+                ) : (
+                  <>
+                    <VoteBreakdown poll={poll} />
+                    {(winningProposalName || winningProposalName === 0) && (
+                      <>
+                        <CardTitle>Winning Proposal</CardTitle>
+                        <span>{winningProposalName}</span>
+                      </>
+                    )}{' '}
                   </>
                 )}
               </DetailsPanelCard>
@@ -755,6 +797,31 @@ function VoteBreakdown({ poll }) {
           {voteBreakdown.map((item, i) => (
             <DetailsCardItem key={i} {...item} />
           ))}
+        </>
+      ) : (
+        <>
+          {options.map((_, i) => (
+            <DetailsCardItem key={i} {...{ name: options[i], value: '----' }} />
+          ))}
+        </>
+      )}
+    </>
+  );
+}
+
+function VoteBreakdownRankedChoice({ poll }) {
+  const { voteBreakdownFetching, ballot, options } = poll;
+  const voteBreakdownExists = ballot && ballot.length > 0;
+  return (
+    <>
+      <CardTitle>Vote breakdown</CardTitle>
+      {voteBreakdownFetching ? (
+        <Loader mt={34} mb={34} color="header" background="white" />
+      ) : voteBreakdownExists ? (
+        <>
+          {/* {voteBreakdown.map((item, i) => (
+            <DetailsCardItem key={i} {...item} />
+          ))} */}
         </>
       ) : (
         <>
