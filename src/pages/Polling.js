@@ -361,6 +361,7 @@ class RankedChoiceDropdown extends React.Component {
         value={dropdownValue(choiceNum)}
         onSelect={this.onDropdownSelect}
         emptyMsg="Not available"
+        allowEmpty={true}
         style={{ marginBottom: '15px' }}
       />
     );
@@ -380,7 +381,8 @@ class VotingPanelRankedChoice extends React.Component {
     const unchosenOptions = options.filter(
       option => !ballot.map(b => b.selectedOption).includes(option)
     );
-
+    const canAddChoice =
+      ballot[this.state.optionCount - 1] && unchosenOptions.length > 0;
     return (
       <React.Fragment>
         <DetailsPanelCard
@@ -405,9 +407,9 @@ class VotingPanelRankedChoice extends React.Component {
             />
           ))}
           <AddChoice
-            disabled={!ballot[this.state.optionCount - 1]}
+            disabled={!canAddChoice}
             onClick={() => {
-              if (ballot[this.state.optionCount - 1]) {
+              if (canAddChoice) {
                 this.setState(({ optionCount }) => ({
                   optionCount: optionCount + 1
                 }));

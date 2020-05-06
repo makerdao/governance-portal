@@ -32,7 +32,8 @@ export default class Dropdown extends Component {
       renderRowItem,
       value,
       emptyMsg,
-      color
+      color,
+      allowEmpty
     } = this.props;
     const hasItems = items.length > 0;
     const noItemMsg = emptyMsg || 'nothing to show';
@@ -46,7 +47,7 @@ export default class Dropdown extends Component {
             dim={!hasItems}
             color={color}
           >
-            {hasItems ? selected : noItemMsg}
+            {hasItems ? selected : allowEmpty ? selected : noItemMsg}
             <Arrow hide={!hasItems} color={color} />
           </Selection>
           {this.state.shown && (
