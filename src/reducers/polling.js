@@ -120,7 +120,12 @@ export const voteForRankedChoicePoll = (pollId, rankings) => async dispatch => {
   });
 
   if (success) {
-    dispatch(setOptionVotingForRankedChoice(pollId, rankings));
+    dispatch(
+      setOptionVotingForRankedChoice(
+        pollId,
+        rankings.map(ranking => ranking + 1)
+      )
+    );
     dispatch(updateVoteBreakdown(pollId));
   }
 };

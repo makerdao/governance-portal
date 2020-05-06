@@ -345,21 +345,12 @@ class RankedChoiceDropdown extends React.Component {
     const { options, optionVotingFor, choiceNum, selectable } = this.props;
     const { selectedOption } = this.state;
 
-    const choiceNumText = choiceNum =>
-      choiceNum === 1
-        ? '1st'
-        : choiceNum === 2
-        ? '2nd'
-        : choiceNum === 3
-        ? '3rd'
-        : choiceNum + 'th';
-
     const dropdownValue = choiceNum =>
       selectedOption !== undefined
         ? selectedOption.toString()
         : optionVotingFor !== undefined
         ? optionVotingFor.toString()
-        : choiceNumText(choiceNum) + ' choice';
+        : this.props.choiceNumText(choiceNum) + ' choice';
 
     return (
       <div style={{ marginBottom: '6px' }}>
@@ -410,7 +401,16 @@ class VotingPanelRankedChoice extends React.Component {
   };
 
   render() {
-    const { poll, activeAccount, modalOpen } = this.props;
+    const choiceNumText = choiceNum =>
+      choiceNum === 1
+        ? '1st'
+        : choiceNum === 2
+        ? '2nd'
+        : choiceNum === 3
+        ? '3rd'
+        : choiceNum + 'th';
+
+    const { poll, activeAccount, modalOpen, existingRanking } = this.props;
     const { pollId, options } = poll;
     const { ballot } = this.state;
     const unchosenOptions = options.filter(
@@ -443,6 +443,7 @@ class VotingPanelRankedChoice extends React.Component {
           </BallotTextWapper>
           {Array.from({ length: this.state.optionCount }).map((_, i) => (
             <RankedChoiceDropdown
+              choiceNumText={choiceNumText}
               close={() =>
                 this.setState(state => {
                   const ballot = state.ballot;
@@ -493,7 +494,11 @@ class VotingPanelRankedChoice extends React.Component {
               modalOpen(PollingVoteRankedChoice, {
                 poll: {
                   pollId,
-                  rankings: ballot.map(choice => choice.selectedOptionId)
+                  rankings: ballot.map(choice =>
+                    options.findIndex(
+                      option => option === choice.selectedOption
+                    )
+                  )
                 }
               });
             }}
@@ -501,6 +506,34 @@ class VotingPanelRankedChoice extends React.Component {
             Submit Vote
           </VoteButton>
         </DetailsPanelCard>
+
+        {existingRanking ? (
+          existingRanking.length === 0 ? (
+            <div style={{ color: '#546978' }}>Not currently voting</div>
+          ) : (
+            <DetailsPanelCard
+              style={{ overflow: 'visible', padding: '0px 30px 15px 30px' }}
+            >
+              <CardTitle>Current Vote</CardTitle>
+              {existingRanking.map((ranking, i) => (
+                <div
+                  style={{
+                    color: 'rgb(128,128,128)',
+                    fontSize: '15px',
+                    margin: '5px 0px'
+                  }}
+                >
+                  <span>{choiceNumText(i + 1)} choice</span>
+                  <span style={{ margin: '0px 10px' }}>
+                    {options[ranking - 1]}
+                  </span>
+                </div>
+              ))}
+            </DetailsPanelCard>
+          )
+        ) : (
+          <Loader mt={34} mb={34} color="header" background="background" />
+        )}
       </React.Fragment>
     );
   }
@@ -616,7 +649,8 @@ class Polling extends React.Component {
       options,
       optionVotingFor,
       totalVotes,
-      winner
+      winner,
+      rankings
     } = poll;
     const optionVotingForName = options[optionVotingFor];
 
@@ -656,7 +690,7 @@ class Polling extends React.Component {
             <RightPanels>
               {active && rankedChoice && (
                 <VotingPanelRankedChoice
-                  optionVotingFor={optionVotingForName}
+                  existingRanking={rankings}
                   poll={poll}
                   activeAccount={activeAccount}
                   modalOpen={modalOpen}
