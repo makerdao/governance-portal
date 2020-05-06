@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import ReactGA from 'react-ga';
 import mixpanel from 'mixpanel-browser';
 
-import { add, subtract, formatRound } from '../../../utils/misc';
 import Button from '../../Button';
 import { getActiveAccount } from '../../../reducers/accounts';
 import { voteForRankedChoicePoll } from '../../../reducers/polling';

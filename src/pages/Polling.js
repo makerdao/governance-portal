@@ -15,7 +15,11 @@ import { VotingWeightBanner } from './PollingList';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import { modalOpen } from '../reducers/modal';
 import { getWinningProp } from '../reducers/proposals';
-import { getOptionVotingFor, pollDataInit } from '../reducers/polling';
+import {
+  getOptionVotingFor,
+  getOptionVotingForRankedChoice,
+  pollDataInit
+} from '../reducers/polling';
 import theme, { colors } from '../theme';
 import { ethScanLink } from '../utils/ethereum';
 import { MIN_MKR_PERCENTAGE } from '../utils/constants';
@@ -570,10 +574,16 @@ class Polling extends React.Component {
 
   updateVotedPollOption = async () => {
     if (!this.props.poll || !this.state.activeAccount) return null;
-    await this.props.getOptionVotingFor(
-      this.state.activeAccount.address,
-      this.props.poll.pollId
-    );
+    await Promise.all([
+      this.props.getOptionVotingFor(
+        this.state.activeAccount.address,
+        this.props.poll.pollId
+      ),
+      this.props.getOptionVotingForRankedChoice(
+        this.state.activeAccount.address,
+        this.props.poll.pollId
+      )
+    ]);
     this.setState({
       voteStateFetching: false
     });
@@ -779,10 +789,12 @@ class Polling extends React.Component {
                           fontWeight: 'bold'
                         }}
                       >
-                        INSTANT RUNOFF LEADER {/* POLL WINNER */}
+                        {active ? 'INSTANT RUNOFF LEADER ' : 'POLL WINNER'}
                       </span>
                       <div style={{ color: 'rgb(71, 73, 95)' }}>
-                        {options[winner] ? options[winner] : null}
+                        {options[parseInt(winner) - 1]
+                          ? options[parseInt(winner) - 1]
+                          : null}
                       </div>
                     </div>
                     <VoteBreakdownRankedChoice poll={poll} />
@@ -837,6 +849,15 @@ function VoteBreakdownRankedChoice({ poll }) {
   const { ballotFetching, ballot, options } = poll;
 
   const ballotExists = ballot && ballot.length !== 0;
+  const sortedBallot = ballotExists
+    ? ballot
+        .map((choiceOb, i) => ({ ...choiceOb, option: options[i] }))
+        .sort((a, b) =>
+          a.firstChoice.plus(a.transfer).gt(b.firstChoice.plus(b.transfer))
+            ? -1
+            : 1
+        )
+    : [];
 
   return (
     <>
@@ -844,42 +865,46 @@ function VoteBreakdownRankedChoice({ poll }) {
         <Loader mt={34} mb={34} color="header" background="white" />
       ) : (
         <>
-          {ballot.map(({ firstChoice, firstPct, transferPct }, i) => (
-            <div style={{ marginBottom: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div>{options[i]}</div>
-                <div>
-                  {firstChoice} MKR ({firstPct}%)
+          {sortedBallot.map(
+            ({ firstChoice, firstPct, transferPct, option }, i) => (
+              <div style={{ marginBottom: '12px' }}>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <div>{option}</div>
+                  <div>
+                    {firstChoice.toFixed(1)} MKR ({firstPct.toFixed(1)}%)
+                  </div>
+                </div>
+                <div
+                  style={{
+                    position: 'relative',
+                    height: '6px',
+                    borderBottom: '1px solid rgb(223, 223, 223)'
+                  }}
+                >
+                  <div
+                    style={{
+                      position: 'absolute',
+                      height: '6px',
+                      background: 'rgb(110, 220, 208)',
+                      width: `${firstPct.toFixed(1)}%`,
+                      zIndex: '2'
+                    }}
+                  ></div>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      height: '6px',
+                      background: 'rgb(182, 237, 231)',
+                      width: `${transferPct.plus(firstPct).toFixed(1)}%`,
+                      zIndex: '1'
+                    }}
+                  ></div>
                 </div>
               </div>
-              <div
-                style={{
-                  position: 'relative',
-                  height: '6px',
-                  borderBottom: '1px solid rgb(223, 223, 223)'
-                }}
-              >
-                <div
-                  style={{
-                    position: 'absolute',
-                    height: '6px',
-                    background: 'rgb(110, 220, 208)',
-                    width: `${firstPct}%`,
-                    zIndex: '2'
-                  }}
-                ></div>
-                <div
-                  style={{
-                    position: 'absolute',
-                    height: '6px',
-                    background: 'rgb(182, 237, 231)',
-                    width: `${transferPct + firstPct}%`,
-                    zIndex: '1'
-                  }}
-                ></div>
-              </div>
-            </div>
-          ))}
+            )
+          )}
         </>
       )}
     </>
@@ -919,5 +944,6 @@ const reduxProps = (state, { match }) => {
 export default connect(reduxProps, {
   modalOpen,
   getOptionVotingFor,
+  getOptionVotingForRankedChoice,
   pollDataInit
 })(Polling);

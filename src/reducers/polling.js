@@ -1,5 +1,6 @@
 import matter from 'gray-matter';
 import uniqBy from 'lodash.uniqby';
+import BigNumber from 'bignumber.js';
 import { createReducer } from '../utils/redux';
 import { formatRound, check } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
@@ -20,6 +21,8 @@ export const POLL_VOTE_SUCCESS = 'poll/VOTE_SUCCESS';
 export const POLL_VOTE_FAILURE = 'poll/VOTE_FAILURE';
 
 export const POLLS_SET_OPTION_VOTING_FOR = 'polls/SET_OPTION_VOTING_FOR';
+export const POLLS_SET_OPTION_VOTING_FOR_RANKED_CHOICE =
+  'polls/SET_OPTION_VOTING_FOR_RANKED_CHOICE';
 export const ADD_POLL = 'poll/ADD_POLL';
 export const UPDATE_POLL = 'polls/UPDATE_POLL';
 
@@ -76,6 +79,11 @@ export const setOptionVotingFor = (pollId, optionId) => ({
   payload: { pollId, optionId }
 });
 
+export const setOptionVotingForRankedChoice = (pollId, rankings) => ({
+  type: POLLS_SET_OPTION_VOTING_FOR_RANKED_CHOICE,
+  payload: { pollId, rankings }
+});
+
 // Writes ---
 
 export const voteForPoll = (pollId, optionId) => async dispatch => {
@@ -112,7 +120,7 @@ export const voteForRankedChoicePoll = (pollId, rankings) => async dispatch => {
   });
 
   if (success) {
-    dispatch(setOptionVotingFor(pollId, rankings));
+    dispatch(setOptionVotingForRankedChoice(pollId, rankings));
     dispatch(updateVoteBreakdown(pollId));
   }
 };
@@ -161,11 +169,11 @@ export const getOptionVotingForRankedChoice = (
   address,
   pollId
 ) => async dispatch => {
-  let optionId = await window.maker
+  let rankings = await window.maker
     .service('govPolling')
     .getOptionVotingForRankedChoice(address, pollId);
 
-  dispatch(setOptionVotingFor(pollId, optionId));
+  dispatch(setOptionVotingForRankedChoice(pollId, rankings));
 };
 
 const fetchPollFromUrl = async url => {
@@ -323,7 +331,6 @@ export const pollsInit = () => async dispatch => {
 
   try {
     const polls = await getAllWhiteListedPolls();
-    console.log(polls, 'polls');
 
     let pollsRemaining = polls.length;
     function onPollFetchAttempt() {
@@ -361,23 +368,37 @@ export const pollsInit = () => async dispatch => {
   }
 };
 
-export const getTalliedBallot = async (pollId, endDate) => {
-  // const tally = await window.maker
-  //   .service('govPolling')
-  //   .getTallyRankedChoiceIrv(pollId);
+export const getTalliedBallot = async (pollId, options) => {
+  const tally = await window.maker
+    .service('govPolling')
+    .getTallyRankedChoiceIrv(pollId);
 
-  // const ballot = tally
-  // const winner = tally.winner;
-  // const totalMkrParticipation = tally.totalMkrParticipation;
+  const totalMkrParticipation = tally.totalMkrParticipation;
+  const winner = tally.winner;
 
-  const ballot = [
-    { firstChoice: 100, firstPct: 60, transferPct: 10 },
-    { firstChoice: 13, firstPct: 30, transferPct: 15 }
-  ];
+  const ballot = options.map((_, i) => {
+    if (tally.options[i + 1]) {
+      return {
+        ...tally.options[i + 1],
+        firstPct: tally.options[i + 1].firstChoice
+          .div(totalMkrParticipation)
+          .times(100),
+        transferPct: tally.options[i + 1].transfer
+          .div(totalMkrParticipation)
+          .times(100)
+      };
+    } else {
+      return {
+        firstChoice: BigNumber(0),
+        transfer: BigNumber(0),
+        firstPct: BigNumber(0),
+        transferPct: BigNumber(0),
+        winner: false,
+        eliminated: true
+      };
+    }
+  });
 
-  const winner = 1;
-
-  const totalMkrParticipation = 113;
   return { ballot, winner, totalMkrParticipation };
 };
 
@@ -526,6 +547,20 @@ export default createReducer(initialState, {
           return {
             ...poll,
             optionVotingFor: payload.optionId
+          };
+        }
+        return poll;
+      })
+    };
+  },
+  [POLLS_SET_OPTION_VOTING_FOR_RANKED_CHOICE]: (state, { payload }) => {
+    return {
+      ...state,
+      polls: state.polls.map(poll => {
+        if (poll.pollId === payload.pollId) {
+          return {
+            ...poll,
+            rankings: payload.rankings
           };
         }
         return poll;
