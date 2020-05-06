@@ -20,6 +20,7 @@ import { ethScanLink } from '../utils/ethereum';
 import { MIN_MKR_PERCENTAGE } from '../utils/constants';
 import ExternalLink from '../components/Onboarding/shared/ExternalLink';
 import Dropdown from '../components/Dropdown';
+import { Tooltip, Text, Card as CardUI } from '@makerdao/ui-components-core';
 
 const riseUp = keyframes`
 0% {
@@ -52,6 +53,11 @@ const VoteSelection = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+`;
+
+const BallotTextWapper = styled.div`
+  display: flex;
+  flex-direction: row;
 `;
 
 const DetailsPanelCard = styled(Card)`
@@ -351,19 +357,20 @@ class RankedChoiceDropdown extends React.Component {
         : choiceNumText(choiceNum) + ' choice';
 
     return (
-      <Dropdown
-        color="light_grey2"
-        items={options}
-        renderItem={item => <DropdownText width="225px">{item}</DropdownText>}
-        renderRowItem={item => (
-          <DropdownText width="225px">{item}</DropdownText>
-        )}
-        value={dropdownValue(choiceNum)}
-        onSelect={this.onDropdownSelect}
-        emptyMsg="Not available"
-        allowEmpty={true}
-        style={{ marginBottom: '15px' }}
-      />
+      <div style={{ marginBottom: '6px' }}>
+        <Dropdown
+          color="light_grey2"
+          items={options}
+          renderItem={item => <DropdownText width="225px">{item}</DropdownText>}
+          renderRowItem={item => (
+            <DropdownText width="225px">{item}</DropdownText>
+          )}
+          value={dropdownValue(choiceNum)}
+          onSelect={this.onDropdownSelect}
+          emptyMsg="Not available"
+          allowEmpty={true}
+        />
+      </div>
     );
   }
 }
@@ -389,9 +396,23 @@ class VotingPanelRankedChoice extends React.Component {
           style={{ overflow: 'visible', padding: '0px 30px 15px 30px' }}
         >
           <CardTitle>Your Voting Ballot</CardTitle>
-          <VotingBallotText>
-            This poll uses instant runoff voting.
-          </VotingBallotText>
+          <BallotTextWapper>
+            <VotingBallotText>
+              This poll uses instant runoff voting.
+            </VotingBallotText>
+            <Tooltip
+              color="steel"
+              fontSize="m"
+              ml="2xs"
+              content={
+                <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                  <Text.p t="caption" color="darkLavender" lineHeight="normal">
+                    TODO: this is how ranked choice voting works...
+                  </Text.p>
+                </CardUI>
+              }
+            />
+          </BallotTextWapper>
           {Array.from({ length: this.state.optionCount }).map((_, i) => (
             <RankedChoiceDropdown
               choiceNum={i + 1}
