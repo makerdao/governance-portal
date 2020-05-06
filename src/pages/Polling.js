@@ -9,6 +9,7 @@ import Button from '../components/Button';
 import Card from '../components/Card';
 import Loader from '../components/Loader';
 import PollingVote from '../components/modals/PollingVote';
+import PollingVoteRankedChoice from '../components/modals/PollingVote/RankedChoice';
 import NotFound from './NotFound';
 import { VotingWeightBanner } from './PollingList';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
@@ -407,7 +408,7 @@ class VotingPanelRankedChoice extends React.Component {
   render() {
     const { poll, activeAccount, modalOpen } = this.props;
     const { pollId, options } = poll;
-    const { selectedOptionId, ballot } = this.state;
+    const { ballot } = this.state;
     const unchosenOptions = options.filter(
       option => !ballot.map(b => b.selectedOption).includes(option)
     );
@@ -485,10 +486,10 @@ class VotingPanelRankedChoice extends React.Component {
                 page: 'Polling',
                 section: 'voting-panel'
               });
-              modalOpen(PollingVote, {
+              modalOpen(PollingVoteRankedChoice, {
                 poll: {
                   pollId,
-                  selectedOptionId
+                  rankings: ballot.map(choice => choice.selectedOptionId)
                 }
               });
             }}
@@ -597,13 +598,15 @@ class Polling extends React.Component {
       return <Loader mt={34} mb={34} color="header" background="background" />;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
     const {
+      vote_type,
       discussion_link,
       rawData,
       multiHash,
       active,
       options,
       optionVotingFor,
-      totalVotes
+      totalVotes,
+      winner
     } = poll;
     const optionVotingForName = options[optionVotingFor];
 
@@ -616,8 +619,7 @@ class Polling extends React.Component {
       : '0';
 
     const timeLeftString = active ? 'Ends In' : 'Ended On';
-
-    const rankedChoice = window.rankedChoice; //FIXME to not be hard-coded
+    const rankedChoice = vote_type.includes('Ranked Choice IRV');
 
     return (
       <Fragment>
@@ -660,16 +662,18 @@ class Polling extends React.Component {
                   totalVotes={totalVotes}
                 />
               )}
-              <VotedFor
-                poll={poll}
-                optionVotingFor={optionVotingForName}
-                optionVotingForId={optionVotingFor}
-                voteStateFetching={voteStateFetching || accountDataFetching}
-                withdrawVote={this.withdrawVote}
-                modalOpen={modalOpen}
-                totalVotes={totalVotes}
-                alreadyVotingFor={true}
-              />
+              {rankedChoice ? null : (
+                <VotedFor
+                  poll={poll}
+                  optionVotingFor={optionVotingForName}
+                  optionVotingForId={optionVotingFor}
+                  voteStateFetching={voteStateFetching || accountDataFetching}
+                  withdrawVote={this.withdrawVote}
+                  modalOpen={modalOpen}
+                  totalVotes={totalVotes}
+                  alreadyVotingFor={true}
+                />
+              )}
               <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
                 <CardTitle>Details</CardTitle>
                 {[
@@ -759,8 +763,28 @@ class Polling extends React.Component {
 
                 {rankedChoice ? (
                   <div>
-                    <CardTitle>INSTANT RUNOFF LEADER </CardTitle>
-                    <span>{winningProposalName}</span>
+                    <CardTitle>Vote breakdown</CardTitle>
+                    <div
+                      style={{
+                        backgroundColor: 'rgb(247, 248, 249)',
+                        padding: '6px 8px',
+                        borderRadius: '4px',
+                        margin: '6px 0px'
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: '#47495f',
+                          fontSize: '11px',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        INSTANT RUNOFF LEADER {/* POLL WINNER */}
+                      </span>
+                      <div style={{ color: 'rgb(71, 73, 95)' }}>
+                        {options[winner] ? options[winner] : null}
+                      </div>
+                    </div>
                     <VoteBreakdownRankedChoice poll={poll} />
                   </div>
                 ) : (
@@ -810,23 +834,51 @@ function VoteBreakdown({ poll }) {
 }
 
 function VoteBreakdownRankedChoice({ poll }) {
-  const { voteBreakdownFetching, ballot, options } = poll;
-  const voteBreakdownExists = ballot && ballot.length > 0;
+  const { ballotFetching, ballot, options } = poll;
+
+  const ballotExists = ballot && ballot.length !== 0;
+
   return (
     <>
-      <CardTitle>Vote breakdown</CardTitle>
-      {voteBreakdownFetching ? (
+      {ballotFetching || !ballotExists ? (
         <Loader mt={34} mb={34} color="header" background="white" />
-      ) : voteBreakdownExists ? (
-        <>
-          {/* {voteBreakdown.map((item, i) => (
-            <DetailsCardItem key={i} {...item} />
-          ))} */}
-        </>
       ) : (
         <>
-          {options.map((_, i) => (
-            <DetailsCardItem key={i} {...{ name: options[i], value: '----' }} />
+          {ballot.map(({ firstChoice, firstPct, transferPct }, i) => (
+            <div style={{ marginBottom: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div>{options[i]}</div>
+                <div>
+                  {firstChoice} MKR ({firstPct}%)
+                </div>
+              </div>
+              <div
+                style={{
+                  position: 'relative',
+                  height: '6px',
+                  borderBottom: '1px solid rgb(223, 223, 223)'
+                }}
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    height: '6px',
+                    background: 'rgb(110, 220, 208)',
+                    width: `${firstPct}%`,
+                    zIndex: '2'
+                  }}
+                ></div>
+                <div
+                  style={{
+                    position: 'absolute',
+                    height: '6px',
+                    background: 'rgb(182, 237, 231)',
+                    width: `${transferPct + firstPct}%`,
+                    zIndex: '1'
+                  }}
+                ></div>
+              </div>
+            </div>
           ))}
         </>
       )}

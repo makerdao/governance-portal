@@ -98,6 +98,25 @@ export const voteForPoll = (pollId, optionId) => async dispatch => {
   }
 };
 
+export const voteForRankedChoicePoll = (pollId, rankings) => async dispatch => {
+  dispatch({ type: POLL_VOTE_REQUEST });
+
+  const pollVote = window.maker
+    .service('govPolling')
+    .voteRankedChoice(pollId, rankings);
+
+  const success = await handleTx({
+    txObject: pollVote,
+    prefix: 'VOTE',
+    dispatch
+  });
+
+  if (success) {
+    dispatch(setOptionVotingFor(pollId, rankings));
+    dispatch(updateVoteBreakdown(pollId));
+  }
+};
+
 export const withdrawVoteForPoll = pollId => async dispatch => {
   dispatch({ type: POLL_VOTE_REQUEST });
 
@@ -138,6 +157,17 @@ export const getOptionVotingFor = (address, pollId) => async dispatch => {
   dispatch(setOptionVotingFor(pollId, optionId));
 };
 
+export const getOptionVotingForRankedChoice = (
+  address,
+  pollId
+) => async dispatch => {
+  let optionId = await window.maker
+    .service('govPolling')
+    .getOptionVotingForRankedChoice(address, pollId);
+
+  dispatch(setOptionVotingFor(pollId, optionId));
+};
+
 const fetchPollFromUrl = async url => {
   const res = await fetch(url);
   await check(res);
@@ -166,7 +196,13 @@ const formatYamlToJson = async data => {
       'Invalid poll document: no options or title field found in front matter'
     );
   const { content } = json;
-  const { title, summary, options, discussion_link } = json.data;
+  const {
+    title,
+    summary,
+    options,
+    discussion_link,
+    vote_type = 'Plurality Voting'
+  } = json.data;
   return {
     voteId: data.voteId
       ? data.voteId
@@ -177,6 +213,7 @@ const formatYamlToJson = async data => {
     summary,
     options: formatOptions(options),
     discussion_link,
+    vote_type,
     content,
     rawData: data.about || data
   };
@@ -286,6 +323,7 @@ export const pollsInit = () => async dispatch => {
 
   try {
     const polls = await getAllWhiteListedPolls();
+    console.log(polls, 'polls');
 
     let pollsRemaining = polls.length;
     function onPollFetchAttempt() {
@@ -323,9 +361,29 @@ export const pollsInit = () => async dispatch => {
   }
 };
 
+export const getTalliedBallot = async (pollId, endDate) => {
+  // const tally = await window.maker
+  //   .service('govPolling')
+  //   .getTallyRankedChoiceIrv(pollId);
+
+  // const ballot = tally
+  // const winner = tally.winner;
+  // const totalMkrParticipation = tally.totalMkrParticipation;
+
+  const ballot = [
+    { firstChoice: 100, firstPct: 60, transferPct: 10 },
+    { firstChoice: 13, firstPct: 30, transferPct: 15 }
+  ];
+
+  const winner = 1;
+
+  const totalMkrParticipation = 113;
+  return { ballot, winner, totalMkrParticipation };
+};
+
 export const pollDataInit = poll => dispatch => {
   if (!poll) return;
-  const { pollId, options, endDate, active } = poll;
+  const { pollId, options, endDate, active, vote_type } = poll;
   getTotalVotes(pollId).then(totalVotes =>
     dispatch(updatePoll(pollId, { totalVotes }))
   );
@@ -335,56 +393,74 @@ export const pollDataInit = poll => dispatch => {
   getNumUniqueVoters(pollId).then(numUniqueVoters =>
     dispatch(updatePoll(pollId, { numUniqueVoters }))
   );
-  getWinningProposal(pollId).then(proposalId => {
-    const winningProposal = proposalId === 0 ? null : parseInt(proposalId) - 1;
-    if (!active && winningProposal !== null)
-      dispatch(updatePoll(pollId, { winningProposal }));
-  });
+  if (vote_type.includes('Ranked Choice IRV')) {
+    dispatch(updatePoll(pollId, { ballotFetching: true }));
 
-  dispatch(updatePoll(pollId, { voteBreakdownFetching: true }));
-  getVoteBreakdown(pollId, options, endDate).then(voteBreakdown =>
-    dispatch(
-      updatePoll(pollId, { voteBreakdown, voteBreakdownFetching: false })
-    )
-  );
+    getTalliedBallot(pollId, options, endDate).then(
+      ({ ballot, winner, totalMkrParticipation }) =>
+        dispatch(
+          updatePoll(pollId, {
+            ballot,
+            winner,
+            totalMkrParticipation,
+            ballotFetching: false
+          })
+        )
+    );
+  } else {
+    getWinningProposal(pollId).then(proposalId => {
+      const winningProposal =
+        proposalId === 0 ? null : parseInt(proposalId) - 1;
+      if (!active && winningProposal !== null)
+        dispatch(updatePoll(pollId, { winningProposal }));
+    });
+
+    dispatch(updatePoll(pollId, { voteBreakdownFetching: true }));
+    getVoteBreakdown(pollId, options, endDate).then(voteBreakdown =>
+      dispatch(
+        updatePoll(pollId, { voteBreakdown, voteBreakdownFetching: false })
+      )
+    );
+  }
 };
 
 export const formatHistoricalPolls = topics => async dispatch => {
-  const govTopics = topics.filter(t => t.govVote === true);
-  const allPolls = govTopics.reduce(
-    (result, { end_timestamp, date, topic_blurb, topic, key, proposals }) => {
-      const options = proposals.map(p => p.title);
-      const totalVotes = proposals.reduce(
-        (acc, proposal) => acc + proposal.end_approvals,
-        0
-      );
+  // don't need to show legacy polls for now
+  // const govTopics = topics.filter(t => t.govVote === true);
+  // const allPolls = govTopics.reduce(
+  //   (result, { end_timestamp, date, topic_blurb, topic, key, proposals }) => {
+  //     const options = proposals.map(p => p.title);
+  //     const totalVotes = proposals.reduce(
+  //       (acc, proposal) => acc + proposal.end_approvals,
+  //       0
+  //     );
 
-      const poll = {
-        legacyPoll: true,
-        active: false,
-        content: proposals[0] ? proposals[0].about : topic_blurb,
-        endDate: new Date(end_timestamp),
-        options: options,
-        source:
-          proposals[0] && proposals[0].source
-            ? proposals[0].source
-            : window.maker.service('smartContract').getContract('POLLING')
-                .address,
-        startDate: new Date(date),
-        summary: topic_blurb,
-        title: topic,
-        totalVotes: formatRound(totalVotes, 2),
-        pollId: key,
-        voteId: key,
-        topicKey: key
-      };
+  //     const poll = {
+  //       legacyPoll: true,
+  //       active: false,
+  //       content: proposals[0] ? proposals[0].about : topic_blurb,
+  //       endDate: new Date(end_timestamp),
+  //       options: options,
+  //       source:
+  //         proposals[0] && proposals[0].source
+  //           ? proposals[0].source
+  //           : window.maker.service('smartContract').getContract('POLLING')
+  //               .address,
+  //       startDate: new Date(date),
+  //       summary: topic_blurb,
+  //       title: topic,
+  //       totalVotes: formatRound(totalVotes, 2),
+  //       pollId: key,
+  //       voteId: key,
+  //       topicKey: key
+  //     };
 
-      result.push(poll);
-      return result;
-    },
-    []
-  );
-  dispatch(legacyPollsSuccess(allPolls));
+  //     result.push(poll);
+  //     return result;
+  //   },
+  //   []
+  // );
+  dispatch(legacyPollsSuccess([]));
 };
 
 // Reducer ------------------------------------------------
