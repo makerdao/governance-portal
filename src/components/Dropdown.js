@@ -44,8 +44,8 @@ export default class Dropdown extends Component {
         <Wrapper>
           <Selection
             onClick={disabled ? () => {} : this.toggle}
-            clickable={hasItems}
-            dim={!hasItems}
+            clickable={hasItems || allowEmpty}
+            dim={!hasItems && !allowEmpty}
             color={color}
           >
             {hasItems ? selected : allowEmpty ? selected : noItemMsg}
