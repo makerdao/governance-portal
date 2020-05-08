@@ -540,6 +540,26 @@ class VotingPanelRankedChoice extends React.Component {
                   </span>
                 </div>
               ))}
+              {active && (
+                <Blue
+                  onClick={() => {
+                    mixpanel.track('btn-click', {
+                      id: 'withdraw',
+                      product: 'governance-dashboard',
+                      page: 'Polling',
+                      section: 'voting-panel'
+                    });
+                    modalOpen(PollingVoteRankedChoice, {
+                      poll: {
+                        pollId,
+                        withdraw: true
+                      }
+                    });
+                  }}
+                >
+                  Withdraw Vote
+                </Blue>
+              )}
             </DetailsPanelCard>
           )
         ) : (

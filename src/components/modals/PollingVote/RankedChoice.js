@@ -6,7 +6,10 @@ import mixpanel from 'mixpanel-browser';
 
 import Button from '../../Button';
 import { getActiveAccount } from '../../../reducers/accounts';
-import { voteForRankedChoicePoll } from '../../../reducers/polling';
+import {
+  voteForRankedChoicePoll,
+  withdrawVoteForPoll
+} from '../../../reducers/polling';
 import { modalClose } from '../../../reducers/modal';
 import { clear as voteClear } from '../../../reducers/vote';
 import { StyledTitle, StyledBlurb, StyledTop } from '../shared/styles';
@@ -26,14 +29,18 @@ class PollingVote extends Component {
       activeAccount,
       modalClose
     } = this.props;
-    const { pollId, rankings } = poll;
+    const { pollId, rankings, withdraw } = poll;
 
     return (
       <TransactionModal
         txHash={voteTxHash}
         txStatus={voteTxStatus}
         account={activeAccount}
-        txPurpose={'This transaction is to cast your vote'}
+        txPurpose={
+          withdraw
+            ? 'This transaction is to withdraw your vote'
+            : 'This transaction is to cast your vote'
+        }
         onComplete={modalClose}
       >
         {onNext => {
@@ -43,8 +50,10 @@ class PollingVote extends Component {
                 <StyledTitle>Confirmation</StyledTitle>
               </StyledTop>
               <StyledBlurb>
-                Please confirm your vote below. Votes can be withdrawn at
-                anytime.
+                {withdraw
+                  ? 'You will be withdrawing your vote.'
+                  : `Please confirm your vote below. Votes can be withdrawn at
+                anytime.`}
               </StyledBlurb>
               <div
                 style={{
@@ -56,12 +65,21 @@ class PollingVote extends Component {
                 <Button
                   slim
                   onClick={() => {
-                    mixpanel.track('btn-click', {
-                      id: 'confirm-vote',
-                      product: 'governance-dashboard',
-                      section: 'polling-vote-modal'
-                    });
-                    this.props.voteForRankedChoicePoll(pollId, rankings);
+                    if (withdraw) {
+                      mixpanel.track('btn-click', {
+                        id: 'confirm-withdraw-vote',
+                        product: 'governance-dashboard',
+                        section: 'polling-vote-modal'
+                      });
+                      this.props.withdrawVoteForPoll(pollId);
+                    } else {
+                      mixpanel.track('btn-click', {
+                        id: 'confirm-vote',
+                        product: 'governance-dashboard',
+                        section: 'polling-vote-modal'
+                      });
+                      this.props.voteForRankedChoicePoll(pollId, rankings);
+                    }
                     onNext();
                   }}
                 >
@@ -94,5 +112,5 @@ export default connect(
     voteTxHash: state.polling.voteTxHash,
     voteTxStatus: state.polling.voteTxStatus
   }),
-  { modalClose, voteClear, voteForRankedChoicePoll }
+  { modalClose, voteClear, voteForRankedChoicePoll, withdrawVoteForPoll }
 )(PollingVote);
