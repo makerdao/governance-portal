@@ -380,6 +380,7 @@ export const getTalliedBallot = async (pollId, options) => {
 
   const totalMkrParticipation = tally.totalMkrParticipation;
   const winner = tally.winner;
+  const rounds = tally.rounds;
 
   const ballot = options.map((_, i) => {
     if (tally.options[i + 1]) {
@@ -404,7 +405,7 @@ export const getTalliedBallot = async (pollId, options) => {
     }
   });
 
-  return { ballot, winner, totalMkrParticipation };
+  return { ballot, winner, rounds, totalMkrParticipation };
 };
 
 export const pollDataInit = poll => dispatch => {
@@ -423,9 +424,10 @@ export const pollDataInit = poll => dispatch => {
     dispatch(updatePoll(pollId, { ballotFetching: true }));
 
     getTalliedBallot(pollId, options, endDate).then(
-      ({ ballot, winner, totalMkrParticipation }) =>
+      ({ ballot, winner, rounds, totalMkrParticipation }) =>
         dispatch(
           updatePoll(pollId, {
+            rounds,
             ballot,
             winner,
             totalMkrParticipation,

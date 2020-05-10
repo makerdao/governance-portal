@@ -157,6 +157,21 @@ const AddChoice = styled.div`
   cursor: ${({ disabled }) => (disabled ? '' : 'pointer')};
 `;
 
+const TooltopWrapper = styled.div`
+  > span {
+    height: 22px;
+    width: 16px;
+  }
+  > span:after {
+    height: 22px;
+    width: 16px;
+  }
+  > span:before {
+    height: 22px;
+    width: 16px;
+  }
+`;
+
 const DetailsCardItem = ({ name, value, component }) => (
   <DetailsItem>
     <DetailsCardText>{name}</DetailsCardText>
@@ -430,22 +445,29 @@ class VotingPanelRankedChoice extends React.Component {
               <VotingBallotText>
                 This poll uses instant runoff voting.
               </VotingBallotText>
-              <Tooltip
-                color="steel"
-                fontSize="m"
-                ml="2xs"
-                content={
-                  <CardUI px="m" py="s" bg="white" maxWidth="30rem">
-                    <Text.p
-                      t="caption"
-                      color="darkLavender"
-                      lineHeight="normal"
-                    >
-                      TODO: this is how ranked choice voting works...
-                    </Text.p>
-                  </CardUI>
-                }
-              />
+              <TooltopWrapper>
+                <Tooltip
+                  color="steel"
+                  fontSize="m"
+                  ml="2xs"
+                  content={
+                    <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                      <Text.p
+                        t="caption"
+                        color="darkLavender"
+                        lineHeight="normal"
+                      >
+                        Voters can rank options in order of preference. If no
+                        option achieves more than 50% of the vote based on first
+                        choices, the option with the fewest number of votes is
+                        eliminated and these votes redistributed to these
+                        voters’ second choices. This process is repeated until
+                        one option achieves a majority.
+                      </Text.p>
+                    </CardUI>
+                  }
+                />
+              </TooltopWrapper>
             </BallotTextWapper>
             {Array.from({ length: this.state.optionCount }).map((_, i) => (
               <RankedChoiceDropdown
@@ -473,18 +495,20 @@ class VotingPanelRankedChoice extends React.Component {
                 options={unchosenOptions}
               />
             ))}
-            <AddChoice
-              disabled={!canAddChoice}
-              onClick={() => {
-                if (canAddChoice) {
-                  this.setState(({ optionCount }) => ({
-                    optionCount: optionCount + 1
-                  }));
-                }
-              }}
-            >
-              + Add another choice
-            </AddChoice>
+            {unchosenOptions.length > 0 && (
+              <AddChoice
+                disabled={!canAddChoice}
+                onClick={() => {
+                  if (canAddChoice) {
+                    this.setState(({ optionCount }) => ({
+                      optionCount: optionCount + 1
+                    }));
+                  }
+                }}
+              >
+                + Add another choice
+              </AddChoice>
+            )}
             <VoteButton
               style={{ margin: '10px 0' }}
               bgColor="green"
@@ -518,7 +542,13 @@ class VotingPanelRankedChoice extends React.Component {
 
         {existingRanking ? (
           existingRanking.length === 0 ? (
-            <div style={{ color: '#546978' }}>
+            <div
+              style={{
+                color: '#546978',
+                textAlign: 'center',
+                padding: '10px 0 30px'
+              }}
+            >
               {active ? 'Not currently voting' : 'You did not vote'}
             </div>
           ) : (
@@ -681,7 +711,8 @@ class Polling extends React.Component {
       optionVotingFor,
       totalVotes,
       winner,
-      rankings
+      rankings,
+      rounds
     } = poll;
     const optionVotingForName = options[optionVotingFor];
 
@@ -841,26 +872,55 @@ class Polling extends React.Component {
                     <CardTitle>Vote breakdown</CardTitle>
                     <div
                       style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
                         backgroundColor: 'rgb(247, 248, 249)',
-                        padding: '6px 8px',
+                        padding: '6px 14px',
                         borderRadius: '4px',
                         margin: '6px 0px'
                       }}
                     >
-                      <span
-                        style={{
-                          color: '#47495f',
-                          fontSize: '11px',
-                          fontWeight: 'bold'
-                        }}
-                      >
-                        {active ? 'INSTANT RUNOFF LEADER ' : 'POLL WINNER'}
-                      </span>
-                      <div style={{ color: 'rgb(71, 73, 95)' }}>
-                        {options[parseInt(winner) - 1]
-                          ? options[parseInt(winner) - 1]
-                          : null}
+                      <div>
+                        <span
+                          style={{
+                            color: '#47495f',
+                            fontSize: '11px',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          {active ? 'INSTANT RUNOFF LEADER ' : 'POLL WINNER'}
+                        </span>
+                        <div style={{ color: 'rgb(71, 73, 95)' }}>
+                          {options[parseInt(winner) - 1]
+                            ? options[parseInt(winner) - 1]
+                            : null}
+                        </div>
                       </div>
+                      {active ? (
+                        <Tooltip
+                          color="steel"
+                          fontSize="m"
+                          ml="2xs"
+                          content={
+                            <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                              <Text.p
+                                t="caption"
+                                color="darkLavender"
+                                lineHeight="normal"
+                              >
+                                According to the instant runoff voting process,
+                                this option would win if the poll ended right
+                                now.
+                              </Text.p>
+                            </CardUI>
+                          }
+                        />
+                      ) : (
+                        <span style={{ color: '#9fafb9' }}>
+                          {rounds} rounds
+                        </span>
+                      )}
                     </div>
                     <VoteBreakdownRankedChoice poll={poll} />
                   </div>
@@ -931,16 +991,27 @@ function VoteBreakdownRankedChoice({ poll }) {
       ) : (
         <>
           {sortedBallot.map(
-            ({ firstChoice, firstPct, transferPct, transfer, option }) => (
+            ({
+              firstChoice,
+              firstPct,
+              transferPct,
+              transfer,
+              option,
+              eliminated
+            }) => (
               <div style={{ marginBottom: '12px' }}>
                 <div
                   style={{ display: 'flex', justifyContent: 'space-between' }}
                 >
                   <div>{option}</div>
-                  <div>
-                    {firstChoice.plus(transfer).toFixed(1)} MKR (
-                    {firstPct.plus(transferPct).toFixed(1)}%)
-                  </div>
+                  {eliminated ? (
+                    '0 MKR (0%)'
+                  ) : (
+                    <div>
+                      {firstChoice.plus(transfer).toFixed(1)} MKR (
+                      {firstPct.plus(transferPct).toFixed(1)}%)
+                    </div>
+                  )}
                 </div>
                 <div
                   style={{
@@ -961,7 +1032,8 @@ function VoteBreakdownRankedChoice({ poll }) {
                           color="darkLavender"
                           lineHeight="normal"
                         >
-                          {firstChoice.toFixed(1)} MKR ({firstPct.toFixed(1)}%)
+                          {firstChoice.toFixed(1)} MKR ({firstPct.toFixed(1)}
+                          %)
                         </Text.p>
                       </CardUI>
                     }
@@ -976,32 +1048,65 @@ function VoteBreakdownRankedChoice({ poll }) {
                       }}
                     />
                   </Tooltip>
-                  <Tooltip
-                    color="steel"
-                    fontSize="m"
-                    content={
-                      <CardUI px="m" py="s" bg="white" maxWidth="30rem">
-                        <Text.h4 fontSize="1.5rem">Transfer votes</Text.h4>
-                        <Text.p
-                          t="caption"
-                          color="darkLavender"
-                          lineHeight="normal"
-                        >
-                          {transfer.toFixed(1)} MKR ({transfer.toFixed(1)}%)
-                        </Text.p>
-                      </CardUI>
-                    }
-                  >
-                    <div
-                      style={{
-                        position: 'absolute',
-                        height: '6px',
-                        background: 'rgb(182, 237, 231)',
-                        width: `${transferPct.plus(firstPct).toFixed(1)}`,
-                        zIndex: '1'
-                      }}
-                    ></div>
-                  </Tooltip>
+                  {eliminated ? (
+                    <Tooltip
+                      color="steel"
+                      fontSize="m"
+                      content={
+                        <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                          <Text.h4 fontSize="1.5rem">Transfer votes</Text.h4>
+                          <Text.p
+                            t="caption"
+                            color="darkLavender"
+                            lineHeight="normal"
+                          >
+                            - {firstChoice.toFixed(1)} MKR (
+                            {firstPct.toFixed(1)}
+                            %)
+                          </Text.p>
+                        </CardUI>
+                      }
+                    >
+                      <div
+                        style={{
+                          position: 'absolute',
+                          height: '6px',
+                          background: `rgb(${colors['light_grey2']})`,
+                          width: `${firstPct.toFixed(1)}%`,
+                          zIndex: '3'
+                        }}
+                      />
+                    </Tooltip>
+                  ) : (
+                    <Tooltip
+                      color="steel"
+                      fontSize="m"
+                      content={
+                        <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                          <Text.h4 fontSize="1.5rem">Transfer votes</Text.h4>
+                          <Text.p
+                            t="caption"
+                            color="darkLavender"
+                            lineHeight="normal"
+                          >
+                            + {transfer.toFixed(1)} MKR (
+                            {transferPct.toFixed(1)}
+                            %)
+                          </Text.p>
+                        </CardUI>
+                      }
+                    >
+                      <div
+                        style={{
+                          position: 'absolute',
+                          height: '6px',
+                          background: 'rgb(182, 237, 231)',
+                          width: `${transferPct.plus(firstPct).toFixed(1)}%`,
+                          zIndex: '1'
+                        }}
+                      />
+                    </Tooltip>
+                  )}
                 </div>
               </div>
             )
