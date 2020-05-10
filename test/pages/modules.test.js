@@ -124,7 +124,7 @@ describe('renders summary page', () => {
     await wait(() => getByTestId('shutdown-initiated'));
   });
 
-  test.skip('Burn MKR Modal Flow', async () => {
+  test('Burn MKR Modal Flow', async () => {
     const { getByTestId, getAllByTestId, getByText, getByRole } = await render(
       <Modules store={store} />
     );

@@ -1083,7 +1083,7 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.0", "@babel/runtime@^7.4.3", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.2", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.4", "@babel/runtime@^7.7.6":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.0", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.2", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.4", "@babel/runtime@^7.7.6":
   version "7.8.3"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.8.3.tgz#0811944f73a6c926bb2ad35e918dcc1bfab279f1"
   integrity sha512-fVHx1rzEmwB130VTkLnxR+HmxcTjGzH12LYQcFFoBwakMd3aOMD4OsRN7tGG/UOYE2ektgFrS8uACAoRk1CY0w==
@@ -1398,6 +1398,14 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-4.72.0.tgz#43df23af013ad1135407e5cf33ca6e4c4c7708d5"
   integrity sha512-o+TYF8vBcyySRsb2kqBDv/KMeme8a2nwWoG+lAWzbDmWfb2/MrVWYCVYDYvjXdSoI/Cujqy1i0gIDrkdxa9chA==
 
+"@makerdao/currency@>=0.9.0":
+  version "0.9.7"
+  resolved "https://registry.yarnpkg.com/@makerdao/currency/-/currency-0.9.7.tgz#7b7310cc4feb75ce78330116ae15dad2267040e0"
+  integrity sha512-7N4w25lYwJf105RJZk/WZpxzUMs3GOxSJ4Qg2yro7V1bnsEHaZ0IeyrFOtUfo87Ia3tvld+k9JLG6ykYOxI3kw==
+  dependencies:
+    babel-runtime "^6.26.0"
+    bignumber.js "^8.1.1"
+
 "@makerdao/currency@^0.9.3", "@makerdao/currency@^0.9.5":
   version "0.9.6"
   resolved "https://registry.yarnpkg.com/@makerdao/currency/-/currency-0.9.6.tgz#ff2cac6869de40ed3965137ce08442c390add7a4"
@@ -1415,18 +1423,16 @@
     babel-runtime "^6.26.0"
     ramda "^0.26.1"
 
-"@makerdao/dai-plugin-governance@0.10.8":
-  version "0.10.8"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.10.8.tgz#c1ed830ebdd2d0d5a82bdb9acd5f9a922a1699e5"
-  integrity sha512-/zIzmYCyJA84w9HrGhvydW0aI9hfvn5WwCLAdtcfB46UCpIF8gdwJJvzruYI55HShwi6JgcrbMWjZP0+Ma8tPA==
+"@makerdao/dai-plugin-governance@0.12.0":
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.12.0.tgz#fb5932cf51dbfa2aa333137dba860f0eef372f13"
+  integrity sha512-fatXbz8Ru8QXC/R70AqFgE4YVlnEGFWQ1bUfktl9sZnR3H0pvtcgzV2BTfY4IE9wmdnPsMUmbq6uZzvpnOHXgQ==
   dependencies:
-    "@babel/runtime" "^7.4.3"
-    "@makerdao/currency" "^0.9.5"
-    "@makerdao/services-core" "^0.9.5"
+    "@makerdao/currency" ">=0.9.0"
+    "@makerdao/services-core" ">=0.9.0"
     assert "^2.0.0"
-    bignumber "^1.1.0"
+    debug "^4.1.1"
     ramda "^0.25.0"
-    web3-utils "^1.0.0-beta.36"
 
 "@makerdao/dai-plugin-ledger-web@^0.9.7":
   version "0.9.7"
@@ -1503,7 +1509,16 @@
     lodash "^4.17.11"
     ws "^7.2.0"
 
-"@makerdao/services-core@^0.9.5", "@makerdao/services-core@^0.9.9":
+"@makerdao/services-core@>=0.9.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@makerdao/services-core/-/services-core-0.10.0.tgz#8bedfe0867d84f35c13989e349128869da15fa83"
+  integrity sha512-z37erX5B09dZ8raIqoEgCSoeYms8wMAEFI12x2+AmuuO+XBiPKGGj6UwGYQhnIeIVD26wKv/+s7ozEXdntGYrQ==
+  dependencies:
+    babel-runtime "^6.26.0"
+    lodash "^4.17.15"
+    toposort "^2.0.2"
+
+"@makerdao/services-core@^0.9.9":
   version "0.9.9"
   resolved "https://registry.yarnpkg.com/@makerdao/services-core/-/services-core-0.9.9.tgz#22bccab226cebfbe9649e34156f4aaa109cc0f86"
   integrity sha512-EFimChs0KpIFMW7wpB0foYA77YP785384h0RbQB517X14blNvgR1T1eZCxFH0YZWw5nISfxGh0lf6l1ImAdfEw==
@@ -1519,10 +1534,10 @@
   dependencies:
     node-fetch "^2.6.0"
 
-"@makerdao/testchain@^1.0.7":
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/@makerdao/testchain/-/testchain-1.0.7.tgz#7d7e0a3455c8b771d223796766936b69e86fb1b6"
-  integrity sha512-uAmv+CFs2GC16PV1F09bRu/nanM19WIVkUP1NPNjIJbTdwOwHQ5mnETU2CLt0YFzWdpSdqeYXaeBPP9FCAr4WQ==
+"@makerdao/testchain@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@makerdao/testchain/-/testchain-1.1.5.tgz#85be3f25cf245d21aa54263eb07a29cb54a6714c"
+  integrity sha512-a1wmYI97UeVFa9IJfhEK6yuFmEjJzkcHPWzTlrAmEu2uc4LO3E9NchE6xQlAj5S0E4NXNn2B9CciqmbrllNA+g==
   dependencies:
     ganache-cli makerdao/ganache-cli#fix/gas-est-crash
 
@@ -3372,11 +3387,6 @@ bignumber.js@^9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.0.tgz#805880f84a329b5eac6e7cb6f8274b6d82bdf075"
   integrity sha512-t/OYhhJ2SD+YGBQcjY8GzzDHEk9f3nerxjtfa6tlMXfe7frs/WozhvCNoGvpM0P3bNf3Gq5ZRMlGr5f3r4/N8A==
-
-bignumber@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/bignumber/-/bignumber-1.1.0.tgz#e6ab0a743da5f3ea018e5c17597d121f7868c159"
-  integrity sha1-5qsKdD2l8+oBjlwXWX0SH3howVk=
 
 binary-extensions@^1.0.0:
   version "1.13.1"
@@ -6080,13 +6090,6 @@ eth-tx-summary@^3.1.2:
     ethereumjs-util "^5.0.1"
     ethereumjs-vm "^2.6.0"
     through2 "^2.0.3"
-
-ethereum-bloom-filters@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/ethereum-bloom-filters/-/ethereum-bloom-filters-1.0.6.tgz#9cdebb3ec20de96ec4a434c6bad6ea5a513037aa"
-  integrity sha512-dE9CGNzgOOsdh7msZirvv8qjHtnHpvBlKe2647kM8v+yeF71IRso55jpojemvHV+jMjr48irPWxMRaHuOWzAFA==
-  dependencies:
-    js-sha3 "^0.8.0"
 
 ethereum-common@0.2.0:
   version "0.2.0"
@@ -9149,7 +9152,7 @@ js-sha3@0.5.7, js-sha3@^0.5.7:
   resolved "https://registry.yarnpkg.com/js-sha3/-/js-sha3-0.5.7.tgz#0d4ffd8002d5333aabaf4a23eed2f6374c9f28e7"
   integrity sha1-DU/9gALVMzqrr0oj7tL2N0yfKOc=
 
-js-sha3@^0.8.0, js-sha3@~0.8.0:
+js-sha3@~0.8.0:
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/js-sha3/-/js-sha3-0.8.0.tgz#b9b7a5da73afad7dedd0f8c463954cbde6818840"
   integrity sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==
@@ -12697,7 +12700,7 @@ randexp@0.4.6:
     discontinuous-range "1.0.0"
     ret "~0.1.10"
 
-randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5, randombytes@^2.1.0:
+randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/randombytes/-/randombytes-2.1.0.tgz#df6f84372f0270dc65cdf6291349ab7a473d4f2a"
   integrity sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==
@@ -15818,20 +15821,6 @@ web3-utils@1.2.1:
     ethjs-unit "0.1.6"
     number-to-bn "1.7.0"
     randomhex "0.1.5"
-    underscore "1.9.1"
-    utf8 "3.0.0"
-
-web3-utils@^1.0.0-beta.36:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/web3-utils/-/web3-utils-1.2.4.tgz#96832a39a66b05bf8862a5b0bdad2799d709d951"
-  integrity sha512-+S86Ip+jqfIPQWvw2N/xBQq5JNqCO0dyvukGdJm8fEWHZbckT4WxSpHbx+9KLEWY4H4x9pUwnoRkK87pYyHfgQ==
-  dependencies:
-    bn.js "4.11.8"
-    eth-lib "0.2.7"
-    ethereum-bloom-filters "^1.0.6"
-    ethjs-unit "0.1.6"
-    number-to-bn "1.7.0"
-    randombytes "^2.1.0"
     underscore "1.9.1"
     utf8 "3.0.0"
 
