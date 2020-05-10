@@ -9,17 +9,23 @@ import Button from '../components/Button';
 import Card from '../components/Card';
 import Loader from '../components/Loader';
 import PollingVote from '../components/modals/PollingVote';
+import PollingVoteRankedChoice from '../components/modals/PollingVote/RankedChoice';
 import NotFound from './NotFound';
 import { VotingWeightBanner } from './PollingList';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import { modalOpen } from '../reducers/modal';
 import { getWinningProp } from '../reducers/proposals';
-import { getOptionVotingFor, pollDataInit } from '../reducers/polling';
+import {
+  getOptionVotingFor,
+  getOptionVotingForRankedChoice,
+  pollDataInit
+} from '../reducers/polling';
 import theme, { colors } from '../theme';
 import { ethScanLink } from '../utils/ethereum';
 import { MIN_MKR_PERCENTAGE } from '../utils/constants';
 import ExternalLink from '../components/Onboarding/shared/ExternalLink';
 import Dropdown from '../components/Dropdown';
+import { Tooltip, Text, Card as CardUI } from '@makerdao/ui-components-core';
 
 const riseUp = keyframes`
 0% {
@@ -54,6 +60,11 @@ const VoteSelection = styled.div`
   justify-content: space-between;
 `;
 
+const BallotTextWapper = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
 const DetailsPanelCard = styled(Card)`
   margin-bottom: 29px;
   font-size: ${({ theme }) => theme.fonts.size.medium};
@@ -75,6 +86,12 @@ const VoteStatusText = styled.p`
   text-align: left;
   line-height: 2;
   font-size: 14px;
+`;
+
+const VotingBallotText = styled.p`
+  color: #546978;
+  font-size: 14px;
+  margin-bottom: 10px;
 `;
 
 const Black = styled.span`
@@ -111,7 +128,7 @@ const DetailsCardText = styled.p`
 const DropdownText = styled.p`
   text-overflow: ellipsis;
   overflow: hidden;
-  width: 125px;
+  width: ${({ width }) => (width ? width : '125px')};
   margin-left: 13px;
   margin-right: 13px;
   color: ${({ color }) => (color ? `rgb(${colors[color]})` : 'black')};
@@ -133,6 +150,26 @@ const DescriptionCard = styled(Card)`
 const DownloadButton = styled(Button)`
   position: absolute;
   bottom: 20px;
+`;
+
+const AddChoice = styled.div`
+  color: rgb(${colors.green});
+  cursor: ${({ disabled }) => (disabled ? '' : 'pointer')};
+`;
+
+const TooltopWrapper = styled.div`
+  > span {
+    height: 22px;
+    width: 16px;
+  }
+  > span:after {
+    height: 22px;
+    width: 16px;
+  }
+  > span:before {
+    height: 22px;
+    width: 16px;
+  }
 `;
 
 const DetailsCardItem = ({ name, value, component }) => (
@@ -292,6 +329,277 @@ class VotingPanel extends React.Component {
   }
 }
 
+class RankedChoiceDropdown extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedOption: undefined
+    };
+  }
+
+  onDropdownSelect = (value, index) => {
+    const selectedOptionId = parseInt(index);
+    this.setState({
+      selectedOption: value,
+      selectedOptionId
+    });
+    if (this.props.onSelect)
+      this.props.onSelect({
+        selectedOption: value,
+        selectedOptionId
+      });
+    mixpanel.track('input-change', {
+      id: 'dropdown-select-ranked-choice',
+      product: 'governance-dashboard',
+      page: 'Polling',
+      section: 'voting-panel'
+    });
+  };
+
+  render() {
+    const { options, optionVotingFor, choiceNum, selectable } = this.props;
+    const { selectedOption } = this.state;
+
+    const dropdownValue = choiceNum =>
+      selectedOption !== undefined
+        ? selectedOption.toString()
+        : optionVotingFor !== undefined
+        ? optionVotingFor.toString()
+        : this.props.choiceNumText(choiceNum) + ' choice';
+
+    return (
+      <div style={{ marginBottom: '6px' }}>
+        <Dropdown
+          disabled={!selectable}
+          color="light_grey2"
+          items={options}
+          renderItem={item =>
+            selectable ? (
+              <DropdownText width="225px">{item}</DropdownText>
+            ) : (
+              <span style={{ display: 'flex' }}>
+                <DropdownText width="225px">{item}</DropdownText>
+                <span
+                  onClick={() => {
+                    this.props.close();
+                  }}
+                  style={{
+                    cursor: 'pointer',
+                    right: '12px',
+                    position: 'absolute',
+                    color: '#708390',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  ✕
+                </span>
+              </span>
+            )
+          }
+          renderRowItem={item => (
+            <DropdownText width="225px">{item}</DropdownText>
+          )}
+          value={dropdownValue(choiceNum)}
+          onSelect={this.onDropdownSelect}
+          emptyMsg="Not available"
+          allowEmpty={true}
+        />
+      </div>
+    );
+  }
+}
+
+class VotingPanelRankedChoice extends React.Component {
+  state = {
+    ballot: [], // ordered by preference
+    optionCount: 1
+  };
+
+  render() {
+    const choiceNumText = choiceNum =>
+      choiceNum === 1
+        ? '1st'
+        : choiceNum === 2
+        ? '2nd'
+        : choiceNum === 3
+        ? '3rd'
+        : choiceNum + 'th';
+
+    const { poll, activeAccount, modalOpen, existingRanking } = this.props;
+    const { active } = poll;
+    const { pollId, options } = poll;
+    const { ballot } = this.state;
+    const unchosenOptions = options.filter(
+      option => !ballot.map(b => b.selectedOption).includes(option)
+    );
+    const canAddChoice =
+      ballot[this.state.optionCount - 1] && unchosenOptions.length > 0;
+    return (
+      <React.Fragment>
+        {active && (
+          <DetailsPanelCard
+            style={{ overflow: 'visible', padding: '0px 30px 15px 30px' }}
+          >
+            <CardTitle>Your Voting Ballot</CardTitle>
+            <BallotTextWapper>
+              <VotingBallotText>
+                This poll uses instant runoff voting.
+              </VotingBallotText>
+              <TooltopWrapper>
+                <Tooltip
+                  color="steel"
+                  fontSize="m"
+                  ml="2xs"
+                  content={
+                    <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                      <Text.p
+                        t="caption"
+                        color="darkLavender"
+                        lineHeight="normal"
+                      >
+                        Voters can rank options in order of preference. If no
+                        option achieves more than 50% of the vote based on first
+                        choices, the option with the fewest number of votes is
+                        eliminated and these votes redistributed to these
+                        voters’ second choices. This process is repeated until
+                        one option achieves a majority.
+                      </Text.p>
+                    </CardUI>
+                  }
+                />
+              </TooltopWrapper>
+            </BallotTextWapper>
+            {Array.from({ length: this.state.optionCount }).map((_, i) => (
+              <RankedChoiceDropdown
+                choiceNumText={choiceNumText}
+                close={() =>
+                  this.setState(state => {
+                    const ballot = state.ballot;
+                    ballot.splice(i, 1);
+                    const optionCount = state.optionCount - 1;
+                    return { optionCount, ballot };
+                  })
+                }
+                selectable={this.state.optionCount - 1 === i}
+                choiceNum={i + 1}
+                key={ballot[i] ? ballot[i].optionVotingFor : i}
+                onSelect={({ selectedOption, selectedOptionId }) => {
+                  this.setState(({ ballot }) => {
+                    ballot[i] = { selectedOption, selectedOptionId };
+                    return { ballot };
+                  });
+                }}
+                optionVotingFor={
+                  ballot[i] ? ballot[i].selectedOption : undefined
+                }
+                options={unchosenOptions}
+              />
+            ))}
+            {unchosenOptions.length > 0 && (
+              <AddChoice
+                disabled={!canAddChoice}
+                onClick={() => {
+                  if (canAddChoice) {
+                    this.setState(({ optionCount }) => ({
+                      optionCount: optionCount + 1
+                    }));
+                  }
+                }}
+              >
+                + Add another choice
+              </AddChoice>
+            )}
+            <VoteButton
+              style={{ margin: '10px 0' }}
+              bgColor="green"
+              color="white"
+              hoverColor="white"
+              width="278px"
+              disabled={!poll.active || !activeAccount || ballot.length === 0}
+              onClick={() => {
+                mixpanel.track('btn-click', {
+                  id: 'vote',
+                  product: 'governance-dashboard',
+                  page: 'Polling',
+                  section: 'voting-panel'
+                });
+                modalOpen(PollingVoteRankedChoice, {
+                  poll: {
+                    pollId,
+                    rankings: ballot.map(choice =>
+                      options.findIndex(
+                        option => option === choice.selectedOption
+                      )
+                    )
+                  }
+                });
+              }}
+            >
+              Submit Vote
+            </VoteButton>
+          </DetailsPanelCard>
+        )}
+
+        {existingRanking ? (
+          existingRanking.length === 0 ? (
+            <div
+              style={{
+                color: '#546978',
+                textAlign: 'center',
+                padding: '10px 0 30px'
+              }}
+            >
+              {active ? 'Not currently voting' : 'You did not vote'}
+            </div>
+          ) : (
+            <DetailsPanelCard
+              style={{ overflow: 'visible', padding: '0px 30px 15px 30px' }}
+            >
+              <CardTitle>{active ? 'Current Vote' : 'Voted For'}</CardTitle>
+              {existingRanking.map((ranking, i) => (
+                <div
+                  style={{
+                    color: 'rgb(128,128,128)',
+                    fontSize: '15px',
+                    margin: '5px 0px'
+                  }}
+                >
+                  <span>{choiceNumText(i + 1)} choice</span>
+                  <span style={{ margin: '0px 10px' }}>
+                    {options[ranking - 1]}
+                  </span>
+                </div>
+              ))}
+              {active && (
+                <Blue
+                  onClick={() => {
+                    mixpanel.track('btn-click', {
+                      id: 'withdraw',
+                      product: 'governance-dashboard',
+                      page: 'Polling',
+                      section: 'voting-panel'
+                    });
+                    modalOpen(PollingVoteRankedChoice, {
+                      poll: {
+                        pollId,
+                        withdraw: true
+                      }
+                    });
+                  }}
+                >
+                  Withdraw Vote
+                </Blue>
+              )}
+            </DetailsPanelCard>
+          )
+        ) : (
+          <Loader mt={34} mb={34} color="header" background="background" />
+        )}
+      </React.Fragment>
+    );
+  }
+}
+
 const timeLeft = (startDate, endDate, active) => {
   const now = new Date();
   let timeLeft = Math.floor(endDate / 1000) - Math.floor(now / 1000);
@@ -360,10 +668,16 @@ class Polling extends React.Component {
 
   updateVotedPollOption = async () => {
     if (!this.props.poll || !this.state.activeAccount) return null;
-    await this.props.getOptionVotingFor(
-      this.state.activeAccount.address,
-      this.props.poll.pollId
-    );
+    await Promise.all([
+      this.props.getOptionVotingFor(
+        this.state.activeAccount.address,
+        this.props.poll.pollId
+      ),
+      this.props.getOptionVotingForRankedChoice(
+        this.state.activeAccount.address,
+        this.props.poll.pollId
+      )
+    ]);
     this.setState({
       voteStateFetching: false
     });
@@ -388,13 +702,17 @@ class Polling extends React.Component {
       return <Loader mt={34} mb={34} color="header" background="background" />;
     if (isNil(poll) || isEmpty(poll) || !isValidRoute) return <NotFound />;
     const {
+      vote_type,
       discussion_link,
       rawData,
       multiHash,
       active,
       options,
       optionVotingFor,
-      totalVotes
+      totalVotes,
+      winner,
+      rankings,
+      rounds
     } = poll;
     const optionVotingForName = options[optionVotingFor];
 
@@ -407,6 +725,7 @@ class Polling extends React.Component {
       : '0';
 
     const timeLeftString = active ? 'Ends In' : 'Ended On';
+    const rankedChoice = vote_type.includes('Ranked Choice IRV');
 
     return (
       <Fragment>
@@ -431,7 +750,16 @@ class Polling extends React.Component {
               )}
             </DescriptionCard>
             <RightPanels>
-              {active && (
+              {rankedChoice && (
+                <VotingPanelRankedChoice
+                  existingRanking={rankings}
+                  poll={poll}
+                  activeAccount={activeAccount}
+                  modalOpen={modalOpen}
+                  totalVotes={totalVotes}
+                />
+              )}
+              {active && !rankedChoice && (
                 <VotingPanel
                   optionVotingFor={optionVotingForName}
                   poll={poll}
@@ -440,16 +768,18 @@ class Polling extends React.Component {
                   totalVotes={totalVotes}
                 />
               )}
-              <VotedFor
-                poll={poll}
-                optionVotingFor={optionVotingForName}
-                optionVotingForId={optionVotingFor}
-                voteStateFetching={voteStateFetching || accountDataFetching}
-                withdrawVote={this.withdrawVote}
-                modalOpen={modalOpen}
-                totalVotes={totalVotes}
-                alreadyVotingFor={true}
-              />
+              {rankedChoice ? null : (
+                <VotedFor
+                  poll={poll}
+                  optionVotingFor={optionVotingForName}
+                  optionVotingForId={optionVotingFor}
+                  voteStateFetching={voteStateFetching || accountDataFetching}
+                  withdrawVote={this.withdrawVote}
+                  modalOpen={modalOpen}
+                  totalVotes={totalVotes}
+                  alreadyVotingFor={true}
+                />
+              )}
               <DetailsPanelCard style={{ padding: '0px 30px 15px 30px' }}>
                 <CardTitle>Details</CardTitle>
                 {[
@@ -537,11 +867,72 @@ class Polling extends React.Component {
                   </>
                 )}
 
-                <VoteBreakdown poll={poll} />
-                {(winningProposalName || winningProposalName === 0) && (
+                {rankedChoice ? (
+                  <div>
+                    <CardTitle>Vote breakdown</CardTitle>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        backgroundColor: 'rgb(247, 248, 249)',
+                        padding: '6px 14px',
+                        borderRadius: '4px',
+                        margin: '6px 0px'
+                      }}
+                    >
+                      <div>
+                        <span
+                          style={{
+                            color: '#47495f',
+                            fontSize: '11px',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          {active ? 'INSTANT RUNOFF LEADER ' : 'POLL WINNER'}
+                        </span>
+                        <div style={{ color: 'rgb(71, 73, 95)' }}>
+                          {options[parseInt(winner) - 1]
+                            ? options[parseInt(winner) - 1]
+                            : null}
+                        </div>
+                      </div>
+                      {active ? (
+                        <Tooltip
+                          color="steel"
+                          fontSize="m"
+                          ml="2xs"
+                          content={
+                            <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                              <Text.p
+                                t="caption"
+                                color="darkLavender"
+                                lineHeight="normal"
+                              >
+                                According to the instant runoff voting process,
+                                this option would win if the poll ended right
+                                now.
+                              </Text.p>
+                            </CardUI>
+                          }
+                        />
+                      ) : (
+                        <span style={{ color: '#9fafb9' }}>
+                          {rounds} rounds
+                        </span>
+                      )}
+                    </div>
+                    <VoteBreakdownRankedChoice poll={poll} />
+                  </div>
+                ) : (
                   <>
-                    <CardTitle>Winning Proposal</CardTitle>
-                    <span>{winningProposalName}</span>
+                    <VoteBreakdown poll={poll} />
+                    {(winningProposalName || winningProposalName === 0) && (
+                      <>
+                        <CardTitle>Winning Proposal</CardTitle>
+                        <span>{winningProposalName}</span>
+                      </>
+                    )}{' '}
                   </>
                 )}
               </DetailsPanelCard>
@@ -573,6 +964,153 @@ function VoteBreakdown({ poll }) {
           {options.map((_, i) => (
             <DetailsCardItem key={i} {...{ name: options[i], value: '----' }} />
           ))}
+        </>
+      )}
+    </>
+  );
+}
+
+function VoteBreakdownRankedChoice({ poll }) {
+  const { ballotFetching, ballot, options } = poll;
+
+  const ballotExists = ballot && ballot.length !== 0;
+  const sortedBallot = ballotExists
+    ? ballot
+        .map((choiceOb, i) => ({ ...choiceOb, option: options[i] }))
+        .sort((a, b) =>
+          a.firstChoice.plus(a.transfer).gt(b.firstChoice.plus(b.transfer))
+            ? -1
+            : 1
+        )
+    : [];
+
+  return (
+    <>
+      {ballotFetching || !ballotExists ? (
+        <Loader mt={34} mb={34} color="header" background="white" />
+      ) : (
+        <>
+          {sortedBallot.map(
+            ({
+              firstChoice,
+              firstPct,
+              transferPct,
+              transfer,
+              option,
+              eliminated
+            }) => (
+              <div style={{ marginBottom: '12px' }}>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <div>{option}</div>
+                  {eliminated ? (
+                    '0 MKR (0%)'
+                  ) : (
+                    <div>
+                      {firstChoice.plus(transfer).toFixed(1)} MKR (
+                      {firstPct.plus(transferPct).toFixed(1)}%)
+                    </div>
+                  )}
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    position: 'relative',
+                    height: '6px',
+                    borderBottom: '1px solid rgb(223, 223, 223)'
+                  }}
+                >
+                  <Tooltip
+                    color="steel"
+                    fontSize="m"
+                    content={
+                      <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                        <Text.h4 fontSize="1.5rem">First choice votes</Text.h4>
+                        <Text.p
+                          t="caption"
+                          color="darkLavender"
+                          lineHeight="normal"
+                        >
+                          {firstChoice.toFixed(1)} MKR ({firstPct.toFixed(1)}
+                          %)
+                        </Text.p>
+                      </CardUI>
+                    }
+                  >
+                    <div
+                      style={{
+                        position: 'absolute',
+                        height: '6px',
+                        background: 'rgb(110, 220, 208)',
+                        width: `${firstPct.toFixed(1)}%`,
+                        zIndex: '2'
+                      }}
+                    />
+                  </Tooltip>
+                  {eliminated ? (
+                    <Tooltip
+                      color="steel"
+                      fontSize="m"
+                      content={
+                        <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                          <Text.h4 fontSize="1.5rem">Transfer votes</Text.h4>
+                          <Text.p
+                            t="caption"
+                            color="darkLavender"
+                            lineHeight="normal"
+                          >
+                            - {firstChoice.toFixed(1)} MKR (
+                            {firstPct.toFixed(1)}
+                            %)
+                          </Text.p>
+                        </CardUI>
+                      }
+                    >
+                      <div
+                        style={{
+                          position: 'absolute',
+                          height: '6px',
+                          background: `rgb(${colors['light_grey2']})`,
+                          width: `${firstPct.toFixed(1)}%`,
+                          zIndex: '3'
+                        }}
+                      />
+                    </Tooltip>
+                  ) : (
+                    <Tooltip
+                      color="steel"
+                      fontSize="m"
+                      content={
+                        <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                          <Text.h4 fontSize="1.5rem">Transfer votes</Text.h4>
+                          <Text.p
+                            t="caption"
+                            color="darkLavender"
+                            lineHeight="normal"
+                          >
+                            + {transfer.toFixed(1)} MKR (
+                            {transferPct.toFixed(1)}
+                            %)
+                          </Text.p>
+                        </CardUI>
+                      }
+                    >
+                      <div
+                        style={{
+                          position: 'absolute',
+                          height: '6px',
+                          background: 'rgb(182, 237, 231)',
+                          width: `${transferPct.plus(firstPct).toFixed(1)}%`,
+                          zIndex: '1'
+                        }}
+                      />
+                    </Tooltip>
+                  )}
+                </div>
+              </div>
+            )
+          )}
         </>
       )}
     </>
@@ -612,5 +1150,6 @@ const reduxProps = (state, { match }) => {
 export default connect(reduxProps, {
   modalOpen,
   getOptionVotingFor,
+  getOptionVotingForRankedChoice,
   pollDataInit
 })(Polling);
