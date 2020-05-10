@@ -52,7 +52,7 @@ const ContentWrapper = styled(Card)`
 `;
 
 const ABSTAIN = 'Abstain';
-const voteTypes = ['Plurality Voting', 'Ranked Choice IRV'];
+const voteTypes = ['Ranked Choice IRV', 'Plurality Voting'];
 
 const INITIAL_POLL_STATE = {
   title: '',
