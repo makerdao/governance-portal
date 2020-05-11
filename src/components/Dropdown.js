@@ -26,13 +26,15 @@ export default class Dropdown extends Component {
 
   render() {
     const {
+      disabled = false,
       items,
       itemKey,
       renderItem,
       renderRowItem,
       value,
       emptyMsg,
-      color
+      color,
+      allowEmpty
     } = this.props;
     const hasItems = items.length > 0;
     const noItemMsg = emptyMsg || 'nothing to show';
@@ -41,12 +43,12 @@ export default class Dropdown extends Component {
       <ClickOutside onOutsideClick={this.clickOutside}>
         <Wrapper>
           <Selection
-            onClick={this.toggle}
-            clickable={hasItems}
-            dim={!hasItems}
+            onClick={disabled ? () => {} : this.toggle}
+            clickable={hasItems || allowEmpty}
+            dim={!hasItems && !allowEmpty}
             color={color}
           >
-            {hasItems ? selected : noItemMsg}
+            {hasItems ? selected : allowEmpty ? selected : noItemMsg}
             <Arrow hide={!hasItems} color={color} />
           </Selection>
           {this.state.shown && (
