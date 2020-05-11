@@ -999,7 +999,7 @@ function VoteBreakdownRankedChoice({ poll }) {
               option,
               eliminated
             }) => (
-              <div style={{ marginBottom: '12px' }}>
+              <div key={option} style={{ marginBottom: '12px' }}>
                 <div
                   style={{ display: 'flex', justifyContent: 'space-between' }}
                 >
