@@ -813,7 +813,7 @@ class Polling extends React.Component {
                     name: 'Questions?',
                     component: (
                       <ExternalLink
-                        href="https://makerdao.com/en/"
+                        href="https://community-development.makerdao.com/makerdao-mcd-faqs/faqs/governance"
                         target="_blank"
                       >
                         Governance FAQ's
