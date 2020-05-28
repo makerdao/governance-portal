@@ -102,7 +102,7 @@ export const voteForPoll = (pollId, optionId) => async dispatch => {
 
   if (success) {
     dispatch(setOptionVotingFor(pollId, optionId));
-    dispatch(updateVoteBreakdown(pollId));
+    //dispatch(updateVoteBreakdown(pollId));
   }
 };
 
@@ -126,7 +126,7 @@ export const voteForRankedChoicePoll = (pollId, rankings) => async dispatch => {
         rankings.map(ranking => ranking + 1)
       )
     );
-    dispatch(updateVoteBreakdown(pollId));
+    //dispatch(updateVoteBreakdown(pollId));
   }
 };
 
@@ -142,7 +142,7 @@ export const withdrawVoteForPoll = pollId => async dispatch => {
 
   if (success) {
     dispatch(setOptionVotingFor(pollId, null));
-    dispatch(updateVoteBreakdown(pollId));
+    //dispatch(updateVoteBreakdown(pollId));
   }
 };
 
