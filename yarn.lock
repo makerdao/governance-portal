@@ -1423,13 +1423,13 @@
     babel-runtime "^6.26.0"
     ramda "^0.26.1"
 
-"@makerdao/dai-plugin-governance@0.12.2":
-  version "0.12.2"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.12.2.tgz#897a8f1fbfd8fd57ffc5d471a740ee7de86cf4b0"
-  integrity sha512-kYWmpBkz71lrIRLPl3+CZNQDB7uYvDlcn7Mi3JXgdj4dSk3foPk2a2Qwy5TGLLWeJFZlGFa5rxjTdj55wnJRwQ==
+"@makerdao/dai-plugin-governance@0.12.7":
+  version "0.12.7"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.12.7.tgz#e958177fd0a852783d164a0c3118d2af303d17d1"
+  integrity sha512-G1xTflGkhH1DC7h2WUbJKm8a6ZdGP5HLLBDUmotEHPEHsTYGq3ZNRIvOTqOPU+CMW66A/7T5Dh18/aspBMHrsw==
   dependencies:
     "@makerdao/currency" ">=0.9.0"
-    "@makerdao/services-core" ">=0.9.0"
+    "@makerdao/services-core" "^0.10.0"
     assert "^2.0.0"
     debug "^4.1.1"
     ramda "^0.25.0"
@@ -1509,7 +1509,7 @@
     lodash "^4.17.11"
     ws "^7.2.0"
 
-"@makerdao/services-core@>=0.9.0":
+"@makerdao/services-core@^0.10.0":
   version "0.10.0"
   resolved "https://registry.yarnpkg.com/@makerdao/services-core/-/services-core-0.10.0.tgz#8bedfe0867d84f35c13989e349128869da15fa83"
   integrity sha512-z37erX5B09dZ8raIqoEgCSoeYms8wMAEFI12x2+AmuuO+XBiPKGGj6UwGYQhnIeIVD26wKv/+s7ozEXdntGYrQ==

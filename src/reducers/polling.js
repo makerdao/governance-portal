@@ -308,17 +308,21 @@ export const getVoteBreakdown = async (pollId, options, endDate) => {
   return voteBreakdown;
 };
 
-export const getTotalVotes = async pollId => {
-  const totalVotes = await window.maker
-    .service('govPolling')
-    .getMkrAmtVoted(pollId);
+export const getTotalVotes = async (pollId, rankedChoice) => {
+  const totalVotes = rankedChoice
+    ? await window.maker
+        .service('govPolling')
+        .getMkrAmtVotedRankedChoice(pollId)
+    : await window.maker.service('govPolling').getMkrAmtVoted(pollId);
   return totalVotes.toNumber();
 };
 
-export const getParticipation = async pollId => {
-  const participation = await window.maker
-    .service('govPolling')
-    .getPercentageMkrVoted(pollId);
+export const getParticipation = async (pollId, rankedChoice) => {
+  const participation = rankedChoice
+    ? await window.maker
+        .service('govPolling')
+        .getPercentageMkrVotedRankedChoice(pollId)
+    : await window.maker.service('govPolling').getPercentageMkrVoted(pollId);
   return participation;
 };
 
@@ -416,16 +420,17 @@ export const getTalliedBallot = async (pollId, options) => {
 export const pollDataInit = poll => dispatch => {
   if (!poll) return;
   const { pollId, options, endDate, active, vote_type } = poll;
-  getTotalVotes(pollId).then(totalVotes =>
+  const rankedChoice = vote_type.includes('Ranked Choice IRV');
+  getTotalVotes(pollId, rankedChoice).then(totalVotes =>
     dispatch(updatePoll(pollId, { totalVotes }))
   );
-  getParticipation(pollId).then(participation =>
+  getParticipation(pollId, rankedChoice).then(participation =>
     dispatch(updatePoll(pollId, { participation }))
   );
   getNumUniqueVoters(pollId).then(numUniqueVoters =>
     dispatch(updatePoll(pollId, { numUniqueVoters }))
   );
-  if (vote_type.includes('Ranked Choice IRV')) {
+  if (rankedChoice) {
     dispatch(updatePoll(pollId, { ballotFetching: true }));
 
     getTalliedBallot(pollId, options, endDate).then(
