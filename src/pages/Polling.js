@@ -668,16 +668,20 @@ class Polling extends React.Component {
 
   updateVotedPollOption = async () => {
     if (!this.props.poll || !this.state.activeAccount) return null;
-    await Promise.all([
-      this.props.getOptionVotingFor(
+    const rankedChoice = this.props.poll.vote_type.includes(
+      'Ranked Choice IRV'
+    );
+    if (rankedChoice) {
+      await this.props.getOptionVotingForRankedChoice(
         this.state.activeAccount.address,
         this.props.poll.pollId
-      ),
-      this.props.getOptionVotingForRankedChoice(
+      );
+    } else {
+      await this.props.getOptionVotingFor(
         this.state.activeAccount.address,
         this.props.poll.pollId
-      )
-    ]);
+      );
+    }
     this.setState({
       voteStateFetching: false
     });
