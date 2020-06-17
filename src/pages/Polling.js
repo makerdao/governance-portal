@@ -896,7 +896,8 @@ class Polling extends React.Component {
                           {active ? 'INSTANT RUNOFF LEADER ' : 'POLL WINNER'}
                         </span>
                         <div style={{ color: 'rgb(71, 73, 95)' }}>
-                          {options[parseInt(winner) - 1]
+                          {options[parseInt(winner) - 1] ||
+                          options[parseInt(winner) - 1] === 0
                             ? options[parseInt(winner) - 1]
                             : null}
                         </div>
