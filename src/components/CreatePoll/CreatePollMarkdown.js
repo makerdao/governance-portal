@@ -81,6 +81,7 @@ const DropdownText = styled.p`
 `;
 
 export default function CreatePollMarkdown({
+  categories,
   voteTypes,
   parentState,
   addPollOption,
@@ -94,6 +95,7 @@ export default function CreatePollMarkdown({
     summary,
     start,
     end,
+    category,
     link,
     option,
     choices,
@@ -232,6 +234,25 @@ export default function CreatePollMarkdown({
             )}
             value={selectedVoteType}
             onSelect={value => handleParentState({ selectedVoteType: value })}
+            allowEmpty={false}
+          />
+        </Box>
+      </SectionWrapper>
+
+      <SectionWrapper>
+        <StyledBody>Category:</StyledBody>
+        <Box width="600px">
+          <Dropdown
+            color="light_grey2"
+            items={categories}
+            renderItem={item => (
+              <DropdownText width="225px">{item}</DropdownText>
+            )}
+            renderRowItem={item => (
+              <DropdownText width="225px">{item}</DropdownText>
+            )}
+            value={category}
+            onSelect={value => handleParentState({ category: value })}
             allowEmpty={false}
           />
         </Box>
