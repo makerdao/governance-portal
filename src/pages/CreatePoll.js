@@ -54,7 +54,7 @@ const ContentWrapper = styled(Card)`
 const ABSTAIN = 'Abstain';
 const voteTypes = ['Ranked Choice IRV', 'Plurality Voting'];
 const categories = [
-  'System Risk Variables ',
+  'System Risk Variables',
   'Protocol Changes',
   'Procedural Changes',
   'MIPs',
