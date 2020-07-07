@@ -53,10 +53,20 @@ const ContentWrapper = styled(Card)`
 
 const ABSTAIN = 'Abstain';
 const voteTypes = ['Ranked Choice IRV', 'Plurality Voting'];
+const categories = [
+  'System Risk Variables',
+  'Protocol Changes',
+  'Procedural Changes',
+  'MIPs',
+  'Oracles',
+  'Collateral Onboarding',
+  'Other'
+];
 
 const INITIAL_POLL_STATE = {
   title: '',
   summary: '',
+  category: categories[0],
   selectedVoteType: voteTypes[0],
   start: POLL_DEFAULT_START,
   end: POLL_DEFAULT_END,
@@ -103,6 +113,7 @@ class CreatePoll extends Component {
     const {
       title,
       summary,
+      category,
       link,
       choices,
       content,
@@ -112,7 +123,7 @@ class CreatePoll extends Component {
       (acc, opt, idx) => `${acc}   ${idx}: ${opt}\n`,
       ''
     );
-    const yml = `---\ntitle: ${title}\nsummary: ${summary}\ndiscussion_link: ${link}\nvote_type: ${selectedVoteType}\noptions:\n${choiceString}---\n`;
+    const yml = `---\ntitle: ${title}\nsummary: ${summary}\ncategory: ${category}\ndiscussion_link: ${link}\nvote_type: ${selectedVoteType}\noptions:\n${choiceString}---\n`;
     const md = `# Poll: ${title}\n\n${content}`;
     const ipfsHash = await generateIPFSHash(`${yml}${md}`, {
       encoding: 'ascii'
@@ -196,6 +207,7 @@ class CreatePoll extends Component {
               case 0:
                 return (
                   <CreatePollMarkdown
+                    categories={categories}
                     voteTypes={voteTypes}
                     parentState={this.state}
                     addPollOption={this.addPollOption}
