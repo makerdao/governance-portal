@@ -131,7 +131,7 @@ export const netToUri = network => {
       return `https://eth-kovan.alchemyapi.io/v2/${process.env
         .REACT_APP_KOVAN_ALCHEMY_KEY || '_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC'}`;
     default:
-      return `https://eth-mainnet.alchemyapi.io/v2/${process.env
+      return `https://eth-kovan.alchemyapi.io/v2/${process.env
         .REACT_APP_MAINNET_ALCHEMY_KEY || '_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC'}`;
   }
 };
