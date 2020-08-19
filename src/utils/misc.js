@@ -101,7 +101,7 @@ export const formatDateWithTime = dateString => {
     day: 'numeric',
     hour: 'numeric',
     minute: 'numeric',
-    hour12: false,
+    hourCycle: 'h23',
     timeZone: 'UTC',
     timeZoneName: 'short'
   };
