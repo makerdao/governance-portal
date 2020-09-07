@@ -209,13 +209,14 @@ const formatYamlToJson = async data => {
       'Invalid poll document: no options or title field found in front matter'
     );
   const { content } = json;
-  const {
+  let {
     title,
     summary,
     options,
     discussion_link,
     vote_type = 'Plurality Voting'
   } = json.data;
+  if (json.data['vote type']) vote_type = json.data['vote type'];
   return {
     voteId: data.voteId
       ? data.voteId
