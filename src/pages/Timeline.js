@@ -309,9 +309,12 @@ const Timeline = ({
                           : ''}
                       </Bold>
                       .
-                      {` Available for execution on ${formatDateWithTime(
-                        proposal.eta
-                      )}`}
+                      {` Available for execution on ${
+                        proposal.source.toLowerCase() ===
+                        '0x2d72e95685c39a7f85327d7a7f8d752aa82b62e9'
+                          ? 'Sept 8, 2020, 14:00 UTC'
+                          : formatDateWithTime(proposal.eta)
+                      }`}
                       .
                     </Tag>
                   </div>
