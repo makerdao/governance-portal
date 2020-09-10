@@ -1,5 +1,6 @@
 import matter from 'gray-matter';
 import uniqBy from 'lodash.uniqby';
+import sortBy from 'lodash.sortby';
 import BigNumber from 'bignumber.js';
 import { createReducer } from '../utils/redux';
 import { formatRound, check } from '../utils/misc';
@@ -149,13 +150,20 @@ export const withdrawVoteForPoll = pollId => async dispatch => {
 // Reads ---
 
 const getAllWhiteListedPolls = async () => {
-  const pollsList = await window.maker
-    .service('govPolling')
-    .getAllWhitelistedPolls();
+  let polls = await window.maker.service('govPolling').getAllWhitelistedPolls();
 
-  const uniqPolls = uniqBy(pollsList, p => p.multiHash);
-  // Don't process polls where startDate is in the future
-  const polls = uniqPolls.filter(poll => poll.startDate <= new Date());
+  polls = uniqBy(polls, p => p.multiHash);
+
+  // Don't show polls where startDate is in the future
+  polls = polls.filter(poll => poll.startDate <= new Date());
+
+  // quick-&-dirty removal of buggy polls
+  const exclude = ['qmycaaypv6cobvhh2jqckub1ryzu4n6swpvqq2eopw2s8g'];
+  polls = polls.filter(poll => !exclude.includes(poll.multiHash.toLowerCase()));
+
+  // truncate results to improve performance
+  polls = sortBy(polls, p => -p.startDate).slice(0, 100);
+
   return polls;
 };
 
