@@ -94,7 +94,7 @@ export const voteForPoll = (pollId, optionId) => async dispatch => {
   const optionIdToVoteFor = parseInt(optionId) + 1;
   const pollVote = window.maker
     .service('govPolling')
-    .vote(pollId, optionIdToVoteFor);
+    .voteLegacy(pollId, optionIdToVoteFor);
   const success = await handleTx({
     txObject: pollVote,
     prefix: 'VOTE',
@@ -112,7 +112,7 @@ export const voteForRankedChoicePoll = (pollId, rankings) => async dispatch => {
 
   const pollVote = window.maker
     .service('govPolling')
-    .voteRankedChoice(pollId, rankings);
+    .voteRankedChoiceLegacy(pollId, rankings);
 
   const success = await handleTx({
     txObject: pollVote,
@@ -134,7 +134,7 @@ export const voteForRankedChoicePoll = (pollId, rankings) => async dispatch => {
 export const withdrawVoteForPoll = pollId => async dispatch => {
   dispatch({ type: POLL_VOTE_REQUEST });
 
-  const pollVote = window.maker.service('govPolling').vote(pollId, 0);
+  const pollVote = window.maker.service('govPolling').voteLegacy(pollId, 0);
   const success = await handleTx({
     txObject: pollVote,
     prefix: 'VOTE',
