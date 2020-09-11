@@ -997,6 +997,7 @@ function VoteBreakdownRankedChoice({ poll }) {
         <>
           {sortedBallot.map(
             ({
+              winner,
               firstChoice,
               firstPct,
               transferPct,
@@ -1009,7 +1010,7 @@ function VoteBreakdownRankedChoice({ poll }) {
                   style={{ display: 'flex', justifyContent: 'space-between' }}
                 >
                   <div>{option}</div>
-                  {eliminated ? (
+                  {eliminated && !winner ? (
                     '0 MKR (0%)'
                   ) : (
                     <div>
@@ -1053,7 +1054,7 @@ function VoteBreakdownRankedChoice({ poll }) {
                       }}
                     />
                   </Tooltip>
-                  {eliminated ? (
+                  {eliminated && !winner ? (
                     <Tooltip
                       color="steel"
                       fontSize="m"
