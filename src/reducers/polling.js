@@ -162,9 +162,9 @@ const getAllWhiteListedPolls = async () => {
   polls = polls.filter(poll => !exclude.includes(poll.multiHash.toLowerCase()));
 
   // truncate results to improve performance
-  polls = sortBy(polls, p => -p.startDate).slice(0, 60);
+  const latestPolls = sortBy(polls, p => -p.startDate).slice(0, 60);
 
-  return polls;
+  return latestPolls;
 };
 
 export const getOptionVotingFor = (address, pollId) => async dispatch => {
