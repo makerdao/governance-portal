@@ -131,7 +131,7 @@ async function extractProposalsAndGetSdkInfo(topics, network) {
   }, []);
   return Promise.all(
     proposals.map(async p => {
-      if (!p.govVote) {
+      if (!p.govVote && !p.active) {
         try {
           const [eta, executed] = await Promise.all([
             window.maker.service('spell').getEta(p.source),
@@ -157,16 +157,12 @@ async function extractProposalsAndGetSdkInfo(topics, network) {
 export const proposalsInit = network => async dispatch => {
   dispatch({ type: PROPOSALS_REQUEST, payload: {} });
   try {
-    const _topics = await promiseRetry({
+    const topics = await promiseRetry({
       fn: fetchTopics,
       args: [network],
       times: 4,
       delay: 1
     });
-
-    const topics = _topics
-      .filter(proposal => proposal.active)
-      .filter(proposal => !proposal.govVote);
 
     dispatch({
       type: PROPOSALS_SUCCESS,
