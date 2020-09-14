@@ -131,7 +131,7 @@ async function extractProposalsAndGetSdkInfo(topics, network) {
   }, []);
   return Promise.all(
     proposals.map(async p => {
-      if (!p.govVote && !p.active) {
+      if (!p.govVote) {
         try {
           const [eta, executed] = await Promise.all([
             window.maker.service('spell').getEta(p.source),
