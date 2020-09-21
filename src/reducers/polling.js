@@ -162,7 +162,7 @@ const getAllWhiteListedPolls = async () => {
   polls = polls.filter(poll => !exclude.includes(poll.multiHash.toLowerCase()));
 
   // truncate results to improve performance
-  const latestPolls = sortBy(polls, p => -p.startDate).slice(0, 25);
+  const latestPolls = sortBy(polls, p => -p.startDate).slice(0, 50);
 
   return latestPolls;
 };
