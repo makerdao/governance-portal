@@ -391,6 +391,64 @@ export const pollsInit = () => async dispatch => {
   }
 };
 
+export const fetchSinglePoll = pollSlug => {
+  return new Promise(async (res, rej) => {
+    let polls = await window.maker
+      .service('govPolling')
+      .getAllWhitelistedPolls();
+
+    polls = uniqBy(polls, p => p.multiHash);
+
+    // Don't show polls where startDate is in the future
+    polls = polls.filter(poll => poll.startDate <= new Date());
+
+    // quick-&-dirty removal of buggy polls
+    const exclude = ['qmycaaypv6cobvhh2jqckub1ryzu4n6swpvqq2eopw2s8g'];
+    polls = polls.filter(
+      poll => !exclude.includes(poll.multiHash.toLowerCase())
+    );
+
+    try {
+      let pollsRemaining = polls.length;
+      function onPollFetchAttempt() {
+        pollsRemaining--;
+        if (pollsRemaining === 0) rej('Poll not found');
+      }
+      for (const poll of polls) {
+        fetchPollFromUrl(poll.url)
+          .then(async pollDocument => {
+            if (pollDocument === null)
+              throw new Error(
+                `Error fetching data for poll with ID ${poll.pollId}`
+              );
+            try {
+              const documentData = await formatYamlToJson(pollDocument);
+              const pollData = { ...poll, ...documentData };
+              pollData.active = isPollActive(
+                pollData.startDate,
+                pollData.endDate
+              );
+              pollData.source = window.maker
+                .service('smartContract')
+                .getContract('POLLING').address;
+              if (toSlug(pollData.voteId) === pollSlug) {
+                res('Poll found');
+                dispatch(addPoll(pollData));
+              }
+            } catch (e) {
+              throw e;
+            }
+          })
+          .catch(e => console.error(e))
+          .finally(onPollFetchAttempt);
+      }
+    } catch (error) {
+      console.error(error);
+      rej('Poll not found');
+    }
+  });
+};
+
 export const getTalliedBallot = async (pollId, options) => {
   const tally = await window.maker
     .service('govPolling')
@@ -426,8 +484,9 @@ export const getTalliedBallot = async (pollId, options) => {
   return { ballot, winner, rounds, totalMkrParticipation };
 };
 
-export const pollDataInit = poll => dispatch => {
-  if (!poll) return;
+export const pollDataInit = (poll, pollSlug) => async dispatch => {
+  if (!poll && pollSlug) await fetchSinglePoll();
+  if (!poll && !pollSlug) return;
   const { pollId, options, endDate, active, vote_type } = poll;
   const rankedChoice = vote_type.includes('Ranked Choice IRV');
   getTotalVotes(pollId, rankedChoice).then(totalVotes =>

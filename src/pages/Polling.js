@@ -656,13 +656,14 @@ class Polling extends React.Component {
       this.state.activeAccount !== prevProps.activeAccount ||
       (this.props.poll && prevProps.poll === undefined)
     ) {
-      this.props.pollDataInit(this.props.poll);
+      this.props.pollDataInit(this.props.poll, this.props.pollSlug);
       this.updateVotedPollOption();
     }
   }
 
   componentDidMount() {
-    if (!!this.props.poll) this.props.pollDataInit(this.props.poll);
+    if (!!this.props.poll)
+      this.props.pollDataInit(this.props.poll, this.props.pollSlug);
     this.updateVotedPollOption();
   }
 
@@ -1208,14 +1209,10 @@ const reduxProps = (state, { match }) => {
     ? accounts.allAccounts.find(a => eq(a.address, accounts.activeAccount))
     : null;
 
-  if (poll && poll.legacyPoll) {
-    const winningProp = getWinningProp(state, poll.pollId);
-    poll.winningProposal = winningProp ? winningProp.title : 'Not applicable';
-  }
-
   return {
     poll,
     pollsFetching,
+    pollSlug,
     activeAccount,
     accountDataFetching: accounts.fetching,
     canVote: activeCanVote({ accounts }),
