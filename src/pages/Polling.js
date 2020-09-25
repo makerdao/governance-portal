@@ -14,7 +14,6 @@ import NotFound from './NotFound';
 import { VotingWeightBanner } from './PollingList';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import { modalOpen } from '../reducers/modal';
-import { getWinningProp } from '../reducers/proposals';
 import {
   getOptionVotingFor,
   getOptionVotingForRankedChoice,
@@ -662,8 +661,7 @@ class Polling extends React.Component {
   }
 
   componentDidMount() {
-    if (!!this.props.poll)
-      this.props.pollDataInit(this.props.poll, this.props.pollSlug);
+    this.props.pollDataInit(this.props.poll, this.props.pollSlug);
     this.updateVotedPollOption();
   }
 
