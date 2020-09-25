@@ -221,7 +221,7 @@ const PollingList = ({
   approvals,
   pollsFetching
 }) => {
-  polls.sort((a, b) => b.startDate - a.startDate);
+  polls.sort((a, b) => b.endDate - a.endDate);
   const winningProposal = poll => {
     if (poll.legacyPoll) {
       const wp = getWinningProp({ proposals, approvals }, poll.pollId);

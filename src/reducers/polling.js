@@ -3,7 +3,7 @@ import uniqBy from 'lodash.uniqby';
 import sortBy from 'lodash.sortby';
 import BigNumber from 'bignumber.js';
 import { createReducer } from '../utils/redux';
-import { formatRound, check } from '../utils/misc';
+import { formatRound, check, toSlug } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { TransactionStatus } from '../utils/constants';
 import { generateIPFSHash } from '../utils/ipfs';
@@ -391,7 +391,8 @@ export const pollsInit = () => async dispatch => {
   }
 };
 
-export const fetchSinglePoll = pollSlug => {
+export const fetchSinglePoll = pollSlug => dispatch => {
+  dispatch(pollsRequest());
   return new Promise(async (res, rej) => {
     let polls = await window.maker
       .service('govPolling')
@@ -412,7 +413,7 @@ export const fetchSinglePoll = pollSlug => {
       let pollsRemaining = polls.length;
       function onPollFetchAttempt() {
         pollsRemaining--;
-        if (pollsRemaining === 0) rej('Poll not found');
+        if (pollsRemaining === 0) return;
       }
       for (const poll of polls) {
         fetchPollFromUrl(poll.url)
@@ -434,6 +435,7 @@ export const fetchSinglePoll = pollSlug => {
               if (toSlug(pollData.voteId) === pollSlug) {
                 res('Poll found');
                 dispatch(addPoll(pollData));
+                dispatch(pollsSuccess());
               }
             } catch (e) {
               throw e;
@@ -445,6 +447,7 @@ export const fetchSinglePoll = pollSlug => {
     } catch (error) {
       console.error(error);
       rej('Poll not found');
+      dispatch(pollsFailure());
     }
   });
 };
@@ -484,8 +487,14 @@ export const getTalliedBallot = async (pollId, options) => {
   return { ballot, winner, rounds, totalMkrParticipation };
 };
 
-export const pollDataInit = (poll, pollSlug) => async dispatch => {
-  if (!poll && pollSlug) await fetchSinglePoll();
+export const pollDataInit = (poll, pollSlug) => async (dispatch, getState) => {
+  if (!poll && !!pollSlug) {
+    await dispatch(fetchSinglePoll(pollSlug));
+    console.log(getState(), 'getState');
+    poll = getState().polling.polls.find(({ voteId }) => {
+      return toSlug(voteId) === pollSlug;
+    });
+  }
   if (!poll && !pollSlug) return;
   const { pollId, options, endDate, active, vote_type } = poll;
   const rankedChoice = vote_type.includes('Ranked Choice IRV');
