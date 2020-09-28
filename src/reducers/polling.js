@@ -3,7 +3,7 @@ import uniqBy from 'lodash.uniqby';
 import sortBy from 'lodash.sortby';
 import BigNumber from 'bignumber.js';
 import { createReducer } from '../utils/redux';
-import { formatRound, check } from '../utils/misc';
+import { formatRound, check, toSlug } from '../utils/misc';
 import { addToastWithTimeout, ToastTypes } from './toasts';
 import { TransactionStatus } from '../utils/constants';
 import { generateIPFSHash } from '../utils/ipfs';
@@ -162,7 +162,7 @@ const getAllWhiteListedPolls = async () => {
   polls = polls.filter(poll => !exclude.includes(poll.multiHash.toLowerCase()));
 
   // truncate results to improve performance
-  const latestPolls = sortBy(polls, p => -p.startDate).slice(0, 60);
+  const latestPolls = sortBy(polls, p => -p.startDate).slice(0, 50);
 
   return latestPolls;
 };
@@ -264,7 +264,7 @@ export const updateVoteBreakdown = pollId => (dispatch, getState) => {
         numUniqueVoters
       })
     );
-    setTimeout(() => checkForVoteBreakdownUpdates(triesRemaining - 1), 1000);
+    // setTimeout(() => checkForVoteBreakdownUpdates(triesRemaining - 1), 1000);
   }
 
   const NUM_TRIES = 6;
@@ -358,7 +358,8 @@ export const pollsInit = () => async dispatch => {
     let pollsRemaining = polls.length;
     function onPollFetchAttempt() {
       pollsRemaining--;
-      if (pollsRemaining === 0) dispatch(pollsSuccess());
+      if (pollsRemaining === 0)
+        setTimeout(() => dispatch(pollsSuccess()), 1000);
     }
     for (const poll of polls) {
       fetchPollFromUrl(poll.url)
@@ -387,8 +388,70 @@ export const pollsInit = () => async dispatch => {
     }
   } catch (error) {
     console.error(error);
-    dispatch(pollsFailure());
+    setTimeout(() => dispatch(pollsFailure()), 1000);
   }
+};
+
+export const fetchSinglePoll = pollSlug => dispatch => {
+  dispatch(pollsRequest());
+  return new Promise(async (res, rej) => {
+    let polls = await window.maker
+      .service('govPolling')
+      .getAllWhitelistedPolls();
+
+    polls = uniqBy(polls, p => p.multiHash);
+
+    // Don't show polls where startDate is in the future
+    polls = polls.filter(poll => poll.startDate <= new Date());
+
+    // quick-&-dirty removal of buggy polls
+    const exclude = ['qmycaaypv6cobvhh2jqckub1ryzu4n6swpvqq2eopw2s8g'];
+    polls = polls.filter(
+      poll => !exclude.includes(poll.multiHash.toLowerCase())
+    );
+
+    try {
+      let pollsRemaining = polls.length;
+      function onPollFetchAttempt() {
+        pollsRemaining--;
+        if (pollsRemaining === 0) return;
+      }
+      for (const poll of polls) {
+        dispatch(pollsRequest());
+        fetchPollFromUrl(poll.url)
+          .then(async pollDocument => {
+            if (pollDocument === null)
+              throw new Error(
+                `Error fetching data for poll with ID ${poll.pollId}`
+              );
+            try {
+              const documentData = await formatYamlToJson(pollDocument);
+              const pollData = { ...poll, ...documentData };
+              pollData.active = isPollActive(
+                pollData.startDate,
+                pollData.endDate
+              );
+              pollData.source = window.maker
+                .service('smartContract')
+                .getContract('POLLING').address;
+              if (toSlug(pollData.voteId) === pollSlug) {
+                res('Poll found');
+                dispatch(addPoll(pollData));
+                dispatch(pollsSuccess());
+              }
+            } catch (e) {
+              throw e;
+            }
+          })
+          .catch(e => console.error(e))
+          .finally(onPollFetchAttempt);
+      }
+    } catch (error) {
+      console.error(error);
+      rej('Poll not found');
+      dispatch(pollsFailure());
+    }
+  });
 };
 
 export const getTalliedBallot = async (pollId, options) => {
@@ -426,8 +489,15 @@ export const getTalliedBallot = async (pollId, options) => {
   return { ballot, winner, rounds, totalMkrParticipation };
 };
 
-export const pollDataInit = poll => dispatch => {
-  if (!poll) return;
+export const pollDataInit = (poll, pollSlug) => async (dispatch, getState) => {
+  if (!poll && !!pollSlug) {
+    await dispatch(fetchSinglePoll(pollSlug));
+    poll = getState().polling.polls.find(({ voteId }) => {
+      return toSlug(voteId) === pollSlug;
+    });
+    if (!poll) return;
+  }
+  if (!poll && !pollSlug) return;
   const { pollId, options, endDate, active, vote_type } = poll;
   const rankedChoice = vote_type.includes('Ranked Choice IRV');
   getTotalVotes(pollId, rankedChoice).then(totalVotes =>

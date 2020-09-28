@@ -145,7 +145,6 @@ describe('async actions', () => {
     const network = 'mainnet';
     await store.dispatch(reducer.init(network));
 
-    expect(tally.voteTallyInit).toBeCalledTimes(1);
     expect(proposals.proposalsInit).toBeCalledTimes(1);
     expect(proposals.proposalsInit).toBeCalledWith(network);
     expect(polling.pollsInit).toBeCalledTimes(1);
@@ -168,7 +167,7 @@ describe('async actions', () => {
       type: reducer.UPDATE_NETWORK,
       payload: { network }
     });
-    expect(store.getActions().length).toBe(13);
+    expect(store.getActions().length).toBe(10);
   });
 
   test.skip('init with an invalid network, and no web3 accounts', async () => {
@@ -226,7 +225,7 @@ describe('async actions', () => {
           obj.payload === mockDefaultAccount
       )
     ).toBeTruthy();
-    expect(storeActions.length).toBe(17);
+    expect(storeActions.length).toBe(14);
   });
 
   test('initWeb3Accounts and update address with web3 default address', async () => {

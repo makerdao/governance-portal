@@ -138,12 +138,12 @@ export const init = (maker, network = 'mainnet') => async dispatch => {
   dispatch(connectSuccess(network));
   dispatch(updateNetwork(network));
   dispatch(updateMaker(maker));
-  dispatch(voteTallyInit());
+  setTimeout(() => dispatch(voteTallyInit()), 3000);
   dispatch(proposalsInit(network));
   dispatch(hatInit());
   dispatch(ethInit());
   dispatch(pollsInit());
-  dispatch(esmInit());
+  setTimeout(() => dispatch(esmInit()), 5000);
   await dispatch(initWeb3Accounts());
   dispatch(pollForMetamaskChanges());
 };

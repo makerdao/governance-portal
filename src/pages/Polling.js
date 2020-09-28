@@ -14,7 +14,6 @@ import NotFound from './NotFound';
 import { VotingWeightBanner } from './PollingList';
 import { activeCanVote, getActiveVotingFor } from '../reducers/accounts';
 import { modalOpen } from '../reducers/modal';
-import { getWinningProp } from '../reducers/proposals';
 import {
   getOptionVotingFor,
   getOptionVotingForRankedChoice,
@@ -656,13 +655,13 @@ class Polling extends React.Component {
       this.state.activeAccount !== prevProps.activeAccount ||
       (this.props.poll && prevProps.poll === undefined)
     ) {
-      this.props.pollDataInit(this.props.poll);
+      this.props.pollDataInit(this.props.poll, this.props.pollSlug);
       this.updateVotedPollOption();
     }
   }
 
   componentDidMount() {
-    if (!!this.props.poll) this.props.pollDataInit(this.props.poll);
+    this.props.pollDataInit(this.props.poll, this.props.pollSlug);
     this.updateVotedPollOption();
   }
 
@@ -1010,14 +1009,10 @@ function VoteBreakdownRankedChoice({ poll }) {
                   style={{ display: 'flex', justifyContent: 'space-between' }}
                 >
                   <div>{option}</div>
-                  {eliminated && !winner ? (
-                    '0 MKR (0%)'
-                  ) : (
-                    <div>
-                      {firstChoice.plus(transfer).toFixed(1)} MKR (
-                      {firstPct.plus(transferPct).toFixed(1)}%)
-                    </div>
-                  )}
+                  <div>
+                    {firstChoice.plus(transfer).toFormat(2)} MKR (
+                    {firstPct.plus(transferPct).toFormat(2)}%)
+                  </div>
                 </div>
                 <div
                   style={{
@@ -1038,7 +1033,17 @@ function VoteBreakdownRankedChoice({ poll }) {
                           color="darkLavender"
                           lineHeight="normal"
                         >
-                          {firstChoice.toFixed(1)} MKR ({firstPct.toFixed(1)}
+                          + {firstChoice.toFormat(2)} MKR (
+                          {firstPct.toFormat(2)} %)
+                        </Text.p>
+                        <Text.h4 fontSize="1.5rem">Transfer votes</Text.h4>
+                        <Text.p
+                          t="caption"
+                          color="darkLavender"
+                          lineHeight="normal"
+                        >
+                          {transfer.toNumber() > 0 && '+'}
+                          {transfer.toFormat(2)} MKR ({transferPct.toFormat(2)}
                           %)
                         </Text.p>
                       </CardUI>
@@ -1049,54 +1054,120 @@ function VoteBreakdownRankedChoice({ poll }) {
                         position: 'absolute',
                         height: '6px',
                         background: 'rgb(110, 220, 208)',
-                        width: `${firstPct.toFixed(1)}%`,
+                        width: `${firstPct.toFormat(2)}%`,
                         zIndex: '2'
                       }}
                     />
                   </Tooltip>
                   {eliminated && !winner ? (
-                    <Tooltip
-                      color="steel"
-                      fontSize="m"
-                      content={
-                        <CardUI px="m" py="s" bg="white" maxWidth="30rem">
-                          <Text.h4 fontSize="1.5rem">Transfer votes</Text.h4>
-                          <Text.p
-                            t="caption"
-                            color="darkLavender"
-                            lineHeight="normal"
-                          >
-                            - {firstChoice.toFixed(1)} MKR (
-                            {firstPct.toFixed(1)}
-                            %)
-                          </Text.p>
-                        </CardUI>
-                      }
-                    >
-                      <div
-                        style={{
-                          position: 'absolute',
-                          height: '6px',
-                          background: `rgb(${colors['light_grey2']})`,
-                          width: `${firstPct.toFixed(1)}%`,
-                          zIndex: '3'
-                        }}
-                      />
-                    </Tooltip>
+                    transfer.toNumber() < 0 ? (
+                      <Tooltip
+                        color="steel"
+                        fontSize="m"
+                        content={
+                          <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                            <Text.h4 fontSize="1.5rem">
+                              First choice votes
+                            </Text.h4>
+                            <Text.p
+                              t="caption"
+                              color="darkLavender"
+                              lineHeight="normal"
+                            >
+                              + {firstChoice.toFormat(2)} MKR (
+                              {firstPct.toFormat(2)} %)
+                            </Text.p>
+                            <Text.h4 fontSize="1.5rem">Transfer votes</Text.h4>
+                            <Text.p
+                              t="caption"
+                              color="darkLavender"
+                              lineHeight="normal"
+                            >
+                              {transfer.toFormat(2)} MKR (
+                              {transferPct.toFormat(2)}
+                              %)
+                            </Text.p>
+                          </CardUI>
+                        }
+                      >
+                        <div
+                          style={{
+                            position: 'absolute',
+                            height: '6px',
+                            background: `rgb(${colors['light_grey2']})`,
+                            left: `${firstPct.plus(transferPct).toFormat(2)}%`,
+                            width: `${transferPct.times(-1).toFormat(2)}%`,
+                            zIndex: '4'
+                          }}
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip
+                        color="steel"
+                        fontSize="m"
+                        content={
+                          <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                            <Text.h4 fontSize="1.5rem">
+                              First choice votes
+                            </Text.h4>
+                            <Text.p
+                              t="caption"
+                              color="darkLavender"
+                              lineHeight="normal"
+                            >
+                              + {firstChoice.toFormat(2)} MKR (
+                              {firstPct.toFormat(2)} %)
+                            </Text.p>
+                            <Text.h4 fontSize="1.5rem">Transfer votes</Text.h4>
+                            <Text.p
+                              t="caption"
+                              color="darkLavender"
+                              lineHeight="normal"
+                            >
+                              + {transfer.toFormat(2)} MKR (
+                              {transferPct.toFormat(2)}
+                              %)
+                            </Text.p>
+                          </CardUI>
+                        }
+                      >
+                        <div
+                          style={{
+                            position: 'absolute',
+                            height: '6px',
+                            background: 'rgb(182, 237, 231)',
+                            left: `${firstPct.toFormat(2)}%`,
+                            width: `${transferPct.toFormat(2)}%`,
+                            zIndex: '4'
+                          }}
+                        />
+                      </Tooltip>
+                    )
                   ) : (
                     <Tooltip
                       color="steel"
                       fontSize="m"
                       content={
                         <CardUI px="m" py="s" bg="white" maxWidth="30rem">
+                          <Text.h4 fontSize="1.5rem">
+                            First choice votes
+                          </Text.h4>
+                          <Text.p
+                            t="caption"
+                            color="darkLavender"
+                            lineHeight="normal"
+                          >
+                            + {firstChoice.toFormat(2)} MKR (
+                            {firstPct.toFormat(2)} %)
+                          </Text.p>
                           <Text.h4 fontSize="1.5rem">Transfer votes</Text.h4>
                           <Text.p
                             t="caption"
                             color="darkLavender"
                             lineHeight="normal"
                           >
-                            + {transfer.toFixed(1)} MKR (
-                            {transferPct.toFixed(1)}
+                            + {transfer.toFormat(2)} MKR (
+                            {transferPct.toFormat(2)}
                             %)
                           </Text.p>
                         </CardUI>
@@ -1107,7 +1178,7 @@ function VoteBreakdownRankedChoice({ poll }) {
                           position: 'absolute',
                           height: '6px',
                           background: 'rgb(182, 237, 231)',
-                          width: `${transferPct.plus(firstPct).toFixed(1)}%`,
+                          width: `${transferPct.plus(firstPct).toFormat(2)}%`,
                           zIndex: '1'
                         }}
                       />
@@ -1136,14 +1207,10 @@ const reduxProps = (state, { match }) => {
     ? accounts.allAccounts.find(a => eq(a.address, accounts.activeAccount))
     : null;
 
-  if (poll && poll.legacyPoll) {
-    const winningProp = getWinningProp(state, poll.pollId);
-    poll.winningProposal = winningProp ? winningProp.title : 'Not applicable';
-  }
-
   return {
     poll,
     pollsFetching,
+    pollSlug,
     activeAccount,
     accountDataFetching: accounts.fetching,
     canVote: activeCanVote({ accounts }),

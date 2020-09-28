@@ -6,7 +6,6 @@ import round from 'lodash.round';
 
 import { createReducer } from '../utils/redux';
 import { initApprovalsFetch } from './approvals';
-import { formatHistoricalPolls } from './polling';
 import { div, mul, promiseRetry, check } from '../utils/misc';
 
 // Constants ----------------------------------------------
@@ -169,7 +168,6 @@ export const proposalsInit = network => async dispatch => {
       type: PROPOSALS_SUCCESS,
       payload: await extractProposalsAndGetSdkInfo(topics, network)
     });
-    dispatch(formatHistoricalPolls(topics));
     dispatch(initApprovalsFetch());
   } catch (err) {
     dispatch({
