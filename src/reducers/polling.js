@@ -358,7 +358,8 @@ export const pollsInit = () => async dispatch => {
     let pollsRemaining = polls.length;
     function onPollFetchAttempt() {
       pollsRemaining--;
-      if (pollsRemaining === 0) dispatch(pollsSuccess());
+      if (pollsRemaining === 0)
+        setTimeout(() => dispatch(pollsSuccess()), 1000);
     }
     for (const poll of polls) {
       fetchPollFromUrl(poll.url)
@@ -387,7 +388,7 @@ export const pollsInit = () => async dispatch => {
     }
   } catch (error) {
     console.error(error);
-    dispatch(pollsFailure());
+    setTimeout(() => dispatch(pollsFailure()), 1000);
   }
 };
 
@@ -416,6 +417,7 @@ export const fetchSinglePoll = pollSlug => dispatch => {
         if (pollsRemaining === 0) return;
       }
       for (const poll of polls) {
+        dispatch(pollsRequest());
         fetchPollFromUrl(poll.url)
           .then(async pollDocument => {
             if (pollDocument === null)
@@ -490,10 +492,10 @@ export const getTalliedBallot = async (pollId, options) => {
 export const pollDataInit = (poll, pollSlug) => async (dispatch, getState) => {
   if (!poll && !!pollSlug) {
     await dispatch(fetchSinglePoll(pollSlug));
-    console.log(getState(), 'getState');
     poll = getState().polling.polls.find(({ voteId }) => {
       return toSlug(voteId) === pollSlug;
     });
+    if (!poll) return;
   }
   if (!poll && !pollSlug) return;
   const { pollId, options, endDate, active, vote_type } = poll;
