@@ -14,6 +14,7 @@ import TillHat from '../components/TillHatMeta';
 import ExtendedLink from '../components/Onboarding/shared/ExtendedLink';
 import { Banner, BannerBody, BannerContent } from '../components/Banner';
 import WithTally from '../components/hocs/WithTally';
+import { Link } from '@makerdao/ui-components-core';
 
 const riseUp = keyframes`
 0% {
@@ -195,6 +196,22 @@ const Timeline = ({
   otherProposals.sort((a, b) => b.end_timestamp - a.end_timestamp);
   return (
     <Fragment>
+      <Banner
+        style={{
+          borderColor: '#FDC134',
+          borderRadius: '50px',
+          textAlign: 'center',
+          fontSize: '14px',
+          padding: '10px 230px',
+          height: 'auto'
+        }}
+      >
+        <div style={{ overflow: 'hidden' }}>
+          Welcome to the legacy Vote Portal. This site is being maintained while
+          we migrate outstanding functionality to the new Vote Portal available
+          at <Link href="https://vote.makerdao.com">vote.makerdao.com</Link>.
+        </div>
+      </Banner>
       {DEV_USE_MIGRATION_BANNER ? <MigrationNotificationBanner /> : null}
       <VoterStatus signaling={signaling} legacy={true} />
       <RiseUp key={otherProposals.toString()}>
