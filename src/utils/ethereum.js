@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import takeLast from 'ramda/src/takeLast';
 
 BigNumber.config({ DECIMAL_PLACES: 18, ROUNDING_MODE: 1 });
-export const INFURA_PROJECT_ID = '912c79d091a74c6a8c0938c3bd2319a0';
+export const ALCHEMY_PROJECT_ID = 'Z8mVj3Mv-Ejd-S97690_uHhlg8nZmvHl';
 
 export const WEI = 1;
 export const GWEI = 1000000000;
@@ -129,9 +129,9 @@ export const netNameToId = name => {
 export const netToUri = network => {
   switch (network) {
     case 'kovan':
-      return `https://${network}.infura.io/v3/${INFURA_PROJECT_ID}`;
+      return `https://eth-${network}.alchemyapi.io/v2/${ALCHEMY_PROJECT_ID}`;
     default:
-      return `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID}`;
+      return `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_PROJECT_ID}`;
   }
 };
 
