@@ -97,8 +97,8 @@ const BannerLink = styled.a`
   font-weight: bold;
 `;
 
-// const DEV_USE_MIGRATION_BANNER = false;
-const HIDE_MIGRATION_BANNER_KEY = 'hide-migration-banner-0.1.1';
+const DEV_USE_MIGRATION_BANNER = false;
+const HIDE_MIGRATION_BANNER_KEY = 'hide-migration-banner-0.1.0';
 
 const hasHiddenMigrationBanner = JSON.parse(
   localStorage.getItem(HIDE_MIGRATION_BANNER_KEY)
@@ -138,16 +138,36 @@ class MigrationNotificationBanner extends React.Component {
         <Content>
           <BannerBody color="#FFFFFF">
             <BannerContent style={{ fontSize: '17px' }}>
-              We are currently experiencing issues with Infura when connecting
-              with Metamask. If you are using Metamask, please create a Custom
-              RPC, you can see how to{' '}
+              {/* <Flex>
+                <NotificationIcon />
+              </Flex> */}
+              We've made a critical update to the Maker Voting Contract. If
+              you've participated in any votes, please visit{' '}
               <BannerLink
-                href="https://www.notion.so/makerdao/How-to-connect-MetaMask-to-a-Custom-RPC-da53e6f2d1f54fb7abf38decc645a80c"
+                href="https://migrate.makerdao.com/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                here
+                migrate.makerdao.com
               </BannerLink>{' '}
+              to withdraw your MKR from the old system. This interface is using
+              the new{' '}
+              <BannerLink
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://etherscan.io/address/0x9ef05f7f6deb616fd37ac3c959a2ddd25a54e4f5"
+              >
+                DSChief
+              </BannerLink>{' '}
+              and{' '}
+              <BannerLink
+                target="_blank"
+                rel="noopener noreferrer"
+                href=" https://etherscan.io/address/0x868ba9aeacA5B73c7C27F3B01588bf4F1339F2bC"
+              >
+                Vote Proxy{' '}
+              </BannerLink>
+              contracts deployed on May 6 2019.
             </BannerContent>
           </BannerBody>
         </Content>
@@ -192,7 +212,7 @@ const Timeline = ({
           at <Link href="https://vote.makerdao.com">vote.makerdao.com</Link>.
         </div>
       </Banner>
-      <MigrationNotificationBanner />
+      {DEV_USE_MIGRATION_BANNER ? <MigrationNotificationBanner /> : null}
       <VoterStatus signaling={signaling} legacy={true} />
       <RiseUp key={otherProposals.toString()}>
         {signaling || !governingProposal ? null : (
