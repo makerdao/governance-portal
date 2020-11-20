@@ -1398,10 +1398,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-4.72.0.tgz#43df23af013ad1135407e5cf33ca6e4c4c7708d5"
   integrity sha512-o+TYF8vBcyySRsb2kqBDv/KMeme8a2nwWoG+lAWzbDmWfb2/MrVWYCVYDYvjXdSoI/Cujqy1i0gIDrkdxa9chA==
 
-"@makerdao/currency@>=0.9.0":
-  version "0.9.7"
-  resolved "https://registry.yarnpkg.com/@makerdao/currency/-/currency-0.9.7.tgz#7b7310cc4feb75ce78330116ae15dad2267040e0"
-  integrity sha512-7N4w25lYwJf105RJZk/WZpxzUMs3GOxSJ4Qg2yro7V1bnsEHaZ0IeyrFOtUfo87Ia3tvld+k9JLG6ykYOxI3kw==
+"@makerdao/currency@0.9.9":
+  version "0.9.9"
+  resolved "https://registry.yarnpkg.com/@makerdao/currency/-/currency-0.9.9.tgz#b5f847362cb4648c30548313f005c80c1c878c9e"
+  integrity sha512-fr6MaiWxQ1IxEaSO8znnhcZTPb8P5ZJU5PS76lx5zAX8CF/ZykfDCX7lb4AMaOVCWajQ8OPN8ekO5a0MOJb3wg==
   dependencies:
     babel-runtime "^6.26.0"
     bignumber.js "^8.1.1"
@@ -1423,12 +1423,12 @@
     babel-runtime "^6.26.0"
     ramda "^0.26.1"
 
-"@makerdao/dai-plugin-governance@0.12.24":
-  version "0.12.24"
-  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.12.24.tgz#28a3fb33333073f0b620496c313636d503098e02"
-  integrity sha512-yCAcc56F5WuVf4uNaPWMB9/c/sqVT6oeLa1SP1MXbvC4Bx3KOM6+hO+VRCh6reYtzjCgMZ1IlZerJrSx89YrhA==
+"@makerdao/dai-plugin-governance@0.12.39":
+  version "0.12.39"
+  resolved "https://registry.yarnpkg.com/@makerdao/dai-plugin-governance/-/dai-plugin-governance-0.12.39.tgz#3a9383856e65f05de5c75fa717d8ace0cc483e8f"
+  integrity sha512-zatSNRLJjbSbx7VfJS0nX8rHy2WGAcNCKRlNeHvL0BafFcs7vuJCgaR68UurR03HatHb+Zw1G/ipO0JlqOf00Q==
   dependencies:
-    "@makerdao/currency" ">=0.9.0"
+    "@makerdao/currency" "0.9.9"
     "@makerdao/services-core" "^0.10.0"
     assert "^2.0.0"
     debug "^4.1.1"
