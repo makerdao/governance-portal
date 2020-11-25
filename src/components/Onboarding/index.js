@@ -45,7 +45,7 @@ const Onboarding = ({ open, step, state, ...props }) => {
     prevStep: props.onboardingPrevStep,
     toStep: props.onboardingToStep,
     setState: props.setOnboardingState,
-    skipPoxy: props.onboardingSkipProxy
+    skipProxy: props.onboardingSkipProxy
   };
 
   return (
@@ -134,7 +134,7 @@ const SingleWalletOnboarding = ({ open, step, onboarding }) => {
         onComplete={onboarding.nextStep}
       />
       <SingleWallet
-        onComplete={() => onboarding.skipPoxy({ step: 2 })}
+        onComplete={() => onboarding.skipProxy({ step: 2 })}
         onCancel={onboarding.prevStep}
       />
       <LockMKR onComplete={onboarding.nextStep} />
