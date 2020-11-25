@@ -29,7 +29,7 @@ export default async function createMaker(
     config.smartContract = {
       addressOverrides: {
         CHIEF: '0x27E0c9567729Ea6e3241DE74B3dE499b7ddd3fe6',
-        VOTE_PROXY_FACTORY: '0xEec40383cbeE179Be76D4D930c0ABD0D4beA672f'
+        VOTE_PROXY_FACTORY: '0x1400798AA746457E467A1eb9b3F3f72C25314429'
       }
     };
   }
