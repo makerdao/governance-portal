@@ -23,6 +23,17 @@ export default async function createMaker(
     }
   };
 
+  // temporary overrides until chief v1.2 is deployed on mainnet.
+  // can be removed when new plugins are released
+  if (network === 'kovan') {
+    config.smartContract = {
+      addressOverrides: {
+        CHIEF: '0x27E0c9567729Ea6e3241DE74B3dE499b7ddd3fe6',
+        VOTE_PROXY_FACTORY: '0xEec40383cbeE179Be76D4D930c0ABD0D4beA672f'
+      }
+    };
+  }
+
   if (useMcdKovanContracts) {
     const MKR = createCurrency('MKR');
     const IOU = createCurrency('IOU');
