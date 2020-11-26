@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { connect } from 'react-redux';
@@ -38,14 +38,14 @@ const Background = styled(Box)`
   `};
 `;
 
-const Onboarding = ({ open, step, state, ...props }) => {
+const Onboarding = ({ open, step, state, hideClose, v2, ...props }) => {
   const onboardingProps = {
     close: props.onboardingClose,
     nextStep: props.onboardingNextStep,
     prevStep: props.onboardingPrevStep,
     toStep: props.onboardingToStep,
     setState: props.setOnboardingState,
-    skipPoxy: props.onboardingSkipProxy
+    skipProxy: props.onboardingSkipProxy
   };
 
   return (
@@ -70,7 +70,13 @@ const Onboarding = ({ open, step, state, ...props }) => {
         }
       />
       {open && state === OnboardingStates.SETUP_LINKED_WALLET ? (
-        <ProxyOnboarding step={step} open={open} onboarding={onboardingProps} />
+        <ProxyOnboarding
+          step={step}
+          open={open}
+          onboarding={onboardingProps}
+          hideClose={hideClose}
+          v2={v2}
+        />
       ) : open && state === OnboardingStates.SETUP_SINGLE_WALLET ? (
         <SingleWalletOnboarding
           step={step}
@@ -82,7 +88,17 @@ const Onboarding = ({ open, step, state, ...props }) => {
   );
 };
 
-const ProxyOnboarding = ({ open, step, onboarding }) => {
+const ProxyOnboarding = ({ open, step, onboarding, hideClose, v2 }) => {
+  // please forgive this egregious hack
+  useEffect(() => {
+    if (!hideClose) return;
+    for (var x of document.getElementsByClassName(
+      'indexesm__HeaderButtons-oxosae-0'
+    )) {
+      x.style.display = 'none';
+    }
+  }, [hideClose]);
+
   return (
     <OnboardingFullScreen
       step={step}
@@ -112,7 +128,12 @@ const ProxyOnboarding = ({ open, step, onboarding }) => {
       />
       <LockMKR onComplete={onboarding.nextStep} />
       <StartVoting
+        buttonTitle={v2 ? 'Return to vote.makerdao.com' : undefined}
         onComplete={() => {
+          if (v2) {
+            window.location = 'https://vote.makerdao.com';
+            return;
+          }
           onboarding.close();
           onboarding.setState(OnboardingStates.FINISHED);
         }}
@@ -134,7 +155,7 @@ const SingleWalletOnboarding = ({ open, step, onboarding }) => {
         onComplete={onboarding.nextStep}
       />
       <SingleWallet
-        onComplete={() => onboarding.skipPoxy({ step: 2 })}
+        onComplete={() => onboarding.skipProxy({ step: 2 })}
         onCancel={onboarding.prevStep}
       />
       <LockMKR onComplete={onboarding.nextStep} />
@@ -152,6 +173,25 @@ export default connect(
   state => ({
     ...state.onboarding,
     ...state.accounts
+  }),
+  {
+    setOnboardingState,
+    onboardingClose,
+    onboardingNextStep,
+    onboardingPrevStep,
+    onboardingSkipProxy,
+    onboardingToStep
+  }
+)(Onboarding);
+
+export const ProxySetup = connect(
+  state => ({
+    ...state.onboarding,
+    ...state.accounts,
+    state: OnboardingStates.SETUP_LINKED_WALLET,
+    open: true,
+    hideClose: true,
+    v2: true
   }),
   {
     setOnboardingState,

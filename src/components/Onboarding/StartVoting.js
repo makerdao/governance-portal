@@ -9,7 +9,13 @@ import Sidebar from './shared/Sidebar';
 
 const containerWidth = '44rem';
 
-const StartVoting = ({ onComplete, hotWallet, coldWallet, singleWallet }) => {
+const StartVoting = ({
+  onComplete,
+  hotWallet,
+  coldWallet,
+  singleWallet,
+  buttonTitle = 'Start voting'
+}) => {
   return (
     <TwoColumnSidebarLayout
       sidebar={
@@ -38,7 +44,7 @@ const StartVoting = ({ onComplete, hotWallet, coldWallet, singleWallet }) => {
             onClick={onComplete}
             style={{ fontSize: '2.2rem', fontWeight: 400 }}
           >
-            Start voting
+            {buttonTitle}
           </Button>
         </Flex>
       </Grid>

@@ -12,6 +12,7 @@ import Polling from './pages/Polling';
 import Executive from './pages/Executive';
 import Loader from './components/Loader';
 import Terms from './components/Terms';
+import { ProxySetup } from './components/Onboarding';
 
 class DynamicImport extends Component {
   state = {
@@ -76,6 +77,10 @@ class App extends Component {
                   exact
                   path="/"
                   render={routeProps => <Timeline {...routeProps} />}
+                />
+                <Route
+                  path="/proxysetup"
+                  render={routeProps => <ProxySetup {...routeProps} />}
                 />
                 <Route
                   path="/polling/create"
