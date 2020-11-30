@@ -131,7 +131,7 @@ const ProxyOnboarding = ({ open, step, onboarding, hideClose, v2 }) => {
         buttonTitle={v2 ? 'Return to vote.makerdao.com' : undefined}
         onComplete={() => {
           if (v2) {
-            window.location = 'https://vote.makerdao.com';
+            window.location = 'https://vote.makerdao.com/executive';
             return;
           }
           onboarding.close();
