@@ -25,29 +25,24 @@ const connectingLineHeight = '5rem';
 
 const IconBackground = ({ children, ...props }) => {
   return (
-    <Grid alignItems="center" {...props}>
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        gridRow="1"
-        gridColumn="1"
-      >
-        <Box
-          borderRadius="50%"
-          bg="greys.veryLight"
-          width={iconBackgroundSize}
-          height={iconBackgroundSize}
-        />
-      </Flex>
-      <Flex
-        gridRow="1"
-        gridColumn="1"
-        alignItems="center"
-        justifyContent="center"
-      >
-        {children}
-      </Flex>
-    </Grid>
+    <Flex
+      alignItems="center"
+      justifyContent="center"
+      position="relative"
+      width={iconBackgroundSize}
+      height={iconBackgroundSize}
+      {...props}
+    >
+      <Box
+        borderRadius="50%"
+        bg="greys.veryLight"
+        width={iconBackgroundSize}
+        height={iconBackgroundSize}
+        position="absolute"
+        zIndex="-1"
+      />
+      {children}
+    </Flex>
   );
 };
 
