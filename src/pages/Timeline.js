@@ -207,9 +207,15 @@ const Timeline = ({
         }}
       >
         <div style={{ overflow: 'hidden' }}>
-          Welcome to the legacy Vote Portal. This site is being maintained while
-          we migrate outstanding functionality to the new Vote Portal available
-          at <Link href="https://vote.makerdao.com">vote.makerdao.com</Link>.
+          MakerDAO is currently migrating to a new governance chief contract to
+          prevent flashloans from being used in governance activities. Please
+          withdraw from the old Chief, deposit your MKR in the new Chief
+          contract, and vote on the new proposal on the Executive Voting page.
+          For more information please refer to this
+          <Link href="https://blog.makerdao.com/maker-dschief-1-2-governance-security-update-requires-mkr-holder-actions/">
+            blog
+          </Link>
+          .
         </div>
       </Banner>
       {DEV_USE_MIGRATION_BANNER ? <MigrationNotificationBanner /> : null}
