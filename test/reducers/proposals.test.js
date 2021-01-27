@@ -14,25 +14,6 @@ const mockGetExecutionDate = jest.fn(
 
 // MOCK WEB3 AND SPELL SERVICE
 beforeAll(() => {
-  const mockProvider = {
-    sendAsync: ({ method }, callback) => {
-      if (method === 'eth_accounts') {
-        callback(null, { result: ['0xf00'] });
-      }
-    }
-  };
-  window.web3 = {
-    currentProvider: mockProvider,
-    eth: {
-      defaultAccount: '0xf00bae'
-    }
-  };
-  window.ethereum = {
-    enable: async () => {
-      window.ethereum['sendAsync'] = mockProvider.sendAsync;
-    }
-  };
-
   const mockService = name => {
     if (name === 'spell')
       return {
@@ -45,11 +26,6 @@ beforeAll(() => {
   window.maker = {
     service: jest.fn(mockService)
   };
-});
-
-afterAll(() => {
-  delete window.web3;
-  delete window.ethereum;
 });
 
 test('proposalsInit dispatches a FAILURE action when it cannot reach the backend', async () => {

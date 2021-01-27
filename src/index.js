@@ -68,9 +68,9 @@ if (testchainConfigId) {
     await window.maker.authenticate();
     store.dispatch(init(maker, network));
   })();
-} else if (window.web3) {
-  window.web3.version.getNetwork(async (err, _netId) => {
-    const netId = parseInt(_netId, 10);
+} else if (window.ethereum) {
+  window.ethereum.request({ method: 'eth_requestAccounts' }).then(async () => {
+    const netId = parseInt(window.ethereum.networkVersion);
 
     if (netId !== 1 && netId !== 42) {
       store.dispatch(wrongNetwork());

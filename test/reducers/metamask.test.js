@@ -21,29 +21,14 @@ let store;
 const origWindow = {};
 
 const mockWeb3 = () => {
-  const mockProvider = {
+  window.ethereum = {
     sendAsync: ({ method }, callback) => {
       if (method === 'eth_accounts') {
         callback(null, { result: ['0xf00'] });
       }
-    }
-  };
-  const mockVersion = {
-    getNetwork: async callback => {
-      callback(null, mockNetId);
-    }
-  };
-  window.web3 = {
-    currentProvider: mockProvider,
-    eth: {
-      defaultAccount: mockDefaultAccount
     },
-    version: mockVersion
-  };
-  window.ethereum = {
-    enable: async () => {
-      window.ethereum['sendAsync'] = mockProvider.sendAsync;
-    }
+    selectedAddress: mockDefaultAccount,
+    networkVersion: mockNetId
   };
   window.location.reload = jest.fn();
   window.maker = defaultFunctions;
@@ -51,7 +36,6 @@ const mockWeb3 = () => {
 
 const clearWeb3Mock = () => {
   Object.assign(window, origWindow);
-  delete window.web3;
   delete window.ethereum;
 };
 
@@ -225,7 +209,7 @@ describe('async actions', () => {
           obj.payload === mockDefaultAccount
       )
     ).toBeTruthy();
-    expect(storeActions.length).toBe(14);
+    expect(storeActions.length).toBe(16);
   });
 
   test('initWeb3Accounts and update address with web3 default address', async () => {

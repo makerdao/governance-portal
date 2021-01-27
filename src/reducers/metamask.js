@@ -71,19 +71,17 @@ export const pollForMetamaskChanges = () => async dispatch => {
 };
 
 export const checkNetwork = () => async (dispatch, getState) => {
-  if (window.web3 && window.web3.eth.defaultAccount) {
-    window.web3.version.getNetwork(async (err, netId) => {
-      const {
-        metamask: { network }
-      } = getState();
-      const newNetwork = netIdToName(netId);
-      if (newNetwork !== network) {
-        // When we remove the reload, we want to remember to update the network.
-        // Dispatch kept here to prevent silly errors in the future.
-        dispatch(updateNetwork(newNetwork));
-        window.location.reload();
-      }
-    });
+  if (window.ethereum && window.ethereum.selectedAddress) {
+    const {
+      metamask: { network }
+    } = getState();
+    const newNetwork = netIdToName(window.ethereum.networkVersion);
+    if (newNetwork !== network) {
+      // When we remove the reload, we want to remember to update the network.
+      // Dispatch kept here to prevent silly errors in the future.
+      dispatch(updateNetwork(newNetwork));
+      window.location.reload();
+    }
   }
 };
 
@@ -96,7 +94,7 @@ export const initWeb3Accounts = () => async (dispatch, getState) => {
   } = getState();
 
   async function useAddress() {
-    const address = window.web3.eth.defaultAccount;
+    const address = window.ethereum.selectedAddress;
     if (address !== activeAddress) {
       dispatch(updateAddress(address));
       await dispatch(addMetamaskAccount(address));
@@ -111,12 +109,13 @@ export const initWeb3Accounts = () => async (dispatch, getState) => {
     }
   }
 
-  if (window.web3 && window.web3.eth.defaultAccount) {
+  if (window.ethereum && window.ethereum.selectedAddress) {
     await useAddress();
-  } else if (window.ethereum && !triedEnabling) {
+  }
+  if (window.ethereum && !triedEnabling) {
     triedEnabling = true;
     try {
-      await window.ethereum.enable();
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
       await useAddress();
     } catch (err) {
       dispatch({ type: NO_METAMASK_ACCOUNTS });
@@ -131,7 +130,7 @@ export const initWeb3Accounts = () => async (dispatch, getState) => {
 export const init = (maker, network = 'mainnet') => async dispatch => {
   dispatch(connectRequest());
 
-  if (!window.web3 || !window.web3.eth.defaultAccount) {
+  if (!window.ethereum || !window.ethereum.selectedAddress) {
     dispatch({ type: NO_METAMASK_ACCOUNTS });
     dispatch(notAvailable());
   }
