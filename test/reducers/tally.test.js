@@ -24,24 +24,6 @@ const defaultFunctions = {
 
 describe('Tally Reducer', () => {
   beforeAll(() => {
-    const mockProvider = {
-      sendAsync: ({ method }, callback) => {
-        if (method === 'eth_accounts') {
-          callback(null, { result: ['0xf00'] });
-        }
-      }
-    };
-    window.web3 = {
-      currentProvider: mockProvider,
-      eth: {
-        defaultAccount: '0xf00bae'
-      }
-    };
-    window.ethereum = {
-      enable: async () => {
-        window.ethereum['sendAsync'] = mockProvider.sendAsync;
-      }
-    };
     window.maker = defaultFunctions;
   });
 
@@ -51,8 +33,6 @@ describe('Tally Reducer', () => {
 
   afterAll(() => {
     Object.assign(window, origWindow);
-    delete window.web3;
-    delete window.ethereum;
   });
 
   describe('voteTallyInit', () => {

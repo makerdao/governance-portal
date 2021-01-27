@@ -108,7 +108,7 @@ function useHotAccount(state) {
 
   if (
     account.type === AccountTypes.METAMASK &&
-    window.web3.eth.defaultAccount !== account.address
+    window.ethereum.selectedAddress !== account.address
   ) {
     window.alert(`Please switch to your hot wallet with Metamask.`);
     return false;
