@@ -82,7 +82,7 @@ describe('renders summary page', () => {
     getByTestId('progress-bar');
   });
 
-  test('show esm history', async () => {
+  xtest('show esm history', async () => {
     const { getByText } = await render(<Modules store={store} />);
     getByText('ESM History');
     await wait(() => getByText('Dec 5, 2019'));
