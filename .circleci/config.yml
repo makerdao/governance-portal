@@ -40,6 +40,8 @@ jobs:
           keys:
             - dependency-cache-{{ checksum "package.json" }}
       - run:
+          env:
+            REACT_APP_INFURA_KEY: ${{ secrets.REACT_APP_INFURA_KEY }}
           name: Deploy to Now
           command: |
             yarn build
@@ -58,6 +60,8 @@ jobs:
           command: |
             CI=false yarn build
       - run:
+          env:
+            REACT_APP_INFURA_KEY: ${{ secrets.REACT_APP_INFURA_KEY }}
           name: Deploy to AWS staging
           command: |
             sudo apt update
@@ -86,6 +90,8 @@ jobs:
           command: |
             CI=false yarn build
       - run:
+          env:
+            REACT_APP_INFURA_KEY: ${{ secrets.REACT_APP_INFURA_KEY }}
           name: Deploy to AWS staging
           command: |
             sudo apt update
