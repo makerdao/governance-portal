@@ -1,5 +1,3 @@
-// import { MDAI } from '@makerdao/dai-plugin-mcd';
-// import { DAI } from '../maker';
 import { validTxString, validAddressString } from './ethereum';
 
 export function cutMiddle(str = '', left = 4, right = 4) {
