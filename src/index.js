@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import Raven from 'raven-js';
-import ReactGA from 'react-ga';
+// import Raven from 'raven-js';
+// import ReactGA from 'react-ga';
 import { ThemeProvider } from 'styled-components';
 
 import { mixpanelInit } from './analytics';
@@ -104,14 +104,14 @@ function render() {
   );
 }
 
-if (process.env.NODE_ENV === 'production') {
-  ReactGA.initialize('UA-65766767-7');
-  ReactGA.pageview(window.location.pathname + window.location.search);
+// if (process.env.NODE_ENV === 'production') {
+//   ReactGA.initialize('UA-65766767-7');
+//   ReactGA.pageview(window.location.pathname + window.location.search);
 
-  Raven.config(
-    'https://424db452238242e4bd8d7e5ab064e413@sentry.io/1270414'
-  ).install();
-  Raven.context(() => render());
-} else {
-  render();
-}
+//   Raven.config(
+//     'https://424db452238242e4bd8d7e5ab064e413@sentry.io/1270414'
+//   ).install();
+//   Raven.context(() => render());
+// } else {
+render();
+// }
