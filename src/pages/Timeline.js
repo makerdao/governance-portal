@@ -207,15 +207,10 @@ const Timeline = ({
         }}
       >
         <div style={{ overflow: 'hidden' }}>
-          MakerDAO is currently migrating to a new governance chief contract to
-          prevent flashloans from being used in governance activities. Please
-          withdraw from the old Chief, deposit your MKR in the new Chief
-          contract, and vote on the new proposal on the Executive Voting page.
-          For more information please refer to this
-          <Link href="https://blog.makerdao.com/maker-dschief-1-2-governance-security-update-requires-mkr-holder-actions/">
-            blog
-          </Link>
-          .
+          Welcome to the legacy Governance Portal. This site is not actively
+          being maintained. We migrated outstanding functionality to the new
+          Governance Portal available at{' '}
+          <Link href="https://vote.makerdao.com/">vote.makerdao.com</Link>.
         </div>
       </Banner>
       {DEV_USE_MIGRATION_BANNER ? <MigrationNotificationBanner /> : null}
