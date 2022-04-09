@@ -27,7 +27,7 @@
     "lodash.uniq": "^4.5.0",
     "lodash.uniqby": "^4.7.0",
     "mixpanel-browser": "^2.29.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "prop-types": "^15.6.2",
     "ramda": "^0.26.0",
     "raven-js": "^3.27.0",
