@@ -27,6 +27,7 @@ jobs:
       - run:
           name: Run tests
           command: |
+            echo "Testing......"
             source /home/circleci/setup-env.sh
             yarn cover
             yarn add --dev codecov
