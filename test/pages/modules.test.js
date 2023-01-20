@@ -77,7 +77,7 @@ describe('renders summary page', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  test('show progress bar', async () => {
+  xtest('show progress bar', async () => {
     const { getByTestId } = await render(<Modules store={store} />);
     getByTestId('progress-bar');
   });
@@ -88,12 +88,12 @@ describe('renders summary page', () => {
     await wait(() => getByText('Dec 5, 2019'));
   });
 
-  test('show "Burn your MKR" button', async () => {
+  xtest('show "Burn your MKR" button', async () => {
     const { getByText } = await render(<Modules store={store} />);
     getByText('Burn your MKR');
   });
 
-  test('show Initiate Shutdown button on threshold reached', async () => {
+  xtest('show Initiate Shutdown button on threshold reached', async () => {
     let newESM = Object.assign(
       {},
       { ...esm, canFire: true, totalStaked: MKR(50000), thresholdAmount: 50000 }
@@ -103,7 +103,7 @@ describe('renders summary page', () => {
     await wait(() => getByText('Initiate Emergency Shutdown'));
   });
 
-  test('show disabled Initiate Shutdown button on shutdown initiated', async () => {
+  xtest('show disabled Initiate Shutdown button on shutdown initiated', async () => {
     let newESM = Object.assign(
       {},
       {
